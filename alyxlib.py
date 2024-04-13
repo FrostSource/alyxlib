@@ -90,14 +90,16 @@ def write_onupload_file(onupload_path:Path):
             dst = data[0]
             content = data[1]
             symlink_src = data[2]
+            symlink_src_rel = os.path.relpath(symlink_src,dst.parent)
+            dst_rel = dst.relative_to(onupload_dir)
             # Creating symlinks
             if symlink_src is not None:
-                reinstates.append(f'mklink{" /d" if os.path.isdir(symlink_src) else ""} "{dst.relative_to(onupload_dir)}" "{os.path.relpath(symlink_src,onupload_dir)}"\necho.')
+                reinstates.append(f'mklink{" /d" if os.path.isdir(symlink_src) else ""} "{dst_rel}" "{symlink_src_rel}"\necho.')
             # Directly writing to files
             elif content is not None:
-                reinstates.append(f'echo {content}> {dst}')
+                reinstates.append(f'echo {content}> {dst_rel}')
         
-        f.write(TEMPLATE.ON_UPLOAD_FILE.format(alyxlib_content_path, "\n".join(removes), "\n".join(reinstates)))
+        f.write(TEMPLATE.ON_UPLOAD_FILE.format(os.path.relpath(alyxlib_content_path, onupload_dir), "\n".join(removes), "\n".join(reinstates)))
         # f.write(TEMPLATE.ON_UPLOAD_FILE.format("ONE", "TWO", "THREE"))
 
 alyxlib_content_path = Path(os.path.abspath('.'))
@@ -223,9 +225,15 @@ def create_symlinks(addon_content_path:Path, addon_game_path:Path):
         # print(dst.parent)
         # print(os.path.relpath(src, dst.parent))
         # print()
-        if dst.exists():
+        
+        # Don't replace existing files/dirs
+        if os.path.exists(dst):
             vprint(f"{dst} already exists, symlink can't be created.")
         else:
+            # But do remove a broken link
+            if os.path.islink(dst):
+                os.unlink(dst)
+            # Then create the link
             os.symlink(os.path.relpath(src, dst.parent), dst)
             vprint(f"{dst} symlink created.")
             
