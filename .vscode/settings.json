@@ -1,0 +1,39 @@
+/*
+	v1.2.1
+	https://github.com/FrostSource/alyxlib
+*/
+{
+    "Lua.completion.autoRequire": false,
+    "Lua.diagnostics.ignoredFiles": "Enable",
+    "Lua.workspace.preloadFileSize": 300,
+    "Lua.hover.enumsLimit": 5,
+    "Lua.runtime.version": "LuaJIT",
+    "Lua.runtime.builtin": {
+        "coroutine": "enable",
+        "debug": "enable",
+        "io": "disable",
+        "math": "enable",
+        "os": "disable",
+        "package": "enable",
+        "string": "enable",
+        "table": "enable",
+        "utf8": "disable",
+        "bit": "enable",
+        "bit32": "disable",
+        "jit": "disable"
+    },
+    "Lua.semantic.keyword": false,
+    "Lua.hover.expandAlias": false,
+    "Lua.hover.previewFields": 1,
+    "Lua.type.weakUnionCheck": true,
+    "Lua.type.weakNilCheck": true,
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/_bakeresourcecache": true,
+        "**/*.bak": true,
+        "/release/": true
+    },
+    "Lua.diagnostics.disable": [
+        "inject-field"
+    ],
+}

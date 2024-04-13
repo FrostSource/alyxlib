@@ -1,0 +1,63 @@
+/*
+	v1.0.0
+	https://github.com/FrostSource/alyxlib
+
+	Made for internal use for developing extravaganza tools and assets.
+*/
+{
+	"Script Header":{
+		"scope": "lua",
+		"prefix": ["snippet", "tool", "header_script"],
+		"body": [
+			"--[[",
+			"\tv1.0.0",
+			"\thttps://github.com/FrostSource/alyxlib",
+			"",
+			"\t$0",
+			"]]"
+		],
+		"description": "Header comment for scripts.",
+	},
+
+	"Script Header Section Title":{
+		"scope": "lua",
+		"prefix": ["snippet", "tool", "header_section_title"],
+		"body": [
+			"======================================== ${1:Title} ========================================",
+			"",
+			"$0",
+
+		],
+		"description": "Header section for scripts.",
+	},
+	
+	"Script Header Not Using Core":{
+		"scope": "lua",
+		"prefix": ["snippet", "tool", "header using core"],
+		"body": [
+			"If not using `vscripts/alyxlib/core.lua`, load this file at game start using the following line:",
+			"",
+			"```lua",
+			"require \"alyxlib.${1:module}\"",
+			"```$0"
+
+		],
+		"description": "Header requirement for scripts.",
+	},
+	
+	"Script Footer Initialized":{
+		"scope": "lua",
+		"prefix": ["snippet", "tool", "footer initialized"],
+		"body": [
+			"print(\"${1:name}.lua \".. ${2:version} ..\" initialized...\")",
+			"",
+			"return ${2:version}",
+		],
+		"description": "Footer initialization printing.",
+	},
+
+	
+}
+
+
+

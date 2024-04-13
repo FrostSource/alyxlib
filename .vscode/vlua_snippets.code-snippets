@@ -1,0 +1,169 @@
+/*
+	v1.0.1
+	https://github.com/FrostSource/alyxlib
+
+	Snippets for quick coding using the built-in VScript functions.
+*/
+{
+	/*
+		Hooks.
+	*/
+
+	"Hook: Activate":{
+		"scope": "lua",
+		"prefix": ["Hook", "Activate", "Snippet"],
+		"body": [
+			"---@param activateType 0|1|2",
+			"function Activate(activateType)",
+			"\t$0",
+			"end"
+		],
+		"description": "Called on Activate(), after the entity has spawned. If the entity is spawned on map load, Activate() is called after all entities have spawned."
+	},
+
+	"Hook: OnBreak":{
+		"scope": "lua",
+		"prefix": ["Hook", "OnBreak", "Snippet"],
+		"body": [
+			"---@param inflictor EntityHandle",
+			"function OnBreak(inflictor)",
+			"\t$0",
+			"end"
+		],
+		"description": "Called when a breakable entity is broken. Works for these classes: ???"
+	},
+
+	"Hook: OnEntText":{
+		"scope": "lua",
+		"prefix": ["Hook", "OnEntText", "Snippet"],
+		"body": [
+			"function OnEntText()",
+			"\t$0",
+			"\t-- Return the string to display on entity",
+			"\treturn \"\"",
+			"end"
+		],
+		"description": "Called every frame when ent_text is enabled on the entity. Return a string to be added to the ent_text printout."
+	},
+
+	"Hook: OnTakeDamage":{
+		"scope": "lua",
+		"prefix": ["Hook", "OnTakeDamage", "Snippet"],
+		"body": [
+			"---@param damageTable T01",
+			"function OnTakeDamage(damageTable)",
+			"\t$0",
+			"end"
+		],
+		"description": "Called when the entity takes damage. Table format: {inflictor = handle, damage_direction = Vector, damage_position = Vector, damage_force = Vector, damage = int, attacker = handle} To do: Check which entity classes can take damage. Prop_physics and prop_dynamic confirmed, but the function doesn't get called in every case."
+	},
+
+	"Hook: Precache":{
+		"scope": "lua",
+		"prefix": ["Hook", "Precache", "Snippet"],
+		"body": [
+			"---@param context CScriptPrecacheContext",
+			"function Precache(context)",
+			"\t$0",
+			"end"
+		],
+		"description": "Called when the entity is precached. Used to precache any additional resources needed by the script using the global Precache family of script functions."
+	},
+
+	"Hook: Spawn":{
+		"scope": "lua",
+		"prefix": ["Hook", "Spawn", "Snippet"],
+		"body": [
+			"---@param spawnkeys CScriptKeyValues",
+			"function Spawn(spawnkeys)",
+			"\t$0",
+			"end"
+		],
+		"description": "Called on Spawn(), just after the entity has been created, but before it has been initialized. Passes a CScriptKeyValues handle that can be used to query the entity spawn keyvalues."
+	},
+
+	"Hook: UpdateOnRemove":{
+		"scope": "lua",
+		"prefix": ["Hook", "UpdateOnRemove", "Snippet"],
+		"body": [
+			"function UpdateOnRemove()",
+			"\t$0",
+			"end"
+		],
+		"description": "Called before the entity is killed."
+	},
+
+	/*
+		Trace tables.
+		For some reason using the word Table in the prefix causes dedentation.
+	*/
+
+	"Trace Line Table Snippet3":{
+		"scope": "lua",
+		"prefix": ["Trace Line", "Snippet"],
+		"body": [
+			"---@type TraceTableLine",
+			"local traceTable = {",
+			"\tstartpos = $1,",
+			"\tendpos = $2,",
+			"\tignore = $3,",
+			"\t$4",
+			"}",
+			"TraceLine(traceTable)",
+			"if traceTable.hit then",
+			"\t$0",
+			"end"
+		],
+		"description": "Create a trace table snippet for the TraceLine function."
+	},
+
+	"Trace Hull Table Snippet":{
+		"scope": "lua",
+		"prefix": ["Trace Hull", "Snippet"],
+		"body": [
+			"---@type TraceTableHull",
+			"local traceTable = {",
+			"\tstartpos = $1,",
+			"\tendpos = $2,",
+			"\tmin = ${3:Vector(0,0,0),}",
+			"\tmax = ${4:Vector(0,0,0),}",
+			"\tignore = ${5:thisEntity},",
+			"\t$6",
+			"}",
+			"TraceHull(traceTable)",
+			"if traceTable.hit then",
+			"\t$0",
+			"end"
+		],
+		"description": "Create a trace table snippet for the TraceHull function."
+	},
+
+	"Trace Collideable Table Snippet":{
+		"scope": "lua",
+		"prefix": ["Trace Collideable", "Snippet"],
+		"body": [
+			"---@type TraceTableCollideable",
+			"local traceTable = {",
+			"\tstartpos = $1,",
+			"\tendpos = $2,",
+			"\tent = ${3:thisEntity},",
+			"\t$4",
+			"}",
+			"TraceCollideable(traceTable)",
+			"if traceTable.hit then",
+			"\t$0",
+			"end"
+		],
+		"description": "Create a trace table snippet for the TraceCollideable function."
+	},
+
+	/*
+	*/
+
+	"Include Script Private Scope":{
+		"scope": "lua",
+		"prefix": "include script",
+		"body": "DoIncludeScript(\"$1\", thisEntity:GetPrivateScriptScope())$0",
+		"description": "Include a script into current entity's private script scope."
+	}
+}

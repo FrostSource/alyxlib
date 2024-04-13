@@ -1,0 +1,8 @@
+
+/_bakeresourcecache/
+*bakeresourcecache.vpk
+__pycache__
+/release/
+/test_release/
+__test*
+*.bak
