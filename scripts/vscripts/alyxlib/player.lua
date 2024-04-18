@@ -708,7 +708,8 @@ function CBasePlayer:UpdateWeapons(removes, set)
     if setFound ~= nil then
         hand:AddHandAttachment(setFound)
         -- Multitool needs to be added twice
-        if setFound:GetClassname() == "hlvr_multitool" then
+        -- Hand needs to be added twice to let some props work (syringe)
+        if setFound:GetClassname() == "hlvr_multitool" or setFound:GetClassname() == "hand_use_controller" then
             hand:AddHandAttachment(setFound)
         end
     end
