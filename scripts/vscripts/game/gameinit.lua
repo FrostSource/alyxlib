@@ -7,6 +7,18 @@
 
 -- Please read the included README.md for more details
 
+---
+---Prints a warning in the console, along with a vscript print if inside tools mode.
+---
+---@param ... any
+local function _warn(...)
+    local str = table.concat({...}, " ")
+    Warning(str .. "\n")
+    if IsInToolsMode() then
+        print("Warning - " .. str)
+    end
+end
+
 local DIRECTORIES = {
     "mods/init/",
     ""
@@ -37,7 +49,7 @@ for workshopID in addonList:gmatch("[^,]+") do
         end,
         function(errorMessage)
             if not errorMessage:find(path .. "\']Failed to find") then
-                Warning("Error loading " .. path .. ":\n" .. errorMessage)
+                _warn("Error loading " .. path .. ":\n" .. errorMessage)
             end
         end )
     end
