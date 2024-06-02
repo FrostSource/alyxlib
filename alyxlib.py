@@ -124,17 +124,7 @@ def write_to_file(path:Path, line:str = None, lines:list[str] = None, mode = 'w'
     
     return True
 
-def create_symlinks(addon_content_path:Path, addon_game_path:Path):
-    # Last bool is if the path should be removed and reinstated by on_upload.bat
-    symlinks:list[tuple[Path,Path,bool]] = [
-        (alyxlib_content_path / "scripts/vscripts/alyxlib", addon_content_path / "scripts/vscripts/alyxlib", True),
-        (alyxlib_content_path / "scripts/vlua_globals.lua", addon_content_path / "scripts/vlua_globals.lua", True),
-        # (alyxlib_content_path / "scripts/vscripts/core", addon_content_path / "scripts/vscripts/core", True),
-        (alyxlib_content_path / "scripts/vscripts/game", addon_content_path / "scripts/vscripts/game", True),
-        # (alyxlib_content_path / "scripts/vscripts/2182586257.lua", addon_content_path / "scripts/vscripts/2182586257.lua", True),
-        (alyxlib_content_path / ".vscode", addon_content_path / ".vscode", False),
-        (addon_content_path / "scripts", addon_game_path / "scripts", False)
-    ]
+def create_symlinks(addon_content_path:Path, addon_game_path:Path, symlinks:list[tuple[Path,Path,bool]]):
 
     # Creating links
     for symlink in symlinks:
@@ -152,7 +142,10 @@ def create_symlinks(addon_content_path:Path, addon_game_path:Path):
             if os.path.islink(dst):
                 os.unlink(dst)
             # Then create the link
-            os.symlink(os.path.relpath(src, dst.parent), dst)
+            if USE_RELATIVE_SYMLINKS:
+                os.symlink(os.path.relpath(src, dst.parent), dst)
+            else:
+                os.symlink(src, dst)
             vprint(f"{dst} symlink created.")
             
         if remove:
@@ -214,7 +207,13 @@ def create_sound_files(addon_content_path:Path, addon_game_path:Path):
 
 def MACRO_full_setup(a, b):
     print("Doing full addon setup...")
-    create_symlinks(a, b)
+    create_symlinks(a, b, [
+        (alyxlib_content_path / "scripts/vscripts/alyxlib", a / "scripts/vscripts/alyxlib", True),
+        (alyxlib_content_path / "scripts/vlua_globals.lua", a / "scripts/vlua_globals.lua", True),
+        (alyxlib_content_path / "scripts/vscripts/game", a / "scripts/vscripts/game", True),
+        (alyxlib_content_path / ".vscode", a / ".vscode", False),
+        (a / "scripts", b / "scripts", False)
+    ])
     create_modinit_script(a, b)
     init_git(a, b)
     create_sound_files(a, b)
