@@ -22,7 +22,7 @@
 	green:SetHSL(nil, nil, green.lightness * 0.5)
     ```
 ]]
-require "alyxlib.util.globals"
+require "alyxlib.globals"
 require "alyxlib.math.common"
 
 local hasfrac = math.has_frac

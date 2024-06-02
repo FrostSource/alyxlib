@@ -83,7 +83,7 @@
 
 ]]
 
-require "alyxlib.util.globals"
+require "alyxlib.globals"
 
 ---Allows quick creation of convars with persistence, globalsys checks, and callbacks.
 ---@class EasyConvars

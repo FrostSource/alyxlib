@@ -12,7 +12,7 @@
 ]]
 
 -- Used for button descriptions
-require "alyxlib.input.input"
+require "alyxlib.controls.input"
 
 
 Convars:RegisterCommand("alyxlib_start_print_controller_button_presses", function (_)

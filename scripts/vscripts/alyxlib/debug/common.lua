@@ -11,7 +11,7 @@
     ```
 
 ]]
-require "alyxlib.util.globals"
+require "alyxlib.globals"
 require "alyxlib.extensions.entity"
 require "alyxlib.math.common"
 
