@@ -1,5 +1,5 @@
 /*
-	v2.0.1
+	v3.0.0
 	https://github.com/FrostSource/alyxlib
 */
 {
@@ -15,8 +15,7 @@
 			"end",
 			"",
 			"---@class ${1:EntityName} : EntityClass",
-			"local base, self = entity(\"${1:EntityName}\")",
-			"if self and self.Initiated then return end",
+			"local base = entity(\"${1:EntityName}\")",
 			"",
 			"$0",
 			"",
