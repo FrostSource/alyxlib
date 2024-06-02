@@ -77,7 +77,7 @@
 local version = "v2.0.0"
 
 require "alyxlib.storage"
-require "alyxlib.util.globals"
+require "alyxlib.globals"
 require "alyxlib.debug.common"
 
 ---@type table<string, table>
