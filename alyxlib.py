@@ -219,6 +219,28 @@ def MACRO_full_setup(a, b):
     create_sound_files(a, b)
     print("...Finished full addon setup")
 
+def MACRO_scripts_nogit_setup(a, b):
+    print("Doing full addon setup (no Git)...")
+    create_symlinks(a, b, [
+        (alyxlib_content_path / "scripts/vscripts/alyxlib", a / "scripts/vscripts/alyxlib", True),
+        (alyxlib_content_path / "scripts/vlua_globals.lua", a / "scripts/vlua_globals.lua", True),
+        (alyxlib_content_path / "scripts/vscripts/game", a / "scripts/vscripts/game", True),
+        (alyxlib_content_path / ".vscode", a / ".vscode", False),
+        (a / "scripts", b / "scripts", False)
+    ])
+    create_modinit_script(a, b)
+    create_sound_files(a, b)
+    print("...Finished full addon setup (no Git)")
+
+def MACRO_vscript_setup(a, b):
+    print("Doing vscript only setup...")
+    create_symlinks(a, b, [
+        (alyxlib_content_path / "scripts/vlua_globals.lua", a / "scripts/vlua_globals.lua", True),
+        (alyxlib_content_path / ".vscode", a / ".vscode", False),
+        (a / "scripts", b / "scripts", False)
+    ])
+    print("...Finished vscript only setup")
+
 class Macro:
     desc:str = ""
     func:Callable[[Path, Path], None] = None
