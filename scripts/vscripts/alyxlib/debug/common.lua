@@ -106,7 +106,7 @@ end, "", 0)
 ---
 Convars:RegisterCommand("ent_show", function (_, name)
     Debug.ShowEntity(name)
-end, "", 0)
+end, "Draws a debug line from the player to any entities with a name", 0)
 
 ---
 ---Print the mass of an entity.
@@ -114,7 +114,7 @@ end, "", 0)
 Convars:RegisterCommand("ent_mass", function (_, name)
     local ent = Entities:FindByName(nil, name)
     print(ent:GetMass())
-end, "", 0)
+end, "Prints the mass of an entity", 0)
 
 ---
 ---Quickly draw a sphere at a position with a radius.
@@ -127,7 +127,7 @@ Convars:RegisterCommand("sphere", function (_, x, y, z, r)
 
     DebugDrawSphere(Vector(x, y, z), Vector(255, 255, 255), 255, r, false, 10)
 
-end, "", 0)
+end, "Draws a debug sphere at 3D position with a radius", 0)
 
 Convars:RegisterCommand("print_ent_criteria", function (_, entity)
     local ent = getEntityFromTarget(entity)
@@ -136,6 +136,7 @@ Convars:RegisterCommand("print_ent_criteria", function (_, entity)
     else
         print("Couldn't find entity using search string '"..entity.."'")
     end
+end, "Prints all current context criteria for an entity", 0)
 
 Convars:RegisterCommand("print_ent_base_criteria", function (_, entity)
     local ent = getEntityFromTarget(entity)
