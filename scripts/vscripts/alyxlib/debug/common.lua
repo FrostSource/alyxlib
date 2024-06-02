@@ -136,7 +136,8 @@ Convars:RegisterCommand("print_ent_criteria", function (_, entity)
     else
         print("Couldn't find entity using search string '"..entity.."'")
     end
-end, "", 0)
+
+local symbols = {"and","break","do","else","elseif","end","false","for","function","if","in","local","nil","not","or","repeat","return","then","true","until","while"}
 
 if IsInToolsMode() then
     ---
@@ -147,7 +148,14 @@ if IsInToolsMode() then
     ---Double quotes are not recognized.
     ---
     Convars:RegisterCommand("code", function (_, ...)
-        local code = table.concat({...})
+        local code = ""
+        for _, token in ipairs({...}) do
+            if vlua.find(symbols, token) then
+                code = code .. " " .. token .. " "
+            else
+                code = code .. token
+            end
+        end
         print("Doing code:", code)
         load(code)()
     end, "", 0)
