@@ -298,6 +298,7 @@ function Gesture:UnregisterCallback(callback)
 end
 
 -- Attachment indexes
+-- NOTE: The left hand increases these by 1 because of the flashlight attachment
 local hand_fingertip_index = 6
 local hand_fingertip_middle = 7
 local hand_fingertip_ring = 8
@@ -334,12 +335,12 @@ local function GestureThink()
 
     for i = 0, 1 do
         local hand = hmd:GetVRHand(i)
-        local origin_attach = hand:GetAttachmentOrigin(hand_vr_hand_origin)
-        local index_attach = hand:GetAttachmentOrigin(hand_fingertip_index)
-        local middle_attach = hand:GetAttachmentOrigin(hand_fingertip_middle)
-        local ring_attach = hand:GetAttachmentOrigin(hand_fingertip_ring)
-        local pinky_attach = hand:GetAttachmentOrigin(hand_fingertip_pinky)
-        local thumb_attach = hand:GetAttachmentOrigin(hand_fingertip_thumb)
+        local origin_attach = hand:GetAttachmentOrigin(hand_vr_hand_origin + (1-i))
+        local index_attach = hand:GetAttachmentOrigin(hand_fingertip_index + (1-i))
+        local middle_attach = hand:GetAttachmentOrigin(hand_fingertip_middle + (1-i))
+        local ring_attach = hand:GetAttachmentOrigin(hand_fingertip_ring + (1-i))
+        local pinky_attach = hand:GetAttachmentOrigin(hand_fingertip_pinky + (1-i))
+        local thumb_attach = hand:GetAttachmentOrigin(hand_fingertip_thumb + (1-i))
 
         local index_dist = VectorDistance(origin_attach, index_attach)
         local middle_dist = VectorDistance(origin_attach, middle_attach)

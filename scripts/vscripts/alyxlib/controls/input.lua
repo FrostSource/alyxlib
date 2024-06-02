@@ -1,5 +1,5 @@
 --[[
-    v1.2.0
+    v1.3.0
     https://github.com/FrostSource/alyxlib
 
     Simplifies the tracking of button presses/releases. This system will automatically
@@ -12,7 +12,7 @@
     If not using `vscripts/alyxlib/core.lua`, load this file at game start using the following line:
 
     ```lua
-    require "alyxlib.input.input"
+    require "alyxlib.controls.input"
     ```
 
     ======================================== Usage ========================================
@@ -71,7 +71,7 @@
 ---
 Input = {}
 Input.__index = Input
-Input.version = "v1.2.0"
+Input.version = "v1.3.0"
 
 ---
 ---If the input system should start automatically on player spawn.
@@ -127,7 +127,7 @@ Input.MultiplePressInterval = 0.35
 
 -- ---@type table<integer, table>
 ---@type table<integer, table<integer, InputButtonTable>>
-local tracked_buttons = {}
+local trackedButtons = {}
 
 ---@class InputButtonTable
 ---@field is_held boolean
@@ -136,13 +136,42 @@ local tracked_buttons = {}
 ---@field release_time number
 ---@field press_locked boolean
 ---@field release_locked boolean
----@field press_callbacks table<function, InputCallbackTable>
----@field release_callbacks table<function, InputCallbackTable>
+-- ---@field press_callbacks table<function, InputCallbackTable>
+-- ---@field release_callbacks table<function, InputCallbackTable>
 ---@field multiple_press_count number
 
 ---@class InputCallbackTable
 ---@field presses integer
----@field context any
+---@field func function
+---@field context any # Value passed into first argument of callback.
+---@field handkind InputHandKind # Left, right, primary, secondary.
+---@field actualhandid 0|1 # This needs to be updated whenver hands change.
+
+---@class AnalogCallbackTable
+---@field analog ENUM_ANALOG_INPUT_ACTIONS
+---@field value { x: number?, y: number? }
+---@field checkGreaterThan boolean
+---@field func function
+---@field context any # Value passed into first argument of callback.
+---@field handkind InputHandKind # Left, right, primary, secondary.
+---@field actualhandid 0|1 # This needs to be updated whenver hands change.
+---@field literalhandtype 0|1 # The literal value of the hand which is usually the opposite of Id
+
+
+---@type table<ENUM_DIGITAL_INPUT_ACTIONS, InputCallbackTable[]>
+local pressCallbacks = {}
+
+-- local pressCallbackId = 0
+
+---@type table<ENUM_DIGITAL_INPUT_ACTIONS, InputCallbackTable[]>
+local releaseCallbacks = {}
+
+---@type AnalogCallbackTable[]
+local analogCallbacks = {}
+
+-- local releaseCallbackId = 0
+
+local callbackId = 0
 
 local function createButtonTable()
     return {
@@ -153,10 +182,10 @@ local function createButtonTable()
         release_time = 0,
         press_locked = false,
         release_locked = false,
-        ---@type table<function,InputCallbackTable>
-        press_callbacks = {},
-        ---@type table<function,InputCallbackTable>
-        release_callbacks = {},
+        -- ---@type table<function,InputCallbackTable>
+        -- press_callbacks = {},
+        -- ---@type table<function,InputCallbackTable>
+        -- release_callbacks = {},
         multiple_press_count = 0,
     }
 end
@@ -166,12 +195,19 @@ end
 ---
 ---@param button ENUM_DIGITAL_INPUT_ACTIONS
 function Input:TrackButton(button)
-    tracked_buttons[button] = {
+    if trackedButtons[button] ~= nil then
+        warn("Button", button, "is already tracked!")
+        return
+    end
+
+    trackedButtons[button] = {
         [0] = createButtonTable(), -- Left
         [1] = createButtonTable(), -- Right
-        [2] = createButtonTable(), -- Primary
-        [3] = createButtonTable(), -- Secondary
+        -- [2] = createButtonTable(), -- Primary
+        -- [3] = createButtonTable(), -- Secondary
     }
+    pressCallbacks[button] = {}
+    releaseCallbacks[button] = {}
 end
 
 ---
@@ -188,7 +224,10 @@ end
 ---Stop all buttons from being tracked.
 ---
 function Input:StopTrackingAllButtons()
-    tracked_buttons = {}
+    trackedButtons = {}
+    pressCallbacks = {}
+    releaseCallbacks = {}
+    callbackId = 0
 end
 
 ---
@@ -207,7 +246,9 @@ end
 ---
 ---@param button ENUM_DIGITAL_INPUT_ACTIONS
 function Input:StopTrackingButton(button)
-    tracked_buttons[button] = nil
+    trackedButtons[button] = nil
+    pressCallbacks[button] = nil
+    releaseCallbacks[button] = nil
 end
 
 ---
@@ -221,6 +262,64 @@ function Input:StopTrackingButtons(buttons)
 end
 
 
+local currentPrimaryHandId = 1
+local currentSecondaryHandId = 0
+
+---@alias InputHandKind
+---| 0  # Left Hand.
+---| 1  # Right Hand.
+---| 2  # Primary Hand.
+---| 3  # Secondary Hand.
+
+---Convert a hand kind integer to a hand Id integer.
+---@param kind InputHandKind
+---@return 0|1
+local function convertHandKindToHandId(kind)
+    if kind == 2 then return currentPrimaryHandId
+    elseif kind == 3 then return currentSecondaryHandId
+    else
+        return kind
+    end
+end
+
+
+local function updatePrimaryHandId(primary)
+    -- primary_hand = Entities:GetLocalPlayer():GetHMDAvatar():GetVRHand(primary)
+    -- secondary_hand = Entities:GetLocalPlayer():GetHMDAvatar():GetVRHand(1 - primary)
+    currentPrimaryHandId = primary
+    currentSecondaryHandId = 1 - primary
+
+    -- Update the callbacks so they know which real handid they belond to in the think function
+    -- for _, value in pairs(pressCallbacks) do
+    --     value.actualhandid = convertHandKindToHandId(value.handkind)
+    -- end
+    -- for _, value in pairs(releaseCallbacks) do
+    --     value.actualhandid = convertHandKindToHandId(value.handkind)
+    -- end
+    for btn, list in pairs(pressCallbacks) do
+        for _id, tbl in pairs(list) do
+            tbl.actualhandid = convertHandKindToHandId(tbl.handkind)
+        end
+    end
+    for btn, list in pairs(releaseCallbacks) do
+        for _id, tbl in pairs(list) do
+            tbl.actualhandid = convertHandKindToHandId(tbl.handkind)
+        end
+    end
+
+    for _, tbl in pairs(analogCallbacks) do
+        tbl.actualhandid = convertHandKindToHandId(tbl.handkind)
+        tbl.literalhandtype = 1 - tbl.actualhandid
+    end
+end
+
+ListenToGameEvent("primary_hand_changed", function(data)
+    ---@cast data GAME_EVENT_PRIMARY_HAND_CHANGED
+    updatePrimaryHandId(data.is_primary_left and 0 or 1)
+end, nil)
+
+--#region General requests
+
 ---
 ---Get if a button has just been pressed for a given hand.
 ---Optionally lock the button press so it can't be detected by other scripts until it is released.
@@ -230,7 +329,7 @@ end
 ---@param lock? boolean
 ---@return boolean
 function Input:Pressed(hand, button, lock)
-    local b = tracked_buttons[button]
+    local b = trackedButtons[button]
     if type(hand) ~= "number" then hand = hand:GetHandID() end
     local h = b[hand]
     if h and not h.press_locked and h.is_held and (Time() - h.press_time) <= self.PressedTolerance then
@@ -249,7 +348,7 @@ end
 ---@param lock boolean?
 ---@return boolean
 function Input:Released(hand, button, lock)
-    local b = tracked_buttons[button]
+    local b = trackedButtons[button]
     if type(hand) ~= "number" then hand = hand:GetHandID() end
     local h = b[hand]
     if h and not h.release_locked and not h.is_held and (Time() - h.release_time) <= self.ReleasedTolerance then
@@ -266,7 +365,7 @@ end
 ---@param button ENUM_DIGITAL_INPUT_ACTIONS
 ---@return boolean
 function Input:Button(hand, button)
-    local b = tracked_buttons[button]
+    local b = trackedButtons[button]
     if type(hand) ~= "number" then hand = hand:GetHandID() end
     local h = b[hand]
     if h and h.is_held then
@@ -282,7 +381,7 @@ end
 ---@param button ENUM_DIGITAL_INPUT_ACTIONS
 ---@return number
 function Input:ButtonTime(hand, button)
-    local b = tracked_buttons[button]
+    local b = trackedButtons[button]
     if type(hand) ~= "number" then hand = hand:GetHandID() end
     local h = b[hand]
     if h and h.is_held then
@@ -294,7 +393,7 @@ end
 ---
 ---Button index pointing to its description.
 ---
-local DESCS =
+local DIGITAL_DESCS =
 {
     [0] = "Menu > Toggle Menu",
     [1] = "Menu > Menu Interact",
@@ -326,6 +425,15 @@ local DESCS =
     [27] = "Move > Adjust Height",
 }
 
+local ANALOG_DESCS =
+{
+    [0] = "Hand Curl",
+    [1] = "Trigger Pull",
+    [2] = "Squeeze Xen Grenade",
+    [3] = "Teleport Turn",
+    [4] = "Continuous Turn",
+}
+
 ---
 ---Get the description of a given button.
 ---Useful for debugging or hint display.
@@ -333,7 +441,17 @@ local DESCS =
 ---@param button ENUM_DIGITAL_INPUT_ACTIONS
 ---@return string
 function Input:GetButtonDescription(button)
-    return DESCS[button]
+    return DIGITAL_DESCS[button]
+end
+
+---
+---Get the description of a given analog action.
+---Useful for debugging or hint display.
+---
+---@param analog ENUM_ANALOG_INPUT_ACTIONS
+---@return string
+function Input:GetAnalogDescription(analog)
+    return ANALOG_DESCS[analog]
 end
 
 ---
@@ -356,68 +474,176 @@ function Input:GetHandName(hand, use_operant)
     end
 end
 
+--#endregion General requests
+
 ---
 ---Register a callback for a specific button press/release.
 ---
 ---@param kind string # The kind of button interaction.
 ---| '"press"' # Button is pressed.
 ---| '"release"' # Button is released.
----@param hand CPropVRHand|integer # The ID of the hand to register for.
----| `-1` # Both hands.
----| `0`  # Left Hand.
----| `1`  # Right Hand.
----| `2`  # Primary Hand.
----| `3`  # Secondary Hand.
+---@param hand CPropVRHand|InputHandKind # The ID of the hand to register for.
+---| -1 # Both hands.
 ---@param button ENUM_DIGITAL_INPUT_ACTIONS # The button to check.
 ---@param presses integer|nil # Number of times the button must be pressed in quick succession. E.g. 2 for double click. Only applicable for `kind` press.
 ---@param callback fun(params:INPUT_PRESS_CALLBACK|INPUT_RELEASE_CALLBACK) # The function that will be called when conditions are met.
 ---@param context? any # Optional context passed into the callback as the first value. Is also used when unregistering.
-function Input:RegisterCallback(kind, hand, button, presses, callback, context)
+function Input:ListenToButton(kind, hand, button, presses, callback, context)
 
     if type(hand) ~= "number" then
         hand = hand:GetHandID()
     -- Quick way to register both hands.
     elseif hand == -1 then
-        self:RegisterCallback(kind, 0, button, presses, callback)
-        self:RegisterCallback(kind, 1, button, presses, callback)
+        self:ListenToButton(kind, 0, button, presses, callback)
+        self:ListenToButton(kind, 1, button, presses, callback)
         return
     end
 
-    local b = tracked_buttons[button]
-    if not b then
-        error("Button " .. button .. " is not being tracked! Please use Input:TrackButton("..button..")")
-    end
-    local h = b[hand]
-    if h then
-        local t = h.press_callbacks
-        if kind == "release" then t = h.release_callbacks end
-        -- print('registering input callback', callback, 'in', t)
-        -- t[callback] = presses or 1
-        t[callback] = {
-            presses = presses or 1,
-            context = context
-        }
+    local buttonTable = trackedButtons[button]
+
+    assert(buttonTable ~= nil, "Button " .. button .. " is not being tracked! Please use Input:TrackButton("..button..")")
+
+    local handTable = buttonTable[hand]
+    if not handTable then
+        warn("Hand table", hand, "for button", button, "does not exist for some reason!")
+        return
     end
 
+    -- local t = h.press_callbacks
+    -- if kind == "release" then t = h.release_callbacks end
+    -- print('registering input callback', callback, 'in', t)
+    -- t[callback] = presses or 1
+
+    local callbackTable = kind == "press" and pressCallbacks or releaseCallbacks
+
+    callbackId = callbackId + 1
+    callbackTable[callbackId] = {
+        func = callback,
+        context = context,
+        handkind = hand,
+        actualhandid = convertHandKindToHandId(hand),
+        presses = presses or 1
+    }
+
+    return callbackId
+    -- {
+    --     presses = presses or 1,
+    --     context = context
+    -- }
+
+end
+
+---commentary_started
+---@param kind "up"|"down"
+---@param hand CPropVRHand|InputHandKind
+---@param analogAction ENUM_ANALOG_INPUT_ACTIONS
+---@param analogValue Vector|{ x:number?, y:number? }|{[1]:number?,[2]:number?}|number
+---@param callback fun(params:ANALOG_CALLBACK) # The function that will be called when conditions are met.
+---@param context? any # Optional context passed into the callback as the first value. Is also used when unregistering.
+function Input:ListenToAnalog(kind, hand, analogAction, analogValue, callback, context)
+    local handid = convertHandKindToHandId(hand)
+
+    ---@type { x: number?, y: number? }
+    local value
+    local analogValueType = type(analogValue)
+    if IsVector(analogValue) then
+        value = { x = analogValue.x, y = analogValue.y }
+    elseif analogValueType == "table" then
+        if analogValue[1] ~= nil or analogValue[2] ~= nil then
+            value = { x = analogValue[1], y = analogValue[2] }
+        elseif analogValue.x ~= nil or analogValue.y ~= nil then
+            value = { x = analogValue.x, y = analogValue.y }
+        else
+            error("analogValue must have an x or y component!")
+        end
+    elseif analogValueType == "number" then
+        value = { x = analogValue }
+    else
+        error("Type " .. analogValueType .. " for analogValue is invalid!")
+    end
+
+    callbackId = callbackId + 1
+    analogCallbacks[callbackId] = {
+        checkGreaterThan = kind == "up",
+        actualhandid = handid,
+        func = callback,
+        context = context,
+        literalhandtype = 1 - handid,
+        analog = analogAction,
+        value = value,
+        handkind = hand
+    }
 end
 
 ---
 ---Unregisters a specific callback from all buttons and hands.
 ---
----@param callback function
-function Input:UnregisterCallback(callback, context)
-    for button, hands in pairs(tracked_buttons) do
-        for handid, data in pairs(hands) do
-            for clbck, clbckData in pairs(data.press_callbacks) do
-                if clbck == callback and (clbckData.context == nil or clbckData.context == context) then
-                    data.press_callbacks[clbck] = nil
-                end
+---@param id number # The number returned by ListenToButton.
+function Input:StopListening(id)
+    -- for button, hands in pairs(trackedButtons) do
+    --     for handid, data in pairs(hands) do
+    --         for clbck, clbckData in pairs(data.press_callbacks) do
+    --             if clbck == callback and (clbckData.context == nil or clbckData.context == context) then
+    --                 data.press_callbacks[clbck] = nil
+    --             end
+    --         end
+    --         for clbck, clbckData in pairs(data.release_callbacks) do
+    --             if clbck == callback and (clbckData.context == nil or clbckData.context == context) then
+    --                 data.release_callbacks[clbck] = nil
+    --             end
+    --         end
+    --     end
+    -- end
+    for btn, list in pairs(pressCallbacks) do
+        for _id, tbl in pairs(list) do
+            if _id == id then
+                list[_id] = nil
+                return
             end
-            for clbck, clbckData in pairs(data.release_callbacks) do
-                if clbck == callback and (clbckData.context == nil or clbckData.context == context) then
-                    data.release_callbacks[clbck] = nil
-                end
+        end
+    end
+
+    for btn, list in pairs(releaseCallbacks) do
+        for _id, tbl in pairs(list) do
+            if _id == id then
+                list[_id] = nil
+                return
             end
+        end
+    end
+
+    for _id, value in pairs(analogCallbacks) do
+        if _id == id then
+            analogCallbacks[_id] = nil
+            return
+        end
+    end
+end
+
+---
+---Unregisters a specific callback from all buttons and hands.
+---
+---@param context any # The number returned by ListenToButton.
+function Input:StopListeningByContext(context)
+    for btn, list in pairs(pressCallbacks) do
+        for _id, tbl in pairs(list) do
+            if tbl.context == context then
+                list[_id] = nil
+            end
+        end
+    end
+
+    for btn, list in pairs(releaseCallbacks) do
+        for _id, tbl in pairs(list) do
+            if tbl.context == context then
+                list[_id] = nil
+            end
+        end
+    end
+
+    for _id, value in pairs(analogCallbacks) do
+        if value.context == context then
+            analogCallbacks[_id] = nil
         end
     end
 end
@@ -477,94 +703,140 @@ end
 ---@field button ENUM_DIGITAL_INPUT_ACTIONS # The ID of the button that was pressed.
 ---@field held_time number # Seconds the button was held for prior to being released.
 
+---@class ANALOG_CALLBACK
+---@field value Vector # The vector value of the analog action at the time of detection.
+---@field hand CPropVRHand # EntityHandle for the hand that moved the analog action.
+---@field analog ENUM_ANALOG_INPUT_ACTIONS # The ID of the analog action that was moved.
+
 ---@alias INPUT_CALLBACK INPUT_RELEASE_CALLBACK|INPUT_PRESS_CALLBACK
 
-local primary_hand = 1
-local secondary_hand = 0
-
-local function SetPrimaryHand(primary)
-    -- primary_hand = Entities:GetLocalPlayer():GetHMDAvatar():GetVRHand(primary)
-    -- secondary_hand = Entities:GetLocalPlayer():GetHMDAvatar():GetVRHand(1 - primary)
-    primary_hand = primary
-    secondary_hand = 1 - primary
-end
-
-ListenToGameEvent("primary_hand_changed", function(data)
-    ---@cast data GAME_EVENT_PRIMARY_HAND_CHANGED
-    SetPrimaryHand(data.is_primary_left and 0 or 1)
-end, nil)
-
 local function InputThink()
+    ---@TODO remove these variables and use cached literal/hand entity
     local player = Entities:GetLocalPlayer()
     local hmd = player:GetHMDAvatar()--[[@as CPropHMDAvatar]]
 
-    for button, hands in pairs(tracked_buttons) do
-        for handid, data in pairs(hands) do
-            -- Resolve primary/secondary hand into valid hand id
-            if handid == 2 then handid = primary_hand
-            elseif handid == 3 then handid = secondary_hand end
+    for button, hands in pairs(trackedButtons) do
+        for handid, buttonData in pairs(hands) do
+            -- -- Resolve primary/secondary hand into valid hand id
+            -- if handid == 2 then handid = currentPrimaryHandId
+            -- elseif handid == 3 then handid = currentSecondaryHandId end
 
             local hand = hmd:GetVRHand(handid)
+            -- print(button, hand, handid)
             if player:IsDigitalActionOnForHand(hand:GetLiteralHandType(), button) then
                 -- print("Held time", Input:ButtonTime(handid, button), Time(), data.press_time)
-                if data.press_time == -1 then
-                    data.is_held = true
-                    data.release_locked = false
-                    if Time() - data.prev_press_time <= Input.MultiplePressInterval then
-                        data.multiple_press_count = data.multiple_press_count + 1
+                if buttonData.press_time == -1 then
+                    buttonData.is_held = true
+                    buttonData.release_locked = false
+                    if Time() - buttonData.prev_press_time <= Input.MultiplePressInterval then
+                        buttonData.multiple_press_count = buttonData.multiple_press_count + 1
                     else
-                        data.multiple_press_count = 0
+                        buttonData.multiple_press_count = 0
                     end
-                    data.press_time = Time()
+                    buttonData.press_time = Time()
                     -- This is not reset by release section
-                    data.prev_press_time = data.press_time
+                    buttonData.prev_press_time = buttonData.press_time
                     ---@type INPUT_PRESS_CALLBACK
                     local send = {
                         kind = "press",
-                        press_time = data.press_time,
+                        press_time = buttonData.press_time,
                         hand = hand,
                         button = button,
                     }
-                    data.release_time = -1
+                    buttonData.release_time = -1
                     -- print(Input:GetButtonDescription(button).." pressed", "multiple_press: "..data.multiple_press_count)
                     -- print('doing press callbacks', data.press_callbacks, 'for hand', handid)
-                    for callback, callbackData in pairs(data.press_callbacks) do
-                        if data.multiple_press_count >= callbackData.presses-1 then
+                    -- for callback, callbackData in pairs(data.press_callbacks) do
+                    for id, callbackData in pairs(pressCallbacks[button]) do
+                        -- if callbackData.handkind == handid or (callbackData.handkind == 2 and handid == currentPrimaryHandId) or (callbackData.handkind == 3 and handid == currentSecondaryHandId)
+                        if callbackData.actualhandid == handid and buttonData.multiple_press_count >= callbackData.presses-1 then
+                        -- if data.multiple_press_count >= callbackData.presses-1 then
                             if callbackData.context then
-                                callback(callbackData.context, send)
+                                callbackData.func(callbackData.context, send)
                             else
-                                callback(send)
+                                callbackData.func(send)
                             end
-                            data.multiple_press_count = 0
+                            buttonData.multiple_press_count = 0
                         end
                     end
                 end
-            elseif data.release_time == -1 then
-                data.is_held = false
-                data.press_locked = false
-                data.release_time = Time()
+            elseif buttonData.release_time == -1 then
+                buttonData.is_held = false
+                buttonData.press_locked = false
+                buttonData.release_time = Time()
                 ---@type INPUT_RELEASE_CALLBACK
                 local send = {
                     kind = "release",
-                    release_time = data.release_time,
+                    release_time = buttonData.release_time,
                     hand = hand,
                     button = button,
-                    held_time = Time() - data.press_time
+                    held_time = Time() - buttonData.press_time
                 }
                 -- Needs to be after `send` table.
-                data.press_time = -1
+                buttonData.press_time = -1
                 -- print(Input:GetButtonDescription(button), "released")
-                for callback, callbackData in pairs(data.release_callbacks) do
-                    if callbackData.context then
-                        callback(callbackData.context, send)
-                    else
-                        callback(send)
+                -- for callback, callbackData in pairs(buttonData.release_callbacks) do
+                --     if callbackData.context then
+                --         callback(callbackData.context, send)
+                --     else
+                --         callback(send)
+                --     end
+                -- end
+                for id, callbackData in pairs(releaseCallbacks[button]) do
+                    if callbackData.actualhandid == handid then
+                        if callbackData.context then
+                            callbackData.func(callbackData.context, send)
+                        else
+                            callbackData.func(send)
+                        end
                     end
                 end
             end
         end
     end
 
+    for _, analogData in pairs(analogCallbacks) do
+        local value = player:GetAnalogActionPositionForHand(analogData.literalhandtype, analogData.analog)
+        local send = false
+        ---@TODO Is there a good way to combine duplicate code here?
+        if analogData.checkGreaterThan then
+            if (analogData.value.x == nil or value.x >= analogData.value.x)
+            and (analogData.value.y == nil or value.y >= analogData.value.y) then
+                if not analogData.wasSent then
+                    analogData.wasSent = true
+                    send = true
+                end
+            else
+                analogData.wasSent = false
+            end
+        else
+            if (analogData.value.x == nil or value.x <= analogData.value.x)
+            and (analogData.value.y == nil or value.y <= analogData.value.y) then
+                if analogData.wasSent == false then
+                    analogData.wasSent = true
+                    send = true
+                end
+            else
+                analogData.wasSent = false
+            end
+        end
+
+        if send then
+            local t = {
+                value = value,
+                analog = analogData.analog,
+                hand = hmd:GetVRHand(analogData.actualhandid)
+            }
+            if analogData.context then
+                analogData.func(analogData.context, t)
+            else
+                analogData.func(t)
+            end
+        end
+
+    end
+
+    -- print()
     return 0
 end
 
@@ -604,7 +876,7 @@ ListenToGameEvent("player_activate", function()
                 Warning("Input could not find HMD, make sure VR mode is enabled. Disabling Input...\n")
                 return nil
             end
-            SetPrimaryHand(Convars:GetBool("hlvr_left_hand_primary") and 0 or 1)
+            updatePrimaryHandId(Convars:GetBool("hlvr_left_hand_primary") and 0 or 1)
             Input:Start(player)
         end, 0)
     end
