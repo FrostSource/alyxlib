@@ -263,7 +263,7 @@ end
 
 ---Calls the register function using the same syntax as the built-in convar library, for easy converting.
 ---@param name string
----@param defaultValue? string
+---@param defaultValue? any|fun():any
 ---@param helpText? string
 ---@param flags? integer
 function EasyConvars:RegisterConvar(name, defaultValue, helpText, flags)

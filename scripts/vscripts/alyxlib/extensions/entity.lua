@@ -208,7 +208,7 @@ end
 ---
 ---Delay some code using this entity.
 ---
----@param func function
+---@param func fun()
 ---@param delay number?
 function CBaseEntity:Delay(func, delay)
     self:SetContextThink(DoUniqueString("delay"), function() func() end, delay or 0)
