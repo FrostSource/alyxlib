@@ -17,6 +17,9 @@ except ImportError:
 DEFAULT_MANIFEST_HASH = '52a853e6cd865e341e7cb5c1cd1f59cf'
 DEFAULT_SOUNDEVENT_HASH = 'cfbacc91bdc9cc53818dc4adb0950407'
 
+# Relative symlinks do not work with Alyx!
+USE_RELATIVE_SYMLINKS = False
+
 def get_file_hash(path:Path) -> str|None:
     if path.exists():
         with path.open('rb') as f:
@@ -71,8 +74,11 @@ def write_onupload_file(onupload_path:Path):
             dst = data[0]
             content = data[1]
             symlink_src = data[2]
-            symlink_src_rel = os.path.relpath(symlink_src,dst.parent)
-            dst_rel = dst.relative_to(onupload_dir)
+            symlink_src_rel = symlink_src
+            dst_rel = dst
+            if USE_RELATIVE_SYMLINKS:
+                symlink_src_rel = os.path.relpath(symlink_src,dst.parent)
+                dst_rel = dst.relative_to(onupload_dir)
             # Creating symlinks
             if symlink_src is not None:
                 reinstates.append(f'mklink{" /d" if os.path.isdir(symlink_src) else ""} "{dst_rel}" "{symlink_src_rel}"\necho.')
@@ -81,7 +87,6 @@ def write_onupload_file(onupload_path:Path):
                 reinstates.append(f'echo {content}> {dst_rel}')
         
         f.write(TEMPLATE.ON_UPLOAD_FILE.format(os.path.relpath(alyxlib_content_path, onupload_dir), "\n".join(removes), "\n".join(reinstates)))
-        # f.write(TEMPLATE.ON_UPLOAD_FILE.format("ONE", "TWO", "THREE"))
 
 alyxlib_content_path = Path(os.path.abspath('.'))
 
