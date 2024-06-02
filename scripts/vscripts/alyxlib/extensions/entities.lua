@@ -180,7 +180,37 @@ function Entities:FindNearest(origin, maxRadius)
     return nearestEnt
 end
 
+---
+---Finds all entities in the map from a list of classnames.
+---
+---@param classes string[]
+---@return EntityHandle[]
+function Entities:FindAllByClassnameList(classes)
+    local ents = {}
+    for _, class in ipairs(classes) do
+        vlua.extend(ents, Entities:FindAllByClassname(class))
+    end
+    return ents
+end
+
+---
+---Finds all entities within a radius from a list of classnames.
+---
+---@param classes string[]
+---@param origin Vector
+---@param maxRadius number
+---@return EntityHandle[]
+function Entities:FindAllByClassnameListWithin(classes, origin, maxRadius)
+    local ents = {}
+    for _, class in ipairs(classes) do
+        vlua.extend(ents, Entities:FindAllByClassnameWithin(class, origin, maxRadius))
+    end
+    return ents
+end
+
+---
 ---Find the entity from a list of possible classnames which is closest to a world position.
+---
 ---@param classes string[]
 ---@param origin Vector
 ---@param maxRadius number
