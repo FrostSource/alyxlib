@@ -250,6 +250,8 @@ class Macro:
 
 macros = [
     Macro("Full Setup", MACRO_full_setup),
+    Macro("Full Setup (no Git)", MACRO_scripts_nogit_setup),
+    Macro("VScript Setup", MACRO_vscript_setup),
     Macro("Git Setup", init_git)
 ]
 
