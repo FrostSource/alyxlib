@@ -1,20 +1,20 @@
 --[[
-    v2.2.0
+    v2.3.0
     https://github.com/FrostSource/alyxlib
 
     Provides common global functions used throughout extravaganza libraries.
 
-    If not using `vscripts/alyxlib/core.lua`, load this file at game start using the following line:
+    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
     
     ```lua
-    require "alyxlib.util.globals"
+    require "alyxlib.globals"
     ```
 ]]
 
 -- These are expected by globals
-require 'alyxlib.util.common'
+require 'alyxlib.utils.common'
 
-local version = "v2.2.0"
+local version = "v2.3.0"
 
 ---
 ---Get the file name of the current script without folders or extension. E.g. `util.util`
@@ -260,12 +260,12 @@ end
 
 ---
 ---Prints a warning in the console, along with a vscript print if inside tools mode.
----But only if convar "developer" is greater than 0.
+---But only if convar "developer" is greater than 1.
 ---
 ---@param ... any
 ---@diagnostic disable-next-line: lowercase-global
 function devwarn(...)
-    if Convars:GetInt("developer") > 0 then
+    if Convars:GetInt("developer") > 1 then
         local str = table.concat({...}, " ")
         Warning(str .. "\n")
         if IsInToolsMode() then
@@ -415,6 +415,34 @@ function TableRandom(tbl)
     end
 
     return selectedKey, tbl[selectedKey]
+end
+
+---
+---Returns all the keys of a table as a new ordered array.
+---
+---@generic K
+---@param tbl table<K,any>
+---@return K[]
+function TableKeys(tbl)
+    local array = {}
+    for key, _ in pairs(tbl) do
+        table.insert(array, key)
+    end
+    return array
+end
+
+---
+---Returns all the value of a table as a new ordered array.
+---
+---@generic V
+---@param tbl table<any,V>
+---@return V[]
+function TableValues(tbl)
+    local array = {}
+    for _, value in pairs(tbl) do
+        table.insert(array, value)
+    end
+    return array
 end
 
 ---
@@ -570,6 +598,24 @@ function TraceLineWorld(parameters)
     return result
 end
 
+---Performs a simple line trace and returns the trace table.
+---@param startpos Vector
+---@param endpos Vector
+---@param ignore? EntityHandle
+---@param mask? integer
+---@return TraceTableLine
+function TraceLineSimple(startpos, endpos, ignore, mask)
+    ---@type TraceTableLine
+    local traceTable = {
+        startpos = startpos,
+        endpos = endpos,
+        ignore = ignore,
+        mask = mask
+    }
+    TraceLine(traceTable)
+    return traceTable
+end
+
 ---
 ---Get if an entity is the world entity.
 ---
@@ -585,6 +631,55 @@ end
 ---@return EntityHandle
 function GetWorld()
     return Entities:FindByClassname(nil, "worldent")
+end
+
+local physicsClasses = {
+    "prop_physics",
+    "prop_physics_override",
+    "prop_physics_interactive",
+    "prop_ragdoll",
+
+    "npc_manhack",
+
+    "item_item_crate",
+    "item_healthvial",
+    "item_hlvr_prop_battery",
+    "item_hlvr_health_station_vial",
+    "item_hlvr_grenade_frag",
+    "item_hlvr_grenade_xen",
+    "item_hlvr_clip_generic_pistol",
+    "item_hlvr_clip_generic_pistol_multiple",
+    "item_hlvr_clip_energygun",
+    "item_hlvr_clip_energygun_multiple",
+    "item_hlvr_clip_shotgun_multiple",
+    "item_hlvr_clip_shotgun_single",
+    "item_hlvr_clip_rapidfire",
+    "item_hlvr_crafting_currency_large",
+    "item_hlvr_crafting_currency_small",
+    "prop_reviver_heart",
+    "prop_russell_headset",
+    "prop_dry_erase_marker",
+    "item_hlvr_weapon_energygun",
+    "item_hlvr_weapon_shotgun",
+    "item_hlvr_weapon_rapidfire",
+    "item_hlvr_weapon_generic_pistol",
+}
+
+---Get if an entity is a physical entity.
+---@param entity EntityHandle
+---@return boolean
+function IsPhysicsObject(entity)
+    if IsEntity(entity) then
+        if entity:GetClassname() == "prop_animinteractable" then
+            -- This might fail in the hyper specific situation that the model has exactly 500 mass
+            return entity:GetMass() ~= 500
+        else
+            -- Unsure of a better way to determine physics besides a list of all known physics classes
+            -- Mass is not a good indicator
+            return vlua.find(physicsClasses, entity:GetClassname()) ~= nil
+        end
+    end
+    return false
 end
 
 ---
@@ -690,17 +785,75 @@ function CalcClosestPointOnEntityOBBAdjusted(entity, position)
     -- return calcpos + (entity:GetCenter() - entity:GetOrigin())
 end
 
+---
 ---Assigns a default value to a table which will be returned if an invalid key is accessed.
+---
 ---@generic T
----@param tbl T
----@param default any
----@return T
+---@param tbl T # The table to which the default value will be assigned.
+---@param default any # The default value to be returned for invalid keys.
+---@return T # The table with the default value assigned.
 function DefaultTable(tbl, default)
     return setmetatable(tbl, {
         __index = function ()
             return default
         end
     })
+end
+
+---
+---Wraps a value within a specified range.
+---
+---@param value number The value to be wrapped.
+---@param min number # The minimum value of the range.
+---@param max number # The maximum value of the range.
+---@return number # The wrapped value within the specified range.
+function Wrap(value, min, max)
+    local range = max - min + 1
+    return ((value - min) % range) + min
+end
+
+---
+---This function creates a toggle behavior function that switches between two provided functions based on a condition.
+---
+--- Example:
+---
+---     local alphaToggle = CreateToggleBehavior(
+---         function(name)
+---             print(name .. "Alpha went below 50%")
+---         end,
+---         function(name)
+---             print(name .. "Alpha went above 50%")
+---         end
+---     )
+---
+---     thisEntity:SetThink("thinker", function()
+---         alphaToggle(thisEntity:GetRenderAlpha() < 128, thisEntity:GetName())
+---         return 0
+---     end, 0)
+---
+---@param on? fun(...): any # Function called when the condition is true.
+---@param off? fun(...): any # Function called when the condition is false.
+---@return fun(condition: boolean, ...): any # The created toggle function.
+function CreateToggleBehavior(on, off)
+    local flag = false
+
+    return function (condition, ...)
+        if condition then
+            if not flag then
+                flag = true
+                if on then
+                    return on(...)
+                end
+            end
+        else
+            if flag then
+                flag = false
+                if off then
+                    return off(...)
+                end
+            end
+        end
+    end
 end
 
 
