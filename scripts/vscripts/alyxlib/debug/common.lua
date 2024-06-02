@@ -137,6 +137,15 @@ Convars:RegisterCommand("print_ent_criteria", function (_, entity)
         print("Couldn't find entity using search string '"..entity.."'")
     end
 
+Convars:RegisterCommand("print_ent_base_criteria", function (_, entity)
+    local ent = getEntityFromTarget(entity)
+    if ent then
+        ent:PrintBaseCriteria()
+    else
+        print("Couldn't find entity using search string '"..entity.."'")
+    end
+end, "Prints context criteria for an entity except for values saved using storage.lua", 0)
+
 local symbols = {"and","break","do","else","elseif","end","false","for","function","if","in","local","nil","not","or","repeat","return","then","true","until","while"}
 
 if IsInToolsMode() then
