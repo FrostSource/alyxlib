@@ -1,39 +1,37 @@
 --[[
-    v3.1.0
+    v4.0.0
     https://github.com/FrostSource/alyxlib
 
-    The main core script provides useful global functions as well as loading any standard libraries that it can find.
-
-    The two main purposes are:
-    
-    1. Automatically load libraries to simplify the process for users.
-    2. Provide entity class functions to emulate OOP programming.
+    The main initializer script loads any standard libraries that it can find.
 
     Load this script into the global scope using the following line:
 
     ```lua
-    require "alyxlib.core"
+    require "alyxlib.init"
     ```
 
 ]]
 
-local version = "v3.1.0"
+local version = "v4.0.0"
 
 print("Initializing AlyxLib core system ".. version .." ...")
 
-require "alyxlib.util.globals"
+require "alyxlib.globals"
 
 -- Base libraries
 
 ifrequire "alyxlib.debug.common"
 ifrequire "alyxlib.debug.controller"
-if not IsVREnabled() then
+if IsVREnabled() then
+    ifrequire "alyxlib.debug.vr"
+else
     ifrequire "alyxlib.debug.novr"
 end
-ifrequire "alyxlib.util.enums"
-ifrequire "alyxlib.util.common"
+ifrequire "alyxlib.utils.enums"
+ifrequire "alyxlib.utils.common"
 ifrequire "alyxlib.extensions.string"
 ifrequire "alyxlib.extensions.vector"
+ifrequire "alyxlib.extensions.qangle"
 ifrequire "alyxlib.extensions.entity"
 ifrequire "alyxlib.extensions.entities"
 ifrequire "alyxlib.extensions.npc"
@@ -45,13 +43,14 @@ ifrequire "alyxlib.data.color"
 
 -- Useful libraries
 
-ifrequire "alyxlib.player"
+ifrequire "alyxlib.player.core"
+ifrequire "alyxlib.player.wrist_attachments"
 ifrequire "alyxlib.precache"
 ifrequire "alyxlib.class"
 
-ifrequire "alyxlib.input.input"
-ifrequire "alyxlib.input.gesture"
-ifrequire "alyxlib.input.haptics"
+ifrequire "alyxlib.controls.input"
+ifrequire "alyxlib.controls.gesture"
+ifrequire "alyxlib.controls.haptics"
 
 ifrequire "alyxlib.helpers.easyconvars"
 
