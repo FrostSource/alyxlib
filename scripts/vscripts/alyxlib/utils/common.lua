@@ -7,7 +7,7 @@
     If not using `vscripts/alyxlib/core.lua`, load this file at game start using the following line:
     
     ```lua
-    require "alyxlib.util.common"
+    require "alyxlib.utils.common"
     ```
 ]]
 
@@ -172,13 +172,64 @@ function Util.CreateConstraint(entity1, entity2, class, properties)
     local uname2 = entity2 and DoUniqueString("") or ""
     if entity2 then entity2:SetEntityName(uname2) end
 
-    properties = vlua.tableadd({attach1 = uname1, attach2 = uname2}, properties or {})
+    properties = vlua.tableadd({
+        origin = entity1:GetAbsOrigin(),
+        attach1 = uname1,
+        attach2 = uname2
+    }, properties or {})
     local constraint = SpawnEntityFromTableSynchronous(class or "phys_constraint", properties)
 
     -- Restore original names now that constraint knows their handles
     entity1:SetEntityName(name1)
     if entity2 then entity2:SetEntityName(name2) end
     return constraint
+end
+
+---@alias ExplosionType
+---|"" # "Default"
+---|"grenade" # "Grenade"
+---|"molotov" # "Molotov"
+---|"fireworks" # "Fireworks"
+---|"gascan" # "Gasoline Can"
+---|"gascylinder" # "Pressurized Gas Cylinder"
+---|"explosivebarrel" # "Explosive Barrel"
+---|"electrical" # "Electrical"
+---|"emp" # "EMP"
+---|"shrapnel" # "Shrapnel"
+---|"smoke" # "Smoke Grenade"
+---|"flashbang" # "Flashbang"
+---|"tripmine" # "Tripmine"
+---|"ice" # "Ice"
+---|"none" # "None"
+---|"custom" # "Custom"
+
+---Create a damaging explosion effect at a position.
+---@param origin Vector
+---@param explosionType? ExplosionType
+---@param magnitude? number
+---@param radiusOverride? number
+---@param ignoredEntity? EntityHandle|string # If the entity passed does not have a unique name, all entities with that name will be ignored.
+---@param ignoredClass? string
+function Util.CreateExplosion(origin, explosionType, magnitude, radiusOverride, ignoredEntity, ignoredClass)
+
+    local name
+    if ignoredEntity and type(ignoredEntity) ~= "string" then
+        name = ignoredEntity:GetName()
+    else
+        name = ignoredEntity
+    end
+
+    local expl = SpawnEntityFromTableSynchronous("env_explosion",
+    {
+        origin = origin,
+        explosion_type = explosionType or "",
+        iMagnitude = magnitude or 100,
+        iRadiusOverride = radiusOverride or 0,
+        ignoredEntity = name,
+        ignoredClass = ignoredClass or "",
+    })
+    expl:EntFire("Explode")
+    expl:EntFire("Kill", nil, 0.1)
 end
 
 ---Choose and return a random argument.
