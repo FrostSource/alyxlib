@@ -400,22 +400,31 @@ thisEntity = nil
     ---@field item string
     ---@field item_name string
     ---@field entindex integer
-    ---@field hand_is_primary boolean
+    ---@field hand_is_primary number
     ---@field vr_tip_attachment integer
     ---@field wasparentedto string
 ---@class GAME_EVENT_GRABBITY_GLOVE_CATCH : GAME_EVENT_BASE
     ---@field entindex integer
     ---@field item string
-    ---@field hand_is_primary boolean
+    ---@field hand_is_primary number
     ---@field vr_tip_attachment integer
----@class GAME_EVENT_GRABBITY_HIGHLIGHT_START : GAME_EVENT_BASE
+---@class GAME_EVENT_GRABBITY_GLOVE_HIGHLIGHT_START : GAME_EVENT_BASE
     ---@field entindex integer
-    ---@field hand_is_primary boolean
-    ---@field vr_tip_attachment integer
----@class GAME_EVENT_GRABBITY_HIGHLIGHT_STOP : GAME_EVENT_GRABBITY_HIGHLIGHT_START, GAME_EVENT_BASE
----@class GAME_EVENT_GRABBITY_LOCKED_ON_START : GAME_EVENT_GRABBITY_HIGHLIGHT_START, GAME_EVENT_BASE
----@class GAME_EVENT_GRABBITY_LOCKED_ON_STOP : GAME_EVENT_GRABBITY_HIGHLIGHT_START, GAME_EVENT_BASE
-    ---@field highlight_active boolean
+    ---@field hand_is_primary number
+    ---@field vr_tip_attachment 1|2 # Hand that grabbed, 1 = left, 2 = right (reversed if left handed).
+---@class GAME_EVENT_GRABBITY_GLOVE_HIGHLIGHT_STOP : GAME_EVENT_GRABBITY_GLOVE_HIGHLIGHT_START, GAME_EVENT_BASE
+    ---@field entindex integer
+    ---@field hand_is_primary number
+    ---@field vr_tip_attachment 1|2 # Hand that grabbed, 1 = left, 2 = right (reversed if left handed).
+---@class GAME_EVENT_GRABBITY_GLOVE_LOCKED_ON_START : GAME_EVENT_GRABBITY_GLOVE_HIGHLIGHT_START, GAME_EVENT_BASE
+    ---@field entindex integer
+    ---@field hand_is_primary number
+    ---@field vr_tip_attachment 1|2 # Hand that grabbed, 1 = left, 2 = right (reversed if left handed).
+---@class GAME_EVENT_GRABBITY_GLOVE_LOCKED_ON_STOP : GAME_EVENT_GRABBITY_GLOVE_HIGHLIGHT_START, GAME_EVENT_BASE
+    ---@field entindex integer
+    ---@field hand_is_primary number
+    ---@field vr_tip_attachment 1|2 # Hand that grabbed, 1 = left, 2 = right (reversed if left handed).
+    ---@field highlight_active number
 ---@class GAME_EVENT_PLAYER_GESTURED : GAME_EVENT_BASE
     ---@field item string
 ---@class GAME_EVENT_PLAYER_SHOOT_WEAPON : GAME_EVENT_BASE
@@ -1526,7 +1535,7 @@ function vlua.rawdelete(t, key) end
 function vlua.rawin(t, key) end
 ---Implements Squirrel find method for tables and strings. (o, substr, [startidx]) for strings, (o, value) for tables
 ---@param tbl table # Table to search.
----@param value any|string # Value to search for.
+---@param value any # Value to search for.
 ---@return any # Key associated with `value`.
 ---@overload fun(str: string, substr: string, startIndex: integer?): string|nil
 function vlua.find(tbl, value) end
