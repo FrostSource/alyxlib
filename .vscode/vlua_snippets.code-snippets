@@ -50,7 +50,7 @@
 		"scope": "lua",
 		"prefix": ["Hook", "OnTakeDamage", "Snippet"],
 		"body": [
-			"---@param damageTable T01",
+			"---@param damageTable TypeDamageTable",
 			"function OnTakeDamage(damageTable)",
 			"\t$0",
 			"end"
