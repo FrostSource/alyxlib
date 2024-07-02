@@ -147,6 +147,18 @@ Convars:RegisterCommand("print_ent_base_criteria", function (_, entity)
     end
 end, "Prints context criteria for an entity except for values saved using storage.lua", 0)
 
+Convars:RegisterCommand("healme", function (_, amount)
+
+    amount = tonumber(amount)
+
+    if not amount then
+        warn("Must provide a health amount.")
+        return
+    end
+
+    Player:SetHealth(amount)
+end, "", 0)
+
 local symbols = {"and","break","do","else","elseif","end","false","for","function","if","in","local","nil","not","or","repeat","return","then","true","until","while"}
 
 if IsInToolsMode() then
