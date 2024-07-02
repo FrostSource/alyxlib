@@ -150,14 +150,12 @@ end, "Prints context criteria for an entity except for values saved using storag
 local symbols = {"and","break","do","else","elseif","end","false","for","function","if","in","local","nil","not","or","repeat","return","then","true","until","while"}
 
 if IsInToolsMode() then
-    ---
-    ---Executes Lua code.
-    ---
-    ---E.g. code print('Hello world!')
-    ---
-    ---Double quotes are not recognized.
-    ---
-    Convars:RegisterCommand("code", function (_, ...)
+
+    ---Collates a string of Lua code.
+    ---@param ... unknown
+    ---@return string
+    local function excode(...)
+
         local code = ""
         for _, token in ipairs({...}) do
             if vlua.find(symbols, token) then
@@ -166,8 +164,40 @@ if IsInToolsMode() then
                 code = code .. token
             end
         end
+        return code
+    end
+
+    ---
+    ---Executes Lua code.
+    ---
+    ---E.g. code print('Hello world!')
+    ---
+    ---Double quotes are not recognized.
+    ---
+    Convars:RegisterCommand("code", function(_, ...)
+        local code = excode(...)
         print("Doing code:", code)
         load(code)()
+    end, "", 0)
+
+    Convars:RegisterCommand("ent_code", function (_, name, ...)
+        if not name then
+            warn("Must provide entity name!")
+            return
+        end
+
+        local ents = Entities:FindAllByName(name)
+        local code = excode(...)
+
+        print("Doing code on entities named ("..name.."):", code)
+        for _, ent in ipairs(ents) do
+            -- load(code, nil, nil, ent:GetOrCreatePublicScriptScope())()
+            load(code, nil, nil, ent:GetOrCreatePrivateScriptScope())()
+            -- if not rawget(ent, "thisEntity") then
+            --     rawset(ent, "thisEntity", ent)
+            -- end
+            -- load(code, nil, nil, ent)()
+        end
     end, "", 0)
 end
 
