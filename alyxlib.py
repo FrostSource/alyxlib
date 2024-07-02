@@ -217,6 +217,8 @@ def MACRO_full_setup(a, b):
         (alyxlib_content_path / "scripts/vlua_globals.lua", a / "scripts/vlua_globals.lua", True),
         (alyxlib_content_path / "scripts/vscripts/game", a / "scripts/vscripts/game", True),
         (alyxlib_content_path / ".vscode", a / ".vscode", False),
+        (alyxlib_content_path / "panorama/scripts/custom_game/panorama_lua.js", a / "panorama/scripts/custom_game/panorama_lua.js", False),
+        (alyxlib_content_path / "panorama/scripts/custom_game/panoramadoc.js", a / "panorama/scripts/custom_game/panoramadoc.js", False),
         (a / "scripts", b / "scripts", False)
     ])
     create_modinit_script(a, b)
@@ -231,6 +233,8 @@ def MACRO_scripts_nogit_setup(a, b):
         (alyxlib_content_path / "scripts/vlua_globals.lua", a / "scripts/vlua_globals.lua", True),
         (alyxlib_content_path / "scripts/vscripts/game", a / "scripts/vscripts/game", True),
         (alyxlib_content_path / ".vscode", a / ".vscode", False),
+        (alyxlib_content_path / "panorama/scripts/custom_game/panorama_lua.js", a / "panorama/scripts/custom_game/panorama_lua.js", False),
+        (alyxlib_content_path / "panorama/scripts/custom_game/panoramadoc.js", a / "panorama/scripts/custom_game/panoramadoc.js", False),
         (a / "scripts", b / "scripts", False)
     ])
     create_modinit_script(a, b)

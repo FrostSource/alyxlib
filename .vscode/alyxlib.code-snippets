@@ -68,5 +68,65 @@
 			"if thisEntity then if thisEntity:GetPrivateScriptScope().__load then return else thisEntity:GetPrivateScriptScope().__load = true end else return end"
 		],
 		"description": "Stops the script from executing a second time when the game loads. Place at the top of the script."
+	},
+
+
+	"Panorama XML Template":{
+		"scope": "xml",
+		"prefix": ["Panorama XML"],
+		"body":[
+			"<root>",
+			"\t<styles>",
+			"\t\t<include src=\"s2r://panorama/styles/base_styles.vcss_c\" />",
+			"\t\t<include src=\"s2r://panorama/styles/language_shared.vcss_c\" />",
+			"\t\t<include src=\"s2r://panorama/styles/custom_game/${1:my_styles}.vcss_c\" />",
+			"\t</styles>",
+			"",
+			"\t<scripts>",
+			"\t\t<include src=\"s2r://panorama/scripts/custom_game/panorama_lua.vjs_c\" />",
+			"\t\t<!--Custom script should come after panorama_lua-->",
+			"\t\t<include src=\"s2r://panorama/scripts/custom_game/${2:my_script}.vjs_c\" />",
+			"\t</scripts>",
+			"",
+			"\t<Panel class=\"root\">",
+			"\t\t$0",
+			"\t</Panel>",
+			"</root>",
+
+		]
+	},
+
+	"Panorama JS Template":{
+		"scope": "js,javascript",
+		"prefix": ["Panorama JS", "Panorama JavaScript"],
+		"body":[
+			"\"use strict\";",
+			"// Used to import panorama typedefs",
+			"if(false)p=require(\"./panoramadoc\");",
+			"",
+			"/**",
+			" * Parses a command sent by a VScript.",
+			" * @param {string} command Name of the command to perform.",
+			" * @param {string[]} args List of string arguments the command can use.",
+			" */",
+			"function ParseCommand(command, args)",
+			"{",
+			"\tswitch(command)",
+			"\t{",
+			"\t\tcase \"\":",
+			"\t\t",
+			"\t\tbreak;",
+			"\t}",
+			"}",
+			"",
+			"/**",
+			" * Code to run when this JavaScript entity is executed and loaded.",
+			" */",
+			"(function()",
+			"{",
+			"\t",
+			"})();",
+			""
+		]
 	}
 }
