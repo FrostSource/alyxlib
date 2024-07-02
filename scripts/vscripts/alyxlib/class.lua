@@ -123,7 +123,8 @@ local function _inherit(base, self, fenv)
         -- take this into account when looking for the valve meta
         self.__inherits = { setmetatable(valveMetaIntermediary, getmetatable(self)) }
     end
-    table.insert(self.__inherits, base)
+    -- Have base take priority over Valve meta, allowing function overriding
+    table.insert(self.__inherits, 1, base)
 
     local meta = {
         __name = self:GetDebugName().."_meta",
