@@ -44,7 +44,7 @@ end
 ---
 ---@param entity EntityHandle
 ---@param name string
----@return EntityHandle?
+---@return EntityHandle? # The found entity, nil if not found.
 ---@return string # Prefab part of the name.
 function Entities:FindInPrefab(entity, name)
     local myname = entity:GetName()
@@ -231,6 +231,47 @@ function Entities:FindByClassnameListNearest(classes, origin, maxRadius)
     end
 
     return nearestEnt
+end
+
+---
+---Finds all NPCs within the map.
+---
+---@return CAI_BaseNPC[]
+function Entities:FindAllNPCs()
+    local npcs = {}
+    local ent = Entities:First()
+    while ent ~= nil do
+        if ent:IsNPC() then
+            table.insert(npcs, ent)
+        end
+        ent = Entities:Next(ent)
+    end
+    return npcs
+end
+
+function Entities:FindAllByModelWithin(modelName, origin, maxRadius)
+    local ents = {}
+    local currentEnt = Entities:FindByModelWithin(nil, modelName, origin, maxRadius)
+    while currentEnt ~= nil do
+        table.insert(ents, currentEnt)
+        currentEnt = Entities:FindByModelWithin(currentEnt, modelName, origin, maxRadius)
+    end
+    return ents
+end
+
+function Entities:FindByModelNearest(modelName, origin, maxRadius)
+    local closestEnt = nil
+    local closestDist = math.huge
+    local currentEnt = Entities:FindByModelWithin(nil, modelName, origin, maxRadius)
+    while currentEnt ~= nil do
+        local dist = VectorDistanceSq(origin, currentEnt:GetAbsOrigin())
+        if dist < closestDist then
+            closestDist = dist
+            closestEnt = currentEnt
+        end
+        currentEnt = Entities:FindByModelWithin(currentEnt, modelName, origin, maxRadius)
+    end
+    return closestEnt
 end
 
 return version
