@@ -188,7 +188,7 @@ end
 -- end)
 
 ---@param params PLAYER_EVENT_PRIMARY_HAND_CHANGED
-RegisterPlayerEventCallback("primary_hand_changed", function (params)
+ListenToPlayerEvent("primary_hand_changed", function (params)
     WristAttachments:Update()
 end)
 

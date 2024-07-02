@@ -476,7 +476,7 @@ end
 local listenFor = "player_spawn"
 local listenFunc = ListenToGameEvent
 if package.loaded["player"] then
-    listenFunc = RegisterPlayerEventCallback
+    listenFunc = ListenToPlayerEvent
     listenFor = "player_activate"
 end
 

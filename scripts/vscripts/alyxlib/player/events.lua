@@ -26,8 +26,8 @@ local registered_event_callbacks = {
 ---@param callback fun(params)
 ---@param context? table # Optional: The context to pass to the function as `self`. If omitted the context will not passed to the callback.
 ---@return integer eventID # ID used to unregister
-function RegisterPlayerEventCallback(event, callback, context)
-    devprint("Registering player callback", event, callback)
+function ListenToPlayerEvent(event, callback, context)
+    devprint("Listening to player event", event, callback)
     registered_event_callbacks[event][registered_event_index] = { callback = callback, context = context}
     registered_event_index = registered_event_index + 1
     return registered_event_index - 1
@@ -35,7 +35,7 @@ end
 
 ---Unregisters a callback with a name.
 ---@param eventID integer
-function UnregisterPlayerEventCallback(eventID)
+function StopListeningToPlayerEvent(eventID)
     for _, event in pairs(registered_event_callbacks) do
         event[eventID] = nil
     end
@@ -70,8 +70,11 @@ end
 ---@class PLAYER_EVENT_PLAYER_ACTIVATE : GAME_EVENT_BASE
 ---@field player CBasePlayer # The entity handle of the player.
 ---@field type "spawn"|"load"|"transition" # Type of player activate.
+
 ---@class PLAYER_EVENT_VR_PLAYER_READY : PLAYER_EVENT_PLAYER_ACTIVATE
 ---@field hmd_avatar CPropHMDAvatar # The hmd avatar entity handle.
+
+---@alias PLAYER_EVENT_NOVR_PLAYER PLAYER_EVENT_PLAYER_ACTIVATE
 
 -- Setting up player values.
 local listenEventPlayerActivateID
@@ -139,7 +142,9 @@ local function listenEventPlayerActivate(data)
             end
         -- Callback for novr player if HMD not found
         else
+            print("no vr event")
             for id, event_data in pairs(registered_event_callbacks["novr_player"]) do
+                print(event_data)
                 if event_data.context ~= nil then
                     event_data.callback(event_data.context, data)
                 else
@@ -150,6 +155,7 @@ local function listenEventPlayerActivate(data)
     end, 0)
 
     -- Registered callback
+    print("normal event")
     for id, event_data in pairs(registered_event_callbacks[data.game_event_name]) do
         if event_data.context ~= nil then
             event_data.callback(event_data.context, data)

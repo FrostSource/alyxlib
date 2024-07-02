@@ -357,11 +357,11 @@ function EasyConvars:SetRaw(name, value)
 end
 
 
-local registerer = RegisterPlayerEventCallback
+local registerer = ListenToPlayerEvent
 if registerer == nil then
     registerer = ListenToGameEvent
 end
-RegisterPlayerEventCallback("player_activate", function (params)
+ListenToPlayerEvent("player_activate", function (params)
     for name, data in pairs(EasyConvars.registered) do
         if data.initializer then
             if data.value ~= nil then

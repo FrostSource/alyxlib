@@ -81,7 +81,7 @@ function _PrecacheGlobalItems(context)
     end
 end
 
-RegisterPlayerEventCallback("player_activate", function (params)
+ListenToPlayerEvent("player_activate", function (params)
     SpawnEntityFromTableAsynchronous("logic_script", {
         vscripts = "alyxlib/precache"
     }, function (spawnedEnt)
