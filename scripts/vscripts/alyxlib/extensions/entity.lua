@@ -347,4 +347,39 @@ function CBaseEntity:UntrackProperty(propertyFunction)
     self:SetContextThink(tostring(propertyFunction), nil, 0)
 end
 
+---
+---Quickly start a think function on the entity with a random name and no delay.
+---
+---@param func fun(...):number? # The think function.
+---@return string # The name of the think for stopping later if desired.
+function CBaseEntity:QuickThink(func)
+    local name = DoUniqueString("QuickThink")
+    self:SetContextThink(name, func, 0)
+    return name
+end
+
+---
+---Sets whether the entity is rendered or not.
+---
+---@param renderingEnabled boolean # If false the entity will become invisible.
+function CBaseEntity:SetRenderingEnabled(renderingEnabled)
+    if renderingEnabled then
+        self:RemoveEffects(0x020)
+    else
+        self:AddEffects(0x020)
+    end
+end
+
+---
+---Sets whether the entity casts a shadow or not.
+---
+---@param shadowEnabled boolean # If false the entity will not cast a dynamic shadow.
+function CBaseEntity:SetCastShadow(shadowEnabled)
+    if shadowEnabled then
+        self:RemoveEffects(0x010)
+    else
+        self:AddEffects(0x020)
+    end
+end
+
 return version
