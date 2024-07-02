@@ -162,3 +162,65 @@ function CAI_BaseNPC:SetRelationship(target, disposition, priority)
     priority = priority or 0
     self:EntFire("SetRelationship", target .. " " .. disposition .. " " .. priority)
 end
+
+local livingClasses = {
+    "player",
+    "npc_combine_s",
+    "npc_antlion",
+    "npc_headcrab",
+    "npc_headcrab_fast",
+    "npc_headcrab_black",
+    "npc_headcrab_runner",
+    "npc_headcrab_armored",
+    "npc_zombie",
+    "npc_zombie_blind",
+    "npc_barnacle",
+    "npc_vr_citizen_male",
+    "npc_vr_citizen_female",
+    "npc_pigeon",
+    "npc_crow"
+}
+
+---
+---Get if this NPC is a creature, e.g. combine, headcrab, player
+---
+---Will return false for all other class types, such as npc_turret and npc_manhack.
+---
+---@return boolean
+function CAI_BaseNPC:IsCreature()
+    return vlua.find(livingClasses, self:GetClassname()) ~= nil
+end
+
+local combineClasses = {
+    "npc_combine_s",
+    "npc_turret",
+    "npc_manhack"
+}
+
+---
+---Get if this NPC is a combine creature.
+---
+---@return boolean
+function CAI_BaseNPC:IsCombine()
+    return vlua.find(combineClasses, self:GetClassname()) ~= nil
+end
+
+local xenClasses = {
+    "npc_antlion",
+    "npc_headcrab",
+    "npc_headcrab_fast",
+    "npc_headcrab_black",
+    "npc_headcrab_runner",
+    "npc_headcrab_armored",
+    "npc_zombie",
+    "npc_zombie_blind",
+    "npc_barnacle",
+}
+
+---
+---Get if this NPC is a Xen creature.
+---
+---@return boolean
+function CAI_BaseNPC:IsXen()
+    return vlua.find(xenClasses, self:GetClassname()) ~= nil
+end
