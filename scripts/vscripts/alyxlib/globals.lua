@@ -510,7 +510,7 @@ end
 ---@param array1 T1[] # Base array
 ---@param array2 T2[] # Array which will be appended onto the base array.
 ---@return T1[]|T2[] # The new appended array.
-function ArrayAppend(array1, array2)
+function ArrayAppend(array1, array2, ...)
     array1 = vlua.clone(array1)
     for _, v in ipairs(array2) do
         table.insert(array1, v)
@@ -518,8 +518,24 @@ function ArrayAppend(array1, array2)
     return array1
 end
 
-
-
+---
+---Appends any number of arrays onto `array` as a new array object.
+---
+---Safe extend function alternative to `vlua.extend`, no input arrays are modified.
+---
+---@generic T
+---@param array T[] # Base array
+---@param ... T[] # Any arrays to add.
+---@return T[] # The new appended array.
+function ArrayAppends(array, ...)
+    array = vlua.clone(array)
+    for _, tbl in ipairs({...}) do
+        for _, v in ipairs(tbl) do
+            table.insert(array, v)
+        end
+    end
+    return array
+end
 
 ---@class TraceTableLineExt : TraceTableLine
 ---@field ignore (EntityHandle|EntityHandle[])? # Entity or array of entities to ignore.
@@ -587,6 +603,7 @@ end
 ---Does a raytrace along a line until it hits or the world or reaches the end of the line.
 ---
 ---@param parameters TraceTableLine
+---@return TraceTableLine
 function TraceLineWorld(parameters)
     local result = TraceLine(parameters)
     while parameters.hit and parameters.enthit:GetClassname() ~= "worldent" do
@@ -595,7 +612,26 @@ function TraceLineWorld(parameters)
         parameters.startpos = parameters.pos
         result = TraceLine(parameters)
     end
-    return result
+    return parameters
+end
+
+---
+---Does a raytrace along a line until it hits the specified entity or reaches the end of the line.
+---
+---@param parameters TraceTableLine
+---@return TraceTableLine
+function TraceLineEntity(ent, parameters)
+    local result = TraceLine(parameters)
+    while parameters.hit and parameters.enthit ~= ent do
+        if parameters.enthit then
+            print(parameters.enthit:GetClassname())
+        end
+        parameters.ignore = parameters.enthit
+        parameters.enthit = nil
+        parameters.startpos = parameters.pos
+        result = TraceLine(parameters)
+    end
+    return parameters
 end
 
 ---Performs a simple line trace and returns the trace table.
@@ -854,6 +890,23 @@ function CreateToggleBehavior(on, off)
             end
         end
     end
+end
+
+---Compute the closest corner relative to a vector on the AABB of an entity.
+---@param entity EntityHandle
+---@param position Vector
+function CalcClosestCornerOnEntityAABB(entity, position)
+    local corners = entity:GetBoundingCorners(true)
+    local closestCorner = corners[1]
+    local bestDistSq = math.huge
+    for _, corner in ipairs(corners) do
+        local distSq = VectorDistanceSq(corner, position)
+        if distSq < bestDistSq then
+            closestCorner = corner
+            bestDistSq = distSq
+        end
+    end
+    return closestCorner
 end
 
 
