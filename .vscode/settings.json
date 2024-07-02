@@ -24,7 +24,6 @@
     },
     "Lua.semantic.keyword": false,
     "Lua.hover.expandAlias": false,
-    "Lua.hover.previewFields": 1,
     "Lua.type.weakUnionCheck": true,
     "Lua.type.weakNilCheck": true,
     "files.exclude": {
