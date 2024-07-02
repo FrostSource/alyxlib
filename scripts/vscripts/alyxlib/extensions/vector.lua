@@ -149,4 +149,11 @@ function meta:LengthSquared()
     return self.x * self.x + self.y * self.y + self.z * self.z
 end
 
+function meta:SimilarTo(vector, tolerance)
+    return IsVector(vector)
+        and math.isclose(self.x, vector.x, tolerance)
+        and math.isclose(self.y, vector.y, tolerance)
+        and math.isclose(self.z, vector.z, tolerance)
+end
+
 return version
