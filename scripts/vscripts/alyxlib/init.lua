@@ -20,13 +20,6 @@ require "alyxlib.globals"
 
 -- Base libraries
 
-ifrequire "alyxlib.debug.common"
-ifrequire "alyxlib.debug.controller"
-if IsVREnabled() then
-    ifrequire "alyxlib.debug.vr"
-else
-    ifrequire "alyxlib.debug.novr"
-end
 ifrequire "alyxlib.utils.enums"
 ifrequire "alyxlib.utils.common"
 ifrequire "alyxlib.extensions.string"
@@ -53,6 +46,17 @@ ifrequire "alyxlib.controls.gesture"
 ifrequire "alyxlib.controls.haptics"
 
 ifrequire "alyxlib.helpers.easyconvars"
+ifrequire "alyxlib.panorama.core"
+
+-- Debug
+
+ifrequire "alyxlib.debug.common"
+ifrequire "alyxlib.debug.controller"
+if IsVREnabled() then
+    ifrequire "alyxlib.debug.vr"
+else
+    ifrequire "alyxlib.debug.novr"
+end
 
 -- Common third-party libraries
 
