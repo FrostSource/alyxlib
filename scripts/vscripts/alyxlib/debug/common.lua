@@ -613,6 +613,12 @@ function Debug.GetClassname(ent)
     return classes[ent] or "none"
 end
 
+function Debug.PrintMetaClasses()
+    for val, name in pairs(classes) do
+        print(name .. ": " .. tostring(val))
+    end
+end
+
 ---
 ---Prints a visual ASCII graph showing the distribution of values between a min/max bound.
 ---
