@@ -1848,7 +1848,7 @@ function CBaseEntity:SetContext(name, value, duration) end
 function CBaseEntity:SetContextNum(name, value, duration) end
 ---Set a context think function on this entity.
 ---@param thinkName string|nil
----@param thinkFunction function?
+---@param thinkFunction fun():number?|nil
 ---@param initialDelay number
 function CBaseEntity:SetContextThink(thinkName, thinkFunction, initialDelay) end
 ---Set entity targetname
@@ -1902,7 +1902,7 @@ function CBaseEntity:SetTeam(team) end
 ---If using a string function name, function must exist in private script scope.
 ---@param thinkFunction function|string # If string, will look up in the calling instance or given `context` to find the function. If binding a local function this must be a direct reference, not a string.
 ---@param thinkName string # Name of the think, used for stopping.
----@param initialDelay number # Initial delay before the function is first called.
+---@param initialDelay number? # Initial delay before the function is first called.
 ---@param context EntityHandle? # If `thinkFunction` is a string, use this context to find the function, otherwise ignored.
 function CBaseEntity:SetThink(thinkFunction, thinkName, initialDelay, context) end
 ---Sets the world space velocity of the entity. Only functional on prop_dynamic entities with the Scripted Movement property set.
@@ -3015,7 +3015,7 @@ function debugoverlay:SweptBox(Vector_1, Vector_2, Vector_3, Vector_4, Quaternio
 ---@param position Vector
 ---@param heightOffset integer
 ---@param text string
----@param unknown number
+---@param unknown `0`|number
 ---@param red integer
 ---@param green integer
 ---@param blue integer
