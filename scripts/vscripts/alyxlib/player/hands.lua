@@ -38,7 +38,7 @@ end
 ---Get the rendered glove entity for this hand, i.e. the first `hlvr_prop_renderable_glove` class.
 ---@return EntityHandle|nil
 function CPropVRHand:GetGlove()
-    return self.GetFirstChildWithClassname(self, "hlvr_prop_renderable_glove")
+    return self:GetFirstChildWithClassname("hlvr_prop_renderable_glove")
 end
 
 ---Get the entity for this hands grabbity glove (the animated part on the glove).
