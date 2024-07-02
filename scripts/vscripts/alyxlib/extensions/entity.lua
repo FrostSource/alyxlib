@@ -11,18 +11,37 @@
     ```
 ]]
 
-local version = "v2.3.0"
+
+---
+---Get the entities parented to this entity. Including children of children.
+---
+---This is a memory safe version of GetChildren() which causes a memory leak when called.
+---If you need to get children often you should use this function instead.
+---
+---@return table
+function CBaseEntity:GetChildrenMemSafe()
+    local childrenArray = {}
+    local child = self:FirstMoveChild()
+    while child do
+        table.insert(childrenArray, child)
+        vlua.extend(childrenArray, child:GetChildrenMemSafe())
+        child = child:NextMovePeer()
+    end
+    return childrenArray
+end
 
 ---
 ---Get the top level entities parented to this entity. Not children of children.
 ---
+---This function is memory safe.
+---
 ---@return table
 function CBaseEntity:GetTopChildren()
     local children = {}
-    for _, child in ipairs(self:GetChildren()) do
-        if child:GetMoveParent() == self then
-            children[#children+1] = child
-        end
+    local child = self:FirstMoveChild()
+    while child do
+        table.insert(children, child)
+        child = child:NextMovePeer()
     end
     return children
 end
@@ -45,7 +64,7 @@ end
 ---@param classname string # Classname to find.
 ---@return EntityHandle|nil # The child found.
 function CBaseEntity:GetFirstChildWithClassname(classname)
-    for _, child in ipairs(self:GetChildren()) do
+    for _, child in ipairs(self:GetChildrenMemSafe()) do
         if child:GetClassname() == classname then
             return child
         end
