@@ -182,13 +182,25 @@ local function think()
     return 0.1
 end
 
+local cl_forwardspeed, cl_backspeed, cl_sidespeed
+
 ListenToPlayerEvent("novr_player", function (params)
     SendToConsole("buddha 1; impulse 101;")
     Player:SetContextThink("think", think, 0)
 
-    Convars:SetFloat("cl_forwardspeed", 40)
-    Convars:SetFloat("cl_backspeed", 40)
-    Convars:SetFloat("cl_sidespeed", 40)
-
+    cl_forwardspeed = Convars:GetFloat("cl_forwardspeed")
+    cl_backspeed = Convars:GetFloat("cl_backspeed")
+    cl_sidespeed = Convars:GetFloat("cl_sidespeed")
 end)
 
+Convars:RegisterCommand("novr_player_use_vr_speed", function (_, on)
+    if truthy(on) then
+        Convars:SetFloat("cl_forwardspeed", 40)
+        Convars:SetFloat("cl_backspeed", 40)
+        Convars:SetFloat("cl_sidespeed", 40)
+    else
+        Convars:SetFloat("cl_forwardspeed", cl_forwardspeed)
+        Convars:SetFloat("cl_backspeed", cl_backspeed)
+        Convars:SetFloat("cl_sidespeed", cl_sidespeed)
+    end
+end, "", 0)
