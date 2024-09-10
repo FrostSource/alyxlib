@@ -41,6 +41,20 @@
 		"isFileTemplate": true
 	},
 
+	"Entity Class Game Event":{
+		"scope": "lua",
+		"prefix": ["Game Event"],
+		"body": [
+			"---@param params GAME_EVENT_$2",
+			"base:GameEvent(${1:\"event\"}, function(self, params)",
+			"\t---@cast self ${3:ClassName}",
+			"",
+			"\t$0",
+			"end)"
+		],
+		"description": "Quick templating an entity class game event."
+	},
+
 	"Add Locals To Script Scope":{
 		"scope": "lua",
 		"prefix": ["Add locals to script scope", "localfix"],

@@ -196,11 +196,19 @@ local function _inherit(base, self, fenv)
                 local newname = output .. "_Func"
                 -- Define the function regardless of load state because it still needs to exist
                 rawset(self, newname, func)
-                -- But don't do it on a game load to avoid doubling up
+                -- But don't redirect on a game load to avoid doubling up
                 if activateType ~= 2 then
                     devprint2("Redirecting output \""..output.."\" to func ["..tostring(func).."] as '"..newname.."'")
                     self:RedirectOutput(output, newname, self)
                 end
+            end
+
+            for gameEvent, func in pairs(inherit.__game_events) do
+                ListenToGameEvent(gameEvent, func, self)
+            end
+
+            for playerEvent, func in pairs(inherit.__player_events) do
+                ListenToPlayerEvent(playerEvent, func, self)
             end
         end
 
@@ -373,7 +381,9 @@ function entity(name, ...)
             __script_file = GetScriptFile(nil, 3),
             __inherits = inherits,
             __privates = {},
-            __outputs = {}
+            __outputs = {},
+            __game_events = {},
+            __player_events = {},
         }
         -- Meta table to search all inherits
         setmetatable(base, {
@@ -408,6 +418,8 @@ end
 ---@field __inherits table # Table of inherited classes.
 ---@field __name string # Name of the class.
 ---@field __outputs table<string, function> # Map of output names to functions that will be connected on spawn.
+---@field __game_events table<string, function> # Map of game events to functions that will be listened to on spawn.
+---@field __player_events table<string, function> # Map of player events to functions that will be listened to on spawn.
 ---@field __rawget fun(self: EntityClass, key: string): any # Custom rawget function to get a value from meta.__values without checking inherits.
 ---@field Initiated boolean # If the class entity has been activated.
 ---@field IsThinking boolean # If the entity is currently thinking with `Think` function.
@@ -469,9 +481,23 @@ end
 
 ---Define a function to redirected to `output` on spawn.
 ---@param output string
----@param func function
+---@param func fun(...):any
 function EntityClass:Output(output, func)
     self.__outputs[output] = func
+end
+
+---Define a function for listening to a game event.
+---@param gameEvent GAME_EVENTS_ALL
+---@param func fun(self: EntityClass, params):any
+function EntityClass:GameEvent(gameEvent, func)
+    self.__game_events[gameEvent] = func
+end
+
+---Define a function for listening to a player event.
+---@param playerEvent PLAYER_EVENTS_ALL
+---@param func fun(self, params):any
+function EntityClass:PlayerEvent(playerEvent, func)
+    self.__player_events[playerEvent] = func
 end
 
 --#endregion
