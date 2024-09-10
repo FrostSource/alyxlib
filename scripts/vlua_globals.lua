@@ -62,6 +62,7 @@ thisEntity = nil
 ---| 0 # SHAKE_START
 ---| 1 # SHAKE_STOP
 
+---Table passed into functions called from Hammer.
 ---@class IOParams
 ---@field activator EntityHandle
 ---@field caller EntityHandle
@@ -2147,6 +2148,8 @@ function CBaseEntity:GetBounds() end
 ---@return Vector
 function CBaseEntity:GetCenter() end
 ---Get the entities parented to this entity. Including children of children.
+---
+---This function causes a memory leak which will build over time whenever it is called.
 ---@return EntityHandle[]
 function CBaseEntity:GetChildren() end
 ---Looks up a context and returns it if available. May return string, float, or nil (if the context isn't found)
@@ -3643,7 +3646,7 @@ function CPointTemplate:ForceSpawn() end
 function CPointTemplate:GetSpawnedEntities() end
 ---SetSpawnCallback( hCallbackFunc, hCallbackScope, hCallbackData ) : Set a callback for when the template spawns entities. The spawned entities will be passed in as an array.
 ---@param hCallbackFunc fun(context: table|EntityHandle[], entities: EntityHandle[]|nil)
----@param hCallbackScope handle|nil
+---@param hCallbackScope any
 function CPointTemplate:SetSpawnCallback(hCallbackFunc, hCallbackScope) end
 
 --#endregion
