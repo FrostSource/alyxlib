@@ -21,6 +21,7 @@ local DEPENDENCY_WARNING_NAME = "addon_dependency_warning_message"
 local SpawnDependencyWarning
 local SubmitConsoleCommand
 
+---@type integer
 local playerActivateListener = nil
 
 
@@ -127,7 +128,7 @@ end
 
 ---Sends a command string to the console and prints the command in the console at the same time.
 ---@param command string
----@param isServer boolean # If the command should be sent to the server console instead of the client console.
+---@param isServer? boolean # If the command should be sent to the server console instead of the client console.
 SubmitConsoleCommand = function (command, isServer)
     local target = "client" if isServer then target = "server" end
     Msg("sending to " .. target .. " console: " .. command .. "\n")
@@ -174,10 +175,12 @@ SpawnDependencyWarning = function (workshopID, addonName)
     end
 
     StopListeningToGameEvent(playerActivateListener)
+---@diagnostic disable-next-line: cast-local-type
     playerActivateListener = nil
 
 end
 
 
-
-EnforceAddonDependency(SCALABLE_INIT_WORKSHOP_ID, SCALABLE_INIT_NAME, SCALABLE_INIT_CONVAR, true)
+if AddonIsEnabled(SCALABLE_INIT_WORKSHOP_ID) then
+    EnforceAddonDependency(SCALABLE_INIT_WORKSHOP_ID, SCALABLE_INIT_NAME, SCALABLE_INIT_CONVAR, true)
+end
