@@ -446,6 +446,19 @@ function TableValues(tbl)
 end
 
 ---
+---Returns the size of a table by counting all keys.
+---
+---@param tbl table # The table to count.
+---@return number # The size of the table.
+function TableSize(tbl)
+    local size = 0
+    for _, l in pairs(tbl) do
+        size = size + 1
+    end
+    return size
+end
+
+---
 ---Returns a random value from an array.
 ---
 ---@generic T
