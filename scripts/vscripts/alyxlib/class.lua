@@ -519,13 +519,15 @@ function printinherits(ent, nest)
         if not ent.__inherits or #ent.__inherits == 0 then
             print(nest.."No inherits")
         else
-            for key, value in ipairs(ent.__inherits) do
-                if Debug.GetClassname(value.__index) ~= "none" then
-                    print(nest..tostring(value), Debug.GetClassname(value.__index))
+            for _, inherit in ipairs(ent.__inherits) do
+                -- if Debug.GetClassname(inherit.__index) ~= "none" then
+                    -- print(nest..tostring(inherit), Debug.GetClassname(inherit.__index))
+                if Debug.GetClassname(getmetatable(inherit).__index) ~= "none" then
+                    print(nest..tostring(inherit), Debug.GetClassname(getmetatable(inherit).__index))
                 else
-                    print(nest..tostring(value), value.__name)
+                    print(nest..tostring(inherit), inherit.__name)
                     -- Debug.PrintList(value, nest)
-                    printinherits(value, nest..'   ')
+                    printinherits(inherit, nest..'   ')
                 end
             end
         end
