@@ -1,5 +1,5 @@
 --[[
-    v2.3.0
+    v2.4.0
     https://github.com/FrostSource/alyxlib
 
     Provides base entity extension methods.
@@ -11,6 +11,7 @@
     ```
 ]]
 
+local version = "v2.4.0"
 
 ---
 ---Get the entities parented to this entity. Including children of children.
@@ -18,7 +19,7 @@
 ---This is a memory safe version of GetChildren() which causes a memory leak when called.
 ---If you need to get children often you should use this function instead.
 ---
----@return table
+---@return EntityHandle[]
 function CBaseEntity:GetChildrenMemSafe()
     local childrenArray = {}
     local child = self:FirstMoveChild()
@@ -35,7 +36,7 @@ end
 ---
 ---This function is memory safe.
 ---
----@return table
+---@return EntityHandle[]
 function CBaseEntity:GetTopChildren()
     local children = {}
     local child = self:FirstMoveChild()
@@ -60,6 +61,8 @@ end
 
 ---
 ---Get the first child in this entity's hierarchy with a given classname.
+---
+---This function is memory safe.
 ---
 ---@param classname string # Classname to find.
 ---@return EntityHandle|nil # The child found.

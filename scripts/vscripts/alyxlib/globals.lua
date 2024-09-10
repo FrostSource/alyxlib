@@ -160,9 +160,6 @@ function prints(...)
         else
             t = t .. tostring(v) .. " "
         end
-        -- if i < argsn then
-        --     t = t .. " "
-        -- end
     end
     t = string.sub(t, 1, #t - 1)
     print(t)
@@ -254,7 +251,7 @@ function warn(...)
     local str = table.concat({...}, " ")
     Warning(str .. "\n")
     if IsInToolsMode() then
-        print("Warning - " .. str)
+        print("!!Warning!! " .. str)
     end
 end
 
@@ -636,9 +633,6 @@ end
 function TraceLineEntity(ent, parameters)
     local result = TraceLine(parameters)
     while parameters.hit and parameters.enthit ~= ent do
-        if parameters.enthit then
-            print(parameters.enthit:GetClassname())
-        end
         parameters.ignore = parameters.enthit
         parameters.enthit = nil
         parameters.startpos = parameters.pos
@@ -923,6 +917,6 @@ function CalcClosestCornerOnEntityAABB(entity, position)
 end
 
 
-devprint("globals.lua ".. version .." initialized...")
+print("globals.lua ".. version .." initialized...")
 
 return version

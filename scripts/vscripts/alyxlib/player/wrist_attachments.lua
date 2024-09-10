@@ -1,3 +1,7 @@
+--[[
+    v1.0.0
+    https://github.com/FrostSource/alyxlib
+]]
 
 ---@class WristAttachments
 WristAttachments = {}
@@ -155,37 +159,6 @@ function WristAttachments:Update()
         attachment.entity:SetLocalQAngle(angles)
     end
 end
-
---DEBUG CAN DELETE
--- RegisterPlayerEventCallback("vr_player_ready", function (params)
---     for i = 1, 8 do
---         local choice = Util.Choose(
---             {
---                 model = "models/props/food/bread03a.vmdl",
---                 length = 7.88,
---                 priority = 2
---             },
---             {
---                 model = "models/hands/alyx_watch.vmdl",
---                 length = 1.54,
---                 priority = 0
---             },
---             {
---                 model = "models/props/interior_deco/cigarette_001.vmdl",
---                 length = 1.96,
---                 priority = 1
---             }
---         )
---         local col = RandomInt(0,255).." "..RandomInt(0,255).." "..RandomInt(0,255)
---         local ent = SpawnEntityFromTableSynchronous("prop_dynamic_override", {
---             model = choice.model,
---             rendercolor = col,
---         })
---         local hand = Util.Choose("left", "right")
---         print(hand, choice.model, col)
---         WristAttachments:Add(ent, hand, choice.length, choice.priority)
---     end
--- end)
 
 ---@param params PLAYER_EVENT_PRIMARY_HAND_CHANGED
 ListenToPlayerEvent("primary_hand_changed", function (params)

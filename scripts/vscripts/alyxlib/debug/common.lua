@@ -94,6 +94,11 @@ end, "", 0)
 ---
 Convars:RegisterCommand("print_ents", function (_, pattern, ...)
 
+    if pattern == nil then
+        warn("Must supply at least a pattern to search for, e.g. prints_ents prop_physics")
+        return
+    end
+
     local properties = nil
     properties = {...}
     if #properties == 0 then properties = nil end
@@ -814,7 +819,6 @@ function Debug.PrintGraph(height, min_val, max_val, name_value_pairs)
         i = i + 1
         -- ceil so if above lowest bound, at least show something
         local top = math.ceil(RemapValClamped(value, min_val, max_val, 0, height-1))
-        print(top)
         -- first half with name
         add_column(repeat_char(" ", height-1-top), repeat_char("[", top), "-", str_to_chars(name), repeat_char(" ", max_name_height-#name))
         -- second half to complete graph line

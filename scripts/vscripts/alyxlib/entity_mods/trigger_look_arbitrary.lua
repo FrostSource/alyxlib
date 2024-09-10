@@ -128,7 +128,6 @@ local current_activator = nil
 local current_caller = nil
 
 local function load()
-    print('load name', thisEntity:LoadString("script.target"))
     target_name               = thisEntity:LoadString("script.target", target_name)
     look_time                 = thisEntity:LoadNumber("script.LookTime", look_time)
     fov                       = thisEntity:LoadNumber("script.FieldOfView", fov)
@@ -216,7 +215,6 @@ local function IsLookingAtHandle(look_origin, look_forward, handle)
     local can_see_target = false
     -- 2013 engine uses greater than, not greater or equal
     -- https://github.com/ValveSoftware/source-sdk-2013/blob/0d8dceea4310fde5706b3ce1c70609d72a38efdf/sp/src/game/server/triggers.cpp#L1149
-    -- local dot = look_forward:Dot(dir)
     if dot > fov then
         can_see_target = true
         if test_occlusion then
@@ -338,7 +336,6 @@ local function OnStartTouchAll(input)
         if look_from_handle.ScriptLookupAttachment then
             look_from_attachment_index = look_from_handle:ScriptLookupAttachment(look_from_attachment_name)
         end
-        -- print("looking from", look_from_class, look_from_handle, look_from_attachment_name)
         thisEntity:SetContextThink("LookThinker", Thinker, 0)
     else
         if not target then Warning("trigger_look_arbitrary.lua could not find target with name='"..target_name.."'\n") end

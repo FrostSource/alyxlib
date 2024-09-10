@@ -142,9 +142,7 @@ local function listenEventPlayerActivate(data)
             end
         -- Callback for novr player if HMD not found
         else
-            print("no vr event")
             for id, event_data in pairs(registered_event_callbacks["novr_player"]) do
-                print(event_data)
                 if event_data.context ~= nil then
                     event_data.callback(event_data.context, data)
                 else
@@ -155,7 +153,6 @@ local function listenEventPlayerActivate(data)
     end, 0)
 
     -- Registered callback
-    print("normal event")
     for id, event_data in pairs(registered_event_callbacks[data.game_event_name]) do
         if event_data.context ~= nil then
             event_data.callback(event_data.context, data)
@@ -364,7 +361,7 @@ local function listenEventPlayerDropAmmoInBackpack(data)
             -- print("Player stored 1 generic pistol clip")
         end
     else
-        print("Couldn't figure out ammo for "..tostring(ammotype))
+        warn("Couldn't figure out ammo for "..tostring(ammotype))
     end
     savePlayerData()
 

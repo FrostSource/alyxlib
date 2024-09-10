@@ -644,7 +644,6 @@ end
 ---If nothing is equipped this will return the primary hand entity.
 ---@return EntityHandle|nil
 function CBasePlayer:GetWeapon()
-    -- print('getting gun')
     if self.CurrentlyEquipped == PLAYER_WEAPON_ENERGYGUN then
         return Entities:FindByClassnameNearest("hlvr_weapon_energygun", self.PrimaryHand:GetOrigin(), 128)--[[@as EntityHandle]]
     elseif self.CurrentlyEquipped == PLAYER_WEAPON_RAPIDFIRE then

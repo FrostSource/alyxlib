@@ -29,7 +29,7 @@ local addonList = Convars:GetStr("default_enabled_addons_list")
 
 print("Searching scripts for enabled addon workshop IDs...")
 
--- Local addons no longer appear in default_enabled_addons_list so we get it from the launch parameter
+-- Local addons no longer appear in default_enabled_addons_list in tools mode so we get it from the launch parameter
 if IsInToolsMode() then
     local addon = GlobalSys:CommandLineStr('-addon', '')
     if addon ~= '' then

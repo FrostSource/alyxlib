@@ -1,5 +1,5 @@
 --[[
-    v4.0.0
+    v1.0.0
     https://github.com/FrostSource/alyxlib
 
     The main initializer script loads any standard libraries that it can find.
@@ -12,9 +12,9 @@
 
 ]]
 
-local version = "v4.0.0"
+local version = "v1.0.0"
 
-print("Initializing AlyxLib core system ".. version .." ...")
+print("Initializing AlyxLib system ".. version .." ...")
 
 require "alyxlib.globals"
 

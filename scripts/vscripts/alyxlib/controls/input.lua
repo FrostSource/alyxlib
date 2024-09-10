@@ -136,8 +136,6 @@ local trackedButtons = {}
 ---@field release_time number
 ---@field press_locked boolean
 ---@field release_locked boolean
--- ---@field press_callbacks table<function, InputCallbackTable>
--- ---@field release_callbacks table<function, InputCallbackTable>
 ---@field multiple_press_count number
 
 ---@class InputCallbackTable
@@ -161,8 +159,6 @@ local trackedButtons = {}
 ---@type table<integer, InputCallbackTable>
 local pressCallbacks = {}
 
--- local pressCallbackId = 0
-
 ---@type table<integer, InputCallbackTable>
 local releaseCallbacks = {}
 
@@ -180,10 +176,6 @@ local function createButtonTable()
         release_time = 0,
         press_locked = false,
         release_locked = false,
-        -- ---@type table<function,InputCallbackTable>
-        -- press_callbacks = {},
-        -- ---@type table<function,InputCallbackTable>
-        -- release_callbacks = {},
         multiple_press_count = 0,
     }
 end
@@ -201,11 +193,7 @@ function Input:TrackButton(button)
     trackedButtons[button] = {
         [0] = createButtonTable(), -- Left
         [1] = createButtonTable(), -- Right
-        -- [2] = createButtonTable(), -- Primary
-        -- [3] = createButtonTable(), -- Secondary
     }
-    -- pressCallbacks[button] = {}
-    -- releaseCallbacks[button] = {}
 end
 
 ---
@@ -490,17 +478,6 @@ function Input:ListenToButton(kind, hand, button, presses, callback, context)
 
     assert(buttonTable ~= nil, "Button " .. button .. " is not being tracked! Please use Input:TrackButton("..button..")")
 
-    -- local handTable = buttonTable[hand]
-    -- if not handTable then
-    --     warn("Hand table", hand, "for button", button, "does not exist for some reason!")
-    --     return
-    -- end
-
-    -- local t = h.press_callbacks
-    -- if kind == "release" then t = h.release_callbacks end
-    -- print('registering input callback', callback, 'in')
-    -- t[callback] = presses or 1
-
     local callbackTable = kind == "press" and pressCallbacks or releaseCallbacks
 
     callbackId = callbackId + 1
@@ -514,10 +491,6 @@ function Input:ListenToButton(kind, hand, button, presses, callback, context)
     }
 
     return callbackId
-    -- {
-    --     presses = presses or 1,
-    --     context = context
-    -- }
 
 end
 
@@ -748,14 +721,9 @@ local function InputThink()
 
     for button, hands in pairs(trackedButtons) do
         for handid, buttonData in pairs(hands) do
-            -- -- Resolve primary/secondary hand into valid hand id
-            -- if handid == 2 then handid = currentPrimaryHandId
-            -- elseif handid == 3 then handid = currentSecondaryHandId end
 
             local hand = hmd:GetVRHand(handid)
-            -- print(button, hand, handid)
             if player:IsDigitalActionOnForHand(hand:GetLiteralHandType(), button) then
-                -- print("Held time", Input:ButtonTime(handid, button), Time(), buttonData.press_time)
                 if buttonData.press_time == -1 then
                     buttonData.is_held = true
                     buttonData.release_locked = false
@@ -775,16 +743,8 @@ local function InputThink()
                         button = button,
                     }
                     buttonData.release_time = -1
-                    -- print(Input:GetButtonDescription(button).." pressed", "multiple_press: "..buttonData.multiple_press_count)
-                    -- print('doing press callbacks', data.press_callbacks, 'for hand', handid)
-                    -- for callback, callbackData in pairs(data.press_callbacks) do
-                    -- print(TableSize(pressCallbacks[button]))
-                    -- Debug.PrintTable(pressCallbacks)
                     for id, callbackData in pairs(pressCallbacks) do
-                        -- if callbackData.handkind == handid or (callbackData.handkind == 2 and handid == currentPrimaryHandId) or (callbackData.handkind == 3 and handid == currentSecondaryHandId)
-                        -- print(callbackData.actualhandid == handid, buttonData.multiple_press_count, callbackData.presses-1)
                         if callbackData.actualhandid == handid and callbackData.button == button and buttonData.multiple_press_count >= callbackData.presses-1 then
-                        -- if data.multiple_press_count >= callbackData.presses-1 then
                             if callbackData.context then
                                 callbackData.func(callbackData.context, send)
                             else
@@ -808,14 +768,6 @@ local function InputThink()
                 }
                 -- Needs to be after `send` table.
                 buttonData.press_time = -1
-                -- print(Input:GetButtonDescription(button), "released")
-                -- for callback, callbackData in pairs(buttonData.release_callbacks) do
-                --     if callbackData.context then
-                --         callback(callbackData.context, send)
-                --     else
-                --         callback(send)
-                --     end
-                -- end
                 for id, callbackData in pairs(releaseCallbacks) do
                     if callbackData.actualhandid == handid then
                         if callbackData.context then
@@ -832,26 +784,21 @@ local function InputThink()
     for _, analogData in pairs(analogCallbacks) do
         local value = player:GetAnalogActionPositionForHand(analogData.literalhandtype, analogData.analog)
         local send = false
-        -- print(Debug.SimpleVector(value), analogData.value.x)
         ---@TODO Is there a good way to combine duplicate code here?
         if analogData.checkGreaterThan then
             if (analogData.value.x == nil or value.x >= analogData.value.x)
             and (analogData.value.y == nil or value.y >= analogData.value.y) then
-                -- print("GOOD", analogData.wasSent)
                 if not analogData.wasSent then
-                    -- print("SENDING, SET TRUE")
                     analogData.wasSent = true
                     send = true
                 end
             else
-                -- print("SET FALSE")
                 analogData.wasSent = false
             end
         else
             if (analogData.value.x == nil or value.x <= analogData.value.x)
             and (analogData.value.y == nil or value.y <= analogData.value.y) then
                 if analogData.wasSent == false then
-                    -- print("SET TRUE LESSER THAN")
                     analogData.wasSent = true
                     send = true
                 end
@@ -861,7 +808,6 @@ local function InputThink()
         end
 
         if send then
-            -- print("SHOULD SEND")
             local t = {
                 value = value,
                 analog = analogData.analog,
@@ -876,7 +822,6 @@ local function InputThink()
 
     end
 
-    -- print()
     return 0
 end
 

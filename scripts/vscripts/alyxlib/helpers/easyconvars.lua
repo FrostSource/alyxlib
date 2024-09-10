@@ -413,9 +413,7 @@ end
 ListenToPlayerEvent("player_activate", function (params)
     Player:Delay(function ()
 
-        -- print("\nDO INIT", TableSize(EasyConvars.registered))
         for name, data in pairs(EasyConvars.registered) do
-            -- print(name, data.initializer)
             if data.initializer then
                 if data.value ~= nil then
                     devprints2("EasyConvars", name, "initializer won't be used because it has a user value of", tostring(data.value))

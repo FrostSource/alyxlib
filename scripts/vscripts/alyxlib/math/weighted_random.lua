@@ -164,7 +164,7 @@ end
 ---
 ---Params:
 ---
----@param weights table[]|"{\n\t{ weight = 1 },\n}"
+---@param weights table[]|`{\n\t{ weight = 1 },\n}`
 ---@return WeightedRandom
 function WeightedRandom(weights)
     return setmetatable({ItemPool = weights or {}}, WR)

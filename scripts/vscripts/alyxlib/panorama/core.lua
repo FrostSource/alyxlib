@@ -70,7 +70,7 @@ function Panorama:Send(entityPanel, ...)
     end
 
     dataString = FilterText(dataString)
-    print("Sending to pano:", dataString)
+    -- print("Sending to pano:", dataString)
     SendToConsole("@panorama_dispatch_event AddStyleToEachChild('"..dataString.."')")
 end
 

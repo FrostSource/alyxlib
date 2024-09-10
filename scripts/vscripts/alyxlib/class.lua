@@ -1,5 +1,5 @@
 --[[
-    v2.0.0
+    v2.1.0
     https://github.com/FrostSource/alyxlib
 
     If not using `vscripts/alyxlib/core.lua`, load this file at game start using the following line:
@@ -74,7 +74,7 @@
     end
     ```
 ]]
-local version = "v2.0.0"
+local version = "v2.1.0"
 
 require "alyxlib.storage"
 require "alyxlib.globals"
@@ -267,10 +267,10 @@ local function _inherit(base, self, fenv)
         end
     end
 
-    ---@TODO Not enabled because unsure of performance, test
-    -- fenv.OnEntText = function(damageTable)
-    --     if type(self.OnTakeDamage) == "function" then
-    --         self:OnTakeDamage(damageTable)
+    ---@TODO Not enabled because unsure of performance. Test
+    -- fenv.OnEntText = function()
+    --     if type(self.OnEntText) == "function" then
+    --         return self:OnEntText()
     --     end
     -- end
 
@@ -293,12 +293,13 @@ end
 
 ---Inherit an existing entity class which was defined using `entity` function.
 ---@generic T
----@param script `T`
+---@param script `T` # The script to inherit.
+---@param entity? EntityHandle # Optional entity which will inherit the script. If not used, the entity running the code will inherit.
 ---@return T # Base class, the newly created class.
 ---@return T # Self instance, the entity inheriting `base`.
 ---@diagnostic disable-next-line:lowercase-global
-function inherit(script)
-    local fenv = getfenv(2)
+function inherit(script, entity)
+    local fenv = entity or getfenv(2)
     if fenv.thisEntity == nil then
         fenv = getfenv(3)
         if fenv.thisEntity == nil then
@@ -515,18 +516,14 @@ function printinherits(ent, nest)
         else
             print(nest.."No name")
         end
-        -- Debug.PrintList(ent.__inherits, nest)
         if not ent.__inherits or #ent.__inherits == 0 then
             print(nest.."No inherits")
         else
             for _, inherit in ipairs(ent.__inherits) do
-                -- if Debug.GetClassname(inherit.__index) ~= "none" then
-                    -- print(nest..tostring(inherit), Debug.GetClassname(inherit.__index))
                 if Debug.GetClassname(getmetatable(inherit).__index) ~= "none" then
                     print(nest..tostring(inherit), Debug.GetClassname(getmetatable(inherit).__index))
                 else
                     print(nest..tostring(inherit), inherit.__name)
-                    -- Debug.PrintList(value, nest)
                     printinherits(inherit, nest..'   ')
                 end
             end
