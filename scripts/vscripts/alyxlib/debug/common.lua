@@ -201,20 +201,42 @@ end, "", 0)
 
 local symbols = {"and","break","do","else","elseif","end","false","for","function","if","in","local","nil","not","or","repeat","return","then","true","until","while"}
 
-if IsInToolsMode() then
+-- if IsInToolsMode() then
 
     ---Collates a string of Lua code.
-    ---@param ... unknown
+    ---@param ... string
     ---@return string
     local function excode(...)
 
+        local firstToken = true
+        local firstStringChar = false
+        local insideString = false
         local code = ""
         for _, token in ipairs({...}) do
-            if vlua.find(symbols, token) then
-                code = code .. " " .. token .. " "
+            -- If the token has a space, assume it's a double quote string
+            if not firstToken and token:find(" ") then
+                code = code .. '"' .. token .. '"'
             else
-                code = code .. token
+                -- String tokens need spaces between them
+                if token == "'" then
+                    insideString = not insideString
+                    firstStringChar = true
+                    code = code .. token
+                elseif insideString then
+                    if firstStringChar then
+                        code = code .. token
+                        firstStringChar = false
+                    else
+                        code = code .. " " .. token
+                    end
+                -- Special tokens need spaces between them
+                elseif (vlua.find(symbols, token) or token:sub(#token,#token):match("%d")) then
+                    code = code .. " " .. token .. " "
+                else
+                    code = code .. token
+                end
             end
+            firstToken = false
         end
         return code
     end
@@ -228,8 +250,13 @@ if IsInToolsMode() then
     ---
     Convars:RegisterCommand("code", function(_, ...)
         local code = excode(...)
-        print("Doing code:", code)
-        load(code)()
+        -- print("Doing code:", code)
+        local f,err = load(code)
+        if f == nil then
+            print("Invalid code:", err)
+        else
+            f()
+        end
     end, "", 0)
 
     Convars:RegisterCommand("ent_code", function (_, name, ...)
@@ -243,15 +270,16 @@ if IsInToolsMode() then
 
         print("Doing code on entities named ("..name.."):", code)
         for _, ent in ipairs(ents) do
-            -- load(code, nil, nil, ent:GetOrCreatePublicScriptScope())()
-            load(code, nil, nil, ent:GetOrCreatePrivateScriptScope())()
-            -- if not rawget(ent, "thisEntity") then
-            --     rawset(ent, "thisEntity", ent)
-            -- end
-            -- load(code, nil, nil, ent)()
+            local f,err = load(code, nil, nil, ent:GetOrCreatePrivateScriptScope())
+            if f == nil then
+                print("Invalid code:", err)
+            else
+                f()
+            end
         end
     end, "", 0)
-end
+
+-- end
 
 ---
 ---Prints a formated indexed list of entities with custom property information.
