@@ -613,6 +613,452 @@ thisEntity = nil
     ---@field hint_name string # What to name the hint. Referenced against instructor for the proper lesson.
     ---@field hint_dominant_hand boolean # True for dominant hand, false for off hand.
 
+---Send once a server starts 
+---@class GAME_EVENT_SERVER_SPAWN  
+    ---@field hostname string public host name
+    ---@field address string hostame, IP or DNS name
+    ---@field port number server port
+    ---@field game string game dir
+    ---@field mapname string map name
+    ---@field addonname string addon name
+    ---@field maxplayers number max players
+    ---@field os string WIN32, LINUX
+    ---@field dedicated boolean true if dedicated server
+    ---@field password boolean true if password protected
+---Server is about to be shut down 
+---@class GAME_EVENT_SERVER_PRE_SHUTDOWN
+    ---@field reason string reason why server is about to be shut down
+---Server shut down
+---@class GAME_EVENT_SERVER_SHUTDOWN
+    ---@field reason string reason why server was shut down
+---A generic server message
+---@class GAME_EVENT_SERVER_MESSAGE
+    ---@field text string the message text
+---A server console var has changed
+---@class GAME_EVENT_SERVER_CVAR
+    ---@field cvarname string cvar name, eg "mp_roudtime"
+    ---@field cvarvalue string new cvar value
+---
+---@class GAME_EVENT_SERVER_ADDBAN
+    ---@field name string player name
+    ---@field userid number user ID on server
+    ---@field networkid string player network (i.e. steam) id
+    ---@field ip string IP address
+    ---@field duration string length of the ban
+    ---@field by string banned by...
+    ---@field kicked boolean whether the player was also kicked
+---
+---@class GAME_EVENT_SERVER_REMOVEBAN
+    ---@field networkid string player network (i.e. steam) id
+    ---@field ip string IP address
+    ---@field by string removed by...
+---
+---@class GAME_EVENT_PLAYER_ACTIVATE
+    ---@field userid number user ID on server
+---Player has sent final message in the connection sequence
+---@class GAME_EVENT_PLAYER_CONNECT_FULL
+    ---@field userid number user ID on server
+    ---@field index number player slot (entity index-1)
+    ---@field PlayerID number
+---
+---@class GAME_EVENT_PLAYER_SAY
+    ---@field userid number user ID on server
+    ---@field text string the say text
+---
+---@class GAME_EVENT_PLAYER_FULL_UPDATE
+    ---@field userid number user ID on server
+    ---@field count number Number of this full update
+---A new client connected
+---@class GAME_EVENT_PLAYER_CONNECT
+    ---@field name string player name
+    ---@field index number player slot(entity index-1)
+    ---@field userid number user ID on server (unique on server)
+    ---@field networkid string player network (i.e steam) id
+    ---@field address string ip:port
+    ---@field bot boolean
+---A client was disconnected
+---@class GAME_EVENT_PLAYER_DISCONNECT
+    ---@field userid number user ID on server (unique on server)
+    ---@field reason string see networkdisconnect enum protobuf
+    ---@field name string player name
+    ---@field networkid string player network (i.e steam) id
+    ---@field PlayerID number
+---A player changed his name
+---@class GAME_EVENT_PLAYER_INFO
+    ---@field name string player name
+    ---@field index number player slot (entity index-1)
+    ---@field userid number iser ID on server (unique on server)
+    ---@field networkid string player network (i.e steam) id
+    ---@field bot boolean true if player is a AI bot
+---Player spawned in game
+---@class GAME_EVENT_PLAYER_SPAWN
+    ---@field userid number user ID on server
+---Player change his team
+--You can receive this on the client before the local player has updated the team field locally
+---@class GAME_EVENT_PLAYER_TEAM
+    ---@field userid number user ID on server (unique on server)
+    ---@field team number team id
+    ---@field oldteam number old team id
+    ---@field disconnect boolean team change because player disconnects
+    ---@field autoteam boolean true if the player was auto assigned to the team
+    ---@field silent boolean if true wont print the team join messages
+    ---@field name string
+    ---@field isbot boolean
+---Sent only on the client for the local player - happens only after the local players team variable has been updated
+---@class GAME_EVENT_LOCAL_PLAYER_TEAM
+---
+---@class GAME_EVENT_PLAYER_CHANGENAME
+    ---@field userid number user ID on server
+    ---@field oldname string players old (current) name
+    ---@field newname string players new name
+---A player changed his class
+---@class GAME_EVENT_PLAYER_CLASS
+    ---@field userid number user ID on server
+    ---@field class string new player class / model
+---Players scores changed
+---@class GAME_EVENT_PLAYER_SCORE
+    ---@field userid number user ID on server
+    ---@field kills number \# of kills
+    ---@field deaths number \# of deaths
+    ---@field score number total game score
+---
+---@class GAME_EVENT_PLAYER_HURT
+    ---@field userid number player index who was hurt
+    ---@field attacker number player index who attacked
+    ---@field health number remaining health points
+---Player shoot his weapon
+---@class GAME_EVENT_PLAYER_SHOOT
+    ---@field userid number user ID on server
+    ---@field weapon number weapon ID
+    ---@field mode number weapon mode
+---A public player chat
+---@class GAME_EVENT_PLAYER_CHAT
+    ---@field teamonly boolean true if team only chat
+    ---@field userid number chatting player
+    ---@field playerid number chatting player ID
+    ---@field text string chat text
+---Emits a sound to everyone on a team
+---@class GAME_EVENT_TEAMPLAY_BROADCAST_AUDIO
+    ---@field team number unique team id
+    ---@field sound string name of the sound to emit
+---
+---@class GAME_EVENT_FINALE_START
+    ---@field rushes number
+---
+---@class GAME_EVENT_PLAYER_STATS_UPDATED
+    ---@field forceupload boolean
+---Fired when achievements/stats are downloaded from Steam or XBox Live
+---@class GAME_EVENT_USER_DATA_DOWNLOADED
+---
+---@class GAME_EVENT_RAGDOLL_DISSOLVED
+    ---@field entindex number
+---Info about team
+---@class GAME_EVENT_TEAM_INFO
+    ---@field teamid number unique team id
+    ---@field teamname string team name eg "Team Blue"
+---Team score changed
+---@class GAME_EVENT_TEAM_SCORE
+    ---@field teamid number team id
+    ---@field score number total team score
+--[[
+    HLVR specific events
+]]
+---A specitator/player is a cameraman
+---@class GAME_EVENT_HLTV_CAMERAMAN
+    ---@field index number camera man entity index
+---Shot of a single entity
+---@class GAME_EVENT_HLTV_CHASE
+    ---@field target1 number primary traget index
+    ---@field target2 number secondary traget index or 0
+    ---@field distance number camera distance
+    ---@field theta number view angle horizontal
+    ---@field phi number view angle vertical
+    ---@field intertia number camera intertia
+    ---@field ineye number diretcor suggests to show ineye
+---A camera ranking
+---@class GAME_EVENT_HLTV_RANK_CAMERA
+    ---@field index number fixed camera index
+    ---@field rank number ranking, how interesting is this camera view
+    ---@field target number best/closest target entity
+---An entity ranking
+---@class GAME_EVENT_HLTV_RANK_ENTITY
+    ---@field index number entity index
+    ---@field rank number ranking, how interesting is this entity to view
+    ---@field target number best/closest target entity
+---Show from fixed view
+---@class GAME_EVENT_HLTV_FIXED
+    ---@field posx number camera position in world
+    ---@field posy number
+    ---@field posz number
+    ---@field theta number camera angles
+    ---@field offset number
+    ---@field fov number
+    ---@field target number follow this entity or 0
+---A HLTV message send by moderators
+---@class GAME_EVENT_HLTV_MESSAGE
+    ---@field text string
+---General HLTV status
+---@class GAME_EVENT_HLTV_STATUS
+    ---@field clients number number of HLTV spectators
+    ---@field slots number number HLTV slots
+    ---@field proxies number number of HLTV proxies
+    ---@field master string dispatch master IP:port
+---
+---@class GAME_EVENT_HLTV_TITLE
+    ---@field text string
+---A HLTV chat msg sent by spectators
+---@class GAME_EVENT_HLTV_CHAT
+    ---@field text string
+---
+---@class GAME_EVENT_HLTV_VERSIONINFO
+    ---@field version number
+---
+---@class GAME_EVENT_DEMO_START
+    ---@field local unknown
+    ---@field dota_combatlog_list unknown CSVCMsgList_GameEvents that are combat log events
+    ---@field dota_hero_chase_list unknown CSVCMsgList_GameEvents
+    ---@field dota_pick_hero_list unknown CSVCMsgList_GameEvents
+---
+---@class GAME_EVENT_DEMO_STOP
+---
+---@class GAME_EVENT_DEMO_SKIP
+    ---@field local unknown
+    ---@field playback_tick number current playback tick
+    ---@field skipto_tick number tick we're going to
+    ---@field user_message_list unknown CSVCMsgList_UserMessages
+    ---@field dota_hero_chase_list unknown CSVCMsgList_GameEvents
+---
+---@class GAME_EVENT_MAP_SHUTDOWN
+---
+---@class GAME_EVENT_MAP_TRANSITION
+---
+---@class GAME_EVENT_HOSTNAME_CHANGED
+    ---@field hostname string
+---
+---@class GAME_EVENT_DIFFICULTY_CHANGED
+    ---@field newDifficulty number
+    ---@field oldDifficulty number
+    ---@field strDifficulty string new difficulty as string
+---A message send by game logic to everyone
+---@class GAME_EVENT_GAME_MESSAGE
+    ---@field target number 0 = console, 1 = HUD
+    ---@field text string the message text
+---Send when new map is completely loaded
+---@class GAME_EVENT_GAME_NEWMAP
+    ---@field mapname string map name
+    ---@field transition boolean true if this is a transition from one map to another
+---
+---@class GAME_EVENT_ROUND_START
+    ---@field timelimit number round time limit in seconds
+    ---@field fraglimit number frag limit in seconds
+    ---@field objective string round objective
+---
+---@class GAME_EVENT_ROUND_END
+    ---@field winner number winner team/user i
+    ---@field reason number reson why team won
+    ---@field message string end round message
+    ---@field time number
+---
+---@class GAME_EVENT_ROUND_START_PRE_ENTITY
+---
+---@class GAME_EVENT_ROUND_START_POST_NAV
+---
+---@class GAME_EVENT_ROUND_FREEZE_END
+---Round restart
+---@class GAME_EVENT_TEAMPLAY_ROUND_START
+    ---@field full_reset boolean is this a full reset of the map
+---A game event, name may be 32 characters long
+---@class GAME_EVENT_PLAYER_DEATH
+    ---@field userid number user ID who died
+    ---@field attacker number user ID who killed
+---
+---@class GAME_EVENT_PLAYER_FOOTSTEP
+    ---@field userid number
+---
+---@class GAME_EVENT_PLAYER_HINTMESSAGE
+    ---@field hintmessage string localizable string of a hint
+---
+---@class GAME_EVENT_BREAK_BREAKABLE
+    ---@field entindex number
+    ---@field userid number
+    ---@field material number BREAK_GLASS, BREAK_WOOD, etc
+---
+---@class GAME_EVENT_BREAK_DROP
+    ---@field entindex number
+    ---@field userid number
+    ---@field player_held boolean
+    ---@field player_thrown boolean
+    ---@field player_dropped boolean
+---
+---@class GAME_EVENT_ENTITY_KILLED
+    ---@field entindex_killed number
+    ---@field entindex_attacker number
+    ---@field entindex_inflictor number
+    ---@field damagebits number
+---
+---@class GAME_EVENT_DOOR_OPEN
+    ---@field userid  number Who opened the door
+    ---@field checkpoint boolean Is the door a checkpoint door
+    ---@field closed boolean Was the door closed when it started opening?
+---
+---@class GAME_EVENT_DOOR_CLOSE
+    ---@field userid number Who closed the door
+    ---@field checkpoint boolean Is the door a checkpoint door
+---
+---@class GAME_EVENT_DOOR_UNLOCKED
+    ---@field userid number Who opened the door
+    ---@field checkpoint boolean Is the door a checkpoint door
+--[[
+    Client side VoteController talking to HUD
+]]
+---
+---@class GAME_EVENT_VOTE_STARTED
+    ---@field issue string
+    ---@field param1 string
+    ---@field votedata string
+    ---@field team number
+    ---@field initiator number entity id of the player who initiated the vote
+    ---@field reliable 1 this event is reliable
+---
+---@class GAME_EVENT_VOTE_FAILED
+    ---@field team number
+    ---@field reliable 1 this event is reliable
+---
+---@class GAME_EVENT_VOTE_PASSED
+    ---@field details string
+    ---@field param1 string
+    ---@field team number
+    ---@field reliable 1 this event is reliable
+---
+---@class GAME_EVENT_VOTE_CHANGED
+    ---@field yesVotes number
+    ---@field noVotes number
+    ---@field potentialVotes number
+---
+---@class GAME_EVENT_VOTE_CAST_YES
+    ---@field team number
+    ---@field entityid number entity id of the voter
+---
+---@class GAME_EVENT_VOTE_CAST_NO
+    ---@field team number
+    ---@field entityid number entity id of the voter
+---
+---@class GAME_EVENT_ACHIEVEMENT_EVENT
+    ---@field achievement_name string non-localized name of achievement
+    ---@field cur_val number \# of steps toward achievement
+    ---@field max_val number total # of steps in achievement
+---
+---@class GAME_EVENT_ACHIEVEMENT_EARNED
+    ---@field player number entindex of the player
+    ---@field achievement number achievement ID
+---Used for a notification message when an achievement fails to write
+---@class GAME_EVENT_ACHIEVEMENT_WRITE_FAILED
+---
+---@class GAME_EVENT_BONUS_UPDATED
+    ---@field numadvanced number
+    ---@field numbronze number
+    ---@field numsilver number
+    ---@field numgold number
+---
+---@class GAME_EVENT_SPEC_TARGET_UPDATED
+---
+---@class GAME_EVENT_ENTITY_VISIBLE
+    ---@field userid number The player who sees the entity
+    ---@field subject number Entindex of the entity they see
+    ---@field classname string Classname of the entity they see
+    ---@field entityname string name of the entity they see
+---The player pressed use but a use entity wasn't found
+---@class GAME_EVENT_PLAYER_USE_MISS
+    ---@field userid number userid of user
+---
+---@class GAME_EVENT_GAMEINSTRUCTOR_DRAW
+---
+---@class GAME_EVENT_GAMEINSTRUCTOR_NODRAW
+---
+---@class GAME_EVENT_FLARE_IGNITE_NPC
+    ---@field entindex number entity ignited
+---
+---@class GAME_EVENT_HELICOPTER_GRENADE_PUNT_MISS
+---
+---@class GAME_EVENT_PHYSGUN_PICKUP
+    ---@field entindex number entity picked up
+--[[
+    Economy events
+]]
+---
+---@class GAME_EVENT_INVENTORY_UPDATED
+    ---@field itemdef number
+    ---@field itemid number
+---
+---@class GAME_EVENT_CART_UPDATED
+---
+---@class GAME_EVENT_STORE_PRICESHEET_UPDATED
+---
+---@class GAME_EVENT_ITEM_SCHEMA_INITIALIZED
+---
+---@class GAME_EVENT_DROP_RATE_MODIFIED
+---
+---@class GAME_EVENT_EVENT_TICKET_MODIFIED
+---
+---@class GAME_EVENT_GC_CONNECTED
+--[[
+    Instructor / Hint Events
+]]
+---
+---@class GAME_EVENT_INSTRUCTOR_START_LESSON
+    ---@field userid number The player who this lesson is intended for
+    ---@field hint_name string Name of the lesson to start. Must match instructor_lesson.txt
+    ---@field hint_target number entity id that the hint should display at. Leave empty if controller target
+    ---@field vr_movement_type number
+    ---@field vr_single_controller boolean
+    ---@field vr_controller_type number
+---
+---@class GAME_EVENT_INSTRUCTOR_CLOSE_LESSON
+    ---@field userid number The player who this lesson is intended for
+    ---@field hint_name string Name of the lesson to start. Must match instructor_lesson.txt
+---Create a hint using data supplied entirely by the server/map. Intended for hints to smooth playtests before content is ready to make the hint unneccessary. NOT INTENDED AS A SHIPPABLE CRUTCH
+---@class GAME_EVENT_INSTRUCTOR_SERVER_HINT_CREATE
+    ---@field userid number user ID of the player that triggered the hint
+    ---@field hint_entindex number entity id of the env_instructor_hint that fired the event
+    ---@field hint_name string what to name the hint. For referencing it again later (e.g. a kill command for the hint instead of a timeout)
+    ---@field hint_replace_key string type name so that message of the same type will replace each other
+    ---@field hint_target number entity id that the hint should display at
+    ---@field hint_activator_userid number userid id of the activator
+    ---@field hint_timeout number how long in seconds until the hint automatically times out, 0 = never
+    ---@field hint_icon_onscreen string the hint icon to use when the hint is onscreen. e.g. "icon_alert_red"
+    ---@field hint_icon_offscreen string the hint icon to use when the hint is offscreen. e.g. "icon_alert"
+    ---@field hint_caption string the hint caption. e.g. "#ThisIsDangerous"
+    ---@field hint_activator_caption string the hint caption that only the activator sees e.g. "#YouPushedItGood"
+    ---@field hint_color string the hint color in "r,g,b" format where each component is 0-255
+    ---@field hint_icon_offset number how far on the z axis to offset the hint from entity origin
+    ---@field hint_range number range before the hint is culled
+    ---@field hint_flag number hint flags
+    ---@field hint_binding string bindings to use when use_binding is the onscreen icon
+    ---@field hint_allow_nodraw_target boolean if false, the hint will dissappear if the target entity is invisible
+    ---@field hint_nooffscreen boolean if true, the hint will not show when outside the player view
+    ---@field hint_forcecaption boolean if true, the hint caption will show even if the hint is occluded
+    ---@field hint_local_player_only boolean if true, only the local player will see the hint
+    ---@field hint_start_sound string Game sound to play
+    ---@field hint_layoutfile string Path for Panorama layout file
+    ---@field hint_vr_panel_type number Attachment type for the Panorama panel
+    ---@field hint_vr_height_offset number Height offset for attached panels
+    ---@field hint_vr_offset_x number offset for attached panels
+    ---@field hint_vr_offset_y number offset for attached panels
+    ---@field hint_vr_offset_z number offset for attached panels
+---Destroys a server/map created hint
+---@class GAME_EVENT_INSTRUCTOR_SERVER_HINT_STOP
+    ---@field hint_name string The hint to stop. Will stop ALL hints with this name
+    ---@field hint_entindex number entity id of the env_instructor_hint that fired the event
+---
+---@class GAME_EVENT_SET_INSTRUCTOR_GROUP_ENABLED
+    ---@field group string
+    ---@field enabled number
+---
+---@class GAME_EVENT_CLIENTSIDE_LESSON_CLOSED
+    ---@field lesson_name string
+---
+---@class GAME_EVENT_DYNAMIC_SHADOW_LIGHT_CHANGED
+
 
 
 --[[
