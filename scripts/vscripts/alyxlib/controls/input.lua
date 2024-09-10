@@ -146,6 +146,7 @@ local trackedButtons = {}
 ---@field context any # Value passed into first argument of callback.
 ---@field handkind InputHandKind # Left, right, primary, secondary.
 ---@field actualhandid 0|1 # This needs to be updated whenver hands change.
+---@field button ENUM_DIGITAL_INPUT_ACTIONS # The button for this event.
 
 ---@class AnalogCallbackTable
 ---@field analog ENUM_ANALOG_INPUT_ACTIONS
@@ -157,19 +158,16 @@ local trackedButtons = {}
 ---@field actualhandid 0|1 # This needs to be updated whenver hands change.
 ---@field literalhandtype 0|1 # The literal value of the hand which is usually the opposite of Id
 
-
----@type table<ENUM_DIGITAL_INPUT_ACTIONS, InputCallbackTable[]>
+---@type table<integer, InputCallbackTable>
 local pressCallbacks = {}
 
 -- local pressCallbackId = 0
 
----@type table<ENUM_DIGITAL_INPUT_ACTIONS, InputCallbackTable[]>
+---@type table<integer, InputCallbackTable>
 local releaseCallbacks = {}
 
----@type AnalogCallbackTable[]
+---@type table<integer, AnalogCallbackTable>
 local analogCallbacks = {}
-
--- local releaseCallbackId = 0
 
 local callbackId = 0
 
@@ -206,8 +204,8 @@ function Input:TrackButton(button)
         -- [2] = createButtonTable(), -- Primary
         -- [3] = createButtonTable(), -- Secondary
     }
-    pressCallbacks[button] = {}
-    releaseCallbacks[button] = {}
+    -- pressCallbacks[button] = {}
+    -- releaseCallbacks[button] = {}
 end
 
 ---
@@ -282,7 +280,8 @@ local function convertHandKindToHandId(kind)
     end
 end
 
-
+---Sets the current primary hand that the player is using.
+---@param primary 0|1 # 0 = Left, 1 = Right
 local function updatePrimaryHandId(primary)
     -- primary_hand = Entities:GetLocalPlayer():GetHMDAvatar():GetVRHand(primary)
     -- secondary_hand = Entities:GetLocalPlayer():GetHMDAvatar():GetVRHand(1 - primary)
@@ -296,16 +295,17 @@ local function updatePrimaryHandId(primary)
     -- for _, value in pairs(releaseCallbacks) do
     --     value.actualhandid = convertHandKindToHandId(value.handkind)
     -- end
-    for btn, list in pairs(pressCallbacks) do
-        for _id, tbl in pairs(list) do
+
+    -- for btn, list in pairs(pressCallbacks) do
+        for _id, tbl in pairs(pressCallbacks) do
             tbl.actualhandid = convertHandKindToHandId(tbl.handkind)
         end
-    end
-    for btn, list in pairs(releaseCallbacks) do
-        for _id, tbl in pairs(list) do
+    -- end
+    -- for btn, list in pairs(releaseCallbacks) do
+        for _id, tbl in pairs(releaseCallbacks) do
             tbl.actualhandid = convertHandKindToHandId(tbl.handkind)
         end
-    end
+    -- end
 
     for _, tbl in pairs(analogCallbacks) do
         tbl.actualhandid = convertHandKindToHandId(tbl.handkind)
@@ -503,15 +503,15 @@ function Input:ListenToButton(kind, hand, button, presses, callback, context)
 
     assert(buttonTable ~= nil, "Button " .. button .. " is not being tracked! Please use Input:TrackButton("..button..")")
 
-    local handTable = buttonTable[hand]
-    if not handTable then
-        warn("Hand table", hand, "for button", button, "does not exist for some reason!")
-        return
-    end
+    -- local handTable = buttonTable[hand]
+    -- if not handTable then
+    --     warn("Hand table", hand, "for button", button, "does not exist for some reason!")
+    --     return
+    -- end
 
     -- local t = h.press_callbacks
     -- if kind == "release" then t = h.release_callbacks end
-    -- print('registering input callback', callback, 'in', t)
+    -- print('registering input callback', callback, 'in')
     -- t[callback] = presses or 1
 
     local callbackTable = kind == "press" and pressCallbacks or releaseCallbacks
@@ -522,7 +522,8 @@ function Input:ListenToButton(kind, hand, button, presses, callback, context)
         context = context,
         handkind = hand,
         actualhandid = convertHandKindToHandId(hand),
-        presses = presses or 1
+        presses = presses or 1,
+        button = button
     }
 
     return callbackId
@@ -533,16 +534,12 @@ function Input:ListenToButton(kind, hand, button, presses, callback, context)
 
 end
 
----commentary_started
----@param kind "up"|"down"
----@param hand CPropVRHand|InputHandKind
----@param analogAction ENUM_ANALOG_INPUT_ACTIONS
----@param analogValue Vector|{ x:number?, y:number? }|{[1]:number?,[2]:number?}|number
----@param callback fun(params:ANALOG_CALLBACK) # The function that will be called when conditions are met.
----@param context? any # Optional context passed into the callback as the first value. Is also used when unregistering.
-function Input:ListenToAnalog(kind, hand, analogAction, analogValue, callback, context)
-    local handid = convertHandKindToHandId(hand)
+---@alias AnalogValueType Vector|{ x:number?, y:number? }|{[1]:number?,[2]:number?}|number
 
+---Converts any of the possible inputs to the specific type used for analog events.
+---@param analogValue AnalogValueType
+---@return { x: number?, y: number? }
+local function getCorrectAnalogValue(analogValue)
     ---@type { x: number?, y: number? }
     local value
     local analogValueType = type(analogValue)
@@ -561,6 +558,22 @@ function Input:ListenToAnalog(kind, hand, analogAction, analogValue, callback, c
     else
         error("Type " .. analogValueType .. " for analogValue is invalid!")
     end
+    return value
+end
+
+---
+---Listen to a specific analog value reaching a certain value.
+---
+---@param kind "up"|"down" # `up` means listen for the value moving above `analogValue`, `down` means listen for it moving below.
+---@param hand CPropVRHand|InputHandKind # The hand entity or kind of hand to listen to.
+---@param analogAction ENUM_ANALOG_INPUT_ACTIONS # The specific analog action to listen for.
+---@param analogValue AnalogValueType # The value(s) to listen for.
+---@param callback fun(params:ANALOG_CALLBACK) # The function that will be called when conditions are met.
+---@param context? any # Optional context passed into the callback as the first value. Is also used when unregistering.
+function Input:ListenToAnalog(kind, hand, analogAction, analogValue, callback, context)
+    local handid = convertHandKindToHandId(hand)
+
+    local value = getCorrectAnalogValue(analogValue)
 
     callbackId = callbackId + 1
     analogCallbacks[callbackId] = {
@@ -573,6 +586,31 @@ function Input:ListenToAnalog(kind, hand, analogAction, analogValue, callback, c
         value = value,
         handkind = hand
     }
+
+    return callbackId
+end
+
+---
+---Allows changing some data which was defined in `ListenToAnalog` for a specific ID.
+---
+---@param id integer # The ID of the analog event you want to modify.
+---@param analogAction? ENUM_ANALOG_INPUT_ACTIONS # The new action to listen for, or nil to leave unchanged.
+---@param analogValue AnalogValueType # The new value to listen for, or nil to leave unchanged.
+---@return boolean # True if the ID was found, false otherwise.
+function Input:ModifyAnalogCallback(id, analogAction, analogValue)
+    for _id, analogCallbackData in pairs(analogCallbacks) do
+        if _id == id then
+            if analogAction ~= nil then
+                analogCallbackData.analog = analogAction
+            end
+            if analogValue ~= nil then
+                local value = getCorrectAnalogValue(analogValue)
+                analogCallbackData.value = value
+            end
+            return true
+        end
+    end
+    return false
 end
 
 ---
@@ -616,6 +654,38 @@ function Input:StopListening(id)
         if _id == id then
             analogCallbacks[_id] = nil
             return
+        end
+    end
+end
+
+---
+---Stops listening to any listened from all buttons and hands that have this callback/context pair.
+---
+---@param callback fun(params:ANALOG_CALLBACK) # The callback function that's listening.
+---@param context? any # The context that was given.
+function Input:StopListeningCallbackContext(callback, context)
+    -- for btn, list in pairs(pressCallbacks) do
+        for _id, tbl in pairs(pressCallbacks) do
+            if tbl.func == callback and tbl.context == context then
+                pressCallbacks[_id] = nil
+                break
+            end
+        end
+    -- end
+
+    -- for btn, list in pairs(releaseCallbacks) do
+        for _id, tbl in pairs(releaseCallbacks) do
+            if tbl.func == callback and tbl.context == context then
+                releaseCallbacks[_id] = nil
+                break
+            end
+        end
+    -- end
+
+    for _id, tbl in pairs(analogCallbacks) do
+        if tbl.func == callback and tbl.context == context then
+            analogCallbacks[_id] = nil
+            break
         end
     end
 end
@@ -724,7 +794,7 @@ local function InputThink()
             local hand = hmd:GetVRHand(handid)
             -- print(button, hand, handid)
             if player:IsDigitalActionOnForHand(hand:GetLiteralHandType(), button) then
-                -- print("Held time", Input:ButtonTime(handid, button), Time(), data.press_time)
+                -- print("Held time", Input:ButtonTime(handid, button), Time(), buttonData.press_time)
                 if buttonData.press_time == -1 then
                     buttonData.is_held = true
                     buttonData.release_locked = false
@@ -744,12 +814,15 @@ local function InputThink()
                         button = button,
                     }
                     buttonData.release_time = -1
-                    -- print(Input:GetButtonDescription(button).." pressed", "multiple_press: "..data.multiple_press_count)
+                    -- print(Input:GetButtonDescription(button).." pressed", "multiple_press: "..buttonData.multiple_press_count)
                     -- print('doing press callbacks', data.press_callbacks, 'for hand', handid)
                     -- for callback, callbackData in pairs(data.press_callbacks) do
-                    for id, callbackData in pairs(pressCallbacks[button]) do
+                    -- print(TableSize(pressCallbacks[button]))
+                    -- Debug.PrintTable(pressCallbacks)
+                    for id, callbackData in pairs(pressCallbacks) do
                         -- if callbackData.handkind == handid or (callbackData.handkind == 2 and handid == currentPrimaryHandId) or (callbackData.handkind == 3 and handid == currentSecondaryHandId)
-                        if callbackData.actualhandid == handid and buttonData.multiple_press_count >= callbackData.presses-1 then
+                        -- print(callbackData.actualhandid == handid, buttonData.multiple_press_count, callbackData.presses-1)
+                        if callbackData.actualhandid == handid and callbackData.button == button and buttonData.multiple_press_count >= callbackData.presses-1 then
                         -- if data.multiple_press_count >= callbackData.presses-1 then
                             if callbackData.context then
                                 callbackData.func(callbackData.context, send)
@@ -782,7 +855,7 @@ local function InputThink()
                 --         callback(send)
                 --     end
                 -- end
-                for id, callbackData in pairs(releaseCallbacks[button]) do
+                for id, callbackData in pairs(releaseCallbacks) do
                     if callbackData.actualhandid == handid then
                         if callbackData.context then
                             callbackData.func(callbackData.context, send)
@@ -798,21 +871,26 @@ local function InputThink()
     for _, analogData in pairs(analogCallbacks) do
         local value = player:GetAnalogActionPositionForHand(analogData.literalhandtype, analogData.analog)
         local send = false
+        -- print(Debug.SimpleVector(value), analogData.value.x)
         ---@TODO Is there a good way to combine duplicate code here?
         if analogData.checkGreaterThan then
             if (analogData.value.x == nil or value.x >= analogData.value.x)
             and (analogData.value.y == nil or value.y >= analogData.value.y) then
+                -- print("GOOD", analogData.wasSent)
                 if not analogData.wasSent then
+                    -- print("SENDING, SET TRUE")
                     analogData.wasSent = true
                     send = true
                 end
             else
+                -- print("SET FALSE")
                 analogData.wasSent = false
             end
         else
             if (analogData.value.x == nil or value.x <= analogData.value.x)
             and (analogData.value.y == nil or value.y <= analogData.value.y) then
                 if analogData.wasSent == false then
+                    -- print("SET TRUE LESSER THAN")
                     analogData.wasSent = true
                     send = true
                 end
@@ -822,6 +900,7 @@ local function InputThink()
         end
 
         if send then
+            -- print("SHOULD SEND")
             local t = {
                 value = value,
                 analog = analogData.analog,
