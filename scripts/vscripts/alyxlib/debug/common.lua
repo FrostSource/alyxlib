@@ -159,6 +159,46 @@ Convars:RegisterCommand("healme", function (_, amount)
     Player:SetHealth(amount)
 end, "", 0)
 
+Convars:RegisterCommand("ent_table_string_info", function (_, tblpart, colon, hash)
+    print(tblpart, colon, hash)
+    if tblpart == nil and colon == nil and hash == nil then
+        print("Must provide a valid entity table string, e.g. table: 0x0012b03")
+        return
+    end
+
+    if colon == ":" then
+        hash = tblpart .. colon .. " " .. hash
+    elseif tblpart == "table:" then
+        hash = tblpart .." ".. colon
+    elseif tblpart:find("table:") then
+        hash = tblpart
+    elseif tblpart == "table" then
+        hash = "table: " .. colon
+    else
+        hash = "table: " .. tblpart
+    end
+
+    local foundEnt = nil
+    local ent = Entities:First()
+    while ent ~= nil do
+        if tostring(ent) == hash then
+            foundEnt = ent
+            break
+        end
+        ent = Entities:Next(ent)
+    end
+
+    if foundEnt then
+        print("Info for " .. tostring(foundEnt))
+        prints("\tClassname", foundEnt:GetClassname())
+        prints("\tName", foundEnt:GetName())
+        prints("\tParent", foundEnt:GetMoveParent())
+        prints("\tModel", foundEnt:GetModelName())
+    else
+        print("Could not find any entity in the world matching " .. hash)
+    end
+end, "", 0)
+
 local symbols = {"and","break","do","else","elseif","end","false","for","function","if","in","local","nil","not","or","repeat","return","then","true","until","while"}
 
 if IsInToolsMode() then
