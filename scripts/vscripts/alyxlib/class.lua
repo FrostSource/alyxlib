@@ -209,9 +209,17 @@ local function _inherit(base, self, fenv)
             Storage.LoadAll(self, true)
         end
 
+        -- Fire custom activate function, only during normal activate times
+        if type(self.OnActivate) == "function" and activateType ~= READY_TRANSITION then
+            self:OnActivate(activateType)
+        end
+
         -- Fire custom ready function
         if type(self.OnReady) == "function" then
-            self:OnReady(activateType)
+            -- Need delay to let easyconvars and player initialize
+            self:Delay(function ()
+                self:OnReady(activateType)
+            end)
         end
 
         if self.IsThinking then
@@ -265,6 +273,7 @@ local function _inherit(base, self, fenv)
         private[k] = function(...) v(self, ...) end
     end
 
+    -- Activate hook doesn't fire after a transition so we force it
     if self:Attribute_GetIntValue("InstanceActivated", 0) == 1 then
         fenv.Activate(3)
     else
@@ -402,7 +411,8 @@ end
 ---@field __rawget fun(self: EntityClass, key: string): any # Custom rawget function to get a value from meta.__values without checking inherits.
 ---@field Initiated boolean # If the class entity has been activated.
 ---@field IsThinking boolean # If the entity is currently thinking with `Think` function.
----@field OnReady fun(self: EntityClass, loaded: boolean) # Called automatically on `Activate` if defined.
+---@field OnActivate fun(self: EntityClass, activateType: ENUM_ACTIVATION_TYPES) # Called automatically on `Activate` if defined.
+---@field OnReady fun(self: EntityClass, readyType: OnReadyType) # Called automatically after `Activate`, if defined, when EasyConvars and Player are initialized.
 ---@field OnSpawn fun(self: EntityClass, spawnkeys: CScriptKeyValues) # Called automatically on `Spawn` if defined.
 ---@field UpdateOnRemove fun(self: EntityClass) # Called before the entity is killed.
 ---@field OnBreak fun(self: EntityClass, inflictor: EntityHandle) # Called when a breakable entity is broken.
