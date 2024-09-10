@@ -11,7 +11,7 @@ try:
     import git
     GIT_LIBRARY_INSTALLED = True
 except ImportError:
-    print("GitPython library required for some operations, plase use 'pip install gitpython' to install...")
+    print("GitPython library required for some operations, please use 'pip install gitpython' to install...")
 
 
 DEFAULT_MANIFEST_HASH = '52a853e6cd865e341e7cb5c1cd1f59cf'
