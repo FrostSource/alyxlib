@@ -755,7 +755,7 @@ end
 ---@return boolean # Returns true if the value is truthy, false otherwise.
 ---@diagnostic disable-next-line:lowercase-global
 function truthy(value)
-    return not (value == nil or value == false or value == 0 or value == "" or value == "0" or (type(value) == "table" and next(value) == nil))
+    return not (value == nil or value == false or value == 0 or value == "" or value == "0" or value == "false" or (type(value) == "table" and next(value) == nil))
 end
 
 ---
