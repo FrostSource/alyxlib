@@ -283,29 +283,16 @@ end
 ---Sets the current primary hand that the player is using.
 ---@param primary 0|1 # 0 = Left, 1 = Right
 local function updatePrimaryHandId(primary)
-    -- primary_hand = Entities:GetLocalPlayer():GetHMDAvatar():GetVRHand(primary)
-    -- secondary_hand = Entities:GetLocalPlayer():GetHMDAvatar():GetVRHand(1 - primary)
     currentPrimaryHandId = primary
     currentSecondaryHandId = 1 - primary
 
-    -- Update the callbacks so they know which real handid they belond to in the think function
-    -- for _, value in pairs(pressCallbacks) do
-    --     value.actualhandid = convertHandKindToHandId(value.handkind)
-    -- end
-    -- for _, value in pairs(releaseCallbacks) do
-    --     value.actualhandid = convertHandKindToHandId(value.handkind)
-    -- end
+    for _id, tbl in pairs(pressCallbacks) do
+        tbl.actualhandid = convertHandKindToHandId(tbl.handkind)
+    end
 
-    -- for btn, list in pairs(pressCallbacks) do
-        for _id, tbl in pairs(pressCallbacks) do
-            tbl.actualhandid = convertHandKindToHandId(tbl.handkind)
-        end
-    -- end
-    -- for btn, list in pairs(releaseCallbacks) do
-        for _id, tbl in pairs(releaseCallbacks) do
-            tbl.actualhandid = convertHandKindToHandId(tbl.handkind)
-        end
-    -- end
+    for _id, tbl in pairs(releaseCallbacks) do
+        tbl.actualhandid = convertHandKindToHandId(tbl.handkind)
+    end
 
     for _, tbl in pairs(analogCallbacks) do
         tbl.actualhandid = convertHandKindToHandId(tbl.handkind)
@@ -618,35 +605,17 @@ end
 ---
 ---@param id number # The number returned by ListenToButton.
 function Input:StopListening(id)
-    -- for button, hands in pairs(trackedButtons) do
-    --     for handid, data in pairs(hands) do
-    --         for clbck, clbckData in pairs(data.press_callbacks) do
-    --             if clbck == callback and (clbckData.context == nil or clbckData.context == context) then
-    --                 data.press_callbacks[clbck] = nil
-    --             end
-    --         end
-    --         for clbck, clbckData in pairs(data.release_callbacks) do
-    --             if clbck == callback and (clbckData.context == nil or clbckData.context == context) then
-    --                 data.release_callbacks[clbck] = nil
-    --             end
-    --         end
-    --     end
-    -- end
-    for btn, list in pairs(pressCallbacks) do
-        for _id, tbl in pairs(list) do
-            if _id == id then
-                list[_id] = nil
-                return
-            end
+    for _id, tbl in pairs(pressCallbacks) do
+        if _id == id then
+            tbl[_id] = nil
+            return
         end
     end
 
-    for btn, list in pairs(releaseCallbacks) do
-        for _id, tbl in pairs(list) do
-            if _id == id then
-                list[_id] = nil
-                return
-            end
+    for _id, tbl in pairs(releaseCallbacks) do
+        if _id == id then
+            releaseCallbacks[_id] = nil
+            return
         end
     end
 
@@ -664,23 +633,19 @@ end
 ---@param callback fun(params:ANALOG_CALLBACK) # The callback function that's listening.
 ---@param context? any # The context that was given.
 function Input:StopListeningCallbackContext(callback, context)
-    -- for btn, list in pairs(pressCallbacks) do
-        for _id, tbl in pairs(pressCallbacks) do
-            if tbl.func == callback and tbl.context == context then
-                pressCallbacks[_id] = nil
-                break
-            end
+    for _id, tbl in pairs(pressCallbacks) do
+        if tbl.func == callback and tbl.context == context then
+            pressCallbacks[_id] = nil
+            break
         end
-    -- end
+    end
 
-    -- for btn, list in pairs(releaseCallbacks) do
-        for _id, tbl in pairs(releaseCallbacks) do
-            if tbl.func == callback and tbl.context == context then
-                releaseCallbacks[_id] = nil
-                break
-            end
+    for _id, tbl in pairs(releaseCallbacks) do
+        if tbl.func == callback and tbl.context == context then
+            releaseCallbacks[_id] = nil
+            break
         end
-    -- end
+    end
 
     for _id, tbl in pairs(analogCallbacks) do
         if tbl.func == callback and tbl.context == context then
@@ -695,19 +660,15 @@ end
 ---
 ---@param context any # The number returned by ListenToButton.
 function Input:StopListeningByContext(context)
-    for btn, list in pairs(pressCallbacks) do
-        for _id, tbl in pairs(list) do
-            if tbl.context == context then
-                list[_id] = nil
-            end
+    for _id, tbl in pairs(pressCallbacks) do
+        if tbl.context == context then
+            pressCallbacks[_id] = nil
         end
     end
 
-    for btn, list in pairs(releaseCallbacks) do
-        for _id, tbl in pairs(list) do
-            if tbl.context == context then
-                list[_id] = nil
-            end
+    for _id, tbl in pairs(releaseCallbacks) do
+        if tbl.context == context then
+            releaseCallbacks[_id] = nil
         end
     end
 
