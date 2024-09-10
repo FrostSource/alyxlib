@@ -879,12 +879,14 @@ end
 ---@param y number
 ---@param z number
 ---@param radius? number
----@overload fun(pos: Vector, radius?: number)
-function Debug.Sphere(x, y, z, radius)
+---@param time? number
+---@overload fun(pos: Vector, radius?: number, time: number?)
+function Debug.Sphere(x, y, z, radius, time)
     if IsVector(x) then
         ---@diagnostic disable-next-line: cast-type-mismatch
         ---@cast x Vector
         radius = y
+        time = z
         z = x.z
         y = x.y
         x = x.x
@@ -892,7 +894,7 @@ function Debug.Sphere(x, y, z, radius)
 
     radius = radius or 8
 
-    DebugDrawSphere(Vector(x, y, z), Vector(255, 255, 255), 255, radius, false, 10)
+    DebugDrawSphere(Vector(x, y, z), Vector(255, 255, 255), 255, radius, false, time or 10)
 end
 
 ---
