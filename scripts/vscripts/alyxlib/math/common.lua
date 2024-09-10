@@ -60,8 +60,8 @@ function math.isclose(a, b, rel_tol, abs_tol)
         return true
     end
 
-    local diff = abs(b - a)
-    return ((diff <= math.abs(rel_tol * b)) or (diff <= abs(rel_tol * a))) or (diff <= abs_tol)
+    local diff = math.abs(b - a)
+    return ((diff <= math.abs(rel_tol * b)) or (diff <= math.abs(rel_tol * a))) or (diff <= abs_tol)
 end
 
 ---
