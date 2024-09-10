@@ -25,14 +25,13 @@
 if thisEntity then
     ---@param context CScriptPrecacheContext
     function Precache(context)
-        print("GLOBAL PRECACHE")
         _PrecacheGlobalItems(context)
     end
 
     return
 end
 
-require "alyxlib.player"
+require "alyxlib.player.core"
 
 ---@alias AlyxLibGlobalPrecacheType
 ---| "model_folder"
@@ -68,15 +67,17 @@ end
 ---**This should only be called manually if you know what you're doing!**
 ---@param context CScriptPrecacheContext
 function _PrecacheGlobalItems(context)
-    devprint("Globally precaching", #AlyxLibGlobalPrecacheList, "resources...")
-    for _, item in ipairs(AlyxLibGlobalPrecacheList) do
-        devprints("\nPrecaching", item.type, item.path)
-        if item.type == "model" then
-            PrecacheModel(item.path, context)
-        elseif item.type == "entity" then
-            PrecacheEntityFromTable(item.path, item.spawnkeys, context)
-        else
-            PrecacheResource(item.type, item.path, context)
+    if #AlyxLibGlobalPrecacheList > 0 then
+        devprints("Globally precaching", #AlyxLibGlobalPrecacheList, "resources...")
+        for _, item in ipairs(AlyxLibGlobalPrecacheList) do
+            devprints("\nPrecaching", item.type, item.path)
+            if item.type == "model" then
+                PrecacheModel(item.path, context)
+            elseif item.type == "entity" then
+                PrecacheEntityFromTable(item.path, item.spawnkeys, context)
+            else
+                PrecacheResource(item.type, item.path, context)
+            end
         end
     end
 end
