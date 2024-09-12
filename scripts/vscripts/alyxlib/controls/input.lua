@@ -77,7 +77,7 @@ Input.version = "v1.3.0"
 ---If the input system should start automatically on player spawn.
 ---Set this to false soon after require to stop it.
 ---
-Input.AutoStart = true
+Input.AutoStart = false
 
 ---
 ---Number of seconds after a press in which it can still be detected as a single press.

@@ -89,7 +89,7 @@ Gesture.version = "v1.1.1"
 ---If the gesture system should start automatically on player spawn.
 ---Set this to false soon after require to stop it.
 ---
-Gesture.AutoStart = true
+Gesture.AutoStart = false
 
 Gesture.DebugEnabled = false
 
