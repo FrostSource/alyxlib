@@ -14,6 +14,8 @@
 
 local version = "v1.0.0"
 
+ALYXLIB_WORKSHOP_ID = "3329679071"
+
 print("Initializing AlyxLib system ".. version .." ...")
 
 require "alyxlib.globals"
