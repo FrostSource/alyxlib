@@ -1,0 +1,35 @@
+[h1]What is AlyxLib?[/h1]
+
+AlyxLib is a set of scripts and libraries that can be used by Half-Life: Alyx addons to improve the scripting experience and add features that aren't in the base API.
+
+AlyxLib on its own also has a lot of useful console commands to make testing, debugging and playing easier for power-users. At the moment these commands are undocumented but will be listed in detail in the near future as AlyxLib progresses.
+
+[h1]For players[/h1]
+
+This addon must be subscribed to and enabled alongside any other addons which use AlyxLib in order for them to work.
+
+[h1]For Developers[/h1]
+
+If you write complex scripts for your addons please give AlyxLib a try by visiting the [url=https://github.com/FrostSource/alyxlib]GitHub Page[/url] for detailed instructions on how to use AlyxLib with your addon.
+
+[b][i]Please Note: AlyxLib is still in early stages of developement and this initial release servers as a test for the four addons currently using it![/i][/b]
+
+[h1]Scalable Init Support[/h1]
+
+AlyxLib is made to replace Scalable Init Support by integrating it directly into AlyxLib, but also recognizes the widespread use of it, so AlyxLib will allow you to have both Scalable Init Support and AlyxLib enabled at the same time while giving priority to Scalable Init Support for backwards compatibility.
+
+Scalable Init Support is [i]NOT[/i] required for AlyxLib addons to work.
+Addons that use Scalable Init Support [i]SHOULD[/i] work with only AlyxLib enabled.
+
+If you find any issue with Scalable Init Support addons and AlyxLib [b]Please let me know[/b] by leaving a comment below or on the Discord server shown below.
+
+[h1]Getting Help[/h1]
+
+If you experience any troubles using or developing with AlyxLib please don't hesitate to get in touch in one of the following ways:
+[list]
+    [*]Leave a comment on this workshop page
+    [*]Open a [url=https://github.com/FrostSource/alyxlib/issues]GitHub Issue[/url] on the repository
+    [*]Join the Discord server by clicking the image below
+[/list]
+
+[url=https://discord.gg/42SC3Wyjv4][img]https://steamuserimages-a.akamaihd.net/ugc/2397692528302959470/036A75FE4B2E8CD2224F8B62E7CEBEE649493C40/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false[/img][/url]
