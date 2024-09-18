@@ -878,7 +878,7 @@ end
 ---@param vector Vector
 ---@return string
 function Debug.SimpleVector(vector)
-    return "[" .. math.trunc(vector.x, 3) .. " " .. math.trunc(vector.y, 3) .. " " .. math.trunc(vector.z, 3) .. "]"
+    return "[" .. math.trunc(vector.x, 3) .. ", " .. math.trunc(vector.y, 3) .. ", " .. math.trunc(vector.z, 3) .. "]"
 end
 
 ---
