@@ -352,6 +352,7 @@ function Debug.PrintEntityList(list, properties)
             end
 
             -- Find the value of the property
+
             ---@type any
             local foundValueInEntity = "nil"
             if propertyMetaData[propertyIndex] ~= nil then
@@ -365,10 +366,14 @@ function Debug.PrintEntityList(list, properties)
                 end
             end
 
-            propertyValues[index][propertyIndex] = tostring(foundValueInEntity)
+            if IsVector(foundValueInEntity) then
+                propertyValues[index][propertyIndex] = Debug.SimpleVector(foundValueInEntity)
+            else
+                propertyValues[index][propertyIndex] = tostring(foundValueInEntity)
+            end
 
             -- Track the biggest value length
-            propertyMetaData[propertyIndex].max = max(propertyMetaData[propertyIndex].max, #tostring(foundValueInEntity))
+            propertyMetaData[propertyIndex].max = max(propertyMetaData[propertyIndex].max, #propertyValues[index][propertyIndex])
         end
     end
 
