@@ -520,7 +520,7 @@ end
 ---@param array1 T1[] # Base array
 ---@param array2 T2[] # Array which will be appended onto the base array.
 ---@return T1[]|T2[] # The new appended array.
-function ArrayAppend(array1, array2, ...)
+function ArrayAppend(array1, array2)
     array1 = vlua.clone(array1)
     for _, v in ipairs(array2) do
         table.insert(array1, v)
