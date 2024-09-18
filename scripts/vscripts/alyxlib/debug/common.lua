@@ -116,9 +116,14 @@ end, "Draws a debug line from the player to any entities with a name", 0)
 ---
 ---Print the mass of an entity.
 ---
-Convars:RegisterCommand("ent_mass", function (_, name)
-    local ent = Entities:FindByName(nil, name)
-    print(ent:GetMass())
+Convars:RegisterCommand("ent_mass", function (_, pattern)
+    local ent = Debug.FindEntityByPattern(pattern)
+    if not ent then
+        warn("Could not find entity with pattern '"..pattern.."'")
+        return
+    end
+
+    prints(Debug.EntStr(ent), "mass:", ent:GetMass())
 end, "Prints the mass of an entity", 0)
 
 ---
@@ -134,22 +139,24 @@ Convars:RegisterCommand("sphere", function (_, x, y, z, r)
 
 end, "Draws a debug sphere at 3D position with a radius", 0)
 
-Convars:RegisterCommand("print_ent_criteria", function (_, entity)
-    local ent = getEntityFromTarget(entity)
-    if ent then
-        ent:PrintCriteria()
-    else
-        print("Couldn't find entity using search string '"..entity.."'")
+Convars:RegisterCommand("print_ent_criteria", function (_, pattern)
+    local ent = Debug.FindEntityByPattern(pattern)
+    if not ent then
+        warn("Couldn't find entity with pattern '"..pattern.."'")
+        return
     end
+
+    ent:PrintCriteria()
 end, "Prints all current context criteria for an entity", 0)
 
-Convars:RegisterCommand("print_ent_base_criteria", function (_, entity)
-    local ent = getEntityFromTarget(entity)
-    if ent then
-        ent:PrintBaseCriteria()
-    else
-        print("Couldn't find entity using search string '"..entity.."'")
+Convars:RegisterCommand("print_ent_base_criteria", function (_, pattern)
+    local ent = Debug.FindEntityByPattern(pattern)
+    if not ent then
+        warn("Couldn't find entity with pattern '"..pattern.."'")
+        return
     end
+
+    ent:PrintBaseCriteria()
 end, "Prints context criteria for an entity except for values saved using storage.lua", 0)
 
 Convars:RegisterCommand("healme", function (_, amount)
@@ -286,6 +293,56 @@ local symbols = {"and","break","do","else","elseif","end","false","for","functio
 
 -- end
 
+
+---Finds the first entity whose name, class or model matches `pattern`.
+---@param pattern string # The search pattern to look for.
+---@param exact boolean? # If true the pattern must match exactly, otherwise wildcards will be used.
+---@return EntityHandle
+function Debug.FindEntityByPattern(pattern, exact)
+    local ent = nil
+    ent = Entities:FindByName(nil, pattern)
+    if ent == nil then
+        ent = Entities:FindByClassname(nil, pattern)
+        if ent == nil then
+            ent = Entities:FindByModel(nil, pattern)
+        end
+    end
+
+    if ent == nil and not exact then
+        local wildpattern = "*"..pattern.."*"
+        ent = Entities:FindByName(nil, wildpattern)
+        if ent == nil then
+            ent = Entities:FindByClassname(nil, wildpattern)
+            if ent == nil then
+                ent = Entities:FindByModelPattern(pattern)
+            end
+        end
+    end
+
+    return ent
+end
+
+---Finds all entities whose name, class or model match `pattern`.
+---@param pattern string # The search pattern to look for.
+---@param exact boolean? # If true the pattern must match exactly, otherwise wildcards will be used.
+---@return EntityHandle[]
+function Debug.FindAllEntitiesByPattern(pattern, exact)
+    local ents = {}
+
+    ents = ArrayAppend(ents, Entities:FindAllByName(pattern))
+    ents = ArrayAppend(ents, Entities:FindAllByClassname(pattern))
+    ents = ArrayAppend(ents, Entities:FindAllByModel(pattern))
+
+    if #ents == 0 and not exact then
+        local wildpattern = "*"..pattern.."*"
+        ents = ArrayAppend(ents, Entities:FindAllByName(wildpattern))
+        ents = ArrayAppend(ents, Entities:FindAllByClassname(wildpattern))
+        ents = ArrayAppend(ents, Entities:FindAllByModelPattern(pattern))
+    end
+
+    return ents
+end
+
 ---
 ---Prints a formated indexed list of entities with custom property information.
 ---Also links children with their parents by displaying the index alongside the parent for easy look-up.
@@ -299,6 +356,11 @@ local symbols = {"and","break","do","else","elseif","end","false","for","functio
 ---@param list EntityHandle[] # List of entities to print.
 ---@param properties string[] # List of property patterns to search for.
 function Debug.PrintEntityList(list, properties)
+
+    if #list == 0 then
+        warn("No entities to print")
+        return
+    end
 
     properties = properties or {"GetClassname", "GetName", "GetModelName"}
 
@@ -444,24 +506,15 @@ end
 ---@param dont_include_parents boolean # Parents won't be included in the results.
 ---@param properties? string[] # List of property patterns to search for when displaying entity information.
 function Debug.PrintEntities(search, exact, dont_include_parents, properties)
-    if not exact then
-        search = "*"..search.."*"
-    end
-
     -- Get all matching ents
     local preents = {}
-    for _, list in ipairs({
-        Entities:FindAllByName(search),
-        Entities:FindAllByClassname(search),
-        Entities:FindAllByModel(search)
-    }) do
-        for _, value in ipairs(list) do
-            preents[#preents+1] = value
-            if not dont_include_parents then
-                vlua.extend(preents, value:GetParents())
-            end
+    for _, value in ipairs(Debug.FindAllEntitiesByPattern(search, exact)) do
+        preents[#preents+1] = value
+        if not dont_include_parents then
+            vlua.extend(preents, value:GetParents())
         end
     end
+
     -- Filter duplicates
     local ents = {}
     for _, ent in pairs(preents) do
@@ -469,6 +522,12 @@ function Debug.PrintEntities(search, exact, dont_include_parents, properties)
             ents[#ents+1] = ent
         end
     end
+
+    if #ents == 0 then
+        print("No entities found with pattern '"..search.."'")
+        return
+    end
+
     Debug.PrintEntityList(ents, properties)
 end
 
@@ -611,12 +670,13 @@ end
 function Debug.ShowEntity(ent, duration)
     duration = duration or 20
     if type(ent) == "string" then
-        local ents = Entities:FindAllByName(ent)
+        local ents = Debug.FindAllEntitiesByPattern(ent)
         for _,e in ipairs(ents) do
             Debug.ShowEntity(e)
         end
         return
     end
+
     local from = Vector()
     if Entities:GetLocalPlayer() then
         from = Entities:GetLocalPlayer():EyePosition()
