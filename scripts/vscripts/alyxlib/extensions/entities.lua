@@ -249,6 +249,13 @@ function Entities:FindAllNPCs()
     return npcs
 end
 
+---
+---Find all entities by model name within a radius.
+---
+---@param modelName string
+---@param origin Vector
+---@param maxRadius number
+---@return EntityHandle[]
 function Entities:FindAllByModelWithin(modelName, origin, maxRadius)
     local ents = {}
     local currentEnt = Entities:FindByModelWithin(nil, modelName, origin, maxRadius)
@@ -259,6 +266,13 @@ function Entities:FindAllByModelWithin(modelName, origin, maxRadius)
     return ents
 end
 
+---
+---Find the entity by model name nearest to a point.
+---
+---@param modelName string
+---@param origin Vector
+---@param maxRadius number
+---@return EntityHandle?
 function Entities:FindByModelNearest(modelName, origin, maxRadius)
     local closestEnt = nil
     local closestDist = math.huge
@@ -272,6 +286,42 @@ function Entities:FindByModelNearest(modelName, origin, maxRadius)
         currentEnt = Entities:FindByModelWithin(currentEnt, modelName, origin, maxRadius)
     end
     return closestEnt
+end
+
+---
+---Find the first entity whose model name contains `namePattern`.
+---
+---This works by searching every entity in the map and may incur a performance hit in large maps if used often.
+---
+---@param namePattern string
+---@return EntityHandle?
+function Entities:FindByModelPattern(namePattern)
+    local ent = Entities:First()
+    while ent ~= nil do
+        if ent:GetModelName():find(namePattern) then
+            return ent
+        end
+        ent = Entities:Next(ent)
+    end
+end
+
+---
+---Find all entities whose model name contains `namePattern`.
+---
+---This works by searching every entity in the map and may incur a performance hit in large maps if used often.
+---
+---@param namePattern string
+---@return EntityHandle[]
+function Entities:FindAllByModelPattern(namePattern)
+    local ents = {}
+    local ent = Entities:First()
+    while ent ~= nil do
+        if ent:GetModelName():find(namePattern) then
+            table.insert(ents, ent)
+        end
+        ent = Entities:Next(ent)
+    end
+    return ents
 end
 
 return version
