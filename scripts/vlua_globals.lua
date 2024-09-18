@@ -2005,10 +2005,10 @@ function vlua.reverse(t) end
 ---@return table
 function vlua.resize(t, size, fill) end
 ---Implements Squirrel extend method for tables.
----Appears to append array onto o. array must be an ordered table.
----@param o table
----@param array table
----@return table?
+---Extends an ordered table `o` with another ordered table `arr`.
+---@param o table # The array to extend
+---@param array table # The array to add onto `o`
+---@return table? # Returns `o` on success, nil otherwise
 function vlua.extend(o, array) end
 ---Implements Squirrel map method for tables.
 ---Passes values one at a time to function first param. Return a value to be added to resulting table.

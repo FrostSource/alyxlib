@@ -64,7 +64,7 @@ Convars:RegisterCommand("print_diff_ents", function (_, ...)
 end, "", 0)
 
 ---
----Prints all entities with a radius around the player, along with any supplied property patterns.
+---Prints all entities within a given radius around the player, along with any supplied property patterns.
 ---
 ---E.g. print_nearby_ents 100 getname mass
 ---
@@ -164,7 +164,7 @@ Convars:RegisterCommand("healme", function (_, amount)
     amount = tonumber(amount)
 
     if not amount then
-        warn("Must provide a health amount.")
+        warn("Must provide a health amount")
         return
     end
 
@@ -279,7 +279,7 @@ local symbols = {"and","break","do","else","elseif","end","false","for","functio
         local ents = Entities:FindAllByName(name)
         local code = excode(...)
 
-        print("Doing code on entities named ("..name.."):", code)
+        -- print("Doing code on entities named ("..name.."):", code)
         for _, ent in ipairs(ents) do
             local f,err = load(code, nil, nil, ent:GetOrCreatePrivateScriptScope())
             if f == nil then
