@@ -171,8 +171,7 @@ Convars:RegisterCommand("healme", function (_, amount)
     Player:SetHealth(amount)
 end, "", 0)
 
-Convars:RegisterCommand("ent_table_string_info", function (_, tblpart, colon, hash)
-    print(tblpart, colon, hash)
+Convars:RegisterCommand("ent_find_by_address", function (_, tblpart, colon, hash)
     if tblpart == nil and colon == nil and hash == nil then
         print("Must provide a valid entity table string, e.g. table: 0x0012b03")
         return
