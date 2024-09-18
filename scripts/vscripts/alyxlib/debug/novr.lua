@@ -193,14 +193,23 @@ ListenToPlayerEvent("novr_player", function (params)
     cl_sidespeed = Convars:GetFloat("cl_sidespeed")
 end)
 
+local novr_vr_speed_on = false
+
 Convars:RegisterCommand("novr_player_use_vr_speed", function (_, on)
-    if truthy(on) then
+    if on == nil then
+        on = not novr_vr_speed_on
+    end
+    novr_vr_speed_on = truthy(on)
+
+    if novr_vr_speed_on then
         Convars:SetFloat("cl_forwardspeed", 40)
         Convars:SetFloat("cl_backspeed", 40)
         Convars:SetFloat("cl_sidespeed", 40)
+        Msg("NoVR->VR Move Speed ON")
     else
         Convars:SetFloat("cl_forwardspeed", cl_forwardspeed)
         Convars:SetFloat("cl_backspeed", cl_backspeed)
         Convars:SetFloat("cl_sidespeed", cl_sidespeed)
+        Msg("NoVR->VR Move Speed OFF")
     end
 end, "", 0)
