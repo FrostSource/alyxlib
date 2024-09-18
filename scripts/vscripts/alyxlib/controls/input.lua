@@ -251,7 +251,47 @@ end
 local currentPrimaryHandId = 1
 local currentSecondaryHandId = 0
 
+---@alias NAMED_DIGITAL_INPUT_ACTIONS
+---| `DIGITAL_INPUT_TOGGLE_MENU`
+---| `DIGITAL_INPUT_MENU_INTERACT`
+---| `DIGITAL_INPUT_MENU_DISMISS`
+---| `DIGITAL_INPUT_USE`
+---| `DIGITAL_INPUT_USE_GRIP`
+---| `DIGITAL_INPUT_SHOW_INVENTORY`
+---| `DIGITAL_INPUT_GRAV_GLOVE_LOCK`
+---| `DIGITAL_INPUT_FIRE`
+---| `DIGITAL_INPUT_ALT_FIRE`
+---| `DIGITAL_INPUT_RELOAD`
+---| `DIGITAL_INPUT_EJECT_MAGAZINE`
+---| `DIGITAL_INPUT_SLIDE_RELEASE`
+---| `DIGITAL_INPUT_OPEN_CHAMBER`
+---| `DIGITAL_INPUT_TOGGLE_LASER_SIGHT = 13
+---| `DIGITAL_INPUT_TOGGLE_BURST_FIRE`
+---| `DIGITAL_INPUT_TOGGLE_HEALTH_PEN`
+---| `DIGITAL_INPUT_ARM_GRENADE`
+---| `DIGITAL_INPUT_ARM_XEN_GRENADE`
+---| `DIGITAL_INPUT_TELEPORT`
+---| `DIGITAL_INPUT_TURN_LEFT`
+---| `DIGITAL_INPUT_TURN_RIGHT`
+---| `DIGITAL_INPUT_MOVE_BACK`
+---| `DIGITAL_INPUT_WALK`
+---| `DIGITAL_INPUT_JUMP`
+---| `DIGITAL_INPUT_MANTLE`
+---| `DIGITAL_INPUT_CROUCH_TOGGLE`
+---| `DIGITAL_INPUT_STAND_TOGGLE`
+---| `DIGITAL_INPUT_ADJUST_HEIGHT`
+
+INPUT_HAND_BOTH = -1
+INPUT_HAND_LEFT = 0
+INPUT_HAND_RIGHT = 1
+INPUT_HAND_PRIMARY = 2
+INPUT_HAND_SECONDARY = 3
+
 ---@alias InputHandKind
+---| `INPUT_HAND_LEFT`
+---| `INPUT_HAND_RIGHT`
+---| `INPUT_HAND_PRIMARY`
+---| `INPUT_HAND_SECONDARY`
 ---| 0  # Left Hand.
 ---| 1  # Right Hand.
 ---| 2  # Primary Hand.
@@ -457,9 +497,9 @@ end
 ---@param kind string # The kind of button interaction.
 ---| '"press"' # Button is pressed.
 ---| '"release"' # Button is released.
----@param hand CPropVRHand|InputHandKind # The ID of the hand to register for.
----| -1 # Both hands.
----@param button ENUM_DIGITAL_INPUT_ACTIONS # The button to check.
+---@param hand CPropVRHand|`INPUT_HAND_BOTH`|InputHandKind # The type of hand to listen on, or the hand itself.
+---| -1 # Both hands
+---@param button NAMED_DIGITAL_INPUT_ACTIONS|ENUM_DIGITAL_INPUT_ACTIONS # The button to check.
 ---@param presses integer|nil # Number of times the button must be pressed in quick succession. E.g. 2 for double click. Only applicable for `kind` press.
 ---@param callback fun(params:INPUT_PRESS_CALLBACK|INPUT_RELEASE_CALLBACK) # The function that will be called when conditions are met.
 ---@param context? any # Optional context passed into the callback as the first value. Is also used when unregistering.
