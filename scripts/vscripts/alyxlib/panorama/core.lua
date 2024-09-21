@@ -1,5 +1,8 @@
 --[[
     v1.0.0
+    https://github.com/FrostSource/alyxlib
+
+    Panorama core library.
 ]]
 
 Panorama = {}

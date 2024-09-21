@@ -4,11 +4,9 @@
 
     Provides base entity extension methods.
 
-    If not using `vscripts/alyxlib/core.lua`, load this file at game start using the following line:
+    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
     
-    ```lua
     require "alyxlib.extensions.entity"
-    ```
 ]]
 
 local version = "v2.4.0"

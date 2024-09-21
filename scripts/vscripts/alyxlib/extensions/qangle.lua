@@ -4,11 +4,9 @@
 
     Provides QAngle class extension methods.
 
-    If not using `vscripts/alyxlib/core.lua`, load this file at game start using the following line:
+    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
     
-    ```lua
     require "alyxlib.extensions.qangle"
-    ```
 ]]
 -- require "alyxlib.math.common"
 

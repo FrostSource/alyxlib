@@ -6,9 +6,7 @@
 
     If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
     
-    ```lua
     require "alyxlib.debug.controller"
-    ```
 ]]
 
 -- Used for button descriptions

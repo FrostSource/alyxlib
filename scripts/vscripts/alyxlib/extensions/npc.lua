@@ -5,11 +5,9 @@
     Extension for NPC entities.
     Some functions are specific to only one entity class such as `npc_combine_s`, check the individual function descriptions.
 
-    If not using `vscripts/alyxlib/core.lua`, load this file at game start using the following line:
+    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
     
-    ```lua
     require "alyxlib.extensions.npc"
-    ```
 ]]
 
 require "alyxlib.globals"

@@ -2,69 +2,12 @@
     v1.3.0
     https://github.com/FrostSource/alyxlib
 
-    Simplifies the tracking of button presses/releases. This system will automatically
-    start when the player spawns unless told not to before the player spawns.
-
-    ```lua
-    Input.AutoStart = false
-    ```
-
-    If not using `vscripts/alyxlib/core.lua`, load this file at game start using the following line:
-
-    ```lua
-    require "alyxlib.controls.input"
-    ```
-
-    ======================================== Usage ========================================
-
-    The system can be told to track all buttons or individual buttons for those who are
-    performant conscious:
-
-    ```lua
-    Input:TrackAllButtons()
-    Input:TrackButtons({7, 17})
-    ```
-
-    Common usage is to register a callback function which will fire whenever the passed
-    conditions are met. `press`/`release` can be individually registered, followed by which
-    hand to check (or -1 for both), the digital button to check, number of presses
-    (if `press` kind), and the function to call.
-
-    ```lua
-    Input:RegisterCallback("press", 1, 7, 1, function(data)
-        ---@cast data INPUT_PRESS_CALLBACK
-        print(("Button %s pressed at %.2f on %s"):format(
-            Input:GetButtonDescription(data.button),
-            data.press_time,
-            Input:GetHandName(data.hand)
-        ))
-    end)
-    ```
+    Simplifies the tracking of digital action presses/releases.
     
-    ```lua
-    Input:RegisterCallback("release", -1, 17, nil, function(data)
-        ---@cast data INPUT_RELEASE_CALLBACK
-        if data.held_time >= 5 then
-            print(("Button %s charged for %d seconds on %s"):format(
-                Input:GetButtonDescription(data.button),
-                data.held_time, 
-                Input:GetHandName(data.hand)
-            ))
-        end
-    end)
-    ```
+    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
 
-    Other general use functions exist for checking presses and are extended to the hand class for ease of use:
-
-    ```lua
-    if Player.PrimaryHand:Pressed(3) then end
-    if Player.PrimaryHand:Released(3) then end
-    if Player.PrimaryHand:Button(3) then end
-    if Player.PrimaryHand:ButtonTime(3) >= 5 then end
-    ```
-
+    require "alyxlib.controls.input"
 ]]
----@TODO: Allow context to be passed to the callbacks.
 
 ---
 ---The input class simplifies button tracking.

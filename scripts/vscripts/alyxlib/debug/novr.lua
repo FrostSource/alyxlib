@@ -1,3 +1,13 @@
+--[[
+    v1.0.0
+    https://github.com/FrostSource/alyxlib
+
+    Adds functions and console commands to help debugging outside VR mode.
+
+    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
+
+    require "alyxlib.debug.novr"
+]]
 
 ---@class NoVrInteractClass
 ---@field class string

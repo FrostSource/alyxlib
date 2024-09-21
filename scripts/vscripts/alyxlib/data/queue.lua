@@ -1,55 +1,12 @@
 --[[
-    v1.3.2
+    v1.4.0
     https://github.com/FrostSource/alyxlib
 
-    Adds queue behaviour for tables with #queue.items being the front of the queue.
+    A queue is a data structure where items are added at one end and removed from the other, so the first item added is the first one taken out.
 
-    If not using `vscripts/alyxlib/core.lua`, load this file at game start using the following line:
+    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
     
-    ```lua
     require "alyxlib.data.queue"
-    ```
-
-    ======================================== Usage ==========================================
-
-    ```lua
-    -- Create a queue with 3 initial values.
-    -- 3 is the front of the queue.
-    local queue = Queue(1, 2, 3)
-
-    -- Prints "3"
-    print(queue:Dequeue())
-
-    -- Get multiple values
-    local a,b = queue:Dequeue(2)
-
-    -- Prints "2   1"
-    print(a,b)
-
-    -- Queue any values
-    stack:Enqueue('a','b','c')
-
-    -- To loop over the items, reference queue.items directly:
-    for index, value in ipairs(queue.items) do
-        print(index, value)
-    end
-
-    -- Or use the `pairs` helper function:
-    for index, value in queue:pairs() do
-        print(index, value)
-    end
-    ```
-
-    =========================================== Notes =============================================
-
-    This class supports `storage` with `Storage.SaveQueue()`:
-
-    ```lua
-    Storage:SaveQueue('queue', queue)
-    queue = Storage:LoadQueue('queue')
-    ```
-    
-    Queues are also natively saved using `Storage.Save()` or if encountered in a table being saved.
 ]]
 
 ---@class Queue

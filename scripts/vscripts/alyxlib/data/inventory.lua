@@ -1,58 +1,13 @@
 --[[
-    v1.2.2
+    v1.2.3
     https://github.com/FrostSource/alyxlib
 
     An inventory is a table where each key has an integer value assigned to it.
     When a value hits 0 the key is removed from the table.
 
-    If not using `vscripts/alyxlib/core.lua`, load this file at game start using the following line:
+    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
     
-    ```lua
     require "alyxlib.data.inventory"
-    ```
-
-    ======================================== Usage ========================================
-
-    ```lua
-    -- Create an inventory with 2 initial keys.
-    local inv = Inventory({
-        gun = 1,
-        metal = 4
-    })
-
-    -- Remove 1 from metal
-    -- Prints "3"
-    print(inv:Remove("metal"))
-
-    -- Add 3 to gun
-    -- Prints "4"
-    print(inv:Add("gun", 3))
-
-    -- Get the highest value key
-    -- Prints "gun  4"
-    print(inv:Highest())
-
-    -- To loop over the items, reference queue.items directly
-    for key, value in pairs(inv.items) do
-        print(key, value)
-    end
-
-    -- Or use the `pairs` helper function:
-    for key, value in inv:pairs() do
-        print(key, value)
-    end
-    ```
-
-    =========================================== Notes =============================================
-
-    This class supports `storage` with `Storage.SaveInventory()`:
-
-    ```lua
-    Storage:SaveInventory('inv', inv)
-    inv = Storage:LoadInventory('inv')
-    ```
-    
-    Inventories are also natively saved using `Storage.Save()` or if encountered in a table being saved.
 ]]
 
 ---@class Inventory
@@ -77,9 +32,6 @@ if pcall(require, "alyxlib.storage") then
     ---@return boolean # If the save was successful.
     ---@luadoc-ignore
     function InventoryClass.__save(handle, name, inventory)
-        -- Storage.SaveTable(handle, Storage.Join(name, "items"), inventory.items)
-        -- Storage.SaveType(handle, name, "util.Inventory")
-        -- return true
         return Storage.SaveTableCustom(handle, name, inventory, "Inventory")
     end
 
@@ -93,13 +45,6 @@ if pcall(require, "alyxlib.storage") then
     ---@return Inventory|nil
     ---@luadoc-ignore
     function InventoryClass.__load(handle, name)
-        -- local items = Storage.LoadTable(handle, Storage.Join(name, "items"))
-        -- if items ~= nil then
-        --     local _inventory = Inventory()
-        --     _inventory.items = items
-        --     return _inventory
-        -- end
-        -- return nil
         local inventory = Storage.LoadTableCustom(handle, name, "Inventory")
         if inventory == nil then return nil end
         return setmetatable(inventory, InventoryClass)

@@ -2,13 +2,11 @@
     v1.2.0
     https://github.com/FrostSource/alyxlib
 
-    The core math extension script.
+    Extends the math library with useful functions.
 
-    If not using `vscripts/alyxlib/core.lua`, load this file at game start using the following line:
+    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
     
-    ```lua
     require "alyxlib.math.common"
-    ```
 ]]
 
 local version = "v1.2.0"

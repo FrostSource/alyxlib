@@ -1,55 +1,12 @@
 --[[
-    v1.2.2
+    v1.2.3
     https://github.com/FrostSource/alyxlib
 
-    Adds stack behaviour for tables with index 1 as the top of the stack.
+    A stack is a data structure where elements are added to the top and removed from the top, with the most recently added item being the first to be removed.
 
-    If not using `vscripts/alyxlib/core.lua`, load this file at game start using the following line:
+    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
     
-    ```lua
     require "alyxlib.data.stack"
-    ```
-
-    ======================================== Usage ==========================================
-
-    ```lua
-    -- Create a stack with 3 initial values.
-    -- 1 is the top of the stack.
-    local stack = Stack(1, 2, 3)
-
-    -- Prints "1"
-    print(stack:Pop())
-
-    -- Pop multiple values
-    local a,b = stack:Pop(2)
-
-    -- Prints "2   3"
-    print(a,b)
-
-    -- Push any values
-    stack:Push('a','b','c')
-
-    -- To loop over the items, reference stack.items directly:
-    for index, value in ipairs(stack.items) do
-        print(index, value)
-    end
-
-    -- Or use the `pairs` helper function:
-    for index, value in stack:pairs() do
-        print(index, value)
-    end
-    ```
-
-    =========================================== Notes =============================================
-
-    This class supports `storage` with `Storage.SaveStack()`:
-
-    ```lua
-    Storage:SaveStack('stack', stack)
-    stack = Storage:LoadStack('stack')
-    ```
-
-    Stacks are also natively saved using `Storage.Save()` or if encountered in a table being saved.
 ]]
 
 ---@class Stack

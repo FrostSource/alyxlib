@@ -1,3 +1,17 @@
+--[[
+    v1.0.0
+    https://github.com/FrostSource/alyxlib
+
+    Provides functionality for animating getter/setter entity methods using curves.
+
+    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
+    
+    require "alyxlib.helpers.animation"
+]]
+
+---
+---Animation library for animating entity properties and values.
+---
 ---@diagnostic disable: undefined-field
 ---@class Animation
 Animation = {}

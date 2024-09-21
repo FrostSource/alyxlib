@@ -1,34 +1,12 @@
 --[[
     v1.2.2
-    Weighted random allows you to assign chances to tables.
+    https://github.com/FrostSource/alyxlib
 
-    If not using `vscripts/alyxlib/core.lua`, load this file at game start using the following line:
+    Weighted random allows you to assign chances to tables keys.
+
+    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
     
-    ```lua
     require "alyxlib.math.weighted_random"
-    ```
-
-    ======================================== Usage ========================================
-
-    The WeightedRandom() function takes a list of tables where each one must at least
-    contain a key with the name "weight" pointing to a number value.
-    The table may contain any other keys/values you wish and will be returned if this weight is chosen.
-
-    Weights do not need to be [0-1] range.
-
-    ```lua
-    local wr = WeightedRandom({
-        { weight = 1, name = "Common" },
-        { weight = 0.75, name = "Semi-common" },
-        { weight = 0.5, name = "Uncommon" },
-        { weight = 0.25, name = "Rare" },
-        { weight = 0.1, name = "Extremely rare" },
-    })
-
-    for i = 1, 20 do
-        print(wr:Random().name)
-    end
-    ```
 ]]
 
 ---

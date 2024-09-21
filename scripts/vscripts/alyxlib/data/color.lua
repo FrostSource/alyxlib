@@ -1,26 +1,10 @@
 --[[
-	v1.0.0
+	v1.0.1
 	https://github.com/FrostSource/alyxlib
 
-	If not using `vscripts/alyxlib/core.lua`, load this file at game start using the following line:
+	If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
 	
-	```lua
 	require "alyxlib.data.color"
-	```
-
-	======================================== Usage ========================================
-	
-	```lua
-    -- Create a red color
-	local red = Color(255, 0, 0, 255)
-	-- Implicit 0 for blue and green, and 255 for alpha
-	red = Color(255)
-	-- Same implicit values for green
-	local green = Color(nil, 255)
-    
-	-- Make the color 50% darker
-	green:SetHSL(nil, nil, green.lightness * 0.5)
-    ```
 ]]
 require "alyxlib.globals"
 require "alyxlib.math.common"
