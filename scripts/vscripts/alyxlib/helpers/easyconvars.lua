@@ -2,104 +2,48 @@
     v1.1.1
     https://github.com/FrostSource/alyxlib
 
-    Allows for quick creation of convars which support persistence saving, checking GlobalSys
-    for default values, and callbacks on value change.
+    Allows for quick creation of convars which support persistence saving, checking GlobalSys for default values, and callbacks on value change.
 
-    If not using `vscripts/alyxlib/core.lua`, load this file at game start using the following line:
+    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
     
-    ```lua
     require "alyxlib.helpers.easyconvars"
-    ```
-
-    ======================================== Usage ==========================================
-
-    EasyConvars are useful when you need a convar that performs actions when the value is changed
-    or needs to be saved and automatically saved on game load.
-
-    For this example we will create a convar that draws a debug line to the nearest resin when turned on.
-
-    ```lua
-    EasyConvars:Register("example_debug_resin", "0", function (val)
-        -- Turn the string value into a boolean
-        val = truthy(val)
-
-        local player = Entities:GetLocalPlayer()
-
-        if not player then
-            -- Player wasn't found so return false to override the user's value
-            -- false automatically converts to "0"
-            return false
-        end
-
-        -- Perform an action based on the value the user gave
-        if val == true then
-            player:SetThink(function()
-                local resin = Entities:FindByClassnameNearest("item_hlvr_crafting_currency_small", player:GetOrigin(), 1000)
-                if resin then
-                    DebugDrawLine(player:GetOrigin(), resin:GetOrigin(), 255,255,255, true, 1)
-                end
-                return 1
-            end, "example_debug_resin", 0)
-        else
-            player:StopThink("example_debug_resin")
-        end
-
-        -- No need to return a value at the end, the user's input is used
-    end)
-    ```
-
-    After the convar is registered, it will be accessible in the console like any other convar.
-    It will behave like a regular convar even though internally it is registered as a command.
-    If the user accesses the convar without any value it will display the current value in the console.
-
-    If we want the convar to be saved when it is changed we can call another method right after
-    defining it:
-
-    ```lua
-    EasyConvars:SetPersistent("example_debug_resin", true)
-    ```
-
-    Sometimes we need to know the value of our convar in code so the standard 'get' methods
-    found in the Convars class are also available in EasyConvars:
-
-    ```lua
-    -- Assuming the convar was set to 1 in the console.
-    val = EasyConvars:GetString("example_debug_resin") -- "1"
-    val = EasyConvars:GetBool("example_debug_resin") -- true
-    val = EasyConvars:GetFloat("example_debug_resin") -- 1
-    val = EasyConvars:GetInt("example_debug_resin") -- 1
-    ```
-
-    You MUST use the EasyConvars methods for retrieving the values as they are registered
-    as console commands instead of normal convars.
-
-    If you don't need a callback and just want the saving feature you can simply set
-    the callback to `nil` in the `Register` method, or use the `RegisterConvar` method instead.
-
-    ```lua
-    EasyConvars:RegisterConvar("example_debug_resin", "0")
-    EasyConvars:SetPersistent("example_debug_resin", true)
-    ```
-
 ]]
 
 require "alyxlib.globals"
 
+---
 ---Allows quick creation of convars with persistence, globalsys checks, and callbacks.
+---
 ---@class EasyConvars
 EasyConvars = {}
 EasyConvars.version = "v1.1.1"
 
+---Data of a registered convar.
 ---@class EasyConvarsRegisteredData
+---@field type EasyConvarsType # Type of the convar.
+---@field name string # Name of the convar
+---@field desc? string # Description of the convar/command. Is displayed below the current value when called without a parameter.
 ---@field value string # Raw value of the convar.
----@field persistent boolean # If the value is saved to player on change.
----@field isCommand boolean # The convar is a command, has no value
 ---@field callback? fun(val:string, ...):any? # Optional callback function whenever the convar is changed.
 ---@field initializer? fun():any # Optional initializer function which will set the default value on player spawn.
----@field postUpdate? fun(newVal:string, oldVal:string) # Optional post update function called after the value has been changed.
----@field desc? string # Description of the convar/command. Is displayed below the current value when called without a parameter.
----@field wasChangedByUser boolean # 
+---@field persistent boolean # If the value is saved to player on change.
+---@field wasChangedByUser boolean # Whether the value was changed by the user.
+---@field displayFunc? fun(val:any) # The function called when the convar is called without any parameters. By default it just prints the value.
 
+---Types of convars.
+---@alias EasyConvarsType
+---| `EASYCONVARS_CONVAR`
+---| `EASYCONVARS_COMMAND`
+---| `EASYCONVARS_TOGGLE`
+
+---Convars have a value and display their value in the console.
+EASYCONVARS_CONVAR = "convar"
+---Commands have no value and only run a callback when called.
+EASYCONVARS_COMMAND = "command"
+---Toggles have a value of "1" or "0" and display their state in the console.
+EASYCONVARS_TOGGLE = "toggle"
+
+---The table of all registered convars.
 ---@type table<string, EasyConvarsRegisteredData>
 EasyConvars.registered = {}
 
@@ -108,16 +52,15 @@ EasyConvars.registered = {}
 EasyConvars._isLoading = true
 
 ---Converts any value to "1" or "0" depending on whether it represents true or false.
----@param val any
----@return "0"|"1"
+---@param val any # The value to convert
+---@return "0"|"1" # "0" if the value is truthy, "1" if the value is falsy
 local function valueToBoolStr(val)
-    if val == true or val == 1 or val == "1" or (type(val) == "table" and #val > 0) then
-        return "1"
-    else
-        return "0"
-    end
+    return truthy(val) and "1" or "0"
 end
 
+---Converts any value to a string and infers a string representation for special values.
+---@param val any # The value to convert
+---@return string # The converted value
 local function convertToSafeVal(val)
     if val ==  nil then return "0"
     elseif val == true then return "1"
@@ -129,106 +72,140 @@ end
 
 ---Call a registered data callback if it exists.
 ---@param registeredData EasyConvarsRegisteredData
----@param value string
----@param ... any
+---@param value string # The new value of the convar/first argument
+---@param ... any # The rest of the arguments
 local function callCallback(registeredData, value, ...)
     local oldValue = registeredData.value
-    if type(registeredData.callback) == "function" then
-        local result = registeredData.callback(...)
-        if result ~= nil then
-            if type(result) == "boolean" then result = result and "1" or "0" end
-            registeredData.value = convertToSafeVal(result)
+
+    local result = nil
+    if registeredData.type == EASYCONVARS_COMMAND then
+        result = registeredData.callback(value, ...)
+    else
+        if registeredData.type == EASYCONVARS_TOGGLE and value == nil then
+            registeredData.value = valueToBoolStr(not truthy(registeredData.value))
         else
             registeredData.value = convertToSafeVal(value)
         end
-    else
-        registeredData.value = convertToSafeVal(value)
+
+        result = registeredData.callback(registeredData.value, oldValue)
     end
 
-    if type(registeredData.postUpdate) == "function" then
-        local result = registeredData.postUpdate(registeredData.value, oldValue)
-        if result ~= nil then
-            registeredData.value = convertToSafeVal(result)
-        end
+    if result ~= nil then
+        registeredData.value = convertToSafeVal(result)
     end
 end
 
----Create a convar with a callback function.
----@param name string
----@param default any|fun():any # Will be converted to a string. If given a function, the value will be determined on player spawn.
----@param func? fun(val:string, ...):any? # Optional callback function.
----@param helpText? string
----@param flags? integer
----@param displayFunc? function # The function called when the command is called without any parameters. By default it just prints the value.
----@param postUpdate? fun(newVal:string, oldVal:string) # Ppost update function called after the value has been changed.
----@param commandOnly? boolean # If the convar is just a command and has no value associated with it.
-function EasyConvars:Register(name, default, func, helpText, flags, displayFunc, postUpdate, commandOnly)
+---Default display function for convars
+---@param reg EasyConvarsRegisteredData
+local function defaultDisplayFuncConvar(reg)
+    Msg(reg.name .. " = " .. tostring(reg.value) .. "\n")
+    if reg.desc ~= nil and reg.desc ~= "" then
+        Msg(reg.desc .. "\n")
+    end
+end
+
+---Default display function for toggles
+---@param reg EasyConvarsRegisteredData
+local function defaultDisplayFuncToggle(reg)
+    Msg(reg.name .. (truthy(reg.value) and " ON" or " OFF") .. "\n")
+end
+
+---Creates a convar of any type.
+---
+---For simple creation use one of the following:
+--- - [EasyConvars:RegisterConvar](lua://EasyConvars.RegisterConvar)
+--- - [EasyConvars:RegisterToggle](lua://EasyConvars.RegisterToggle)
+--- - [EasyConvars:RegisterCommand](lua://EasyConvars.RegisterCommand)
+---
+---@param ctype EasyConvarsType # Type of the convar.
+---@param name string # Name of the convar
+---@param defaultValue any|fun():any # Will be converted to a string. If given a function, the value will be determined on player spawn.
+---@param onUpdate? (fun(val:string, ...):any?)|(fun(newVal:string, oldVal:string):any) # Optional callback function.
+---@param helpText? string # Description of the convar
+---@param flags? CVarFlags|integer # Flag for the convar
+---@param displayFunc? fun(reg: EasyConvarsRegisteredData) # The function called when the convar is called without any parameters. By default it just prints the value.
+---@overload fun(name: string, defaultValue: any, onUpdate: fun(newVal: string, oldVal: string):any?, helpText: string, flags: integer, displayFunc: function)
+-- function EasyConvars:Register(name, default, onUpdate, helpText, flags, displayFunc, postUpdate, commandOnly)
+function EasyConvars:Register(ctype, name, defaultValue, onUpdate, helpText, flags, displayFunc)
 
     -- GlobalSys:CommandLineStr("-"..name, GlobalSys:CommandLineCheck("-"..name) and "1" or tostring(default or "0"))
     local launchVal = GlobalSys:CommandLineStr("-"..name, GlobalSys:CommandLineCheck("-"..name) and "1" or nil)
     self.registered[name] = {
+        type = ctype,
+        callback = onUpdate,
         value = launchVal,
         persistent = false,
-        isCommand = commandOnly == true,
-        postUpdate = postUpdate,
+        -- isCommand = commandOnly == true,
+        name = name,
         desc = helpText,
         wasChangedByUser = false,
+        displayFunc = displayFunc or vlua.select(ctype == EASYCONVARS_CONVAR, defaultDisplayFuncConvar, defaultDisplayFuncToggle),
     }
     local reg = self.registered[name]
 
     --Assign the initializer only if no launch value is set by user
-    if type(default) == "function" then
+    if type(defaultValue) == "function" then
         if launchVal == nil then
-            reg.initializer = default
+            reg.initializer = defaultValue
         else
             devprints2("EasyConvars", name, "initializer won't be used because it has a launch value of", launchVal)
         end
     else
-        reg.value = convertToSafeVal(default) or "0"
+        reg.value = convertToSafeVal(defaultValue) or "0"
     end
 
     helpText = helpText or ""
     flags = flags or 0
 
-    reg.callback = func
+    -- reg.callback = onUpdate
 
     Convars:RegisterCommand(name, function (_, ...)
         local args = {...}
 
         -- Display current value
-        if not reg.isCommand and #args == 0 then
-            if displayFunc then
-                displayFunc(reg.value)
-            else
-                Msg(name .. " = " .. tostring(reg.value) .. "\n")
-                if reg.desc ~= nil and reg.desc ~= "" then
-                    Msg(reg.desc .. "\n")
-                end
+        if reg.type == EASYCONVARS_CONVAR and #args == 0 then
+            if type(reg.displayFunc) == "function" then
+                reg.displayFunc(reg)
             end
+            -- Early exit
             return
         end
 
         local prevVal = reg.value
+        local prevTruthy = truthy(reg.value)
+
         callCallback(reg, args[1], ...)
+
         if prevVal ~= reg.value then
             reg.wasChangedByUser = true
+        end
+
+        -- Display the new toggled state
+        if reg.type == EASYCONVARS_TOGGLE then
+            if type(reg.displayFunc) == "function" then
+                reg.displayFunc(reg)
+            end
         end
 
         self:Save(name)
     end, helpText, flags)
 end
 
----Prints a warning to the console.
----@param msg any
+---
+---Prints a warning to the console except during internal handling.
+---
+---@param msg any # Warning to print
 function EasyConvars:Warn(msg)
     if not self._isLoading then
         warn(msg)
     end
 end
 
----Prints a message to the console.
----@param msg any
-function EasyConvars:Print(msg)
+---
+---Prints a message to the console except during internal handling.
+---
+---@param msg any # Message to print
+function EasyConvars:Msg(msg)
     if not self._isLoading then
         Msg(msg .. "\n")
         if IsInToolsMode() then
@@ -237,9 +214,12 @@ function EasyConvars:Print(msg)
     end
 end
 
+---
 ---Manually saves the current value of the convar with a given name.
+---
 ---This is done automatically when the value is changed if SetPersistent is set to true.
----@param name string
+---
+---@param name string # The name of the convar to save.
 function EasyConvars:Save(name)
     if not self.registered[name] then return end
     if self.registered[name].persistent == false then return end
@@ -255,16 +235,20 @@ function EasyConvars:Save(name)
     saver:SaveString("easyconvar_"..name, self.registered[name].value)
 end
 
+---
 ---Manually loads the saved value of the convar with a given name.
+---
 ---This is done automatically when the player spawns for any previously saved convar.
----@param name string
+---
+---@param name string # The name of the convar to load.
+---@return boolean # Returns true if the convar was loaded successfully.
 function EasyConvars:Load(name)
-    if not self.registered[name] then return end
+    if not self.registered[name] then return false end
 
     local loader = Player or GetListenServerHost()
     if not loader then
         warn("Cannot load convar '"..name.."', player does not exist!")
-        return
+        return false
     end
 
     self._isLoading = true
@@ -277,14 +261,17 @@ function EasyConvars:Load(name)
     end
 
     self._isLoading = false
+
+    return val ~= nil
 end
 
----Sets the convar as persistent. It will be saved to the player when changed and load its
----previous state when the map starts.
 ---
----Convars with previously saved data will have persistence automatically turned on when loaded.
----@param name string
----@param persistent boolean
+---Sets the convar as persistent.
+---
+---It will be saved to the player when changed and load its previous state when the player spawns.
+---
+---@param name string # The name of the convar.
+---@param persistent boolean # Whether the convar should be persistent.
 function EasyConvars:SetPersistent(name, persistent)
     if not self.registered[name] then return end
     self.registered[name].persistent = persistent
@@ -300,105 +287,142 @@ function EasyConvars:SetPersistent(name, persistent)
     end
 end
 
----Calls the register function using the same syntax as the built-in convar library, for easy converting.
----@param name string
----@param defaultValue? any|fun():any
----@param helpText? string
----@param flags? integer
----@param postUpdate? fun(newVal:string, oldVal:string): any # Ppost update function called after the value has been changed.
-function EasyConvars:RegisterConvar(name, defaultValue, helpText, flags, postUpdate)
-    self:Register(name, defaultValue, nil, helpText, flags, nil, postUpdate, false)
+---
+---Registers a new convar.
+---
+---@param name string # Name of the convar
+---@param defaultValue? "0"|any|fun():any # Default value of the convar, or an initializer function
+---@param helpText? string # Description of the convar
+---@param flags? `nil`|CVarFlags|integer # Flags for the convar
+---@param postUpdate? fun(newVal:string, oldVal:string): any # Update function called after the value has been changed
+---@param displayFunc? fun(reg: EasyConvarsRegisteredData) # Optional custom display function
+function EasyConvars:RegisterConvar(name, defaultValue, helpText, flags, postUpdate, displayFunc)
+    self:Register(EASYCONVARS_CONVAR,name, defaultValue, postUpdate, helpText, flags, displayFunc)
 end
 
----Calls the register function using the same syntax as the built-in convar library, for easy converting.
----@param name string
----@param callback fun(...):any?
----@param helpText? string
----@param flags? integer
----@param postUpdate? fun(newVal:string, oldVal:string) # Ppost update function called after the value has been changed.
-function EasyConvars:RegisterCommand(name, callback, helpText, flags, postUpdate)
-    self:Register(name, nil, callback, helpText, flags, nil, postUpdate, true)
+---
+---Registers a new command.
+---
+---@param name string # Name of the command
+---@param callback fun(val:string, ...):any? # Callback function
+---@param helpText? string # Description of the command
+---@param flags? CVarFlags|integer # Flags for the command
+function EasyConvars:RegisterCommand(name, callback, helpText, flags)
+    self:Register(EASYCONVARS_COMMAND, name, nil, callback, helpText, flags, nil)
 end
 
+---
+---Registers a new toggle convar.
+---
+---@param name string # Name of the convar
+---@param defaultValue? "0"|any|fun():any # Default value of the convar
+---@param helpText? string # Description of the convar
+---@param flags? `nil`|CVarFlags|integer # Flags for the convar
+---@param postUpdate? fun(newVal:string, oldVal:string): any # Update function called after the value has been changed
+---@param displayFunc? fun(reg: EasyConvarsRegisteredData) # Optional custom display function
+function EasyConvars:RegisterToggle(name, defaultValue, helpText, flags, postUpdate, displayFunc)
+    EasyConvars:Register(EASYCONVARS_TOGGLE, name, defaultValue, postUpdate, helpText, flags, displayFunc)
+end
+
+---
 ---Returns the convar as a string.
----@param name string
----@return string?
+---
+---@param name string # Name of the convar
+---@return string? # The value of the convar as a string or nil if convar does not exist
 function EasyConvars:GetStr(name)
     if not self.registered[name] then return nil end
     return self.registered[name].value
 end
 
+---
 ---Returns the convar as a boolean.
----@param name string
----@return boolean?
+---
+---@param name string # Name of the convar
+---@return boolean? # The value of the convar as a boolean or nil if convar does not exist
 function EasyConvars:GetBool(name)
     if not self.registered[name] then return nil end
     return truthy(self:GetStr(name))
 end
 
+---
 ---Returns the convar as a float.
----@param name string
----@return number?
+---
+---@param name string # Name of the convar
+---@return number? # The value of the convar as a number or nil if convar does not exist
 function EasyConvars:GetFloat(name)
     if not self.registered[name] then return nil end
     return tonumber(self:GetStr(name)) or 0
 end
 
+---
 ---Returns the convar as an integer.
----@param name string
----@return integer?
+---
+---@param name string # Name of the convar
+---@return integer? # The value of the convar as a truncated number or nil if convar does not exist
 function EasyConvars:GetInt(name)
     if not self.registered[name] then return nil end
     return math.floor(self:GetFloat(name))
 end
 
----Sets the value of the convar to a string and calls any associated callback.
----@param name string
----@param value string
+---
+---Sets the value of the convar to a string and calls the update.
+---
+---@param name string # Name of the convar
+---@param value string # The value to set
 function EasyConvars:SetStr(name, value)
     local reg = self.registered[name]
     if not reg then return nil end
     callCallback(reg, value)
 end
 
----Sets the value of the convar to a boolean and calls any associated callback.
----@param name string
----@param value boolean
+---
+---Sets the value of the convar to a boolean and calls the update.
+---
+---@param name string # Name of the convar
+---@param value boolean # The value to set
 function EasyConvars:SetBool(name, value)
     local reg = self.registered[name]
     if not reg then return nil end
     callCallback(reg, valueToBoolStr(value))
 end
 
----Sets the value of the convar to a float and calls any associated callback.
----@param name string
----@param value number
+---
+---Sets the value of the convar to a float and calls the update.
+---
+---@param name string # Name of the convar
+---@param value number # The value to set
 function EasyConvars:SetFloat(name, value)
     local reg = self.registered[name]
     if not reg then return nil end
     callCallback(reg, tostring(value))
 end
 
----Sets the value of the convar to an integer and calls any associated callback.
----@param name string
----@param value integer
+---
+---Sets the value of the convar to an integer and calls the update.
+---
+---@param name string # Name of the convar
+---@param value integer # The value to set
 function EasyConvars:SetInt(name, value)
     local reg = self.registered[name]
     if not reg then return nil end
     callCallback(reg, tostring(math.floor(value)))
 end
 
----Sets the raw value of the convar. For use inside command callbacks when a value needs to be set before the return.
----@param name string
----@param value any
+---
+---Sets the raw value of the convar without calling the update.
+---
+---@param name string # Name of the convar
+---@param value any # The value to set
 function EasyConvars:SetRaw(name, value)
     local reg = self.registered[name]
     if not reg then return nil end
     reg.value = tostring(value)
 end
 
+---
 ---Get if the convar was changed by the user in the console.
----@param name string
+---
+---@param name string # Name of the convar
 function EasyConvars:WasChangedByUser(name)
     local reg = self.registered[name]
     if not reg then return false end
@@ -406,23 +430,26 @@ function EasyConvars:WasChangedByUser(name)
 end
 
 
-local registerer = ListenToPlayerEvent
-if registerer == nil then
-    registerer = ListenToGameEvent
+-- Check which version of listener is available
+local listener = ListenToPlayerEvent
+if listener == nil then
+    listener = ListenToGameEvent
 end
-ListenToPlayerEvent("player_activate", function (params)
+listener("player_activate", function (params)
     Player:Delay(function ()
 
         for name, data in pairs(EasyConvars.registered) do
-            if data.initializer then
-                if data.value ~= nil then
-                    devprints2("EasyConvars", name, "initializer won't be used because it has a user value of", tostring(data.value))
-                else
-                    data.value = tostring(data.initializer())
-                    devprints("EasyConvars", name, "initializer value was", data.value)
+            -- Try to load convar, if fails use initializer
+            if not EasyConvars:Load(name) then
+                if data.initializer then
+                    if data.value ~= nil then
+                        devprints2("EasyConvars", name, "initializer won't be used because it has a user value of", tostring(data.value))
+                    else
+                        data.value = tostring(data.initializer())
+                        devprints("EasyConvars", name, "initializer value was", data.value)
+                    end
                 end
             end
-            EasyConvars:Load(name)
         end
         EasyConvars._isLoading = false
 
