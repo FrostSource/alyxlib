@@ -82,25 +82,29 @@ function meta:Slerp(target, t)
 end
 
 ---
----Translates the vector in a local coordinate system.
+---Translates a vector within a local coordinate system.
+---This function computes a new vector by applying an offset relative to the local axes defined by the forward, right, and up direction vectors.
 ---
----@param offset Vector # The translation offset vector.
+---@param offset Vector # The translation offset vector. This defines how much to move along the forward, right, and up directions.
+---                    - `offset.x`: Translation along the forward vector.
+---                    - `offset.y`: Translation along the right vector.
+---                    - `offset.z`: Translation along the up vector.
+---
 ---@param forward Vector # The forward direction of the local coordinate system.
 ---@param right Vector # The right direction of the local coordinate system.
 ---@param up Vector # The up direction of the local coordinate system.
----@return Vector # The translated 3D vector.
+---
+---@return Vector # A new vector representing the translated position.
+---
 function meta:LocalTranslate(offset, forward, right, up)
     local x = self.x + offset.x * forward.x + offset.y * right.x + offset.z * up.x
     local y = self.y + offset.x * forward.y + offset.y * right.y + offset.z * up.y
     local z = self.z + offset.x * forward.z + offset.y * right.z + offset.z * up.z
-    -- local x = self.x + offset.x * right.x + offset.y * up.x + offset.z * forward.x
-    -- local y = self.y + offset.x * right.y + offset.y * up.y + offset.z * forward.y
-    -- local z = self.y + offset.x * right.z + offset.y * up.z + offset.z * forward.z
     return Vector(x, y, z)
 end
 
 ---
----Calculates the angle difference between the calling vector and the given vector. This is always the smallest angle.
+---Calculates the angle difference in degrees between the calling vector and the given vector. This is always the smallest angle.
 ---
 ---@param vector Vector # The vector to calculate the angle difference with.
 ---@return number # Angle difference in degrees.
@@ -140,7 +144,8 @@ function meta:Unpack()
 end
 
 ---
----Returns the squared length of the vector, without using sqrt.
+---Returns the squared length (magnitude) of the vector.
+---More efficient than calculating the actual length as it avoids using `sqrt()`.
 ---
 ---@return number
 function meta:LengthSquared()
