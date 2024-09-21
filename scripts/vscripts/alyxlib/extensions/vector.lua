@@ -151,9 +151,13 @@ end
 
 function meta:SimilarTo(vector, tolerance)
     return IsVector(vector)
-        and math.isclose(self.x, vector.x, tolerance)
-        and math.isclose(self.y, vector.y, tolerance)
-        and math.isclose(self.z, vector.z, tolerance)
+
+---
+---Creates a copy of the vector.
+---
+---@return Vector # A new vector with the same components as the original.
+function meta:Clone()
+    return Vector(self.x, self.y, self.y)
 end
 
 return version
