@@ -293,9 +293,9 @@ function ColorClass:SetRGB(r, g, b, a)
 end
 
 ---Get the HSL color values from this `Color`.
----@return number? h # Hue color value in range [0-360]
----@return number? s # Saturation color value in range [0-100]
----@return number? l # Lightness color value in range [0-100]
+---@return number h # Hue color value in range [0-360]
+---@return number s # Saturation color value in range [0-100]
+---@return number l # Lightness color value in range [0-100]
 function ColorClass:GetHSL()
 	local h, s, l = rgbToHsl(self[1], self[2], self[3])
 	return math.floor(h * 360), math.floor(s * 100), math.floor(l * 100)
