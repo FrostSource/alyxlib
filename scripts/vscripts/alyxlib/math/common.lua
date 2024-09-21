@@ -88,5 +88,14 @@ function math.has_frac(number)
     return type(number) == "number" and number ~= math.floor(number)
 end
 
+---
+---Returns the fractional part of a number.
+---
+---@param number number # The number to get the fractional part of.
+---@return number # The fractional part of the number.
+function math.get_frac(number)
+    return number - math.floor(number)
+end
+
 
 return version
