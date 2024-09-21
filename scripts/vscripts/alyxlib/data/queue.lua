@@ -121,8 +121,9 @@ end
 ---
 ---@param ... any
 function QueueClass:Enqueue(...)
-    for _, value in ipairs({...}) do
-        table.insert(self.items, 1, value)
+    local args = {...}
+    for i = #args, 1, -1 do
+        table.insert(self.items, 1, args[i])
     end
 end
 
