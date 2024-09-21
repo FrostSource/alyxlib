@@ -119,37 +119,39 @@ Animation.Curves = {
 
 }
 
+---
+---Creates a new animation function.
+---
+---The returned function should be called with a time value between 0 and 1.
+---
 ---@generic T
----@param entity EntityHandle
----@param getter fun(self:EntityHandle):T
----@param setter fun(self:EntityHandle,vec:T)
----@param targetValue T
----@param curveFunc fun(startValue:T,endValue:T,time:number):T
----@return fun(time:number):boolean
+---@param entity EntityHandle # Entity to animate
+---@param getter fun(self:EntityHandle):T # Function to get the current value
+---@param setter fun(self:EntityHandle,vec:T) # Function to set the new value
+---@param targetValue T # Value to animate to
+---@param curveFunc fun(startValue:T,endValue:T,time:number):T # Animation curve
+---@return fun(time:number):boolean # New animation function
 function Animation:CreateAnimation(entity, getter, setter, targetValue, curveFunc)
     local startValue = getter(entity)
-    local isNumber = type(targetValue) == "number"
-    -- local _type
-    -- if type(targetValue) == "number" then
-    --     _type = "number"
-    -- elseif IsVector(targetValue) then
-    --     _type = "vector"
-    -- elseif IsQAngle(targetValue) then
-    --     _type = "qangle"
-    -- end
+
+    local special = nil
+    if IsVector(targetValue) then
+        special = Vector
+    elseif IsQAngle(targetValue) then
+        special = QAngle
+    end
 
     return function(t)
         local currentValue = getter(entity)
-        currentValue = curveFunc(startValue, targetValue, t)
-        -- if isNumber then
-        --     currentValue = curveFunc(startValue, targetValue, t)
-        -- else
-        --     currentValue = Vector(
-        --         curveFunc(currentValue.x, targetValue.x, t),
-        --         curveFunc(currentValue.y, targetValue.y, t),
-        --         curveFunc(currentValue.z, targetValue.z, t)
-        --     )
-        -- end
+        if not special then
+            currentValue = curveFunc(startValue, targetValue, t)
+        else
+            currentValue = special(
+                curveFunc(startValue.x, targetValue.x, t),
+                curveFunc(startValue.y, targetValue.y, t),
+                curveFunc(startValue.z, targetValue.z, t)
+            )
+        end
         setter(entity, currentValue)
 
         if t >= 1 then
@@ -157,23 +159,20 @@ function Animation:CreateAnimation(entity, getter, setter, targetValue, curveFun
             return true
         end
         return false
-
-        -- if isNumber then
-        --     return abs(targetValue - currentValue) <= 0.001
-        -- else
-        --     return (targetValue - currentValue):Length() <= 0.001
-        -- end
     end
 end
 
+---
+---Animates a value over time on an entity.
+---
 ---@generic T
----@param entity EntityHandle
----@param getter fun(self:EntityHandle):T
----@param setter fun(self:EntityHandle,vec:T)
----@param targetValue T
----@param curveFunc fun(startValue:T,endValue:T,time:number):T
----@param time number
----@param finishCallback? function
+---@param entity EntityHandle # Entity to animate
+---@param getter fun(self:EntityHandle):T # Function to get the current value
+---@param setter fun(self:EntityHandle,vec:T) # Function to set the new value
+---@param targetValue T # Value to animate to
+---@param curveFunc Animation.Curves|fun(startValue:T,endValue:T,time:number):T # Animation curve
+---@param time number # Total time of the animation
+---@param finishCallback? function # Callback that is called when the animation is finished
 function Animation:Animate(entity, getter, setter, targetValue, curveFunc, time, finishCallback)
     local anim = self:CreateAnimation(entity, getter, setter, targetValue, curveFunc)
     local startTime = Time()
@@ -193,13 +192,16 @@ function Animation:Animate(entity, getter, setter, targetValue, curveFunc, time,
     end)
 end
 
+---
+---Animates a value over time on this entity.
+---
 ---@generic T
----@param getter fun(self:EntityHandle):T
----@param setter fun(self:EntityHandle,vec:T)
----@param targetValue T
----@param curveFunc fun(startValue:T,endValue:T,time:number):T
----@param time number
----@param finishCallback? function
+---@param getter fun(self:EntityHandle):T # Function to get the current value
+---@param setter fun(self:EntityHandle,vec:T) # Function to set the new value
+---@param targetValue T # Value to animate to
+---@param curveFunc Animation.Curves|fun(startValue:T,endValue:T,time:number):T # Animation curve
+---@param time number # Total time of the animation
+---@param finishCallback? function # Callback that is called when the animation is finished
 function CBaseEntity:Animate(getter, setter, targetValue, curveFunc, time, finishCallback)
     Animation:Animate(self, getter, setter, targetValue, curveFunc, time, finishCallback)
 end
