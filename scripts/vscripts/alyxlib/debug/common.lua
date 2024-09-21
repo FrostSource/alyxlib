@@ -261,7 +261,11 @@ local symbols = {"and","break","do","else","elseif","end","false","for","functio
     ---
     Convars:RegisterCommand("code", function(_, ...)
         local code = excode(...)
-        -- print("Doing code:", code)
+
+        if IsInToolsMode() then
+            print("Doing code:", code)
+        end
+
         local f,err = load(code)
         if f == nil then
             print("Invalid code:", err)
@@ -279,7 +283,10 @@ local symbols = {"and","break","do","else","elseif","end","false","for","functio
         local ents = Entities:FindAllByName(name)
         local code = excode(...)
 
-        -- print("Doing code on entities named ("..name.."):", code)
+        if IsInToolsMode() then
+            print("Doing code on entities named ("..name.."):", code)
+        end
+
         for _, ent in ipairs(ents) do
             local f,err = load(code, nil, nil, ent:GetOrCreatePrivateScriptScope())
             if f == nil then
