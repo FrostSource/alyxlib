@@ -151,10 +151,13 @@ end
 ---| "D_NU" # Neutral
 
 ---Set the relationship of this NPC with a targetname or classname.
----@param target string # Targetname or classname.
+---@param target string|EntityHandle # Targetname, classname or entity.
 ---@param disposition RelationshipDisposition # Type of relationship with `target`.
 ---@param priority? number # How much the Subject(s) should Like/Hate/Fear the Target(s). Higher priority = stronger feeling. Default is 0.
 function CAI_BaseNPC:SetRelationship(target, disposition, priority)
+    if IsEntity(target) then
+        target = target--[[@as EntityHandle]]:GetName()
+    end
     priority = priority or 0
     self:EntFire("SetRelationship", target .. " " .. disposition .. " " .. priority)
 end
