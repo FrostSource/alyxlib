@@ -45,3 +45,9 @@ You can also join us on our [Discord server](https://discord.gg/42SC3Wyjv4) to g
 
 # Projects using AlyxLib
 
+<p align="center">
+<a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3144612716"><img src="https://steamuserimages-a.akamaihd.net/ugc/2318858611175367914/A9DF9C6F4BDAD028C899210A34ECB1573674D6B7/" width="23%"></img></a>
+<a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3145397582"><img src="https://steamuserimages-a.akamaihd.net/ugc/2397692528303465396/EC70CA957F433DBD8E9D1BCB19E12E7B896EFDE6/" width="23%"></img></a>
+<a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3329684800"><img src="https://steamuserimages-a.akamaihd.net/ugc/2397692528303495590/700AD9E3DD1C2984BCD4F2D588ACDD8BE2EB6EAD/" width="23%"></img></a>
+<a href="https://steamcommunity.com/sharedfiles/filedetails/?id=2703180455"><img src="https://steamuserimages-a.akamaihd.net/ugc/2397692528303482230/73852A6226202BAA79D1D7E3C88083D71F356D87/" width="23%"></img></a>
+</p>
