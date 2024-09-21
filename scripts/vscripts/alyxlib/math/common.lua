@@ -24,10 +24,10 @@ end
 ---Truncates a number to the specified number of decimal places.
 ---
 ---@param number number # The input number.The input number.
----@param places integer # The number of decimal places to keep.
+---@param places? integer # The number of decimal places to keep.
 ---@return number #  The input number truncated to the specified decimal places.
 function math.trunc(number, places)
-    local shift = 10 ^ places
+    local shift = 10 ^ (places or 1)
     return math.floor(number * shift) / shift
 end
 
