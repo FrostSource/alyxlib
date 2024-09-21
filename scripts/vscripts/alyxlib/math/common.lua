@@ -43,15 +43,32 @@ function math.round(number, decimals)
 end
 
 ---
----Check if two numbers are close to each other within a specified tolerance.
+---Checks if two numbers are close to each other within a specified tolerance.
 ---
----@param a number # The first number to compare.
----@param b number # The second number to compare.
----@param rel_tol? number # The relative tolerance (optional).
----@param abs_tol? number # The absolute tolerance (optional).
----@return boolean # True if the numbers are close; false otherwise.
+---@param a number       # The first number to compare.
+---@param b number       # The second number to compare.
+---@param rel_tol? number # The relative tolerance (optional). Defines the maximum allowed relative difference between `a` and `b` as a percentage of the larger of the two values.
+---@param abs_tol? number # The absolute tolerance (optional). Defines the maximum allowed fixed difference between `a` and `b`, regardless of their magnitudes.
+---@return boolean      # Returns `true` if the numbers are considered close based on the specified tolerances; otherwise, returns `false`.
+---
+--- **Examples:**
+---
+--- 1. **Relative Tolerance (`rel_tol`)**:
+---    ```lua
+---    local result1 = math.isclose(1000, 1020, 0.02)
+---    -- Expected Output: true
+---    -- Explanation: The difference (20) is within 2% of the larger number (1020), which allows a maximum difference of 20.4.
+---    ```
+---
+--- 2. **Absolute Tolerance (`abs_tol`)**:
+---    ```lua
+---    local result2 = math.isclose(1000, 1015, nil, 15)
+---    -- Expected Output: true
+---    -- Explanation: The difference (15) is within the fixed absolute tolerance of 15.
+---    ```
+---
 function math.isclose(a, b, rel_tol, abs_tol)
-    rel_tol = rel_tol or 1e-8
+    rel_tol = rel_tol or 1e-4
     abs_tol = abs_tol or 0.0
 
     if a == b then
