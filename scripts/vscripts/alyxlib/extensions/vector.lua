@@ -149,8 +149,19 @@ function meta:LengthSquared()
     return self.x * self.x + self.y * self.y + self.z * self.z
 end
 
-function meta:SimilarTo(vector, tolerance)
+---
+---Checks if this vector is similar to another vector within a given tolerance.
+---
+---@param vector Vector # The vector to compare against.
+---@param tolerance? number # The tolerance within which the vectors are considered similar. Default is 1e-5. See [math.isclose](lua://math.isclose)
+---@return boolean # Returns `true` if the vectors are similar within the tolerance, otherwise `false`.
+function meta:IsSimilarTo(vector, tolerance)
+    tolerance = tolerance or 1e-5
     return IsVector(vector)
+        and math.isclose(self.x, vector.x, nil, tolerance)
+        and math.isclose(self.y, vector.y, nil, tolerance)
+        and math.isclose(self.z, vector.z, nil, tolerance)
+end
 
 ---
 ---Creates a copy of the vector.

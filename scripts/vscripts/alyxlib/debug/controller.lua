@@ -92,7 +92,7 @@ Convars:RegisterCommand("alyxlib_start_print_controller_analog_positions", funct
                 local desc = (h == 1 and "Left" or "Right")
                 for i = 0, 4 do
                     local pos = Player:GetAnalogActionPositionForHand(h, i)
-                    if not pos:SimilarTo(analogPositions[h][i]) then
+                    if not pos:IsSimilarTo(analogPositions[h][i]) then
                         analogPositions[h][i] = pos
                         Msg(desc .. " controller: [".. i .."] " .. Input:GetAnalogDescription(i) .. " : " .. Debug.SimpleVector(pos) .. "\n")
                     end
