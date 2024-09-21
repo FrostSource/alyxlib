@@ -61,9 +61,13 @@ Schedule = {
 function CAI_BaseNPC:StartSchedule(state, type, interruptability, reacquire, goal)
 
     local goalName
+    local schedName = DoUniqueString("_npc_generated_schedule")
+    local origin = Vector()
 
     if IsVector(goal) then
-        goalName = DoUniqueString("schedule_positional_target")
+        -- Make schedule its own target
+        goalName = schedName
+        origin = goal
     else
         goalName = goal:GetName()
     end
@@ -75,16 +79,8 @@ function CAI_BaseNPC:StartSchedule(state, type, interruptability, reacquire, goa
         interruptability = interruptability,
         resilient = reacquire,
         goalent = goalName,
+        origin = origin
     })
-
-    if IsVector(goal) then
-        local target = SpawnEntityFromTableSynchronous("info_target", {
-            origin = goal,
-            targetname = goalName
-        })
-        -- parent target to schedule so it will be killed when schedule is
-        target:SetParent(schedule, "")
-    end
 
     schedule:EntFire("StartSchedule")
 
