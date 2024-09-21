@@ -14,7 +14,7 @@ This addon must be subscribed to and enabled alongside any other addons which us
 
 If you write complex scripts for your addons please give AlyxLib a try by visiting the [url=https://github.com/FrostSource/alyxlib]GitHub Page[/url] for detailed instructions on how to use AlyxLib with your addon.
 
-[b][i]Please Note: AlyxLib is still in early stages of developement and this initial release servers as a test for the four addons currently using it![/i][/b]
+[b][i]Please Note: AlyxLib is still in early stages of developement and this initial release serves as a test for the four addons currently using it![/i][/b]
 
 [h1]Scalable Init Support[/h1]
 
