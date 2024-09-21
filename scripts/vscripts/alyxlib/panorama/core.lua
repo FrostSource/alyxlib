@@ -75,6 +75,44 @@ function Panorama:Send(panelEntity, ...)
 end
 
 ---
+---Converts any value to a JSON string.
+---
+---@param value any # The value to convert
+---@return string # The JSON string
+function Panorama:ToJSON(value)
+    if type(value) == "nil" then return "null"
+    elseif type(value) == "boolean" then return tostring(value)
+    elseif type(value) == "number" then return tostring(value)
+    elseif IsVector(value) or IsQAngle(value) then
+        return string.format("[%.2f,%.2f,%.2f]", value.x, value.y, value.z)
+    elseif type(value) == "table" then
+        -- If it's an array
+        if #value == 0 then
+            local result = "{"
+            local first = true
+            for key, val in pairs(value) do
+                if not first then result = result .. "," end
+                result = result .. Panorama:ToJSON(key) .. ":" .. Panorama:ToJSON(val)
+                first = false
+            end
+            return result .. "}"
+        -- If it's an object
+        else
+            local result = "["
+            local first = true
+            for _, val in ipairs(value) do
+                if not first then result = result .. "," end
+                result = result .. Panorama:ToJSON(val)
+                first = false
+            end
+            return result .. "]"
+        end
+    else
+        return string.format("%q", value)
+    end
+end
+
+---
 ---Get the panorama id from an entity if it has one.
 ---
 ---@param entityPanel EntityHandle
