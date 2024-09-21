@@ -4403,6 +4403,7 @@ MAX_PATTACH_TYPES           = 15
 --#region Unknown globals
 
 -- Found through brute force.
+
 BURST   = 5
 EMPTY   = 0
 TAUNT   = 14
@@ -4413,6 +4414,69 @@ ACT_FLY = 25
 ACT_HOP = 30
 ACT_RUN = 10
 ACT_USE = 47
+
+-- CVar flags
+
+---No flags
+FCVAR_NONE                       = 0
+---If this is set, the convar will become anonymous and won't show up in the 'find' results.
+FCVAR_UNREGISTERED               = 1
+---Hidden in released products. Flag is removed automatically if ALLOW_DEVELOPMENT_CVARS is defined.
+FCVAR_DEVELOPMENTONLY            = 2
+---Hidden. Doesn't appear in find or autocomplete. Like DEVELOPMENTONLY, but can't be compiled out.
+FCVAR_HIDDEN                     = 16
+---Makes the ConVar value hidden from all clients ( For example sv_password )
+FCVAR_PROTECTED                  = 32
+---Executing the command or changing the ConVar is only allowed in singleplayer
+FCVAR_SPONLY                     = 64
+---Save the ConVar value into client.vdf
+FCVAR_ARCHIVE                    = 128
+---For serverside ConVars, notifies all players with blue chat text when the value gets changed
+FCVAR_NOTIFY                     = 256
+---For clientside commands, sends the value to the server
+FCVAR_USERINFO                   = 512
+---Forces the ConVar to only have printable characters ( No control characters )
+FCVAR_PRINTABLEONLY              = 1024
+---Don't log the ConVar changes to console/log files/users
+FCVAR_UNLOGGED                   = 2048
+---Tells the engine to never print this variable as a string. This is used for variables which may contain control characters.
+FCVAR_NEVER_AS_STRING            = 4096
+---For serverside ConVars, it will send its value to all clients. The ConVar with the same name must also exist on the client!
+FCVAR_REPLICATED                 = 8192
+---Requires sv_cheats to be enabled to change the ConVar or run the command
+FCVAR_CHEAT                      = 16384
+---Unknown split screen flag
+FCVAR_SS                         = 32768
+---Force the ConVar to be recorded by demo recordings.
+FCVAR_DEMO                       = 65536
+---Opposite of FCVAR_DEMO, ensures the ConVar is not recorded in demos
+FCVAR_DONTRECORD                 = 131072
+---Makes the ConVar not changeable while connected to a server or in singleplayer
+FCVAR_NOT_CONNECTED              = 4194304
+---Unknown
+FCVAR_VCONSOLE_SET_FOCUS         = 1073741824
+
+---@alias CVarFlags
+---|`FCVAR_NONE` # No flags
+---|`FCVAR_UNREGISTERED` # If this is set, the convar will become anonymous and won't show up in the 'find' results.
+---|`FCVAR_DEVELOPMENTONLY` # Hidden in released products. Flag is removed automatically if ALLOW_DEVELOPMENT_CVARS is defined.
+---|`FCVAR_HIDDEN` # Hidden. Doesn't appear in find or autocomplete. Like DEVELOPMENTONLY, but can't be compiled out.
+---|`FCVAR_PROTECTED` # Makes the ConVar value hidden from all clients ( For example sv_password )
+---|`FCVAR_SPONLY` # Executing the command or changing the ConVar is only allowed in singleplayer
+---|`FCVAR_ARCHIVE` # Save the ConVar value into client.vdf
+---|`FCVAR_NOTIFY` # For serverside ConVars, notifies all players with blue chat text when the value gets changed
+---|`FCVAR_USERINFO` # For clientside commands, sends the value to the server
+---|`FCVAR_PRINTABLEONLY` # Forces the ConVar to only have printable characters ( No control characters )
+---|`FCVAR_UNLOGGED` # Don't log the ConVar changes to console/log files/users
+---|`FCVAR_NEVER_AS_STRING` # Tells the engine to never print this variable as a string. This is used for variables which may contain control characters.
+---|`FCVAR_REPLICATED` # For serverside ConVars, it will send its value to all clients. The ConVar with the same name must also exist on the client!
+---|`FCVAR_CHEAT` # Requires sv_cheats to be enabled to change the ConVar or run the command
+---|`FCVAR_SS` # Unknown split screen flag
+---|`FCVAR_DEMO` # Force the ConVar to be recorded by demo recordings.
+---|`FCVAR_DONTRECORD` # Opposite of FCVAR_DEMO, ensures the ConVar is not recorded in demos
+---|`FCVAR_NOT_CONNECTED` # Makes the ConVar not changeable while connected to a server or in singleplayer
+---|`FCVAR_VCONSOLE_SET_FOCUS` # Unknown
+
 
 --#endregion
 
