@@ -86,9 +86,10 @@ end
 
 ---
 ---Add a table value with an associated weight.
+---
 ---If `tbl` already has a weight key then `weight` parameter can be omitted.
 ---
----Note: The table `tbl` is not cloned, the given reference is used.
+---**Note:** The table `tbl` is not cloned, the given reference is used.
 ---
 ---@param tbl table # Table of values that will be returned.
 ---@param weight? number # Weight for this table.
@@ -96,14 +97,17 @@ function WR:Add(tbl, weight)
     if weight ~= nil then tbl.weight = weight end
     self.ItemPool[#self.ItemPool+1] = tbl
 end
+
 ---
----Get the total weight of this weighted random object.
+---Get the sum of all weights in the WeightedRandom.
 ---
 ---@return number # The sum of all weights.
 function WR:TotalWeight()
     local weight_sum = 0
     for _,item in ipairs(self.ItemPool) do
-        weight_sum = weight_sum + item.weight
+        if item.weight then
+            weight_sum = weight_sum + item.weight
+        end
     end
     return weight_sum
 end
@@ -121,9 +125,11 @@ function WR:Random()
         weight_remaining = RandomFloat(0, weight_sum)
     end
     for _,item in ipairs(self.ItemPool) do
-        weight_remaining = weight_remaining - item.weight
-        if weight_remaining < 0 then
-            return item
+        if item.weight then
+            weight_remaining = weight_remaining - item.weight
+            if weight_remaining < 0 then
+                return item
+            end
         end
     end
     -- Return to last item just in case (should never reach here.)
