@@ -22,6 +22,11 @@ Convars:RegisterCommand("alyxlib_start_print_controller_button_presses", functio
         return
     end
 
+    if not IsVREnabled() then
+        warn("Cannot print controller buttons outside of VR mode!")
+        return
+    end
+
     local buttonsPressed = {[0]={},[1]={}}
 
     player:SetContextThink("DebugPrintControllerButtonPresses", function()
