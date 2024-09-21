@@ -20,33 +20,33 @@ end
 ---
 ---The entity can be initialized if it accepts the input "AddCSSClass".
 ---
----@param entityPanel EntityHandle # The entity to initialize.
+---@param panelEntity EntityHandle # The entity to initialize.
 ---@param customId? string # If nil the id will be generated automatically.
-function Panorama:InitPanel(entityPanel, customId)
+function Panorama:InitPanel(panelEntity, customId)
     local id = customId
 
     if not id or id == "" then
-        if entityPanel:GetName() ~= "" then
-            id = DoUniqueString(entityPanel:GetName() .. "_panoid")
+        if panelEntity:GetName() ~= "" then
+            id = DoUniqueString(panelEntity:GetName() .. "_panoid")
         else
-            id = DoUniqueString(entityPanel:GetClassname() .. "_panoid")
+            id = DoUniqueString(panelEntity:GetClassname() .. "_panoid")
         end
     end
 
-    entityPanel.__panoid = id
-    DoEntFireByInstanceHandle(entityPanel, "AddCSSClass", id, 0, nil, nil)
+    panelEntity.__panoid = id
+    DoEntFireByInstanceHandle(panelEntity, "AddCSSClass", id, 0, nil, nil)
 end
 
 ---
 ---Send data to a panorama panel.
 ---
----@param entityPanel EntityHandle
----@param ... any
-function Panorama:Send(entityPanel, ...)
+---@param panelEntity EntityHandle # The entity to send data to.
+---@param ... any # The data to send. Each value will be converted to a string.
+function Panorama:Send(panelEntity, ...)
     ---@diagnostic disable-next-line: undefined-field
-    local id = entityPanel.__panoid
+    local id = panelEntity.__panoid
     if not id then
-        warn(Debug.EntStr(entityPanel), "has not been initialized with a panorama id!")
+        warn(Debug.EntStr(panelEntity), "has not been initialized with a panorama id!")
         return
     end
 
