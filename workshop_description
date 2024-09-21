@@ -2,7 +2,9 @@
 
 AlyxLib is a set of scripts and libraries that can be used by Half-Life: Alyx addons to improve the scripting experience and add features that aren't in the base API.
 
-AlyxLib on its own also has a lot of useful console commands to make testing, debugging and playing easier for power-users. At the moment these commands are undocumented but will be listed in detail in the near future as AlyxLib progresses.
+AlyxLib on its own also has a lot of useful console commands to make testing/debugging and playing easier for power-users.
+
+[url=https://github.com/FrostSource/alyxlib/wiki/Console-Commands]Click here for a list of all console commands[/url]
 
 [h1]For players[/h1]
 
