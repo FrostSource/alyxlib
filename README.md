@@ -1,4 +1,24 @@
-# AlyxLib
+
+<p align="center">
+<picture>
+    <source srcset="https://github.com/user-attachments/assets/5888846f-88b6-4a35-bf83-51e31cdfdcff" media="(prefers-color-scheme: light)">
+    <source srcset="https://github.com/user-attachments/assets/27af88d4-265f-4c58-83ef-d68cba14f1f9" media="(prefers-color-scheme: dark)">
+    <img alt="AlyxLib Logo" src="https://github.com/user-attachments/assets/27af88d4-265f-4c58-83ef-d68cba14f1f9" width="250">
+</picture>
+</p>
+
+<div align="center">
+
+[![License](https://img.shields.io/badge/License-MIT-04663E)](#license)
+[![issues](https://img.shields.io/github/issues/FrostSource/alyxlib?color=04663E)](https://github.com/FrostSource/alyxlib/issues)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/w/FrostSource/alyxlib?color=04663E)
+
+[![Discord](https://img.shields.io/discord/825047476146012261?style=for-the-badge&logo=discord&logoColor=white&label=discord&logoSize=auto&labelColor=5865F2&color=2ea44f)](https://discord.gg/42SC3Wyjv4 "Join the Discord")
+[![Steam](https://img.shields.io/steam/downloads/3329679071?style=for-the-badge&logo=steam&label=steam&logoSize=auto&labelColor=black&color=2ea44f)](https://steamcommunity.com/sharedfiles/filedetails/?id=3329679071 "AlyxLib workshop")
+
+[![view - Documentation](https://img.shields.io/badge/view-Documentation-blue?style=for-the-badge)](https://github.com/FrostSource/alyxlib/wiki "Go to project documentation")
+
+</div>
 
 > [!WARNING]\
 > this repository has been made public to create the wiki and may not work as intended until this message is removed!
