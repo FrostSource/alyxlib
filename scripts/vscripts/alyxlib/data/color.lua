@@ -126,7 +126,7 @@ end
 ---@field lightness integer # Lightness component.
 local ColorClass = {}
 
-if pcall(require, "storage") then
+if Storage then
     Storage.RegisterType("Color", ColorClass)
 
     ---
