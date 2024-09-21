@@ -10,22 +10,25 @@
 ]]
 
 ---
----Weighted random allows you to assign chances to tables.
----
----Should be loaded into global scope by using the following line:
----
----      require "math.weighted_random"
+---A list of tables with associated weights.
 ---
 ---@class WeightedRandom
 local WR = {
-    ---Root list containing all weighted tables.
+    ---List containing all weighted tables.
     ---@type table[]
     ItemPool = {},
+
     ---If true this weighted random will use math.random().
     ---Otherwise it uses Valve's RandomFloat().
     UseRandomSeed = false,
 }
 WR.__index = WR
+
+---
+---Individual item in the list of weighted tables.
+---
+---@class WeightedRandomItem
+---@field weight number # The weight of this item.
 
 if pcall(require, "alyxlib.storage") then
     Storage.RegisterType("WeightedRandom", WR)
@@ -108,7 +111,7 @@ end
 ---
 ---Pick a random table from the list of weighted tables.
 ---
----@return table
+---@return WeightedRandomItem # The chosen table.
 function WR:Random()
     local weight_sum = self:TotalWeight()
     local weight_remaining
@@ -142,8 +145,8 @@ end
 ---
 ---Params:
 ---
----@param weights table[]|`{\n\t{ weight = 1 },\n}`
----@return WeightedRandom
+---@param weights WeightedRandomItem[] # List of weighted tables.
+---@return WeightedRandom # WeightedRandom object.
 function WeightedRandom(weights)
     return setmetatable({ItemPool = weights or {}}, WR)
 end
