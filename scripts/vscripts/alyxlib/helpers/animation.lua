@@ -3,25 +3,26 @@
 Animation = {}
 
 local localBounceOut = function(a, b, t)
-    local c = math.abs(b - a)
-    if t < (1 / 2.75) then
-        return c * (7.5625 * t * t) + a
-    elseif t < (2 / 2.75) then
-        t = t - (1.5 / 2.75)
-        return c * (7.5625 * t * t + 0.75) + a
-    elseif t < (2.5 / 2.75) then
-        t = t - (2.25 / 2.75)
-        return c * (7.5625 * t * t + 0.9375) + a
+    local normalizedT = t
+    if normalizedT < (1 / 2.75) then
+        return a + (b - a) * 7.5625 * normalizedT * normalizedT
+    elseif normalizedT < (2 / 2.75) then
+        normalizedT = normalizedT - (1.5 / 2.75)
+        return a + (b - a) * (7.5625 * normalizedT * normalizedT + 0.75)
+    elseif normalizedT < (2.5 / 2.75) then
+        normalizedT = normalizedT - (2.25 / 2.75)
+        return a + (b - a) * (7.5625 * normalizedT * normalizedT + 0.9375)
     else
-        t = t - (2.625 / 2.75)
-        return c * (7.5625 * t * t + 0.984375) + a
+        normalizedT = normalizedT - (2.625 / 2.75)
+        return a + (b - a) * (7.5625 * normalizedT * normalizedT + 0.984375)
     end
 end
 
 local localBounceIn = function(a, b, t)
-    return b - localBounceOut(0, b - a, 1 - t) + a
+    return a + (b - a) * (1 - localBounceOut(0, 1, 1 - t))
 end
 
+---@enum Animation.Curves
 Animation.Curves = {
     linear = function(a, b, t)
         return a * (1 - t) + b * t
@@ -50,39 +51,54 @@ Animation.Curves = {
 
     -- Elastic In curve function
     elasticIn = function(a, b, t)
-        local c = math.abs(b - a)
-        if t == 0 then return a end
-        if t == 1 then return b end
-        local p = 0.3 * c
+        local c = b - a
+        local p = 0.3
         local s = p / 4
-        t = t - 1
-        return -(c * 2^(-10 * t) * math.sin((t - s) * (2 * math.pi) / p)) + a
+
+        if t == 0 then
+            return a
+        elseif t == 1 then
+            return b
+        else
+            local postFix = 2 ^ (10 * (t - 1)) * math.sin((t - 1 + s) * (2 * math.pi) / p)
+            return a + c * postFix
+        end
     end,
 
     -- Elastic Out curve function
     elasticOut = function(a, b, t)
-        local c = math.abs(b - a)
-        if t == 0 then return a end
-        if t == 1 then return b end
-        local p = 0.3 * c
+        local c = b - a
+        local p = 0.3
         local s = p / 4
-        return c * 2^(-10 * t) * math.sin((t - s) * (2 * math.pi) / p) + b
+
+        if t == 0 then
+            return a
+        elseif t == 1 then
+            return b
+        else
+            local postFix = 2 ^ (-10 * t) * math.sin((t - s) * (2 * math.pi) / p)
+            return a + c * (postFix + 1)
+        end
     end,
 
     -- Elastic In Out curve function
     elasticInOut = function(a, b, t)
-        local c = math.abs(b - a)
-        if t == 0 then return a end
-        if t == 1 then return b end
-        t = t * 2
-        local p = 0.3 * c
+        local c = b - a
+        local p = 0.3
         local s = p / 4
-        if t < 1 then
-            t = t - 1
-            return -0.5 * (c * 2^(-10 * t) * math.sin((t - s) * (2 * math.pi) / p)) + a
+
+        if t == 0 then
+            return a
+        elseif t == 1 then
+            return b
+        elseif t < 0.5 then
+            local t2 = t * 2
+            local postFix = 2 ^ (10 * (t2 - 1)) * math.sin((t2 - 1 + s) * (2 * math.pi) / p)
+            return a + c * 0.5 * postFix
         else
-            t = t - 1
-            return c * 2^(-10 * t) * math.sin((t - s) * (2 * math.pi) / p) * 0.5 + b
+            local t2 = t * 2 - 1
+            local postFix = 2 ^ (-10 * t2) * math.sin((t2 - s) * (2 * math.pi) / p)
+            return a + c * 0.5 * (postFix + 2)
         end
     end,
 
@@ -95,9 +111,9 @@ Animation.Curves = {
     -- Bounce In Out curve function
     bounceInOut = function(a, b, t)
         if t < 0.5 then
-            return localBounceIn(a, b, t * 2) * 0.5 + a
+            return a + (b - a) * 0.5 * localBounceIn(0, 1, t * 2)
         else
-            return localBounceOut(a, b, t * 2 - 1) * 0.5 + (b - a) * 0.5 + a
+            return a + (b - a) * 0.5 * localBounceOut(0, 1, t * 2 - 1) + (b - a) * 0.5
         end
     end,
 
