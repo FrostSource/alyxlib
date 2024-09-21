@@ -101,14 +101,16 @@ end
 
 ---
 ---Capitalizes letters in the input string.
+---
 ---If `onlyFirstLetter` is true, it capitalizes only the first letter.
+---
 ---If `onlyFirstLetter` is false or not provided, it capitalizes all letters.
 ---
 ---@param s string # The input string to be capitalized.
----@param only_first_letter boolean # (optional) If true, only the first letter is capitalized. Default is false.
+---@param onlyFirstLetter boolean # (optional) If true, only the first letter is capitalized. Default is false.
 ---@return string # The capitalized string.
-function string.capitalize(s, only_first_letter)
-    if only_first_letter then
+function string.capitalize(s, onlyFirstLetter)
+    if onlyFirstLetter then
         local upper = s:gsub("^%l", string.upper)
         return upper
     else
