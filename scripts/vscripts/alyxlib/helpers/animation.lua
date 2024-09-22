@@ -219,3 +219,5 @@ end
 function CBaseEntity:Animate(getter, setter, targetValue, curveFunc, time, finishCallback)
     Animation:Animate(self, getter, setter, targetValue, curveFunc, time, finishCallback)
 end
+
+return Animation.version

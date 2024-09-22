@@ -449,7 +449,4 @@ listenFunc(listenFor, function(params)
     end
 end, nil)
 
-
-print("gesture.lua ".. Gesture.version .." initialized...")
-
-return Gesture
+return Gesture.version

@@ -750,7 +750,4 @@ CBaseEntity.Load        = Storage.Load
 
 CBaseEntity.LoadAll     = function(self) Storage.LoadAll(self, true) end
 
-
-print("storage.lua ".. Storage.version .." initialized...")
-
-return Storage
+return Storage.version

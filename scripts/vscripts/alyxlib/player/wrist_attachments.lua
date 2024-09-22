@@ -165,6 +165,4 @@ ListenToPlayerEvent("primary_hand_changed", function (params)
     WristAttachments:Update()
 end)
 
-print("wrist_attachments.lua ".. WristAttachments.version .." initialized...")
-
 return WristAttachments.version

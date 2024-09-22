@@ -69,3 +69,5 @@ function CBaseEntity:Grab(hand)
     Player:GrabByHandle(self, hand)
 end
 Expose(CBaseEntity.Grab, "Grab", CBaseEntity)
+
+return version

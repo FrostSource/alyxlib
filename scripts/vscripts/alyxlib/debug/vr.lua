@@ -99,3 +99,5 @@ Convars:RegisterCommand("alyxlib_add_hand_attachment", function (_, classname, h
 
     hand:AddHandAttachment(ent)
 end, "", 0)
+
+return version

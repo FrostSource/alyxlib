@@ -221,3 +221,5 @@ local xenClasses = {
 function CAI_BaseNPC:IsXen()
     return vlua.find(xenClasses, self:GetClassname()) ~= nil
 end
+
+return version

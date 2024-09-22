@@ -136,3 +136,5 @@ EF_ITEM_BLINK         = 256
 EF_PARENT_ANIMATES    = 512
 ---@type number
 EF_FOLLOWBONE         = 1024
+
+return version

@@ -118,3 +118,5 @@ Convars:RegisterCommand("alyxlib_stop_print_controller_analog_positions", functi
     player:SetContextThink("DebugPrintControllerAnalogPositions", nil, 0)
     Msg("Stopped printing controller analog positions...\n")
 end, "", 0)
+
+return version

@@ -359,3 +359,5 @@ end
 function IsColor(value)
 	return type(value) == "table" and getmetatable(value) == ColorClass
 end
+
+return version

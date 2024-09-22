@@ -977,3 +977,5 @@ end
 function Debug.EntStr(ent)
     return "[" .. ent:GetClassname() .. ", " .. ent:GetName() .. "]"
 end
+
+return Debug.version

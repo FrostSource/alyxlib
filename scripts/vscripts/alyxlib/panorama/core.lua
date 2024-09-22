@@ -125,6 +125,4 @@ function Panorama:GetId(entityPanel)
     return entityPanel.__panoid
 end
 
-print("panorama/core.lua ".. Panorama.version .." initialized...")
-
 return Panorama.version

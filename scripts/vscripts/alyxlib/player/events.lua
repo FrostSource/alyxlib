@@ -618,4 +618,4 @@ local function listenEventWeaponSwitch(data)
 end
 ListenToGameEvent("weapon_switch", listenEventWeaponSwitch, nil)
 
-
+return version

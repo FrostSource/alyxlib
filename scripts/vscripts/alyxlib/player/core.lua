@@ -857,6 +857,4 @@ end
 require "alyxlib.player.hands"
 require "alyxlib.player.events"
 
-print("player.lua ".. version .." initialized...")
-
 return version

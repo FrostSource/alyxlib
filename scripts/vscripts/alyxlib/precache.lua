@@ -89,8 +89,4 @@ ListenToPlayerEvent("player_activate", function (params)
     end, nil)
 end)
 
-local version = "v1.0.0"
-
-print("precache.lua ".. version .." initialized...")
-
 return version

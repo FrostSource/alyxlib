@@ -916,7 +916,4 @@ function CalcClosestCornerOnEntityAABB(entity, position)
     return closestCorner
 end
 
-
-print("globals.lua ".. version .." initialized...")
-
 return version

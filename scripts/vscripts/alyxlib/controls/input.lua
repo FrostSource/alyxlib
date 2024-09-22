@@ -850,7 +850,4 @@ ListenToGameEvent("player_activate", function()
     end
 end, nil)
 
-
-print("input.lua ".. Input.version .." initialized...")
-
-return Input
+return Input.version

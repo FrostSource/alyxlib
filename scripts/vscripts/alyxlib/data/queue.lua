@@ -230,3 +230,5 @@ function Queue(...)
     },
     QueueClass)
 end
+
+return version

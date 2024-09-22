@@ -258,3 +258,5 @@ function Util.VectorFromString(str)
     local x, y, z = str:match("(%d+)[^%d]+(%d*)[^%d]+(%d*)")
     return Vector(tonumber(x), tonumber(y), tonumber(z))
 end
+
+return Util.version

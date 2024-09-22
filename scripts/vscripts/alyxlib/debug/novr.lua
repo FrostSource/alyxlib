@@ -223,3 +223,5 @@ Convars:RegisterCommand("novr_player_use_vr_speed", function (_, on)
         Msg("NoVR->VR Move Speed OFF")
     end
 end, "", 0)
+
+return version

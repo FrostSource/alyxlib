@@ -210,8 +210,6 @@ function StackClass:__tostring()
 end
 
 
-
-
 ---
 ---Create a new `Stack` object.
 ---First value is at the top.
@@ -232,3 +230,5 @@ function Stack(...)
     },
     StackClass)
 end
+
+return version

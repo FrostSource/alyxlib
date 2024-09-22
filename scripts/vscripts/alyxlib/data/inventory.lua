@@ -219,3 +219,5 @@ function Inventory(starting_inventory)
     },
     InventoryClass)
 end
+
+return version

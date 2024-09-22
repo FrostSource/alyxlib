@@ -157,3 +157,4 @@ function WeightedRandom(weights)
     return setmetatable({ItemPool = weights or {}}, WR)
 end
 
+return version

@@ -84,6 +84,4 @@ function HapticSequence(duration, pulseStrength, pulseInterval)
     return setmetatable(inst, HapticSequenceClass)
 end
 
-print("haptics.lua ".. HapticSequenceClass.version .." initialized...")
-
-return HapticSequenceClass
+return HapticSequenceClass.version

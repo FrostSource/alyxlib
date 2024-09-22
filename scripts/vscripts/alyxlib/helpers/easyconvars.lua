@@ -456,6 +456,4 @@ listener("player_activate", function (params)
     end)
 end, nil)
 
-print("easyconvars.lua ".. EasyConvars.version .." initialized...")
-
-return EasyConvars
+return EasyConvars.version
