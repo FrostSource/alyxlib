@@ -68,7 +68,7 @@ See the extensive wiki for full function reference and code examples.
 
 Please feel free to create an issue with your problem, question or suggestion.
 
-You can also join us on our [Discord server](https://discord.gg/42SC3Wyjv4) to get faster responses.
+You can also join us on our <img src="https://github.com/user-attachments/assets/347c331b-4105-4d13-ba90-d4dec3952c75" width="16"> [Discord server](https://discord.gg/42SC3Wyjv4) to get faster responses.
 
 ## 🌟Projects using AlyxLib
 
