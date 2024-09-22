@@ -1,5 +1,5 @@
 --[[
-    v1.3.0
+    v1.3.1
     https://github.com/FrostSource/alyxlib
 
     Provides string class extension methods.
@@ -9,7 +9,7 @@
     require "alyxlib.extensions.string"
 ]]
 
-local version = "v1.3.0"
+local version = "v1.3.1"
 
 ---
 ---Gets if a string starts with a substring.

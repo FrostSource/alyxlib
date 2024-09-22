@@ -1,5 +1,5 @@
 --[[
-    v1.8.0
+    v1.9.0
     https://github.com/FrostSource/alyxlib
 
     Debug utility functions.
@@ -13,7 +13,7 @@ require "alyxlib.extensions.entity"
 require "alyxlib.math.common"
 
 Debug = {}
-Debug.version = "v1.8.0"
+Debug.version = "v1.9.0"
 
 ---Try to find an entity using a target string.
 ---@param target string

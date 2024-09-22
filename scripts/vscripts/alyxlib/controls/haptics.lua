@@ -1,5 +1,5 @@
 --[[
-    v1.0.0
+    v1.0.1
     https://github.com/FrostSource/alyxlib
 
     Haptic sequences allow for more complex vibrations than the one-shot pulses that the base API provides.
@@ -28,7 +28,7 @@ local HapticSequenceClass = {
     pulseWidth_us = 0,
 }
 HapticSequenceClass.__index = HapticSequenceClass
-HapticSequenceClass.version = "v1.0.0"
+HapticSequenceClass.version = "v1.0.1"
 
 ---
 ---Start the haptic sequence on a given hand.

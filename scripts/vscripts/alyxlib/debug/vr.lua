@@ -9,6 +9,8 @@
     require "alyxlib.debug.vr"
 ]]
 
+local version = "v1.0.0"
+
 ---Get a hand entity from its name.
 ---@param handName string
 ---@return CPropVRHand?

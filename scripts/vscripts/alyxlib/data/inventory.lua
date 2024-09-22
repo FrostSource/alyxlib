@@ -10,6 +10,8 @@
     require "alyxlib.data.inventory"
 ]]
 
+local version = "v1.2.3"
+
 ---@class Inventory
 local InventoryClass =
 {

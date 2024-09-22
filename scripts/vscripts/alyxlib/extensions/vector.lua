@@ -1,5 +1,5 @@
 --[[
-    v1.2.1
+    v1.3.0
     https://github.com/FrostSource/alyxlib
 
     Provides Vector class extension methods.
@@ -10,7 +10,7 @@
 ]]
 require "alyxlib.math.common"
 
-local version = "v1.2.1"
+local version = "v1.3.0"
 
 ---@class Vector
 local meta = getmetatable(Vector())

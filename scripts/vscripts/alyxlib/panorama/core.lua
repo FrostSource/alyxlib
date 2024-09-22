@@ -1,12 +1,12 @@
 --[[
-    v1.0.0
+    v1.1.0
     https://github.com/FrostSource/alyxlib
 
     Panorama core library.
 ]]
 
 Panorama = {}
-Panorama.version = "v1.0.0"
+Panorama.version = "v1.1.0"
 
 ---Filters text string to replace problematic characters.
 ---@param text string

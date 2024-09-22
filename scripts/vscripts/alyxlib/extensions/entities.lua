@@ -1,5 +1,5 @@
 --[[
-    v1.6.0
+    v1.7.0
     https://github.com/FrostSource/alyxlib
 
     Extensions for the `Entities` class.
@@ -10,7 +10,7 @@
 ]]
 require "alyxlib.extensions.entity"
 
-local version = "v1.6.0"
+local version = "v1.7.0"
 
 ---
 ---Gets an array of every entity that currently exists.

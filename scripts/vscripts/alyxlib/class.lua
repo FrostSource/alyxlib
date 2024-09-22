@@ -1,5 +1,5 @@
 --[[
-    v2.1.0
+    v2.2.0
     https://github.com/FrostSource/alyxlib
 
     If not using `vscripts/alyxlib/core.lua`, load this file at game start using the following line:
@@ -74,7 +74,7 @@
     end
     ```
 ]]
-local version = "v2.1.0"
+local version = "v2.2.0"
 
 require "alyxlib.storage"
 require "alyxlib.globals"
@@ -592,7 +592,5 @@ function isinstance(ent, class)
     end
     return false
 end
-
-print("class.lua ".. version .." initialized...")
 
 return version

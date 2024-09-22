@@ -1,5 +1,5 @@
 --[[
-    v2.3.0
+    v2.4.0
     https://github.com/FrostSource/alyxlib
 
     Provides common global functions used throughout extravaganza libraries.
@@ -14,7 +14,7 @@
 -- These are expected by globals
 require 'alyxlib.utils.common'
 
-local version = "v2.3.0"
+local version = "v2.4.0"
 
 ---
 ---Get the file name of the current script without folders or extension. E.g. `util.util`

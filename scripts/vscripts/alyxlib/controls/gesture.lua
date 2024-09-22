@@ -1,5 +1,5 @@
 --[[
-    v1.1.1
+    v1.2.0
     https://github.com/FrostSource/alyxlib
 
     Provides a system for tracking simple hand poses and gestures.
@@ -38,7 +38,7 @@
 
 Gesture = {}
 Gesture.__index = Gesture
-Gesture.version = "v1.1.1"
+Gesture.version = "v1.2.0"
 
 ---
 ---If the gesture system should start automatically on player spawn.

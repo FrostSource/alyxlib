@@ -1,11 +1,11 @@
 --[[
-    v1.0.0
+    v1.1.0
     https://github.com/FrostSource/alyxlib
 ]]
 
 ---@class WristAttachments
 WristAttachments = {}
-WristAttachments.version = "v1.0.0"
+WristAttachments.version = "v1.1.0"
 
 ---@alias WristAttachmentHandType "left"|"right"|"primary"|"secondary"
 

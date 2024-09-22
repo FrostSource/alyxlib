@@ -1,3 +1,12 @@
+--[[
+    v2.0.0
+    https://github.com/FrostSource/alyxlib
+
+    
+]]
+
+local version = "v2.0.0"
+
 ---@class __PlayerRegisteredEventData
 ---@field callback function
 ---@field context any
@@ -27,7 +36,7 @@ local registered_event_callbacks = {
 ---@param context? table # Optional: The context to pass to the function as `self`. If omitted the context will not passed to the callback.
 ---@return integer eventID # ID used to unregister
 function ListenToPlayerEvent(event, callback, context)
-    devprint("Listening to player event", event, callback)
+    devprint2("Listening to player event", event, callback)
     registered_event_callbacks[event][registered_event_index] = { callback = callback, context = context}
     registered_event_index = registered_event_index + 1
     return registered_event_index - 1

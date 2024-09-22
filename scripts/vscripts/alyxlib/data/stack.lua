@@ -9,6 +9,8 @@
     require "alyxlib.data.stack"
 ]]
 
+local version = "v1.2.3"
+
 ---@class Stack
 local StackClass =
 {

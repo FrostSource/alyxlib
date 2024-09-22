@@ -1,5 +1,5 @@
 --[[
-    v1.0.0
+    v1.1.0
     https://github.com/FrostSource/alyxlib
 
     Extension for NPC entities.
@@ -14,7 +14,7 @@ require "alyxlib.globals"
 require "alyxlib.extensions.entity"
 require "alyxlib.extensions.entities"
 
-local version = "v1.0.0"
+local version = "v1.1.0"
 
 ---
 ---Schedule enum table for use with CAI_BaseNPC:StartSchedule().

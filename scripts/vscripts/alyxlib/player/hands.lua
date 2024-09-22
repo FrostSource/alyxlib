@@ -1,3 +1,13 @@
+--[[
+    v1.0.1
+    https://github.com/FrostSource/alyxlib
+
+    Code for player hands.
+    
+]]
+
+local version = "v1.0.1"
+
 ---Merge an existing prop with this hand.
 ---@param prop EntityHandle|string # The prop handle or targetname.
 ---@param hide_hand boolean # If the hand should turn invisible after merging.

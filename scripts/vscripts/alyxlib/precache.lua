@@ -1,5 +1,5 @@
 --[[
-    v1.0.0
+    v1.0.1
     https://github.com/FrostSource/alyxlib
 
     Precaching can only be done with an entity attached script, so this script collects a list of assets to be automatically
@@ -30,6 +30,8 @@ if thisEntity then
 
     return
 end
+
+local version = "v1.0.1"
 
 require "alyxlib.player.core"
 

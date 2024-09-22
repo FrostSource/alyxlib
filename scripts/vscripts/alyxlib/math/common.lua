@@ -1,5 +1,5 @@
 --[[
-    v1.2.0
+    v1.3.0
     https://github.com/FrostSource/alyxlib
 
     Extends the math library with useful functions.
@@ -9,7 +9,7 @@
     require "alyxlib.math.common"
 ]]
 
-local version = "v1.2.0"
+local version = "v1.3.0"
 
 ---
 ---Get the sign of a number.
@@ -96,6 +96,5 @@ end
 function math.get_frac(number)
     return number - math.floor(number)
 end
-
 
 return version
