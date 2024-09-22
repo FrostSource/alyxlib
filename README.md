@@ -7,6 +7,8 @@
 </picture>
 </p>
 
+&nbsp;
+
 <div align="center">
 
 [![License](https://img.shields.io/badge/License-MIT-04663E)](#license)
@@ -20,12 +22,16 @@
 
 </div>
 
-> [!WARNING]\
-> this repository has been made public to create the wiki and may not work as intended until this message is removed!
+---
 
-AlyxLib provides a set of useful Lua libraries for scripting with Half-Life: Alyx, making your development process smoother and more efficient. Your addon is linked to AlyxLib via symbolic links, ensuring that every addon uses the same source and gets updated automatically whenever AlyxLib is updated. Plus, since your workshop item uses AlyxLib as a requirement, it will also receive any fixes without you having to reupload.
+> [!CAUTION]\
+> This repository has been made public to create the wiki and may not work as intended until this message is removed!
 
-# Library overview
+AlyxLib provides a set of useful Lua libraries for scripting with Half-Life: Alyx, making your development process smoother and more efficient.
+
+Your addon is linked to AlyxLib via symbolic links, ensuring that every addon uses the same source and gets updated automatically whenever AlyxLib is updated. Plus, since your workshop item uses AlyxLib as a requirement, it will also receive any fixes without you having to reupload.
+
+# 📚Library overview
 
 * Full VScript code completion using [Lua Language Server](https://luals.github.io/)
 * Save/Load most data types easily to any entity.
@@ -37,9 +43,10 @@ AlyxLib provides a set of useful Lua libraries for scripting with Half-Life: Aly
 
 See the extensive wiki for full function reference and code examples.
 
-# Quick setup guide
+# 🚀Quick setup guide
 
-(For in-depth setup, see the [Installing AlyxLib](https://github.com/FrostSource/alyxlib/wiki/Installing-AlyxLib) wiki page)
+> [!NOTE]\
+> For in-depth setup, see the [Installing AlyxLib](https://github.com/FrostSource/alyxlib/wiki/Installing-AlyxLib) wiki page
 
 1. Download or clone this GitHub repository to your hlvr_addons content folder
 
@@ -57,13 +64,13 @@ See the extensive wiki for full function reference and code examples.
 
 8. Finish the instructions shown in the running `on_upload.bat` program to restore the symlinks for further development
 
-# Need help?
+# ❓Need help?
 
 Please feel free to create an issue with your problem, question or suggestion.
 
 You can also join us on our [Discord server](https://discord.gg/42SC3Wyjv4) to get faster responses.
 
-# Projects using AlyxLib
+# 🌟Projects using AlyxLib
 
 <p align="center">
 <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3144612716"><img src="https://steamuserimages-a.akamaihd.net/ugc/2318858611175367914/A9DF9C6F4BDAD028C899210A34ECB1573674D6B7/" width="23%"></img></a>
