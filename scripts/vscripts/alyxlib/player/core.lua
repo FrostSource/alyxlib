@@ -853,6 +853,14 @@ function CBasePlayer:GetBackpack()
     return Entities:FindByClassname(nil, "player_backpack")
 end
 
+---
+---Enable or disable player movement. Including teleport movement.
+---
+---@param enabled boolean # True if movement should be enabled.
+function CBasePlayer:SetMovementEnabled(enabled)
+    Player:EntFire("EnableTeleport", enabled and "1" or "0")
+end
+
 -- Other player libraries
 require "alyxlib.player.hands"
 require "alyxlib.player.events"
