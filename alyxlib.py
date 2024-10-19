@@ -196,15 +196,15 @@ def create_sound_files(addon_content_path:Path, addon_game_path:Path):
     
     addon_resource_path = addon_content_path / f"resourcemanifests/{addon_content_path.name}_addon_resources.vrman"
     if not addon_resource_path.exists():
-        with addon_resource_path.open("w") as f:
-            f.write(TEMPLATE.RESOURCE_MANIFEST_FILE.format(addon_content_path.name))
+        write_to_file(addon_resource_path, TEMPLATE.RESOURCE_MANIFEST_FILE.format(addon_content_path.name))
         print("Created addon resource manifest...")
 
     if files_match(addon_content_path / "soundevents/addon_template_soundevents.vsndevts", DEFAULT_SOUNDEVENT_HASH):
         os.remove(addon_content_path / "soundevents/addon_template_soundevents.vsndevts")
 
     addon_soundevent_path = addon_content_path / f"soundevents/{addon_content_path.name}_soundevents.vsndevts"
-    if write_to_file(addon_content_path / f"soundevents/{addon_content_path.name}_soundevents.vsndevts", TEMPLATE.SOUNDEVENT_FILE):
+    print(TEMPLATE.SOUNDEVENT_FILE.format())
+    if write_to_file(addon_soundevent_path, TEMPLATE.SOUNDEVENT_FILE.format()):
         print("Created addon soundevent file...")
     
 
