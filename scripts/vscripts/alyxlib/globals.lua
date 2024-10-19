@@ -251,7 +251,7 @@ function warn(...)
     local str = table.concat({...}, " ")
     Warning(str .. "\n")
     if IsInToolsMode() then
-        print("!!Warning!! " .. str)
+        print("\n!!Warning!! " .. str .. "\n")
     end
 end
 
