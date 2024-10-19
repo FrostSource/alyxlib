@@ -34,10 +34,11 @@ end
 local function alyxlib_require(path, required)
     if required then
         print_version(path, require(path))
+    else
+        ifrequire(path, function (lib_version)
+            print_version(path, lib_version)
+        end)
     end
-    ifrequire(path, function (lib_version)
-        print_version(path, lib_version)
-    end)
 end
 
 alyxlib_require("alyxlib.globals", true)
