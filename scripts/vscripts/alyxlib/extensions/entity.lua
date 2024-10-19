@@ -313,6 +313,22 @@ function CBaseEntity:SetCenter(position)
     self:SetOrigin(origin + translation)
 end
 
+
+
+---
+---Set the origin of this entity around one of its attachment points.
+---
+---@param position Vector
+---@param attachment string
+function CBaseAnimating:SetOriginByAttachment(position, attachment)
+    local offset = self:GetAttachmentOrigin(self:ScriptLookupAttachment(attachment))
+    local origin = self:GetOrigin()
+
+    local translation = position - offset
+
+    self:SetOrigin(origin + translation)
+end
+
 ---
 ---Track a property function using a callback when a change is detected.
 ---
