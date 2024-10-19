@@ -437,6 +437,7 @@ end
 ---
 ---Register a callback for a specific button press/release.
 ---
+---@generic T
 ---@param kind string # The kind of button interaction.
 ---| '"press"' # Button is pressed.
 ---| '"release"' # Button is released.
@@ -444,17 +445,17 @@ end
 ---| -1 # Both hands
 ---@param button NAMED_DIGITAL_INPUT_ACTIONS|ENUM_DIGITAL_INPUT_ACTIONS # The button to check.
 ---@param presses integer|nil # Number of times the button must be pressed in quick succession. E.g. 2 for double click. Only applicable for `kind` press.
----@param callback fun(params:INPUT_PRESS_CALLBACK|INPUT_RELEASE_CALLBACK) # The function that will be called when conditions are met.
----@param context? any # Optional context passed into the callback as the first value. Is also used when unregistering.
+---@param callback fun(params:INPUT_PRESS_CALLBACK|INPUT_RELEASE_CALLBACK)|fun(context:T,params:INPUT_PRESS_CALLBACK|INPUT_RELEASE_CALLBACK) # The function that will be called when conditions are met.
+---@param context? T # Optional context passed into the callback as the first value. Is also used when unregistering.
 function Input:ListenToButton(kind, hand, button, presses, callback, context)
 
     if type(hand) ~= "number" then
         hand = hand:GetHandID()
     -- Quick way to register both hands.
     elseif hand == -1 then
-        self:ListenToButton(kind, 0, button, presses, callback)
-        self:ListenToButton(kind, 1, button, presses, callback)
-        return
+        local id1 = self:ListenToButton(kind, 0, button, presses, callback, context)
+        local id2 = self:ListenToButton(kind, 1, button, presses, callback, context)
+        return id1, id2
     end
 
     local buttonTable = trackedButtons[button]
