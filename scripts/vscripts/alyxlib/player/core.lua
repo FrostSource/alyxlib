@@ -669,13 +669,14 @@ function CBasePlayer:GetWeapon()
     end
 end
 
+---
 ---Get the current upgrades for the player's pistol.
 ---
----NOTE: This assumes there is only ONE hlvr_weapon_energygun in the map.
----
+---@param weapon? EntityHandle # Optional weapon to check instead of the player's weapon.
 ---@return PlayerPistolUpgrades[]
-function CBasePlayer:GetPistolUpgrades()
-    local pistol = Entities:FindByClassname(nil, "hlvr_weapon_energygun")
+---@overload fun(self: CBasePlayer): PlayerPistolUpgrades[]
+function CBasePlayer:GetPistolUpgrades(weapon)
+    local pistol = weapon or self:GetWeapons().hlvr_weapon_energygun
 
     if not pistol then
         return {}
@@ -683,7 +684,7 @@ function CBasePlayer:GetPistolUpgrades()
 
     local upgrades = {}
 
-    for _, child in ipairs(pistol:GetChildren()) do
+    for _, child in ipairs(pistol:GetChildrenMemSafe()) do
         if child:GetClassname() == "reflex_sights" then
             table.insert(upgrades, "pistol_upgrade_reflex_sight")
         elseif child:GetClassname() == "hlvr_upgrade_hopper" then
@@ -698,13 +699,14 @@ function CBasePlayer:GetPistolUpgrades()
     return upgrades
 end
 
+---
 ---Get the current upgrades for the player's rapidfire.
 ---
----NOTE: This assumes there is only ONE hlvr_weapon_rapidfire in the map.
----
+---@param weapon? EntityHandle # Optional weapon to check instead of the player's weapon.
 ---@return PlayerRapidfireUpgrades[]
-function CBasePlayer:GetRapidfireUpgrades()
-    local rapidfire = Entities:FindByClassname(nil, "hlvr_weapon_rapidfire")
+---@overload fun(self: CBasePlayer): PlayerRapidfireUpgrades[]
+function CBasePlayer:GetRapidfireUpgrades(weapon)
+    local rapidfire = weapon or self:GetWeapons().hlvr_weapon_rapidfire
 
     if not rapidfire then
         return {}
@@ -712,7 +714,7 @@ function CBasePlayer:GetRapidfireUpgrades()
 
     local upgrades = {}
 
-    for _, child in ipairs(rapidfire:GetChildren()) do
+    for _, child in ipairs(rapidfire:GetChildrenMemSafe()) do
         if child:GetClassname() == "reflex_sights" then
             table.insert(upgrades, "rapidfire_upgrade_reflex_sight")
         elseif child:GetName() == "rapidfire_laser_sight" then
@@ -725,15 +727,16 @@ function CBasePlayer:GetRapidfireUpgrades()
     return upgrades
 end
 
+---
 ---Get the current upgrades for the player's shotgun.
 ---
 ---**This will NOT return "shotgun_upgrade_quick_fire" because there is no known way to detect this!**
 ---
----NOTE: This assumes there is only ONE hlvr_weapon_shotgun in the map.
----
+---@param weapon? EntityHandle # Optional weapon to check instead of the player's weapon.
 ---@return PlayerRapidfireUpgrades[]
-function CBasePlayer:GetShotgunUpgrades()
-    local shotgun = Entities:FindByClassname(nil, "hlvr_weapon_shotgun")
+---@overload fun(self: CBasePlayer): PlayerShotgunUpgrades[]
+function CBasePlayer:GetShotgunUpgrades(weapon)
+    local shotgun = weapon or self:GetWeapons().hlvr_weapon_shotgun
 
     if not shotgun then
         return {}
@@ -741,7 +744,7 @@ function CBasePlayer:GetShotgunUpgrades()
 
     local upgrades = {}
 
-    for _, child in ipairs(shotgun:GetChildren()) do
+    for _, child in ipairs(shotgun:GetChildrenMemSafe()) do
         if child:GetName() == "shotgun_autoloader" then
             table.insert(upgrades, "shotgun_upgrade_autoloader")
         elseif child:GetModelName() == "models/weapons/vr_shotgun/shotgun_grenade_attach_upgrade.vmdl" or child:GetModelName() == "models/weapons/vr_shotgun/shotgun_grenade_attach_upgrade_lhand.vmdl" then
