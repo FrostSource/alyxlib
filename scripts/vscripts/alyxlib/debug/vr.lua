@@ -28,7 +28,7 @@ local function getHandFromName(handName)
     return hand
 end
 
-Convars:RegisterCommand("alyxlib_print_hand_attachments", function (_, handName)
+Convars:RegisterCommand("print_hand_attachments", function (_, handName)
     handName = handName or "primary"
     local hand = getHandFromName(handName)
     if hand == nil then
@@ -53,7 +53,7 @@ Convars:RegisterCommand("alyxlib_print_hand_attachments", function (_, handName)
     end
 end, "", 0)
 
-Convars:RegisterCommand("alyxlib_set_hand_attachment", function (_, classname, handName)
+Convars:RegisterCommand("set_hand_attachment", function (_, classname, handName)
     handName = handName or "primary"
     local hand = getHandFromName(handName)
     if hand == nil then
@@ -69,7 +69,7 @@ Convars:RegisterCommand("alyxlib_set_hand_attachment", function (_, classname, h
     Player:SetWeapon(classname)
 end, "", 0)
 
-Convars:RegisterCommand("alyxlib_remove_hand_attachment", function (_, classname, handName)
+Convars:RegisterCommand("remove_hand_attachment", function (_, classname, handName)
     handName = handName or "primary"
     local hand = getHandFromName(handName)
     if hand == nil then
@@ -85,7 +85,7 @@ Convars:RegisterCommand("alyxlib_remove_hand_attachment", function (_, classname
     Player:RemoveWeapons(classname)
 end, "", 0)
 
-Convars:RegisterCommand("alyxlib_add_hand_attachment", function (_, classname, handName)
+Convars:RegisterCommand("add_hand_attachment", function (_, classname, handName)
     handName = handName or "primary"
     local hand = getHandFromName(handName)
     if hand == nil then
