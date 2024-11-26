@@ -15,12 +15,26 @@ local alyxlibCommands = {}
 ---Registers a command for the AlyxLib library.
 ---
 ---@param name string # Name of the command that will be given in the console.
----@param func function # Function to run when the command is called.
----@param help? string # Description of the command.
+---@param func fun(_:string, ...:string) # Function to run when the command is called.
+---@param helpText? string # Description of the command.
 ---@param flags? number # Flags for the command.
-function RegisterAlyxLibCommand(name, func, help, flags)
-    Convars:RegisterCommand(name, func, help, flags)
-    alyxlibCommands[name] = help
+function RegisterAlyxLibCommand(name, func, helpText, flags)
+    helpText = helpText or "[No description]"
+    Convars:RegisterCommand(name, func, helpText, flags or 0)
+    alyxlibCommands[name] = helpText
+end
+
+---
+---Registers a new AlyxLib console variable.
+---
+---@param name string # Name of the convar that will be given in the console.
+---@param defaultValue string # Default value of the convar.
+---@param helpText? string # Description of the convar.
+---@param flags? integer # Flags for the convar.
+function RegisterAlyxLibConvar(name, defaultValue, helpText, flags)
+    helpText = helpText or "[No description]"
+    Convars:RegisterConvar(name, defaultValue, helpText, flags or 0)
+    alyxlibCommands[name] = "Default: "..tostring(defaultValue)..", "..helpText
 end
 
 Convars:RegisterCommand("alyxlib_commands", function (_, ...)
