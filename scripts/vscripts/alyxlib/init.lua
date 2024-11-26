@@ -81,6 +81,7 @@ alyxlib_require "alyxlib.panorama.core"
 -- Debug
 
 alyxlib_require "alyxlib.debug.common"
+alyxlib_require "alyxlib.debug.commands"
 alyxlib_require "alyxlib.debug.controller"
 if IsVREnabled() then
     alyxlib_require "alyxlib.debug.vr"
