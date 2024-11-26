@@ -854,6 +854,62 @@ function CBasePlayer:SetWeapon(weapon)
     return self:UpdateWeapons(nil, weapon)
 end
 
+local weaponClasses = {
+    "hlvr_weapon_energygun",
+    "hlvr_weapon_rapidfire",
+    "hlvr_weapon_shotgun",
+    "hlvr_weapon_generic_pistol",
+    "hlvr_multitool",
+}
+
+---
+---Gets all EntityHandles for weapons/items attached to the player hand even if not currently equipped.
+---
+---@return {hlvr_weapon_energygun:EntityHandle?,hlvr_weapon_rapidfire:EntityHandle?,hlvr_weapon_shotgun:EntityHandle?,hlvr_weapon_generic_pistol:EntityHandle?,hlvr_multitool:EntityHandle?}
+function CBasePlayer:GetWeapons()
+    local hand = self.PrimaryHand
+
+    local foundWeapons = {}
+
+    local specialAttachmentsFound = {}
+    local attachments = {}
+    local attachment = hand:GetHandAttachment()
+    while attachment ~= nil do
+        if vlua.find(weaponClasses, attachment:GetClassname()) then
+            foundWeapons[attachment:GetClassname()] = attachment
+        end
+
+        -- Do not track multiple versions of the same entity
+        if not vlua.find(attachments, attachment) and not vlua.find(specialAttachmentsFound, attachment) then
+            -- Special attachments are handled separately
+            if vlua.find(specialAttachmentsOrder, attachment:GetClassname()) then
+                specialAttachmentsFound[attachment:GetClassname()] = attachment
+            else
+                table.insert(attachments, 1, attachment)
+            end
+        end
+
+        hand:RemoveHandAttachmentByHandle(attachment)
+        -- Get next current attachment
+        attachment = hand:GetHandAttachment()
+    end
+
+    -- Add special attachments back first to avoid crash
+    for _, specialName in ipairs(specialAttachmentsOrder) do
+        local specialAttachment = specialAttachmentsFound[specialName]
+        if specialAttachment then
+            hand:AddHandAttachment(specialAttachment)
+        end
+    end
+
+    -- Add back all other attachments
+    for _, removedAttachment in ipairs(attachments) do
+        hand:AddHandAttachment(removedAttachment)
+    end
+
+    return foundWeapons
+end
+
 ---
 ---Get the invisible player backpack.
 ---This is will return the backpack even if it has been disabled with a `info_hlvr_equip_player`.
