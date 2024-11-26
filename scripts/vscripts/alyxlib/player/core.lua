@@ -339,10 +339,20 @@ PLAYER_MOVETYPE = {
     CONTINUOUS_HAND = 3,
 }
 
+---
 ---Get VR movement type.
+---
 ---@return PLAYER_MOVETYPE
 function CBasePlayer:GetMoveType()
     return Convars:GetInt('hlvr_movetype_default') --[[@as PLAYER_MOVETYPE]]
+end
+
+---
+---Sets the VR movement type.
+---
+---@param movetype PLAYER_MOVETYPE
+function CBasePlayer:SetMoveType(movetype)
+    Convars:SetInt("vr_movetype_set", movetype)
 end
 
 ---Returns the entity the player is looking at directly.
