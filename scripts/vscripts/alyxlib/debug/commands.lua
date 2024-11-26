@@ -38,8 +38,15 @@ function RegisterAlyxLibConvar(name, defaultValue, helpText, flags)
 end
 
 Convars:RegisterCommand("alyxlib_commands", function (_, ...)
-    for name, help in pairs(alyxlibCommands) do
-        Msg(name .. " - " .. help .. "\n")
+    local names = {}
+    for name in pairs(alyxlibCommands) do
+        table.insert(names, name)
+    end
+
+    table.sort(names)
+
+    for _, name in ipairs(names) do
+        Msg(name .. " - " .. alyxlibCommands[name] .. "\n")
     end
     Msg("\n")
 end, "Displays all AlyxLib commands in the console", 0)
