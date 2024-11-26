@@ -754,7 +754,26 @@ function CBasePlayer:GetShotgunUpgrades()
     return upgrades
 end
 
+---
+---Check if the player has a specific weapon upgrade.
+---
+---@param upgrade PlayerPistolUpgrades|PlayerRapidfireUpgrades|PlayerShotgunUpgrades
+---@return boolean
+function CBasePlayer:HasWeaponUpgrade(upgrade)
+    local weapons = self:GetWeapons()
+    if vlua.find(self:GetPistolUpgrades(weapons.hlvr_weapon_energygun), upgrade) then
+        return true
+    elseif vlua.find(self:GetRapidfireUpgrades(weapons.hlvr_weapon_generic_pistol), upgrade) then
+        return true
+    elseif vlua.find(self:GetShotgunUpgrades(weapons.hlvr_weapon_shotgun), upgrade) then
+        return true
+    end
+    return false
+end
+
+---
 ---Get the forward vector of the player in world space coordinates (z is zeroed).
+---
 ---@return Vector
 function CBasePlayer:GetWorldForward()
     local f = self:GetForwardVector()
