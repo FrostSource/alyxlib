@@ -1,8 +1,8 @@
 --[[
-    v2.0.0
+    v3.0.0
     https://github.com/FrostSource/alyxlib
 
-    Simplifies the tracking of digital action presses/releases.
+    Simplifies the tracking of digital action presses/releases and analog values.
     
     If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
 
@@ -14,13 +14,13 @@
 ---
 Input = {}
 Input.__index = Input
-Input.version = "v2.0.0"
+Input.version = "v3.0.0"
 
 ---
 ---If the input system should start automatically on player spawn.
 ---Set this to false soon after require to stop it.
 ---
-Input.AutoStart = false
+Input.AutoStart = true
 
 ---
 ---Number of seconds after a press in which it can still be detected as a single press.
@@ -46,41 +46,6 @@ Input.ReleasedTolerance = 0.5
 ---@type number
 Input.MultiplePressInterval = 0.35
 
----Example layout:
----{
----    -- Button literal
----    3 =
----    {
----        -- Hand ID
----        0 =
----        {
----            -- if the button is held
----            is_held = false,
----            -- Time() when the button was pressed
----            press_time = 0,
----            -- Time() when the button was released
----            release_time = 0,
----
----            press_callbacks = {}
----            release_callbacks = {}
----        }
----    }
----    
----}
-
--- ---@type table<integer, table>
----@type table<integer, table<integer, InputButtonTable>>
-local trackedButtons = {}
-
----@class InputButtonTable
----@field is_held boolean
----@field press_time number
----@field prev_press_time number
----@field release_time number
----@field press_locked boolean
----@field release_locked boolean
----@field multiple_press_count number
-
 ---@class InputCallbackTable
 ---@field presses integer
 ---@field func function
@@ -88,6 +53,11 @@ local trackedButtons = {}
 ---@field handkind InputHandKind # Left, right, primary, secondary.
 ---@field actualhandid 0|1 # This needs to be updated whenver hands change.
 ---@field button ENUM_DIGITAL_INPUT_ACTIONS # The button for this event.
+---@field kind "press"|"release"
+---@field press_time number
+---@field prev_press_time number
+---@field release_time number
+---@field multiple_press_count number
 
 ---@class AnalogCallbackTable
 ---@field analog ENUM_ANALOG_INPUT_ACTIONS
@@ -100,95 +70,12 @@ local trackedButtons = {}
 ---@field literalhandtype 0|1 # The literal value of the hand which is usually the opposite of Id
 
 ---@type table<integer, InputCallbackTable>
-local pressCallbacks = {}
-
----@type table<integer, InputCallbackTable>
-local releaseCallbacks = {}
+local buttonCallbacks = {}
 
 ---@type table<integer, AnalogCallbackTable>
 local analogCallbacks = {}
 
 local callbackId = 0
-
-local function createButtonTable()
-    return {
-        is_held = false,
-        press_time = -1,
-        prev_press_time = -1,
-        -- Must not be -1, to avoid triggering all buttons on start
-        release_time = 0,
-        press_locked = false,
-        release_locked = false,
-        multiple_press_count = 0,
-    }
-end
-
----
----Set a button to be tracked.
----
----@param button ENUM_DIGITAL_INPUT_ACTIONS
-function Input:TrackButton(button)
-    if trackedButtons[button] ~= nil then
-        warn("Button", button, "is already tracked!")
-        return
-    end
-
-    trackedButtons[button] = {
-        [0] = createButtonTable(), -- Left
-        [1] = createButtonTable(), -- Right
-    }
-end
-
----
----Set an array of buttons to be tracked.
----
----@param buttons ENUM_DIGITAL_INPUT_ACTIONS[]
-function Input:TrackButtons(buttons)
-    for _, button in ipairs(buttons) do
-        self:TrackButton(button)
-    end
-end
-
----
----Stop all buttons from being tracked.
----
-function Input:StopTrackingAllButtons()
-    trackedButtons = {}
-    pressCallbacks = {}
-    releaseCallbacks = {}
-    callbackId = 0
-end
-
----
----Set all buttons to be tracked.
----
-function Input:TrackAllButtons()
-    self:TrackButtons({
-        0,1,2,3,4,5,6,7,8,9,10,
-        11,12,13,14,15,16,17,18,19,
-        20,21,22,23,24,25,26,27
-    })
-end
-
----
----Stop tracking a button.
----
----@param button ENUM_DIGITAL_INPUT_ACTIONS
-function Input:StopTrackingButton(button)
-    trackedButtons[button] = nil
-    pressCallbacks[button] = nil
-    releaseCallbacks[button] = nil
-end
-
----
----Stop tracking an array of buttons.
----
----@param buttons ENUM_DIGITAL_INPUT_ACTIONS[]
-function Input:StopTrackingButtons(buttons)
-    for _,button in ipairs(buttons) do
-        self:StopTrackingButton(button)
-    end
-end
 
 
 local currentPrimaryHandId = 1
@@ -257,11 +144,7 @@ local function updatePrimaryHandId(primary)
     currentPrimaryHandId = primary
     currentSecondaryHandId = 1 - primary
 
-    for _id, tbl in pairs(pressCallbacks) do
-        tbl.actualhandid = convertHandKindToHandId(tbl.handkind)
-    end
-
-    for _id, tbl in pairs(releaseCallbacks) do
+    for _id, tbl in pairs(buttonCallbacks) do
         tbl.actualhandid = convertHandKindToHandId(tbl.handkind)
     end
 
@@ -275,78 +158,6 @@ ListenToGameEvent("primary_hand_changed", function(data)
     ---@cast data GAME_EVENT_PRIMARY_HAND_CHANGED
     updatePrimaryHandId(data.is_primary_left and 0 or 1)
 end, nil)
-
---#region General requests
-
----
----Get if a button has just been pressed for a given hand.
----Optionally lock the button press so it can't be detected by other scripts until it is released.
----
----@param hand CPropVRHand|0|1
----@param button ENUM_DIGITAL_INPUT_ACTIONS
----@param lock? boolean
----@return boolean
-function Input:Pressed(hand, button, lock)
-    local b = trackedButtons[button]
-    if type(hand) ~= "number" then hand = hand:GetHandID() end
-    local h = b[hand]
-    if h and not h.press_locked and h.is_held and (Time() - h.press_time) <= self.PressedTolerance then
-        if lock then h.press_locked = true end
-        return true
-    end
-    return false
-end
-
----
----Get if a button has just been released for a given hand.
----Optionally lock the button release so it can't be detected by other scripts until it is pressed.
----
----@param hand CPropVRHand|0|1
----@param button ENUM_DIGITAL_INPUT_ACTIONS
----@param lock boolean?
----@return boolean
-function Input:Released(hand, button, lock)
-    local b = trackedButtons[button]
-    if type(hand) ~= "number" then hand = hand:GetHandID() end
-    local h = b[hand]
-    if h and not h.release_locked and not h.is_held and (Time() - h.release_time) <= self.ReleasedTolerance then
-        if lock then h.release_locked = true end
-        return true
-    end
-    return false
-end
-
----
----Get if a button is currently being held down for a given hand.
----
----@param hand CPropVRHand|0|1
----@param button ENUM_DIGITAL_INPUT_ACTIONS
----@return boolean
-function Input:Button(hand, button)
-    local b = trackedButtons[button]
-    if type(hand) ~= "number" then hand = hand:GetHandID() end
-    local h = b[hand]
-    if h and h.is_held then
-        return true
-    end
-    return false
-end
-
----
----Get the amount of seconds a button has been held for a given hand.
----
----@param hand CPropVRHand|0|1
----@param button ENUM_DIGITAL_INPUT_ACTIONS
----@return number
-function Input:ButtonTime(hand, button)
-    local b = trackedButtons[button]
-    if type(hand) ~= "number" then hand = hand:GetHandID() end
-    local h = b[hand]
-    if h and h.is_held then
-        return Time() - h.press_time
-    end
-    return 0
-end
 
 ---
 ---Button index pointing to its description.
@@ -458,20 +269,20 @@ function Input:ListenToButton(kind, hand, button, presses, callback, context)
         return id1, id2
     end
 
-    local buttonTable = trackedButtons[button]
-
-    assert(buttonTable ~= nil, "Button " .. button .. " is not being tracked! Please use Input:TrackButton("..button..")")
-
-    local callbackTable = kind == "press" and pressCallbacks or releaseCallbacks
-
     callbackId = callbackId + 1
-    callbackTable[callbackId] = {
+    buttonCallbacks[callbackId] = {
         func = callback,
         context = context,
         handkind = hand,
         actualhandid = convertHandKindToHandId(hand),
         presses = presses or 1,
-        button = button
+        button = button,
+        kind = kind,
+
+        multiple_press_count = 0,
+        press_time = -1,
+        release_time = 0,
+        prev_press_time = 0,
     }
 
     return callbackId
@@ -535,7 +346,7 @@ function Input:ListenToAnalog(kind, hand, analogAction, analogValue, callback, c
 end
 
 ---
----Allows changing some data which was defined in `ListenToAnalog` for a specific ID.
+---Changes some data which was defined in `ListenToAnalog` for a specific ID.
 ---
 ---@param id integer # The ID of the analog event you want to modify.
 ---@param analogAction? ENUM_ANALOG_INPUT_ACTIONS # The new action to listen for, or nil to leave unchanged.
@@ -558,20 +369,13 @@ function Input:ModifyAnalogCallback(id, analogAction, analogValue)
 end
 
 ---
----Unregisters a specific callback from all buttons and hands.
+---Unregisters a listener with a specific ID.
 ---
 ---@param id number # The number returned by ListenToButton.
 function Input:StopListening(id)
-    for _id, tbl in pairs(pressCallbacks) do
+    for _id, tbl in pairs(buttonCallbacks) do
         if _id == id then
             tbl[_id] = nil
-            return
-        end
-    end
-
-    for _id, tbl in pairs(releaseCallbacks) do
-        if _id == id then
-            releaseCallbacks[_id] = nil
             return
         end
     end
@@ -585,21 +389,14 @@ function Input:StopListening(id)
 end
 
 ---
----Stops listening to any listened from all buttons and hands that have this callback/context pair.
+---Unregisters any listeners with a specific callback/context pair.
 ---
 ---@param callback fun(params:ANALOG_CALLBACK) # The callback function that's listening.
 ---@param context? any # The context that was given.
 function Input:StopListeningCallbackContext(callback, context)
-    for _id, tbl in pairs(pressCallbacks) do
+    for _id, tbl in pairs(buttonCallbacks) do
         if tbl.func == callback and tbl.context == context then
-            pressCallbacks[_id] = nil
-            break
-        end
-    end
-
-    for _id, tbl in pairs(releaseCallbacks) do
-        if tbl.func == callback and tbl.context == context then
-            releaseCallbacks[_id] = nil
+            buttonCallbacks[_id] = nil
             break
         end
     end
@@ -613,19 +410,13 @@ function Input:StopListeningCallbackContext(callback, context)
 end
 
 ---
----Unregisters a specific callback from all buttons and hands.
+---Unregisters any listeners which have a specific context.
 ---
 ---@param context any # The number returned by ListenToButton.
 function Input:StopListeningByContext(context)
-    for _id, tbl in pairs(pressCallbacks) do
+    for _id, tbl in pairs(buttonCallbacks) do
         if tbl.context == context then
-            pressCallbacks[_id] = nil
-        end
-    end
-
-    for _id, tbl in pairs(releaseCallbacks) do
-        if tbl.context == context then
-            releaseCallbacks[_id] = nil
+            buttonCallbacks[_id] = nil
         end
     end
 
@@ -634,47 +425,6 @@ function Input:StopListeningByContext(context)
             analogCallbacks[_id] = nil
         end
     end
-end
-
-
----
----Get if a button has just been pressed for this hand.
----Optionally lock the button press so it can't be detected by other scripts until it is released.
----
----@param button ENUM_DIGITAL_INPUT_ACTIONS
----@param lock boolean?
----@return boolean
-function CPropVRHand:Pressed(button, lock)
-    return Input:Pressed(self:GetHandID(), button, lock)
-end
-
----
----Get if a button has just been released for this hand.
----Optionally lock the button release so it can't be detected by other scripts until it is pressed.
----
----@param button ENUM_DIGITAL_INPUT_ACTIONS
----@param lock boolean?
----@return boolean
-function CPropVRHand:Released(button, lock)
-    return Input:Released(self:GetHandID(), button, lock)
-end
-
----
----Get if a button is currently being held down for a this hand.
----
----@param button ENUM_DIGITAL_INPUT_ACTIONS
----@return boolean
-function CPropVRHand:Button(button)
-    return Input:Button(self:GetHandID(), button)
-end
-
----
----Get the amount of seconds a button has been held for this hand.
----
----@param button ENUM_DIGITAL_INPUT_ACTIONS
----@return number
-function CPropVRHand:ButtonTime(button)
-    return Input:ButtonTime(self:GetHandID(), button)
 end
 
 
@@ -703,66 +453,70 @@ local function InputThink()
     local player = Entities:GetLocalPlayer()
     local hmd = player:GetHMDAvatar()--[[@as CPropHMDAvatar]]
 
-    for button, hands in pairs(trackedButtons) do
-        for handid, buttonData in pairs(hands) do
+    for id, callbackData in pairs(buttonCallbacks) do
 
-            local hand = hmd:GetVRHand(handid)
-            if player:IsDigitalActionOnForHand(hand:GetLiteralHandType(), button) then
-                if buttonData.press_time == -1 then
-                    buttonData.is_held = true
-                    buttonData.release_locked = false
-                    if Time() - buttonData.prev_press_time <= Input.MultiplePressInterval then
-                        buttonData.multiple_press_count = buttonData.multiple_press_count + 1
+            local hand = hmd:GetVRHand(callbackData.actualhandid)
+            if player:IsDigitalActionOnForHand(hand:GetLiteralHandType(), callbackData.button) then
+                if callbackData.press_time == -1 then
+                    if Time() - callbackData.prev_press_time <= Input.MultiplePressInterval then
+                        callbackData.multiple_press_count = callbackData.multiple_press_count + 1
                     else
-                        buttonData.multiple_press_count = 0
+                        callbackData.multiple_press_count = 0
                     end
-                    buttonData.press_time = Time()
+                    callbackData.press_time = Time()
                     -- This is not reset by release section
-                    buttonData.prev_press_time = buttonData.press_time
-                    ---@type INPUT_PRESS_CALLBACK
-                    local send = {
-                        kind = "press",
-                        press_time = buttonData.press_time,
-                        hand = hand,
-                        button = button,
-                    }
-                    buttonData.release_time = -1
-                    for id, callbackData in pairs(pressCallbacks) do
-                        if callbackData.actualhandid == handid and callbackData.button == button and buttonData.multiple_press_count >= callbackData.presses-1 then
+                    callbackData.prev_press_time = callbackData.press_time
+
+                    callbackData.release_time = -1
+
+                    if callbackData.kind == "press" then
+
+                        ---@type INPUT_PRESS_CALLBACK
+                        local send = {
+                            kind = "press",
+                            press_time = callbackData.press_time,
+                            hand = hand,
+                            button = callbackData.button,
+                        }
+
+                        if callbackData.multiple_press_count >= callbackData.presses-1 then
                             if callbackData.context then
                                 callbackData.func(callbackData.context, send)
                             else
                                 callbackData.func(send)
                             end
-                            buttonData.multiple_press_count = 0
+                            callbackData.multiple_press_count = 0
                         end
                     end
                 end
-            elseif buttonData.release_time == -1 then
-                buttonData.is_held = false
-                buttonData.press_locked = false
-                buttonData.release_time = Time()
-                ---@type INPUT_RELEASE_CALLBACK
-                local send = {
-                    kind = "release",
-                    release_time = buttonData.release_time,
-                    hand = hand,
-                    button = button,
-                    held_time = Time() - buttonData.press_time
-                }
-                -- Needs to be after `send` table.
-                buttonData.press_time = -1
-                for id, callbackData in pairs(releaseCallbacks) do
-                    if callbackData.actualhandid == handid then
-                        if callbackData.context then
-                            callbackData.func(callbackData.context, send)
-                        else
-                            callbackData.func(send)
-                        end
+
+            -- Release callbacks
+            elseif callbackData.release_time == -1 then
+                callbackData.release_time = Time()
+
+                local cachePressTime = callbackData.press_time
+                callbackData.press_time = -1
+
+                if callbackData.kind == "release" then
+
+                    ---@type INPUT_RELEASE_CALLBACK
+                    local send = {
+                        kind = "release",
+                        release_time = callbackData.release_time,
+                        hand = hand,
+                        button = callbackData.button,
+                        held_time = Time() - cachePressTime
+                    }
+
+
+                    if callbackData.context then
+                        callbackData.func(callbackData.context, send)
+                    else
+                        callbackData.func(send)
                     end
                 end
             end
-        end
+
     end
 
     for _, analogData in pairs(analogCallbacks) do
