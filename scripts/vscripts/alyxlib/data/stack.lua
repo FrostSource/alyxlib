@@ -1,5 +1,5 @@
 --[[
-    v1.2.3
+    v1.2.4
     https://github.com/FrostSource/alyxlib
 
     A stack is a data structure where elements are added to the top and removed from the top, with the most recently added item being the first to be removed.
@@ -9,7 +9,7 @@
     require "alyxlib.data.stack"
 ]]
 
-local version = "v1.2.3"
+local version = "v1.2.4"
 
 ---@class Stack
 local StackClass =
