@@ -399,4 +399,21 @@ function CBaseEntity:SetCastShadow(shadowEnabled)
     end
 end
 
+---
+---Adds an I/O connection that will call the function on the passed entity when the specified output fires.
+---This means the redirection is persistent after game loads.
+---
+---@param output string # The name of the output to redirect.
+---@param func function # The function to redirect to.
+---@param entity? EntityHandle # The entity to redirect to, defaults to this entity.
+function CEntityInstance:RedirectOutputFunc(output, func, entity)
+    entity = entity or self
+
+    local name = DoUniqueString(tostring(func))
+    entity[name] = func
+    entity:RedirectOutput(output, name, entity)
+
+    return name
+end
+
 return version
