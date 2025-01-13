@@ -102,7 +102,7 @@ end
 ---Peek at a number of items at the front of the queue without removing them.
 ---
 ---@param count? number # Default is 1
----@return any
+---@return ...
 function QueueClass:Front(count)
     count = min(count or 1, #self.items)
     local tbl = {}
@@ -116,7 +116,7 @@ end
 ---Peek at a number of items at the back of the queue without removing them.
 ---
 ---@param count? number # Default is 1
----@return any
+---@return ...
 function QueueClass:Back(count)
     count = min(count or 1, #self.items)
     local tbl = {}

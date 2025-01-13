@@ -78,9 +78,9 @@ thisEntity = nil
 ---@class TraceTableBase
 ---@field startpos Vector # Global vector where to start the trace.
 ---@field endpos Vector # Global vector where to end the trace.
----@field pos Vector # Global vector where the trace hit.
----@field fraction number # Fraction from the start to end where the trace hit.
----@field hit boolean # Whether the trace hit something. Always present.
+---@field pos Vector? # Global vector where the trace hit.
+---@field fraction number? # Fraction from the start to end where the trace hit.
+---@field hit boolean? # Whether the trace hit something. Always present.
 ---@field startsolid boolean? # Whether the trace started inside the entity. This parameter is set to nil if it is false.
 ---@field normal Vector? # Global normal vector of the surface hit.
 

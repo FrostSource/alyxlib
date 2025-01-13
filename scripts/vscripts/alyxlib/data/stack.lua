@@ -88,7 +88,7 @@ end
 ---Pop a number of items from the stack.
 ---
 ---@param count? number # Default is 1
----@return any
+---@return ...
 function StackClass:Pop(count)
     count = min(count or 1, #self.items)
     local tbl = {}
@@ -102,7 +102,7 @@ end
 ---Peek at a number of items at the top of the stack without removing them.
 ---
 ---@param count? number # Default is 1
----@return any
+---@return ...
 function StackClass:Top(count)
     count = min(count or 1, #self.items)
     local tbl = {}
@@ -116,7 +116,7 @@ end
 ---Peek at a number of items at the bottom of the stack without removing them.
 ---
 ---@param count? number # Default is 1
----@return any
+---@return ...
 function StackClass:Bottom(count)
     count = min(count or 1, #self.items)
     local tbl = {}
