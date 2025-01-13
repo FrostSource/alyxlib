@@ -1,5 +1,5 @@
 --[[
-    v2.4.0
+    v2.5.0
     https://github.com/FrostSource/alyxlib
 
     Provides common global functions used throughout extravaganza libraries.
@@ -14,7 +14,80 @@
 -- These are expected by globals
 require 'alyxlib.utils.common'
 
-local version = "v2.4.0"
+local _version = "v2.5.0"
+
+---
+---A registered AlyxLib addon.
+---
+---@class AlyxLibAddon
+---@field name string # Full name of the addon, e.g. My New Addon
+---@field version string # SemVer version string of the addon, e.g. v1.2.3
+---@field shortName string # Short unique name of the addon without spaces, e.g. myaddon
+---@field minAlyxLibVersion string # Minimum AlyxLib version that this addon works with
+---@field maxAlyxLibVersion string # Maximum AlyxLib version that this addon works with 
+---@field workshopID string? # The ID of the addon on the Steam workshop
+
+---
+---List of registered addons using AlyxLib.
+---
+---Requires the developer to use the `RegisterAlyxLibAddon` function in their addon.
+---
+---@type AlyxLibAddon[]
+AlyxLibAddons = {}
+
+---
+---Registers an addon with AlyxLib.
+---
+function RegisterAlyxLibAddon(name, version, workshopID, shortName, minAlyxLibVersion, maxAlyxLibVersion)
+    local newAddon = {
+        name = name,
+        version = version,
+        workshopID = workshopID,
+        shortName = shortName or string.lower(name:gsub("%s+", "")),
+        minAlyxLibVersion = minAlyxLibVersion or "v1.0.0",
+        maxAlyxLibVersion = maxAlyxLibVersion or ALYXLIB_VERSION
+    }
+    table.insert(AlyxLibAddons, newAddon)
+
+    if CompareVersions(ALYXLIB_VERSION, newAddon.minAlyxLibVersion) < 0 then
+        warn("Current AlyxLib version ("..ALYXLIB_VERSION..") is older than the minimum version "..name.." requires ("..newAddon.minAlyxLibVersion..") and may not work as expected!")
+    elseif CompareVersions(ALYXLIB_VERSION, newAddon.maxAlyxLibVersion) > 0 then
+        warn("Current AlyxLib version ("..ALYXLIB_VERSION..") is newer than the maximum version "..name.." requires ("..newAddon.maxAlyxLibVersion..") and may not work as expected!")
+    end
+end
+
+---
+---Compares two semantic version strings and returns an integer indicating their relative order.
+---
+---It compares the versions based on their `major`, `minor`, and `patch` components.
+---If a version is incomplete, the missing components are assumed to be 0.
+---
+---@param v1 string # The first version string to compare. May include leading "v" and whitespace, and may have missing `minor` or `patch` components.
+---@param v2 string # The second version string to compare. Similar format and rules to `v1`.
+---
+---@return -1|0|1 #
+---  - `-1` if `v1` is older than `v2`.
+---  - `1` if `v1` is newer than `v2`.
+---  - `0` if both versions are equal.
+---
+function CompareVersions(v1, v2)
+    -- Normalize versions by removing leading "v", whitespace, and extracting numbers
+    local function normalize(version)
+        local major, minor, patch = version:match("^%s*v?(%d+)%.*(%d*)%.*(%d*)%s*$")
+        return tonumber(major) or 0, tonumber(minor) or 0, tonumber(patch) or 0
+    end
+
+    -- Normalize both versions
+    local major1, minor1, patch1 = normalize(v1)
+    local major2, minor2, patch2 = normalize(v2)
+
+    -- Compare major, minor, and patch
+    return (major1 ~= major2 and (major1 < major2 and -1 or 1))
+        or (minor1 ~= minor2 and (minor1 < minor2 and -1 or 1))
+        or (patch1 ~= patch2 and (patch1 < patch2 and -1 or 1))
+        or 0
+end
+
 
 ---
 ---Get the file name of the current script without folders or extension. E.g. `util.util`
@@ -916,4 +989,4 @@ function CalcClosestCornerOnEntityAABB(entity, position)
     return closestCorner
 end
 
-return version
+return _version
