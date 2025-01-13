@@ -1,11 +1,11 @@
 --[[
-    v2.0.0
+    v2.0.1
     https://github.com/FrostSource/alyxlib
 
     
 ]]
 
-local version = "v2.0.0"
+local version = "v2.0.1"
 
 ---@class __PlayerRegisteredEventData
 ---@field callback function
@@ -28,6 +28,8 @@ local registered_event_callbacks = {
     weapon_switch = {},
 }
 
+local playerActivated = false
+
 ---@alias PLAYER_EVENTS_ALL "novr_player"|"player_activate"|"vr_player_ready"|"item_pickup"|"item_released"|"primary_hand_changed"|"player_drop_ammo_in_backpack"|"player_retrieved_backpack_clip"|"player_stored_item_in_itemholder"|"player_removed_item_from_itemholder"|"player_drop_resin_in_backpack"|"weapon_switch"
 
 ---Register a callback function with for a player event.
@@ -36,6 +38,9 @@ local registered_event_callbacks = {
 ---@param context? table # Optional: The context to pass to the function as `self`. If omitted the context will not passed to the callback.
 ---@return integer eventID # ID used to unregister
 function ListenToPlayerEvent(event, callback, context)
+    if playerActivated and (event == "novr_player" or event == "player_activate" or event == "vr_player_ready") then
+        warn("Player has already spawned so this event won't fire at "..Debug.GetSourceLine(3))
+    end
     devprint2("Listening to player event", event, callback)
     registered_event_callbacks[event][registered_event_index] = { callback = callback, context = context}
     registered_event_index = registered_event_index + 1
@@ -88,6 +93,7 @@ end
 -- Setting up player values.
 local listenEventPlayerActivateID
 local function listenEventPlayerActivate(data)
+    playerActivated = true
     local base_data = vlua.clone(data)
     Player = GetListenServerHost()
     loadPlayerData()
