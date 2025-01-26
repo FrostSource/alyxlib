@@ -111,6 +111,20 @@ function GetScriptFile(sep, level)
 end
 
 ---
+---Get the list of enabled addons from the `default_enabled_addons_list` Convar.
+---
+---@return string[]
+function GetEnabledAddons()
+    local addons = {}
+    ---@type string
+    local addonList = Convars:GetStr("default_enabled_addons_list")
+    for workshopID in addonList:gmatch("[^,]+") do
+        table.insert(addons, workshopID)
+    end
+    return addons
+end
+
+---
 ---Get if the given `handle` value is an entity, regardless of if it's still alive.
 ---
 ---A common usage is replacing the often used entity check:
