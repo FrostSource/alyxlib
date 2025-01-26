@@ -690,26 +690,34 @@ end
 ---
 ---Draw a simple sphere without worrying about all the properties.
 ---
----@param x number
----@param y number
----@param z number
----@param radius? number
----@param time? number
----@overload fun(pos: Vector, radius?: number, time: number?)
-function Debug.Sphere(x, y, z, radius, time)
+---@param x number # X position
+---@param y number # Y position
+---@param z number # Z position
+---@param radius? number # Radius of the sphere
+---@param time? number # Lifetime in seconds, default 10
+---@param color? Vector # Color vector [Red, Green, Blue]
+---@overload fun(pos: Vector, radius?: number, time: number?, color: Vector?)
+function Debug.Sphere(x, y, z, radius, time, color)
     if IsVector(x) then
         ---@diagnostic disable-next-line: cast-type-mismatch
         ---@cast x Vector
+        ---@diagnostic disable-next-line: cast-type-mismatch
+        ---@cast radius Vector
+
+        color = radius
         radius = y
         time = z
+
         z = x.z
         y = x.y
         x = x.x
     end
 
     radius = radius or 8
+    time = time or 10
+    color = color or Vector(255, 255, 255)
 
-    DebugDrawSphere(Vector(x, y, z), Vector(255, 255, 255), 255, radius, false, time or 10)
+    DebugDrawSphere(Vector(x, y, z), color, 255, radius, false, time)
 end
 
 ---
