@@ -193,7 +193,7 @@ end
 ---
 ---Then runs the given callback function.
 ---
----If the module fails to load then the callback is not executed and no error is thrown.
+---If the module fails to load then the callback is not executed and no error is thrown, but a warning is displayed in the console.
 ---
 ---@param modname string
 ---@param callback fun(mod_result: unknown)?
@@ -203,7 +203,10 @@ function ifrequire(modname, callback)
     ---@TODO: Consider using module_exists
     local success, result = pcall(require, modname)
     if not success then
-        devwarn("ifrequire("..modname..") "..tostring(result).."\n")
+        -- Only warn if the error is not failing to find the module
+        if not result:find(modname .. "\']Failed to find") then
+            devwarn("ifrequire("..modname..") "..tostring(result).."\n")
+        end
         return nil
     end
 
