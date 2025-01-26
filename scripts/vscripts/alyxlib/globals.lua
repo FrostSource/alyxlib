@@ -347,12 +347,12 @@ end
 
 ---
 ---Prints a warning in the console, along with a vscript print if inside tools mode.
----But only if convar "developer" is greater than 1.
+---But only if convar "developer" is greater than 0.
 ---
 ---@param ... any
 ---@diagnostic disable-next-line: lowercase-global
 function devwarn(...)
-    if Convars:GetInt("developer") > 1 then
+    if Convars:GetInt("developer") > 0 then
         local str = table.concat({...}, " ")
         Warning(str .. "\n")
         if IsInToolsMode() then
@@ -468,7 +468,7 @@ end
 ---
 ---Searches for `value` in `tbl` and sets the associated key to `nil`, returning the key if found.
 ---
----If working with arrays you should use `ArrayRemove` instead.
+---If your table is an array you should use `ArrayRemove` instead.
 ---
 ---@param tbl table
 ---@param value any
@@ -1017,7 +1017,9 @@ function CreateToggleBehavior(on, off)
     end
 end
 
+---
 ---Compute the closest corner relative to a vector on the AABB of an entity.
+---
 ---@param entity EntityHandle
 ---@param position Vector
 function CalcClosestCornerOnEntityAABB(entity, position)
