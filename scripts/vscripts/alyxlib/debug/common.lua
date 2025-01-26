@@ -721,6 +721,21 @@ function Debug.Sphere(x, y, z, radius, time, color)
 end
 
 ---
+---Draw a simple line without worrying about all the properties.
+---
+---@param startPos Vector # Start position
+---@param endPos Vector # End position
+---@param time? number # Lifetime in seconds, default 10
+---@param color? Vector # Color vector [Red, Green, Blue]
+function Debug.Line(startPos, endPos, time, color)
+
+    time = time or 10
+    color = color or Vector(255, 255, 255)
+
+    DebugDrawLine(startPos, endPos, color.x, color.y, color.z, false, time)
+end
+
+---
 ---Returns a string made up of an entity's class and name in the format "[class, name]" for debugging purposes.
 ---
 ---@param ent EntityHandle
