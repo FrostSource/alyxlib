@@ -395,7 +395,7 @@ function CBaseEntity:SetCastShadow(shadowEnabled)
     if shadowEnabled then
         self:RemoveEffects(0x010)
     else
-        self:AddEffects(0x020)
+        self:AddEffects(0x010)
     end
 end
 
