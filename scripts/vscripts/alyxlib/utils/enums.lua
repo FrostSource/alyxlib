@@ -123,26 +123,26 @@ PATTACH_CUSTOM_GAME_STATE_1 = 14
 -- Missing enumerations used by Entity:AddEffects, Entity:RemoveEffects and Entity:IsEffectActive.
 
 ---@type number
-EF_BONEMERGE          = 1
+EF_BONEMERGE          = 0x001
 ---@type number
-EF_BRIGHTLIGHT        = 2
+EF_BRIGHTLIGHT        = 0x002
 ---@type number
-EF_DIMLIGHT           = 4
+EF_DIMLIGHT           = 0x004
 ---@type number
-EF_NOINTERP           = 8
+EF_NOINTERP           = 0x008
 ---@type number
-EF_NOSHADOW           = 16
+EF_NOSHADOW           = 0x010
 ---@type number
-EF_NODRAW             = 32
+EF_NODRAW             = 0x020
 ---@type number
-EF_NORECEIVESHADOW    = 64
+EF_NORECEIVESHADOW    = 0x040
 ---@type number
-EF_BONEMERGE_FASTCULL = 128
+EF_BONEMERGE_FASTCULL = 0x080
 ---@type number
-EF_ITEM_BLINK         = 256
+EF_ITEM_BLINK         = 0x100
 ---@type number
-EF_PARENT_ANIMATES    = 512
+EF_PARENT_ANIMATES    = 0x200
 ---@type number
-EF_FOLLOWBONE         = 1024
+EF_FOLLOWBONE         = 0x400
 
 return version
