@@ -94,7 +94,6 @@ end
 local listenEventPlayerActivateID
 local function listenEventPlayerActivate(data)
     playerActivated = true
-    local base_data = vlua.clone(data)
     Player = GetListenServerHost()
     loadPlayerData()
     local previous_map = Storage.LoadString(Player, "PlayerPreviousMap", "")
@@ -176,7 +175,6 @@ local function listenEventPlayerActivate(data)
         end
     end
     StopListeningToGameEvent(listenEventPlayerActivateID)
-    FireGameEvent("player_activate", base_data)
 end
 listenEventPlayerActivateID = ListenToGameEvent("player_activate", listenEventPlayerActivate, nil)
 
