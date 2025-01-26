@@ -585,7 +585,7 @@ function ArrayRemove(array, pos)
     local j, n = 1, #array
 
     for i = 1,n do
-        if i == pos then
+        if i ~= pos then
             -- Move i's kept value to j's position, if it's not already there.
             if i ~= j then
                 array[j] = array[i]
