@@ -575,7 +575,7 @@ end
 ---
 ---Remove an item from an array at a given position.
 ---
----This is significantly faster than `table.remove`.
+---This is exponentially faster than `table.remove` for large arrays.
 ---
 ---@generic T
 ---@param array T # The array to remove from.
@@ -586,6 +586,34 @@ function ArrayRemove(array, pos)
 
     for i = 1,n do
         if i ~= pos then
+            -- Move i's kept value to j's position, if it's not already there.
+            if i ~= j then
+                array[j] = array[i]
+                array[i] = nil
+            end
+            j = j + 1 -- Increment position of where we'll place the next kept value.
+        else
+            array[i] = nil
+        end
+    end
+
+    return array
+end
+
+---
+---Remove a value from an array.
+---
+---This is exponentially faster than `table.remove` for large arrays.
+---
+---@generic T
+---@param array T # The array to remove from
+---@param value any # The value to remove
+---@return T # The same array passed in
+function ArrayRemoveVal(array, value)
+    local j, n = 1, #array
+
+    for i = 1,n do
+        if array[i] ~= value then
             -- Move i's kept value to j's position, if it's not already there.
             if i ~= j then
                 array[j] = array[i]
