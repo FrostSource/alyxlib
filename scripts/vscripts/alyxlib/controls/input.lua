@@ -203,6 +203,21 @@ local AnalogDescriptions =
     [4] = "Continuous Turn",
 }
 
+local ControllerTypeDescriptions =
+{
+    [0] = "VR_CONTROLLER_TYPE_UNKNOWN",
+    [1] = "VR_CONTROLLER_TYPE_X360",
+    [2] = "VR_CONTROLLER_TYPE_VIVE",
+    [3] = "VR_CONTROLLER_TYPE_TOUCH",
+    [4] = "VR_CONTROLLER_TYPE_RIFT_S",
+    [5] = "UNKNOWN",
+    [6] = "VR_CONTROLLER_TYPE_KNUCKLES",
+    [7] = "VR_CONTROLLER_TYPE_WINDOWSMR",
+    [8] = "VR_CONTROLLER_TYPE_WINDOWSMR_SAMSUNG",
+    [9] = "VR_CONTROLLER_TYPE_GENERIC_TRACKED",
+    [10] = "VR_CONTROLLER_TYPE_COSMOS",
+}
+
 ---
 ---Get the description of a given button.
 ---Useful for debugging or hint display.
@@ -221,7 +236,15 @@ end
 ---@return string
 function Input:GetAnalogDescription(analog)
     return AnalogDescriptions[analog]
-    return ANALOG_DESCS[analog]
+end
+
+---
+---Get the description of a given controller type.
+---
+---@param controllerType ControllerType
+---@return string
+function Input:GetControllerTypeDescription(controllerType)
+    return ControllerTypeDescriptions[controllerType]
 end
 
 ---
