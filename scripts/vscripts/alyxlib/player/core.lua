@@ -113,7 +113,7 @@ Player = nil
 ---@type CPropHMDAvatar
 CBasePlayer.HMDAvatar = nil
 ---**The entity handle of the VR anchor (if in VR mode).**
----@type CEntityInstance
+---@type CBaseEntity
 CBasePlayer.HMDAnchor = nil
 ---**1 = Left hand, 2 = Right hand.**
 ---@type CPropVRHand[]
