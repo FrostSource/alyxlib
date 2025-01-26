@@ -248,6 +248,29 @@ function Entities:FindAllNPCs()
 end
 
 ---
+---Returns an iterator to loop over all NPC entities in the map using a `for` loop.
+---
+---E.g.
+---
+---    for npc in Entities:IterateAllNPCs() do
+---        print(npc:GetClassname())
+---    end
+---
+---@return fun():CAI_BaseNPC? # Iterator
+function Entities:IterateAllNPCs()
+    local ent = Entities:First()
+    return function()
+        -- This should be fine because the first entity will never be NPC?
+        ent = Entities:Next(ent)
+
+        while ent ~= nil and not ent:IsNPC() do
+            ent = Entities:Next(ent)
+        end
+        return ent
+    end
+end
+
+---
 ---Find all entities by model name within a radius.
 ---
 ---@param modelName string
