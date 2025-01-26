@@ -467,10 +467,34 @@ local classes = {
     [CSceneEntity] = 'CSceneEntity';
     [CScriptKeyValues] = 'CScriptKeyValues';
     [CScriptPrecacheContext] = 'CScriptPrecacheContext';
+
+    -- Does not exist until CAI_BaseNPC:GetSquad() is called
+    -- [AI_Squad] = "AI_Squad";
 }
 
+---
+---Gets the class name of a vscript entity based on its metatable, e.g. `CBaseEntity`.
+---
+---If the entity is an EntityClass entity the original Valve class name will be returned instead of the EntityClass.
+---
+---@param ent EntityHandle # The entity to get the class name of.
+---@return string # The class name of the entity or "none" if not found.
 function Debug.GetClassname(ent)
-    return classes[ent] or "none"
+
+    -- AI_Squad doesn't exist until CAI_BaseNPC:GetSquad() is called
+    -- check each time to see when it's ready to be added
+    ---@diagnostic disable: undefined-global
+    if AI_Squad then
+        classes[AI_Squad] = "AI_Squad"
+    end
+    ---@diagnostic enable: undefined-global
+
+    if IsClassEntity(ent) then
+        ---@cast ent EntityClass
+        return classes[getvalvemeta(ent).__index] or "none"
+    else
+        return classes[getmetatable(ent).__index] or "none"
+    end
 end
 
 function Debug.PrintMetaClasses()
