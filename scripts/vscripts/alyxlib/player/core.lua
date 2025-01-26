@@ -146,18 +146,18 @@ CBasePlayer.LastItemGrabbed = nil
 ---@type string
 CBasePlayer.LastClassGrabbed = ""
 
----@alias PLAYER_WEAPON_HAND           "hand"
----@alias PLAYER_WEAPON_ENERGYGUN      "energygun"
----@alias PLAYER_WEAPON_RAPIDFIRE      "rapidfire"
----@alias PLAYER_WEAPON_SHOTGUN        "shotgun"
----@alias PLAYER_WEAPON_MULTITOOL      "multitool"
----@alias PLAYER_WEAPON_GENERIC_PISTOL "generic_pistol"
-PLAYER_WEAPON_HAND           = "hand"
-PLAYER_WEAPON_ENERGYGUN      = "energygun"
-PLAYER_WEAPON_RAPIDFIRE      = "rapidfire"
-PLAYER_WEAPON_SHOTGUN        = "shotgun"
-PLAYER_WEAPON_MULTITOOL      = "multitool"
-PLAYER_WEAPON_GENERIC_PISTOL = "generic_pistol"
+---@alias PLAYER_WEAPON_HAND           "hand_use_controller"
+---@alias PLAYER_WEAPON_ENERGYGUN      "hlvr_weapon_energygun"
+---@alias PLAYER_WEAPON_RAPIDFIRE      "hlvr_weapon_rapidfire"
+---@alias PLAYER_WEAPON_SHOTGUN        "hlvr_weapon_shotgun"
+---@alias PLAYER_WEAPON_MULTITOOL      "hlvr_multitool"
+---@alias PLAYER_WEAPON_GENERIC_PISTOL "hlvr_weapon_generic_pistol"
+PLAYER_WEAPON_HAND           = "hand_use_controller"
+PLAYER_WEAPON_ENERGYGUN      = "hlvr_weapon_energygun"
+PLAYER_WEAPON_RAPIDFIRE      = "hlvr_weapon_rapidfire"
+PLAYER_WEAPON_SHOTGUN        = "hlvr_weapon_shotgun"
+PLAYER_WEAPON_MULTITOOL      = "hlvr_multitool"
+PLAYER_WEAPON_GENERIC_PISTOL = "hlvr_weapon_generic_pistol"
 
 ---@alias PlayerPistolUpgrades
 ---|"pistol_upgrade_laser_sight"
@@ -576,10 +576,24 @@ function CBasePlayer:HasWeaponEquipped()
         or self.CurrentlyEquipped == PLAYER_WEAPON_GENERIC_PISTOL
 end
 
+---
 ---Get the amount of ammo stored in the backpack for the currently equipped weapon.
----@return number # The amount of ammo, or 0 if no weapon equipped.
+---
+---This is not accurate if ammo was given through special means like info_hlvr_equip_player.
+---
+---@return number # The amount of ammo, or 0 if no weapon equipped
 function CBasePlayer:GetCurrentWeaponReserves()
-    return self.Items.ammo[self.CurrentlyEquipped] or 0
+    local currentlyEquipped = self.CurrentlyEquipped
+    if currentlyEquipped == PLAYER_WEAPON_ENERGYGUN then
+        return self.Items.ammo.energygun or 0
+    elseif currentlyEquipped == PLAYER_WEAPON_SHOTGUN then
+        return self.Items.ammo.shotgun or 0
+    elseif currentlyEquipped == PLAYER_WEAPON_RAPIDFIRE then
+        return self.Items.ammo.rapidfire or 0
+    elseif currentlyEquipped == PLAYER_WEAPON_GENERIC_PISTOL then
+        return self.Items.ammo.generic_pistol or 0
+    end
+    return 0
 end
 
 ---Player has item holder equipped.
