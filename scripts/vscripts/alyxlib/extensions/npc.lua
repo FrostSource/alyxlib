@@ -222,4 +222,19 @@ function CAI_BaseNPC:IsXen()
     return vlua.find(xenClasses, self:GetClassname()) ~= nil
 end
 
+---
+---Get all members of the same squad as this NPC, including this NPC.
+---
+---@return CAI_BaseNPC[]
+function CAI_BaseNPC:GetSquadMembers()
+    local squad = self:GetSquad()
+    local members = {}
+    for npc in Entities:IterateAllNPCs() do
+        if npc:GetSquad() == squad then
+            table.insert(members, npc)
+        end
+    end
+    return members
+end
+
 return version
