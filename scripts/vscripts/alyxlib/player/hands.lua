@@ -59,7 +59,7 @@ end
 
 ---Returns true if the digital action is on for this. See `ENUM_DIGITAL_INPUT_ACTIONS` for action index values.
 ---Note: Only reports input when headset is awake. Will still transmit input when controller loses tracking.
----@param digitalAction ENUM_DIGITAL_INPUT_ACTIONS
+---@param digitalAction DigitalInputAction
 ---@return boolean
 function CPropVRHand:IsButtonPressed(digitalAction)
     return Player:IsDigitalActionOnForHand(self.Literal, digitalAction)

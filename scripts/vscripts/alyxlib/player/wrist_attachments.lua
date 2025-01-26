@@ -160,7 +160,7 @@ function WristAttachments:Update()
     end
 end
 
----@param params PLAYER_EVENT_PRIMARY_HAND_CHANGED
+---@param params PlayerEventPrimaryHandChanged
 ListenToPlayerEvent("primary_hand_changed", function (params)
     WristAttachments:Update()
 end)

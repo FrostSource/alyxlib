@@ -81,14 +81,14 @@ local function loadPlayerData()
     Player.Items = Storage.LoadTable(Player, "PlayerItems", Player.Items)
 end
 
----@class PLAYER_EVENT_PLAYER_ACTIVATE : GAME_EVENT_BASE
+---@class PlayerEventPlayerActivate : GameEventBase
 ---@field player CBasePlayer # The entity handle of the player.
 ---@field type "spawn"|"load"|"transition" # Type of player activate.
 
----@class PLAYER_EVENT_VR_PLAYER_READY : PLAYER_EVENT_PLAYER_ACTIVATE
+---@class PlayerEventVRPlayerReady : PlayerEventPlayerActivate
 ---@field hmd_avatar CPropHMDAvatar # The hmd avatar entity handle.
 
----@alias PLAYER_EVENT_NOVR_PLAYER PLAYER_EVENT_PLAYER_ACTIVATE
+---@alias PlayerEventNoVRPlayer PlayerEventPlayerActivate
 
 -- Setting up player values.
 local listenEventPlayerActivateID
@@ -100,7 +100,7 @@ local function listenEventPlayerActivate(data)
     local previous_map = Storage.LoadString(Player, "PlayerPreviousMap", "")
     Storage.SaveString(Player, "PlayerPreviousMap", GetMapName())
 
-    ---@cast data PLAYER_EVENT_PLAYER_ACTIVATE
+    ---@cast data PlayerEventPlayerActivate
     data.player = Player
     -- Determine type of player activate
     if previous_map == "" then
@@ -180,14 +180,14 @@ local function listenEventPlayerActivate(data)
 end
 listenEventPlayerActivateID = ListenToGameEvent("player_activate", listenEventPlayerActivate, nil)
 
----@class PLAYER_EVENT_ITEM_PICKUP : GAME_EVENT_ITEM_PICKUP
+---@class PlayerEventItemPickup : GameEventItemPickup
 ---@field item EntityHandle # The entity handle of the item that was picked up.
 ---@field item_class string # Classname of the entity that was picked up.
 ---@field hand CPropVRHand # The entity handle of the hand that picked up the item.
 ---@field otherhand CPropVRHand # The entity handle of the opposite hand.
 
 ---Tracking player held items.
----@param data GAME_EVENT_ITEM_PICKUP
+---@param data GameEventItemPickup
 local function listenEventItemPickup(data)
     -- print("\nITEM PICKUP:")
     -- Debug.PrintTable(data)
@@ -217,7 +217,7 @@ local function listenEventItemPickup(data)
     end
 
     -- Registered callback
-    ---@cast data PLAYER_EVENT_ITEM_PICKUP
+    ---@cast data PlayerEventItemPickup
     data.item_class = data.item--[[@as string]]
     ---@diagnostic disable-next-line: assign-type-mismatch
     data.item = ent_held
@@ -233,7 +233,7 @@ local function listenEventItemPickup(data)
 end
 ListenToGameEvent("item_pickup", listenEventItemPickup, nil)
 
----@class PLAYER_EVENT_ITEM_RELEASED : GAME_EVENT_ITEM_RELEASED
+---@class PlayerEventItemReleased : GameEventItemReleased
 ---@field item EntityHandle # The entity handle of the item that was dropped.
 ---@field item_class string # Classname of the entity that was dropped.
 ---@field hand CPropVRHand # The entity handle of the hand that dropped the item.
@@ -244,7 +244,7 @@ ListenToGameEvent("item_pickup", listenEventItemPickup, nil)
 local last_resin_dropped
 
 ---Item released event
----@param data GAME_EVENT_ITEM_RELEASED
+---@param data GameEventItemReleased
 local function listenEventItemReleased(data)
     -- print("\nITEM RELEASED:")
     -- Debug.PrintTable(data)
@@ -268,7 +268,7 @@ local function listenEventItemReleased(data)
     hand.ItemHeld = nil
 
     -- Registered callback
-    ---@cast data PLAYER_EVENT_ITEM_RELEASED
+    ---@cast data PlayerEventItemReleased
     data.item_class = data.item--[[@as string]]
     ---@diagnostic disable-next-line: assign-type-mismatch
     data.item = hand.LastItemDropped
@@ -284,13 +284,13 @@ local function listenEventItemReleased(data)
 end
 ListenToGameEvent("item_released", listenEventItemReleased, nil)
 
----@class PLAYER_EVENT_PRIMARY_HAND_CHANGED : GAME_EVENT_PRIMARY_HAND_CHANGED
+---@class PlayerEventPrimaryHandChanged : GameEventPrimaryHandChanged
 ---@field is_primary_left boolean
 
 ---Tracking handedness.
----@param data GAME_EVENT_PRIMARY_HAND_CHANGED
+---@param data GameEventPrimaryHandChanged
 local function listenEventPrimaryHandChanged(data)
-    ---@cast data PLAYER_EVENT_PRIMARY_HAND_CHANGED
+    ---@cast data PlayerEventPrimaryHandChanged
     data.is_primary_left = (data.is_primary_left == 1) and true or false
 
     if data.is_primary_left then
@@ -313,12 +313,12 @@ end
 ListenToGameEvent("primary_hand_changed", listenEventPrimaryHandChanged, nil)
 
 -- Inherit from base instead of event to remove 'ammoType'
----@class PLAYER_EVENT_PLAYER_DROP_AMMO_IN_BACKPACK : GAME_EVENT_BASE
+---@class PlayerEventPlayerDropAmmoInBackpack : GameEventBase
 ---@field ammotype "Pistol"|"SMG1"|"Buckshot"|"AlyxGun" # Type of ammo that was stored.
 ---@field ammo_amount 0|1|2|3|4 # Amount of ammo stored for the given type (1 clip, 2 shells).
 
 ---Ammo tracking
----@param data GAME_EVENT_PLAYER_DROP_AMMO_IN_BACKPACK
+---@param data GameEventPlayerDropAmmoInBackpack
 local function listenEventPlayerDropAmmoInBackpack(data)
     -- print("\nSTORE AMMO:")
     -- Debug.PrintTable(data)
@@ -382,7 +382,7 @@ local function listenEventPlayerDropAmmoInBackpack(data)
 
     -- Registered callback
     ---@diagnostic disable-next-line: cast-type-mismatch
-    ---@cast data PLAYER_EVENT_PLAYER_DROP_AMMO_IN_BACKPACK
+    ---@cast data PlayerEventPlayerDropAmmoInBackpack
     data.ammotype = ammotype
     data.ammo_amount = ammo_amount
     for id, event_data in pairs(registered_event_callbacks[data.game_event_name]) do
@@ -397,12 +397,12 @@ ListenToGameEvent("player_drop_ammo_in_backpack", listenEventPlayerDropAmmoInBac
 
 -- Inherit from base instead of event to remove 'ammoType'
 
----@class PLAYER_EVENT_PLAYER_RETRIEVED_BACKPACK_CLIP : GAME_EVENT_BASE
+---@class PlayerEventPlayerRetrievedBackpackClip : GameEventBase
 ---@field ammotype "Pistol"|"SMG1"|"Buckshot"|"AlyxGun" # Type of ammo that was retrieved.
 ---@field ammo_amount integer # Amount of ammo retrieved for the given type (1 clip, 2 shells).
 
 ---Ammo tracking
----@param data GAME_EVENT_PLAYER_RETRIEVED_BACKPACK_CLIP
+---@param data GameEventPlayerRetrievedBackpackClip
 local function listenEventPlayerRetrievedBackpackClip(data)
     -- print("\nRETRIEVE AMMO:")
     -- Debug.PrintTable(data)
@@ -431,7 +431,7 @@ local function listenEventPlayerRetrievedBackpackClip(data)
             end
             -- Registered callback
             ---@diagnostic disable-next-line: cast-type-mismatch
-            ---@cast data PLAYER_EVENT_PLAYER_RETRIEVED_BACKPACK_CLIP
+            ---@cast data PlayerEventPlayerRetrievedBackpackClip
             data.ammotype = ammotype
             data.ammo_amount = ammo_amount
             for id, event_data in pairs(registered_event_callbacks[data.game_event_name]) do
@@ -450,7 +450,7 @@ local function listenEventPlayerRetrievedBackpackClip(data)
     -- Registered callback
     if do_callback then
         ---@diagnostic disable-next-line: cast-type-mismatch
-        ---@cast data PLAYER_EVENT_PLAYER_RETRIEVED_BACKPACK_CLIP
+        ---@cast data PlayerEventPlayerRetrievedBackpackClip
         data.ammotype = ammotype
         data.ammo_amount = ammo_amount
         for id, event_data in pairs(registered_event_callbacks[data.game_event_name]) do
@@ -464,13 +464,13 @@ local function listenEventPlayerRetrievedBackpackClip(data)
 end
 ListenToGameEvent("player_retrieved_backpack_clip", listenEventPlayerRetrievedBackpackClip, nil)
 
----@class PLAYER_EVENT_PLAYER_STORED_ITEM_IN_ITEMHOLDER : GAME_EVENT_PLAYER_STORED_ITEM_IN_ITEMHOLDER
+---@class PlayerEventPlayerStoredItemInItemholder : GameEventPlayerStoredItemInItemholder
 ---@field item EntityHandle # The entity handle of the item that stored.
 ---@field item_class string # Classname of the entity that was stored.
 ---@field hand CPropVRHand  # Hand that the entity was stored in.
 
 ---Wrist tracking
----@param data GAME_EVENT_PLAYER_STORED_ITEM_IN_ITEMHOLDER
+---@param data GameEventPlayerStoredItemInItemholder
 local function listenEventPlayerStoredItemInItemholder(data)
     -- print("\nSTORE WRIST:")
     -- Debug.PrintTable(data)
@@ -498,7 +498,7 @@ local function listenEventPlayerStoredItemInItemholder(data)
     savePlayerData()
 
     -- Registered callback
-    ---@cast data PLAYER_EVENT_PLAYER_STORED_ITEM_IN_ITEMHOLDER
+    ---@cast data PlayerEventPlayerStoredItemInItemholder
     data.item_class = data.item--[[@as string]]
     ---@diagnostic disable-next-line: assign-type-mismatch
     data.item = item
@@ -513,13 +513,13 @@ local function listenEventPlayerStoredItemInItemholder(data)
 end
 ListenToGameEvent("player_stored_item_in_itemholder", listenEventPlayerStoredItemInItemholder, nil)
 
----@class PLAYER_EVENT_PLAYER_REMOVED_ITEM_FROM_ITEMHOLDER : GAME_EVENT_PLAYER_REMOVED_ITEM_FROM_ITEMHOLDER
+---@class PlayerEventPlayerRemovedItemFromItemholder : GameEventPlayerRemovedItemFromItemholder
 ---@field item EntityHandle # The entity handle of the item that removed.
 ---@field item_class string # Classname of the entity that was removed.
 ---@field hand CPropVRHand  # Hand that the entity was removed form.
 
 ---Tracking wrist items
----@param data GAME_EVENT_PLAYER_REMOVED_ITEM_FROM_ITEMHOLDER
+---@param data GameEventPlayerRemovedItemFromItemholder
 local function listenEventPlayerRemovedItemFromItemholder(data)
     -- print("\nREMOVE FROM WRIST:")
     -- Debug.PrintTable(data)
@@ -552,7 +552,7 @@ local function listenEventPlayerRemovedItemFromItemholder(data)
     savePlayerData()
 
     -- Registered callback
-    ---@cast data PLAYER_EVENT_PLAYER_REMOVED_ITEM_FROM_ITEMHOLDER
+    ---@cast data PlayerEventPlayerRemovedItemFromItemholder
     data.item_class = data.item--[[@as string]]
     ---@diagnostic disable-next-line: assign-type-mismatch
     data.item = item
@@ -569,11 +569,11 @@ ListenToGameEvent("player_removed_item_from_itemholder", listenEventPlayerRemove
 
 -- No known way to track resin being taken out reliably.
 
----@class PLAYER_EVENT_PLAYER_DROP_RESIN_IN_BACKPACK : GAME_EVENT_PLAYER_DROP_RESIN_IN_BACKPACK
+---@class PlayerEventPlayerDropResinInBackpack : GameEventPlayerDropResinInBackpack
 ---@field resin_ent EntityHandle? # The resin entity being dropped into the backpack.
 
 ---Track resin
----@param data GAME_EVENT_PLAYER_DROP_RESIN_IN_BACKPACK
+---@param data GameEventPlayerDropResinInBackpack
 local function listenEventPlayerDropResinInBackpack(data)
     -- print("\nSTORE RESIN:")
     -- Debug.PrintTable(data)
@@ -591,7 +591,7 @@ local function listenEventPlayerDropResinInBackpack(data)
     end
     last_resin_dropped = nil
 
-    ---@cast data PLAYER_EVENT_PLAYER_DROP_RESIN_IN_BACKPACK
+    ---@cast data PlayerEventPlayerDropResinInBackpack
     data.resin_ent = last_resin_dropped
 
     for id, event_data in pairs(registered_event_callbacks[data.game_event_name]) do
@@ -604,10 +604,10 @@ local function listenEventPlayerDropResinInBackpack(data)
 end
 ListenToGameEvent("player_drop_resin_in_backpack", listenEventPlayerDropResinInBackpack, nil)
 
----@class PLAYER_EVENT_WEAPON_SWITCH : GAME_EVENT_WEAPON_SWITCH
+---@class PlayerEventWeaponSwitch : GameEventWeaponSwitch
 
 ---Track weapon equipped
----@param data GAME_EVENT_WEAPON_SWITCH
+---@param data GameEventWeaponSwitch
 local function listenEventWeaponSwitch(data)
     -- print("\nWEAPON SWITCH:")
     -- Debug.PrintTable(data)

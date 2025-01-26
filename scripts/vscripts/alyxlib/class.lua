@@ -424,12 +424,12 @@ end
 ---@field __rawget fun(self: EntityClass, key: string): any # Custom rawget function to get a value from meta.__values without checking inherits.
 ---@field Initiated boolean # If the class entity has been activated.
 ---@field IsThinking boolean # If the entity is currently thinking with `Think` function.
----@field OnActivate fun(self: EntityClass, activateType: ENUM_ACTIVATION_TYPES) # Called automatically on `Activate` if defined.
+---@field OnActivate fun(self: EntityClass, activateType: ActivationType) # Called automatically on `Activate` if defined.
 ---@field OnReady fun(self: EntityClass, readyType: OnReadyType) # Called automatically after `Activate`, if defined, when EasyConvars and Player are initialized.
 ---@field OnSpawn fun(self: EntityClass, spawnkeys: CScriptKeyValues) # Called automatically on `Spawn` if defined.
 ---@field UpdateOnRemove fun(self: EntityClass) # Called before the entity is killed.
 ---@field OnBreak fun(self: EntityClass, inflictor: EntityHandle) # Called when a breakable entity is broken.
----@field OnTakeDamage fun(self: EntityClass, damageTable: TypeDamageTable) # Called when entity takes damage.
+---@field OnTakeDamage fun(self: EntityClass, damageTable: OnTakeDamageTable) # Called when entity takes damage.
 ---@field Precache fun(self: EntityClass, context: CScriptPrecacheContext) # Called before Spawn for precaching.
 EntityClass = entity("EntityClass")
 
@@ -488,7 +488,7 @@ function EntityClass:Output(output, func)
 end
 
 ---Define a function for listening to a game event.
----@param gameEvent GAME_EVENTS_ALL
+---@param gameEvent GameEventsAll
 ---@param func fun(self: EntityClass, params):any
 function EntityClass:GameEvent(gameEvent, func)
     self.__game_events[gameEvent] = func
@@ -591,6 +591,14 @@ function isinstance(ent, class)
         end
     end
     return false
+end
+
+---Check if an entity is using the entity class system.
+---@param ent EntityHandle # Entity to check.
+---@return boolean # True if `ent` is a class entity, false otherwise.
+function IsClassEntity(ent)
+    local name = rawget(ent, "__name")
+    return type(name) == "string" and EntityClassNameMap[name] ~= nil
 end
 
 return version

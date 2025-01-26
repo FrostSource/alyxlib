@@ -52,7 +52,7 @@ Input.MultiplePressInterval = 0.35
 ---@field context any # Value passed into first argument of callback.
 ---@field handkind InputHandKind # Left, right, primary, secondary.
 ---@field actualhandid 0|1 # This needs to be updated whenver hands change.
----@field button ENUM_DIGITAL_INPUT_ACTIONS # The button for this event.
+---@field button DigitalInputAction # The button for this event.
 ---@field kind "press"|"release"
 ---@field press_time number
 ---@field prev_press_time number
@@ -60,7 +60,7 @@ Input.MultiplePressInterval = 0.35
 ---@field multiple_press_count number
 
 ---@class AnalogCallbackTable
----@field analog ENUM_ANALOG_INPUT_ACTIONS
+---@field analog AnalogInputAction
 ---@field value { x: number?, y: number? }
 ---@field checkGreaterThan boolean
 ---@field func function
@@ -81,7 +81,7 @@ local callbackId = 0
 local currentPrimaryHandId = 1
 local currentSecondaryHandId = 0
 
----@alias NAMED_DIGITAL_INPUT_ACTIONS
+---@alias NamedDigitalInputAction
 ---| `DIGITAL_INPUT_TOGGLE_MENU`
 ---| `DIGITAL_INPUT_MENU_INTERACT`
 ---| `DIGITAL_INPUT_MENU_DISMISS`
@@ -111,11 +111,11 @@ local currentSecondaryHandId = 0
 ---| `DIGITAL_INPUT_STAND_TOGGLE`
 ---| `DIGITAL_INPUT_ADJUST_HEIGHT`
 
-INPUT_HAND_BOTH = -1
-INPUT_HAND_LEFT = 0
-INPUT_HAND_RIGHT = 1
-INPUT_HAND_PRIMARY = 2
-INPUT_HAND_SECONDARY = 3
+InputHandBoth = -1
+InputHandLeft = 0
+InputHandRight = 1
+InputHandPrimary = 2
+InputHandSecondary = 3
 
 ---@alias InputHandKind
 ---| `INPUT_HAND_LEFT`
@@ -155,14 +155,14 @@ local function updatePrimaryHandId(primary)
 end
 
 ListenToGameEvent("primary_hand_changed", function(data)
-    ---@cast data GAME_EVENT_PRIMARY_HAND_CHANGED
+    ---@cast data GameEventPrimaryHandChanged
     updatePrimaryHandId(data.is_primary_left and 0 or 1)
 end, nil)
 
 ---
 ---Button index pointing to its description.
 ---
-local DIGITAL_DESCS =
+local DigitalDescriptions =
 {
     [0] = "Menu > Toggle Menu",
     [1] = "Menu > Menu Interact",
@@ -194,7 +194,7 @@ local DIGITAL_DESCS =
     [27] = "Move > Adjust Height",
 }
 
-local ANALOG_DESCS =
+local AnalogDescriptions =
 {
     [0] = "Hand Curl",
     [1] = "Trigger Pull",
@@ -207,19 +207,20 @@ local ANALOG_DESCS =
 ---Get the description of a given button.
 ---Useful for debugging or hint display.
 ---
----@param button ENUM_DIGITAL_INPUT_ACTIONS
+---@param button DigitalInputAction
 ---@return string
 function Input:GetButtonDescription(button)
-    return DIGITAL_DESCS[button]
+    return DigitalDescriptions[button]
 end
 
 ---
 ---Get the description of a given analog action.
 ---Useful for debugging or hint display.
 ---
----@param analog ENUM_ANALOG_INPUT_ACTIONS
+---@param analog DigitalInputAction
 ---@return string
 function Input:GetAnalogDescription(analog)
+    return AnalogDescriptions[analog]
     return ANALOG_DESCS[analog]
 end
 
@@ -252,11 +253,11 @@ end
 ---@param kind string # The kind of button interaction.
 ---| '"press"' # Button is pressed.
 ---| '"release"' # Button is released.
----@param hand CPropVRHand|`INPUT_HAND_BOTH`|InputHandKind # The type of hand to listen on, or the hand itself.
+---@param hand CPropVRHand|`InputHandBoth`|InputHandKind # The type of hand to listen on, or the hand itself.
 ---| -1 # Both hands
----@param button NAMED_DIGITAL_INPUT_ACTIONS|ENUM_DIGITAL_INPUT_ACTIONS # The button to check.
+---@param button NamedDigitalInputAction|DigitalInputAction # The button to check.
 ---@param presses integer|nil # Number of times the button must be pressed in quick succession. E.g. 2 for double click. Only applicable for `kind` press.
----@param callback fun(params:INPUT_PRESS_CALLBACK|INPUT_RELEASE_CALLBACK)|fun(context:T,params:INPUT_PRESS_CALLBACK|INPUT_RELEASE_CALLBACK) # The function that will be called when conditions are met.
+---@param callback fun(params:InputPressCallback|InputReleaseCallback)|fun(context:T,params:InputPressCallback|InputReleaseCallback) # The function that will be called when conditions are met.
 ---@param context? T # Optional context passed into the callback as the first value. Is also used when unregistering.
 function Input:ListenToButton(kind, hand, button, presses, callback, context)
 
@@ -321,9 +322,9 @@ end
 ---
 ---@param kind "up"|"down" # `up` means listen for the value moving above `analogValue`, `down` means listen for it moving below.
 ---@param hand CPropVRHand|InputHandKind # The hand entity or kind of hand to listen to.
----@param analogAction ENUM_ANALOG_INPUT_ACTIONS # The specific analog action to listen for.
+---@param analogAction AnalogInputAction # The specific analog action to listen for.
 ---@param analogValue AnalogValueType # The value(s) to listen for.
----@param callback fun(params:ANALOG_CALLBACK) # The function that will be called when conditions are met.
+---@param callback fun(params:InputAnalogCallback) # The function that will be called when conditions are met.
 ---@param context? any # Optional context passed into the callback as the first value. Is also used when unregistering.
 function Input:ListenToAnalog(kind, hand, analogAction, analogValue, callback, context)
     local handid = convertHandKindToHandId(hand)
@@ -349,7 +350,7 @@ end
 ---Changes some data which was defined in `ListenToAnalog` for a specific ID.
 ---
 ---@param id integer # The ID of the analog event you want to modify.
----@param analogAction? ENUM_ANALOG_INPUT_ACTIONS # The new action to listen for, or nil to leave unchanged.
+---@param analogAction? AnalogInputAction # The new action to listen for, or nil to leave unchanged.
 ---@param analogValue AnalogValueType # The new value to listen for, or nil to leave unchanged.
 ---@return boolean # True if the ID was found, false otherwise.
 function Input:ModifyAnalogCallback(id, analogAction, analogValue)
@@ -391,7 +392,7 @@ end
 ---
 ---Unregisters any listeners with a specific callback/context pair.
 ---
----@param callback fun(params:ANALOG_CALLBACK) # The callback function that's listening.
+---@param callback fun(params:InputAnalogCallback) # The callback function that's listening.
 ---@param context? any # The context that was given.
 function Input:StopListeningCallbackContext(callback, context)
     for _id, tbl in pairs(buttonCallbacks) do
@@ -428,25 +429,25 @@ function Input:StopListeningByContext(context)
 end
 
 
----@class INPUT_PRESS_CALLBACK
+---@class InputPressCallback
 ---@field kind "press" # The kind of event.
 ---@field press_time number # The server time at which the button was pressed.
 ---@field hand CPropVRHand # EntityHandle for the hand that pressed the button.
----@field button ENUM_DIGITAL_INPUT_ACTIONS # The ID of the button that was pressed.
+---@field button DigitalInputAction # The ID of the button that was pressed.
 
----@class INPUT_RELEASE_CALLBACK
+---@class InputReleaseCallback
 ---@field kind "release" # The kind of event.
 ---@field release_time number # The server time at which the button was released.
 ---@field hand CPropVRHand # EntityHandle for the hand that released the button.
----@field button ENUM_DIGITAL_INPUT_ACTIONS # The ID of the button that was pressed.
+---@field button DigitalInputAction # The ID of the button that was pressed.
 ---@field held_time number # Seconds the button was held for prior to being released.
 
----@class ANALOG_CALLBACK
+---@class InputAnalogCallback
 ---@field value Vector # The vector value of the analog action at the time of detection.
 ---@field hand CPropVRHand # EntityHandle for the hand that moved the analog action.
----@field analog ENUM_ANALOG_INPUT_ACTIONS # The ID of the analog action that was moved.
+---@field analog AnalogInputAction # The ID of the analog action that was moved.
 
----@alias INPUT_CALLBACK INPUT_RELEASE_CALLBACK|INPUT_PRESS_CALLBACK
+---@alias INPUT_CALLBACK InputPressCallback|InputReleaseCallback
 
 local function InputThink()
     ---@TODO remove these variables and use cached literal/hand entity
@@ -471,7 +472,7 @@ local function InputThink()
 
                     if callbackData.kind == "press" then
 
-                        ---@type INPUT_PRESS_CALLBACK
+                        ---@type InputPressCallback
                         local send = {
                             kind = "press",
                             press_time = callbackData.press_time,
@@ -499,7 +500,7 @@ local function InputThink()
 
                 if callbackData.kind == "release" then
 
-                    ---@type INPUT_RELEASE_CALLBACK
+                    ---@type InputReleaseCallback
                     local send = {
                         kind = "release",
                         release_time = callbackData.release_time,
