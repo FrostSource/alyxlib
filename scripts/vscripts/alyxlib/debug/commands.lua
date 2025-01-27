@@ -51,6 +51,70 @@ Convars:RegisterCommand("alyxlib_commands", function (_, ...)
     Msg("\n")
 end, "Displays all AlyxLib commands in the console", 0)
 
+RegisterAlyxLibCommand("alyxlib_diagnose", function (_, searchPattern)
+    Msg("\n")
+
+    -- Standard AlyxLib and game info
+    Msg("AlyxLib " .. ALYXLIB_VERSION .. "\n")
+    Msg("VR Enabled: " .. (IsVREnabled() and "Yes" or "No") .. "\n")
+    Msg("Map: " .. GetMapName() .. "\n")
+    if IsEntity(Player, true) then
+        if IsVREnabled() then
+            Msg("VR Controller Type: " .. Input:GetControllerTypeDescription(Player:GetVRControllerType()) .. "\n")
+        end
+    else
+        Msg("Player does not exist!\n")
+    end
+
+    if searchPattern == nil then
+        Msg("\nTo run diagnostics for an addon, type \"alyxlib_diagnose <addon_name>\"\n")
+        return
+    end
+
+    local addon = findAddon(searchPattern)
+
+    if not addon then
+        warn("No addon exists matching \"" .. searchPattern .. "\"")
+        return
+    end
+
+    Msg("Running diagnostics for addon \"" .. addon.name .. "\" " .. addon.version .. "\n")
+
+    if not addon.diagnosticFunction then
+        warn("Addon \"" .. addon.name .. "\" does not have a diagnostic function")
+    else
+        local success, result, message = pcall(addon.diagnosticFunction)
+
+        if not success then
+            warn("Failed to run diagnostics: " .. result)
+        else
+            local messages = nil
+            if type(message) == "string" then
+                messages = {message}
+            elseif type(message) == "table" then
+                messages = message
+            else
+                messages = {}
+            end
+
+            if result == true then
+                -- Use custom success message if returned
+                Msg("Diagnostic result: " .. (messages[1] or "Success") .. "\n")
+            else
+                -- Print all error messages
+                Msg("Diagnostic result: Failed\n")
+                for _, msg in ipairs(messages) do
+                    Msg("\t" .. msg .. "\n")
+                end
+            end
+        end
+
+    end
+
+    Msg("\n")
+
+end, "Runs diagnostics for an addon")
+
 ---
 ---Prints all entities in the map, along with any supplied property patterns.
 ---

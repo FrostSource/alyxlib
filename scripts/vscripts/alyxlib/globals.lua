@@ -20,12 +20,13 @@ local _version = "v2.5.0"
 ---A registered AlyxLib addon.
 ---
 ---@class AlyxLibAddon
----@field name string # Full name of the addon, e.g. My New Addon
----@field version string # SemVer version string of the addon, e.g. v1.2.3
----@field shortName string # Short unique name of the addon without spaces, e.g. myaddon
+---@field name string # Full display name of the addon, e.g. My "New Addon"
+---@field version string # SemVer version string of the addon, e.g. "v1.2.3"
+---@field shortName string # Short unique name of the addon without spaces, e.g. "myaddon"
 ---@field minAlyxLibVersion string # Minimum AlyxLib version that this addon works with
 ---@field maxAlyxLibVersion string # Maximum AlyxLib version that this addon works with 
 ---@field workshopID string? # The ID of the addon on the Steam workshop
+---@field diagnosticFunction fun():boolean,(string|string[]) # Diagnostic function to check if the addon is working, and any diagnostic messages
 
 ---
 ---List of registered addons using AlyxLib.
@@ -38,6 +39,13 @@ AlyxLibAddons = {}
 ---
 ---Registers an addon with AlyxLib.
 ---
+---@param name string # Full display name of the addon, e.g. "My New Addon"
+---@param version string # SemVer version string of the addon, e.g. "v1.2.3"
+---@param workshopID? string # The ID of the addon on the Steam workshop
+---@param shortName? string # Short unique name of the addon without spaces, e.g. "myaddon". Defaults to `name` without spaces and converted to lowercase\
+---@param minAlyxLibVersion? string # Minimum AlyxLib version that this addon works with, defaults to "v1.0.0"
+---@param maxAlyxLibVersion? string # Maximum AlyxLib version that this addon works with, defaults to `ALYXLIB_VERSION`
+---@return integer # The index of the addon for use in other AlyxLib functions
 function RegisterAlyxLibAddon(name, version, workshopID, shortName, minAlyxLibVersion, maxAlyxLibVersion)
     local newAddon = {
         name = name,
@@ -54,6 +62,24 @@ function RegisterAlyxLibAddon(name, version, workshopID, shortName, minAlyxLibVe
     elseif CompareVersions(ALYXLIB_VERSION, newAddon.maxAlyxLibVersion) > 0 then
         warn("Current AlyxLib version ("..ALYXLIB_VERSION..") is newer than the maximum version "..name.." requires ("..newAddon.maxAlyxLibVersion..") and may not work as expected!")
     end
+
+    return #AlyxLibAddons
+end
+
+---
+---Registers a diagnostic function for an addon to help users describe issues.
+---
+---The diagnostic function should return two values:
+---  - `true` if the addon is working as expected, `false` otherwise
+---  - An array of strings or a string containing diagnostic messages
+---
+---Common AlyxLib and game information will be printed alongside the diagnostic messages for users to copy.
+---
+---@param addonIndex integer # The index of the addon for use in other AlyxLib functions
+---@param func fun():boolean,(string|string[]) # Diagnostic function to check if the addon is working, and any diagnostic messages
+function ReigsterAlyxLibDiagnostic(addonIndex, func)
+    local addon = AlyxLibAddons[addonIndex]
+    addon.diagnosticFunction = func
 end
 
 ---
