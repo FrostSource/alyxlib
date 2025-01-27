@@ -60,6 +60,41 @@ Convars:RegisterCommand("alyxlib_commands", function (_, ...)
     end
 end, "Displays all AlyxLib commands in the console", 0)
 
+---
+---Searches for an addon by name, short name, or workshop ID.
+---
+---@param searchPattern string
+---@return AlyxLibAddon?
+local function findAddon(searchPattern)
+    for _, addon in ipairs(AlyxLibAddons) do
+        if string.find(addon.name, searchPattern)
+        or string.find(addon.shortName, searchPattern)
+        or string.find(addon.workshopID, searchPattern) then
+            return addon
+        end
+    end
+end
+
+RegisterAlyxLibCommand("alyxlib_info", function ()
+    Msg("AlyxLib " .. ALYXLIB_VERSION .. "\n")
+    Msg("Init Addons: " .. TableSize(SERVER_ADDONS) .. "\n")
+    Msg("AlyxLib Addons: " .. #AlyxLibAddons .. "\n")
+    Msg("Total Addons: " .. #GetEnabledAddons())
+end, "Prints AlyxLib version and addon information")
+
+RegisterAlyxLibCommand("alyxlib_addons", function ()
+    if #AlyxLibAddons == 0 then
+        Msg("No addons enabled are made with AlyxLib")
+        return
+    end
+
+    Msg("Enabled addons made with AlyxLib:\n")
+
+    for _, addon in ipairs(AlyxLibAddons) do
+        Msg("\t" .. addon.name .. " " .. addon.version .. "\n")
+    end
+end, "Lists addons made and registered with AlyxLib")
+
 RegisterAlyxLibCommand("alyxlib_diagnose", function (_, searchPattern)
     Msg("\n")
 
