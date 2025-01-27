@@ -408,7 +408,7 @@ local symbols = {"and","break","do","else","elseif","end","false","for","functio
         else
             f()
         end
-    end, "", 0)
+    end, "Executes arbitrary Lua code in global scope", 0)
 
     RegisterAlyxLibCommand("ent_code", function (_, name, ...)
         if not name then
@@ -416,7 +416,7 @@ local symbols = {"and","break","do","else","elseif","end","false","for","functio
             return
         end
 
-        local ents = Entities:FindAllByName(name)
+        local ents = Debug.FindAllEntitiesByPattern(name, true)
         local code = excode(...)
 
         if IsInToolsMode() then
@@ -431,7 +431,7 @@ local symbols = {"and","break","do","else","elseif","end","false","for","functio
                 f()
             end
         end
-    end, "", 0)
+    end, "Executes arbitrary Lua code on all entities with the given name", 0)
 
 -- end
 
