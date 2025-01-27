@@ -112,7 +112,7 @@ local function noclipVRThink()
     -- print(moveVector)
     if moveVector:Length() > 0 then
         local dir
-        if moveType == PLAYER_MOVETYPE.CONTINUOUS_HAND then
+        if moveType == PlayerMoveType.ContinuousHand then
             dir = (Player.SecondaryHand:GetAngles():Left() * moveVector.x) + (Player.SecondaryHand:GetAngles():Forward() * moveVector.y)
         else
             dir = (Player:EyeAngles():Left() * moveVector.x) + (Player:EyeAngles():Forward() * moveVector.y)

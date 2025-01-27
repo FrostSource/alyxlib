@@ -331,26 +331,26 @@ function CBasePlayer:GrabActivator(data)
 end
 Expose(CBasePlayer.GrabActivator, "GrabActivator", CBasePlayer)
 
----@enum PLAYER_MOVETYPE
-PLAYER_MOVETYPE = {
-    TELEPORT_BLINK = 0,
-    TELEPORT_SHIFT = 1,
-    CONTINUOUS_HEAD = 2,
-    CONTINUOUS_HAND = 3,
+---@enum PlayerMoveType
+PlayerMoveType = {
+    TeleportBlink = 0,
+    TeleportShift = 1,
+    ContinuousHead = 2,
+    ContinuousHand = 3,
 }
 
 ---
 ---Get VR movement type.
 ---
----@return PLAYER_MOVETYPE
+---@return PlayerMoveType
 function CBasePlayer:GetMoveType()
-    return Convars:GetInt('hlvr_movetype_default') --[[@as PLAYER_MOVETYPE]]
+    return Convars:GetInt('hlvr_movetype_default') --[[@as PlayerMoveType]]
 end
 
 ---
 ---Sets the VR movement type.
 ---
----@param movetype PLAYER_MOVETYPE
+---@param movetype PlayerMoveType
 function CBasePlayer:SetMoveType(movetype)
     Convars:SetInt("vr_movetype_set", movetype)
 end
