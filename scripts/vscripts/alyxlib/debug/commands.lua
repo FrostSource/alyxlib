@@ -38,6 +38,11 @@ function RegisterAlyxLibConvar(name, defaultValue, helpText, flags)
 end
 
 Convars:RegisterCommand("alyxlib_commands", function (_, ...)
+    local maxNameLen = 0
+    for name in pairs(alyxlibCommands) do
+        maxNameLen = math.max(maxNameLen, #name)
+    end
+
     local names = {}
     for name in pairs(alyxlibCommands) do
         table.insert(names, name)
@@ -46,9 +51,13 @@ Convars:RegisterCommand("alyxlib_commands", function (_, ...)
     table.sort(names)
 
     for _, name in ipairs(names) do
-        Msg(name .. " - " .. alyxlibCommands[name] .. "\n")
+        local desc = alyxlibCommands[name]
+        local padding = ""
+        for i = 1, maxNameLen - #name do
+            padding = padding .. " "
+        end
+        Msg(name .. padding .. " - " .. desc .. "\n")
     end
-    Msg("\n")
 end, "Displays all AlyxLib commands in the console", 0)
 
 RegisterAlyxLibCommand("alyxlib_diagnose", function (_, searchPattern)
