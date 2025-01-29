@@ -105,6 +105,7 @@ RegisterAlyxLibCommand("alyxlib_diagnose", function (_, searchPattern)
     if IsEntity(Player, true) then
         if IsVREnabled() then
             Msg("VR Controller Type: " .. Input:GetControllerTypeDescription(Player:GetVRControllerType()) .. "\n")
+            Msg("VR Move Type: " .. vlua.find(PlayerMoveType, Player:GetMoveType()) .. "(" .. Player:GetMoveType() .. ")\n")
         end
     else
         Msg("Player does not exist!\n")
