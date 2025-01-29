@@ -1,5 +1,5 @@
 --[[
-    v2.6.0
+    v2.6.1
     https://github.com/FrostSource/alyxlib
 
     Provides base entity extension methods.
@@ -9,7 +9,7 @@
     require "alyxlib.extensions.entity"
 ]]
 
-local version = "v2.6.0"
+local version = "v2.6.1"
 
 ---
 ---Get the entities parented to this entity. Including children of children.

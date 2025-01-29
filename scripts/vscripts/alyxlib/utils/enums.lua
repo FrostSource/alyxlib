@@ -1,11 +1,11 @@
 --[[
-    v1.0.0
+    v1.0.1
     https://github.com/FrostSource/alyxlib
 
     Missing enumerations.
 ]]
 
-local version = "v1.0.0"
+local version = "v1.0.1"
 
 -- Missing enumerations for CBasePlayer:GetAnalogActionPositionForHand.
 

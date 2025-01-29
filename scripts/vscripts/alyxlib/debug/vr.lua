@@ -1,5 +1,5 @@
 --[[
-    v1.0.0
+    v1.0.1
     https://github.com/FrostSource/alyxlib
 
     Adds console commands to help debugging VR specific features.
@@ -9,7 +9,7 @@
     require "alyxlib.debug.vr"
 ]]
 
-local version = "v1.0.0"
+local version = "v1.0.1"
 
 ---Get a hand entity from its name.
 ---@param handName string

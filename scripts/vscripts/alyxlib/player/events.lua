@@ -1,11 +1,11 @@
 --[[
-    v2.0.1
+    v2.1.0
     https://github.com/FrostSource/alyxlib
 
     
 ]]
 
-local version = "v2.0.1"
+local version = "v2.1.0"
 
 ---@class __PlayerRegisteredEventData
 ---@field callback function
