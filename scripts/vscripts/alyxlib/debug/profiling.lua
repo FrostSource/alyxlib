@@ -3,10 +3,6 @@
     https://github.com/FrostSource/alyxlib
 
     Profiler allows for easy profiling of functions.
-
-    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
-    
-    require "alyxlib.debug.profiling"
 ]]
 local __enable_ffi = 0x666ULL
 
