@@ -307,16 +307,18 @@ end
 ---
 ---This is different from `DeepPrintTable` in that it will not print members of entity handles.
 ---
----@param tbl table # Table to print.
----@param prefix? string # Optional prefix for each line.
----@param ignore? any[] # Optional nested tables to ignore.
----@param meta? boolean # If meta tables should be printed.
-function Debug.PrintTable(tbl, prefix, ignore, meta)
+---@param tbl table # Table to print
+---@param prefix? string # Optional prefix for each line
+---@param ignore? any[] # Optional nested tables to ignore
+---@param meta? boolean # If meta tables should be printed
+---@param customIterator? function # Optional custom iterator to use (default=pairs)
+function Debug.PrintTable(tbl, prefix, ignore, meta, customIterator)
     if type(tbl) ~= "table" then return end
     prefix = prefix or ""
     ignore = ignore or {tbl}
+    customIterator = customIterator or pairs
     print(prefix.."{")
-    for key, value in pairs(tbl) do
+    for key, value in customIterator(tbl) do
         -- Return up a level
         if current_print_count >= bailout_count or current_print_count == -1 then
             if current_print_count >= bailout_count then
