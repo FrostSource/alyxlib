@@ -178,10 +178,14 @@ PLAYER_WEAPON_GENERIC_PISTOL = "hlvr_weapon_generic_pistol"
 
 ---@alias PlayerWeaponUpgrades PlayerPistolUpgrades|PlayerRapidfireUpgrades|PlayerShotgunUpgrades
 
----**The classname of the weapon/item attached to hand.
+---
+---The classname of the weapon/item attached to the primary hand.
+---
 ---@type string|PLAYER_WEAPON_HAND|PLAYER_WEAPON_ENERGYGUN|PLAYER_WEAPON_RAPIDFIRE|PLAYER_WEAPON_SHOTGUN|PLAYER_WEAPON_MULTITOOL|PLAYER_WEAPON_GENERIC_PISTOL
 CBasePlayer.CurrentlyEquipped = PLAYER_WEAPON_HAND
----**The classname of the weapon/item previously attached to hand.
+---
+---The classname of the weapon/item previously attached to the primary hand.
+---
 ---@type string|PLAYER_WEAPON_HAND|PLAYER_WEAPON_ENERGYGUN|PLAYER_WEAPON_RAPIDFIRE|PLAYER_WEAPON_SHOTGUN|PLAYER_WEAPON_MULTITOOL|PLAYER_WEAPON_GENERIC_PISTOL
 CBasePlayer.PreviouslyEquipped = PLAYER_WEAPON_HAND
 
