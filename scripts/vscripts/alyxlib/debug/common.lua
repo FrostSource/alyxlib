@@ -420,7 +420,19 @@ CBaseEntity.DebugFind = Debug.ShowEntity
 function Debug.PrintEntityCriteria(ent)
     local c = {}
     ent:GatherCriteria(c)
-    Debug.PrintTable(c)
+
+    Debug.PrintTable(c, nil, nil, nil, function(tbl)
+        local sorted_keys = {}
+        for key in next, tbl do
+            table.insert(sorted_keys, key)
+        end
+        table.sort(sorted_keys)
+        local i = 0
+        return function()
+            i = i + 1
+            return sorted_keys[i], tbl[sorted_keys[i]]
+        end
+    end)
 end
 CBaseEntity.PrintCriteria = Debug.PrintEntityCriteria
 
