@@ -135,12 +135,12 @@ if thisEntity then
     return
 end
 
-local debug_allowed = false
----Show a warning message in the console if debugging is enabled.
+local debug_allowed = true
+---Show a warning message in the console if `developer` is greater than 2.
 ---@param msg any
 local function Warn(msg)
-    -- if debug_allowed and Convars:GetBool( 'developer' ) then
-    if debug_allowed then
+    if debug_allowed and Convars:GetInt( 'developer' ) > 2 then
+    -- if debug_allowed then
         print(msg.."\n")
     end
 end
