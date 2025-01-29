@@ -667,7 +667,7 @@ function Storage.LoadEntity(handle, name, default)
     end
 
     for _, ent in ipairs(ents) do
-        if ent:Attribute_GetIntValue(uniqueKey, 0) == 1 then
+        if ent:HasAttribute(uniqueKey) then
             return ent
         end
     end
