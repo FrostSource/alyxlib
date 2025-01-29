@@ -282,7 +282,7 @@ local current_print_count = 0
 local function printKeyValue(key, value, prefix)
     prefix = prefix or ""
     local vs = (type(value) == "string" and ("\"" .. tostring(value) .. "\"") or tostring(value))
-    local ts = " ("..(IsEntity(value) and "entity" or type(value))..")"
+    local ts = " ("..(IsEntity(value) and ("entity "..Debug.EntStr(value)) or type(value))..")"
     print( string.format( "\t%s%-32s %s", prefix, key, "= " .. format_string(vs) .. ts ) )
 end
 
