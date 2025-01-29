@@ -1,5 +1,5 @@
 --[[
-    v3.0.0
+    v3.1.0
     https://github.com/FrostSource/alyxlib
 
     This file contains utility functions to help reduce repetitive code and add general miscellaneous functionality.
@@ -12,7 +12,7 @@
 ]]
 
 Util = {}
-Util.version = "v3.0.0"
+Util.version = "v3.1.0"
 
 ---
 ---Convert vr_tip_attachment from a game event [1,2] into a hand id [0,1] taking into account left handedness.
@@ -25,57 +25,6 @@ function Util.GetHandIdFromTip(vr_tip_attachment)
         handId = 1 - handId
     end
     return handId
-end
-
----@param ents EntityHandle[]
----@param pos Vector
-local function testNearest(ents, pos)
-    -- print(#ents, Debug.SimpleVector(pos))
-    local closestEnt = nil
-    local closestLen = math.huge
-    for index, ent in ipairs(ents) do
-        local calcpos = CalcClosestPointOnEntityOBB(ent, pos)
-        -- debugoverlay:Sphere(calcpos, 0.5, 255,255,255,255,false,5)
-        local len = VectorDistance(pos, calcpos)
-        -- print(ent, len)
-        if len < closestLen then
-            closestLen = len
-            closestEnt = ent
-        end
-    end
-    -- debugoverlay:Sphere(pos, 0.9, 255,0,255,255,false,5)
-    -- print(closestLen)
-    return closestEnt
-end
-
----
----Estimates the nearest entity `position` with the targetname of `name`
----(or classname `class` if the name is blank).
----
----@param name string
----@param class string
----@param position Vector
----@param radius? number # Default is 128
----@return EntityHandle
-function Util.EstimateNearestEntity(name, class, position, radius)
-    radius = radius or 128
-    local ent
-    if name ~= "" then
-        local found_ents = Entities:FindAllByName(name)
-        -- If only one with this name exists then we can get the exact handle.
-        if #found_ents == 1 then
-            ent = found_ents[1]
-        else
-            -- If multiple exist then we need to estimate the entity that was grabbed.
-            -- ent = Entities:FindByNameNearest(name, position, radius)
-            return testNearest(Entities:FindAllByNameWithin(name, position, radius), position)
-        end
-    else
-        -- Entity without name (hopefully doesn't happen) is found by nearest class type.
-        -- ent = Entities:FindByClassnameNearest(class, position, radius)
-        return testNearest(Entities:FindAllByClassnameWithin(class, position, radius), position)
-    end
-    return ent
 end
 
 ---

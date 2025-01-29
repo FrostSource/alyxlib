@@ -1,5 +1,5 @@
 --[[
-    v1.7.0
+    v1.8.0
     https://github.com/FrostSource/alyxlib
 
     Extensions for the `Entities` class.
@@ -10,7 +10,70 @@
 ]]
 require "alyxlib.extensions.entity"
 
-local version = "v1.7.0"
+local version = "v1.8.0"
+
+
+---
+---Finds the entity in a given list that is closest to a specified position.
+---Uses 0`CalcClosestPointOnEntityOBB` to determine the nearest point on each entity's bounding box.
+---
+--- @param ents EntityHandle[] # A list of entities to check
+--- @param pos Vector # The position to compare distances against
+--- @return EntityHandle? # The closest entity to the given position, or nil if no entities are found
+local function testNearest(ents, pos)
+    -- print(#ents, Debug.SimpleVector(pos))
+    local closestEnt = nil
+    local closestLen = math.huge
+    for index, ent in ipairs(ents) do
+        local calcpos = CalcClosestPointOnEntityOBB(ent, pos)
+        -- debugoverlay:Sphere(calcpos, 0.5, 255,255,255,255,false,5)
+        local len = VectorDistance(pos, calcpos)
+        -- print(ent, len)
+        if len < closestLen then
+            closestLen = len
+            closestEnt = ent
+        end
+    end
+    -- debugoverlay:Sphere(pos, 0.9, 255,0,255,255,false,5)
+    -- print(closestLen)
+    return closestEnt
+end
+
+---
+---Finds the best matching entity based on a given unique name (if provided),
+---classname, position, and search radius. 
+---
+---If a name is provided, it attempts to find an exact match by name first.  
+--- - If only one entity with that name exists, it is returned immediately.  
+--- - If multiple entities share the name, the one closest to the given position is chosen.  
+---
+---If no name is provided, the function falls back to finding the nearest entity of the given classname.  
+---
+---@param name string # The unique name of the entity (if available, "" if not)
+---@param class string # The classname of the entity (fallback if name isn't available)
+---@param position Vector # The position to search around
+---@param radius? number # The max search radius (default: 128)
+---@return EntityHandle # The best-matching entity found, or nil if none found
+function Entities:FindBestMatching(name, class, position, radius)
+    radius = radius or 128
+    local ent
+    if name ~= "" then
+        local found_ents = Entities:FindAllByName(name)
+        -- If only one with this name exists then we can get the exact handle.
+        if #found_ents == 1 then
+            ent = found_ents[1]
+        else
+            -- If multiple exist then we need to estimate the entity that was grabbed.
+            -- ent = Entities:FindByNameNearest(name, position, radius)
+            return testNearest(Entities:FindAllByNameWithin(name, position, radius), position)
+        end
+    else
+        -- Entity without name (hopefully doesn't happen) is found by nearest class type.
+        -- ent = Entities:FindByClassnameNearest(class, position, radius)
+        return testNearest(Entities:FindAllByClassnameWithin(class, position, radius), position)
+    end
+    return ent
+end
 
 ---
 ---Gets an array of every entity that currently exists.
