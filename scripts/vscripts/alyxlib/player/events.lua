@@ -71,10 +71,17 @@ local player_weapon_to_ammotype =
     [PLAYER_WEAPON_GENERIC_PISTOL] = "AlyxGun",
 }
 
+---
+---Save the Player.Items table
+---
 local function savePlayerData()
     Storage.SaveTable(Player, "PlayerItems", Player.Items)
-    Storage.SaveEntity(Player, "LeftWristItem", Player.LeftHand.WristItem)
-    Storage.SaveEntity(Player, "RightWristItem", Player.RightHand.WristItem)
+    if Player and Player.LeftHand then
+        Storage.SaveEntity(Player, "LeftWristItem", Player.LeftHand.WristItem)
+    end
+    if Player and Player.RightHand then
+        Storage.SaveEntity(Player, "RightWristItem", Player.RightHand.WristItem)
+    end
 end
 
 local function loadPlayerData()
