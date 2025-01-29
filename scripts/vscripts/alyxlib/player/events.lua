@@ -1,11 +1,11 @@
 --[[
-    v2.1.1
+    v2.1.2
     https://github.com/FrostSource/alyxlib
 
     
 ]]
 
-local version = "v2.1.1"
+local version = "v2.1.2"
 
 ---@class __PlayerRegisteredEventData
 ---@field callback function
@@ -195,7 +195,7 @@ local function listenEventItemPickup(data)
     local handId = Util.GetHandIdFromTip(data.vr_tip_attachment)
     local hand = Player.Hands[handId + 1]
     local otherhand = Player.Hands[(1 - handId) + 1]
-    local palmPosition = hand:GetGlove():GetAttachmentOrigin(hand:GetGlove():ScriptLookupAttachment("vr_palm"))
+    local palmPosition = hand:GetPalmPosition()
     local ent_held = Entities:FindBestMatching(data.item_name, data.item, palmPosition)
 
     hand.ItemHeld = ent_held

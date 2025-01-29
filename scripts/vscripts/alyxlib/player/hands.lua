@@ -1,12 +1,12 @@
 --[[
-    v1.1.0
+    v1.2.0
     https://github.com/FrostSource/alyxlib
 
     Code for player hands.
     
 ]]
 
-local version = "v1.1.0"
+local version = "v1.2.0"
 
 ---Merge an existing prop with this hand.
 ---@param prop EntityHandle|string # The prop handle or targetname.
@@ -63,6 +63,23 @@ end
 ---@return boolean
 function CPropVRHand:IsButtonPressed(digitalAction)
     return Player:IsDigitalActionOnForHand(self.Literal, digitalAction)
+end
+
+---
+---Get the position of the palm of this hand.
+---
+---Returns the palm of the glove if it exists, otherwise the palm of the invisible hand.
+---Sometimes the glove becomes desynchronized with the hand, such as interacting with a handpose or holding a weapon,
+---so this function will try to return the position of the visible palm whenever possible.
+---
+---@return Vector
+function CPropVRHand:GetPalmPosition()
+    local glove = self:GetGlove()
+    if glove then
+        return glove:GetAttachmentOrigin(glove:ScriptLookupAttachment("vr_palm"))
+    else
+        return self:GetAttachmentOrigin(self:ScriptLookupAttachment("vr_hand_origin"))
+    end
 end
 
 ---Forces the player to drop this entity if held.
