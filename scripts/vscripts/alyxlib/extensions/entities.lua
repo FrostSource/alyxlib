@@ -56,12 +56,11 @@ end
 ---@return EntityHandle # The best-matching entity found, or nil if none found
 function Entities:FindBestMatching(name, class, position, radius)
     radius = radius or 128
-    local ent
     if name ~= "" then
         local found_ents = Entities:FindAllByName(name)
         -- If only one with this name exists then we can get the exact handle.
         if #found_ents == 1 then
-            ent = found_ents[1]
+            return found_ents[1]
         else
             -- If multiple exist then we need to estimate the entity that was grabbed.
             -- ent = Entities:FindByNameNearest(name, position, radius)
@@ -72,7 +71,6 @@ function Entities:FindBestMatching(name, class, position, radius)
         -- ent = Entities:FindByClassnameNearest(class, position, radius)
         return testNearest(Entities:FindAllByClassnameWithin(class, position, radius), position)
     end
-    return ent
 end
 
 ---
