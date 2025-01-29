@@ -12,6 +12,7 @@
 ---
 ---The input class simplifies button tracking.
 ---
+---@class Input
 Input = {}
 Input.__index = Input
 Input.version = "v4.0.0"
