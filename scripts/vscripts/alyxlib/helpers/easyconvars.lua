@@ -29,6 +29,7 @@ EasyConvars.version = "v1.2.0"
 ---@field persistent boolean # If the value is saved to player on change.
 ---@field wasChangedByUser boolean # Whether the value was changed by the user.
 ---@field displayFunc? fun(val:any) # The function called when the convar is called without any parameters. By default it just prints the value.
+---@field defaultValue? string # The default value of the convar given by the registration. Not the value set in cfg or launch options.
 
 ---Types of convars.
 ---@alias EasyConvarsType
@@ -146,14 +147,18 @@ function EasyConvars:Register(ctype, name, defaultValue, onUpdate, helpText, fla
     local reg = self.registered[name]
 
     --Assign the initializer only if no launch value is set by user
-    if type(defaultValue) == "function" then
-        if launchVal == nil then
+
+    if launchVal == nil then
+        if type(defaultValue) == "function" then
             reg.initializer = defaultValue
         else
-            devprints2("EasyConvars", name, "initializer won't be used because it has a launch value of", launchVal)
+            reg.value = convertToSafeVal(defaultValue) or "0"
+            reg.defaultValue = reg.value
         end
     else
-        reg.value = convertToSafeVal(defaultValue) or "0"
+        -- Launch option counts as user change
+        reg.wasChangedByUser = true
+        devprints2("EasyConvars", name, "initializer won't be used because it has a launch value of", launchVal)
     end
 
     helpText = helpText or ""
@@ -443,10 +448,12 @@ listener("player_activate", function (params)
             if not EasyConvars:Load(name) then
                 if data.initializer then
                     if data.value ~= nil then
+                        data.wasChangedByUser = true
                         devprints2("EasyConvars", name, "initializer won't be used because it has a user value of", tostring(data.value))
                     else
                         data.value = tostring(data.initializer())
-                        devprints("EasyConvars", name, "initializer value was", data.value)
+                        data.defaultValue = data.value
+                        devprints2("EasyConvars", name, "initializer value was", data.value)
                     end
                 end
             end
