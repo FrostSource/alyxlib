@@ -14,6 +14,9 @@ local version = "v1.1.0"
 ---@class NoVR
 NoVR = {}
 
+---If the game starts in tools mode, [NoVR:EnableAllDebugging](lua://NoVR.EnableAllDebugging) is called.
+NoVR.AutoStartInToolsMode = false
+
 --#region Interactions
 
 ---@class NoVrInteractClass
@@ -152,13 +155,13 @@ local function activateEntity(entity, data)
     debugoverlay:Text(getTextPosition(entity, data), 0, getText(data), 0, 50, 255, 50, 255, 2)
 end
 
-local function think()
+local function interactThink()
 
     ---@type EntityHandle
     local bestEnt = nil
     ---@type number
     local bestScore = 0
-    
+
     ---@type NoVrInteractClass
     local data = nil
 
@@ -217,16 +220,52 @@ local function think()
     return 0.1
 end
 
+--#endregion Interactions
+
 local cl_forwardspeed, cl_backspeed, cl_sidespeed
 
-ListenToPlayerEvent("novr_player", function (params)
-    SendToConsole("buddha 1; impulse 101;")
-    Player:SetContextThink("think", think, 0)
+---
+---Does the following:
+---
+---* Enables `buddha` mode
+---* Gives all weapons and ammo `impulse 101`
+---* Binds V to noclip toggling
+---* Enables novr entity interaction
+---
+function NoVR:EnableAllDebugging()
+    SendToConsole("buddha 1; impulse 101")
+    NoVR:BindKey("V", "noclip")
+    Player:SetContextThink("novrInteractThink", interactThink, 0)
+end
 
+---
+---Undoes all operations performed by [NoVR:EnableAllDebugging](lua://NoVR.EnableAllDebugging)
+---
+---Except removing weapons.
+---
+function NoVR:DisableAllDebugging()
+    SendToConsole("buddha 0")
+    SendToConsole("unbind V")
+    Player:SetContextThink("novrInteractThink", nil, 0)
+end
+
+ListenToPlayerEvent("novr_player", function (params)
     cl_forwardspeed = Convars:GetFloat("cl_forwardspeed")
     cl_backspeed = Convars:GetFloat("cl_backspeed")
     cl_sidespeed = Convars:GetFloat("cl_sidespeed")
+
+    if NoVR.AutoStartInToolsMode and IsInToolsMode() then
+        NoVR:EnableAllDebugging()
+    end
 end)
+
+Convars:RegisterCommand("novr_enable_all_debugging", function (_)
+    NoVR:EnableAllDebugging()
+end, "Enables all novr debugging commands and bindings, like buddha, impulse 101 and V=noclip", 0)
+
+Convars:RegisterCommand("novr_disable_all_debugging", function (_)
+    NoVR:DisableAllDebugging()
+end, "Undoes everything by novr_enable_all_debugging", 0)
 
 local novr_vr_speed_on = false
 
