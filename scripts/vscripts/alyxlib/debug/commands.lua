@@ -91,7 +91,7 @@ RegisterAlyxLibCommand("alyxlib_addons", function ()
     Msg("Enabled addons made with AlyxLib:\n")
 
     for _, addon in ipairs(AlyxLibAddons) do
-        Msg("\t" .. addon.name .. " " .. addon.version .. "\n")
+        Msg("\t" .. addon.name .. " " .. addon.version .. " (" .. addon.shortName .. ", " .. addon.workshopID .. ")\n")
     end
 end, "Lists addons made and registered with AlyxLib")
 
