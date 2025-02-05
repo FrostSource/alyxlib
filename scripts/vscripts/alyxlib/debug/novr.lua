@@ -288,4 +288,164 @@ Convars:RegisterCommand("novr_player_use_vr_speed", function (_, on)
     end
 end, "", 0)
 
+---@alias KeyboardKey
+---|"mouse1"
+---|"mouse2"
+---|"mouse3"
+---|"mouse4"
+---|"mouse5"
+---|"A"
+---|"B"
+---|"C"
+---|"D"
+---|"E"
+---|"F"
+---|"G"
+---|"H"
+---|"I"
+---|"J"
+---|"K"
+---|"L"
+---|"M"
+---|"N"
+---|"O"
+---|"P"
+---|"Q"
+---|"R"
+---|"S"
+---|"T"
+---|"U"
+---|"V"
+---|"W"
+---|"X"
+---|"Y"
+---|"Z"
+---|"1"
+---|"2"
+---|"3"
+---|"4"
+---|"5"
+---|"6"
+---|"7"
+---|"8"
+---|"9"
+---|"0"
+---|"F1"
+---|"F2"
+---|"F3"
+---|"F4"
+---|"F5"
+---|"F6"
+---|"F7"
+---|"F8"
+---|"F9"
+---|"F10"
+---|"F11"
+---|"F12"
+---|"F13"
+---|"F14"
+---|"F15"
+---|"F16"
+---|"F17"
+---|"F18"
+---|"F19"
+---|"F20"
+---|"F21"
+---|"F22"
+---|"F23"
+---|"F24"
+---|"SPACE"
+---|"ENTER"
+---|"ESCAPE"
+---|"LEFT"
+---|"UP"
+---|"RIGHT"
+---|"DOWN"
+---|"INS"
+---|"DEL"
+---|"HOME"
+---|"END"
+---|"PGUP"
+---|"PGDN"
+---|"CAPSLOCK"
+---|"TAB"
+---|"NUMLOCK"
+---|"SCROLLLOCK"
+---|"SEMICOLON"
+---|"SHIFT"
+---|"RSHIFT"
+---|"CTRL"
+---|"RCTRL"
+---|"ALT"
+---|"RALT"
+---|"BACKSPACE"
+---|"PAUSE"
+---|"'"
+---|"["
+---|"]"
+---|","
+---|"."
+---|"\\"
+---|"/"
+---|"KP_0"
+---|"KP_1"
+---|"KP_2"
+---|"KP_3"
+---|"KP_4"
+---|"KP_5"
+---|"KP_6"
+---|"KP_7"
+---|"KP_8"
+---|"KP_9"
+---|"KP_MULTIPLY"
+---|"KP_DIVIDE"
+---|"KP_MINUS"
+---|"KP_PLUS"
+---|"KP_ENTER"
+---|"KP_DEL"
+
+---@type { name: string, callback: function, key: string }[]
+local novrBindings = {}
+
+---
+---Unbind all keys bound by [NoVR:BindKey](lua://NoVR.BindKey)
+---
+function NoVR:UnbindKeys()
+    -- for _, binding in ipairs(novrBindings) do
+    --     SendToConsole("unbind " .. binding.key)
+    -- end
+
+    -- For now just default binds to avoid unbinding standard keys
+    SendToConsole("binddefaults")
+end
+
+---
+---Bind a keyboard key to a callback function.
+---
+---@param key KeyboardKey
+---@param callback fun()|string # Callback function or command string
+---@param name? string # Optional name for the callback command
+function NoVR:BindKey(key, callback, name)
+    if type(callback) == "string" then
+        SendToConsole("bind " .. key .. " " .. callback)
+    else
+        name = name or ("novr_keybind_" .. UniqueString())
+        Convars:RegisterCommand(name, callback, "", 0)
+        SendToConsole("bind " .. key .. " " .. name)
+    end
+
+    table.insert(novrBindings, {
+        name = name,
+        callback = callback,
+        key = key
+    })
+end
+
+ListenToGameEvent("server_shutdown", function()
+    if #novrBindings > 0 then
+        devprint2("Unbinding " .. #novrBindings .. " novr keys")
+        NoVR:UnbindKeys()
+    end
+end, nil)
+
 return version
