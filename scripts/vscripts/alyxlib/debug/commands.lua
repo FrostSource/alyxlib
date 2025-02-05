@@ -405,9 +405,9 @@ local symbols = {"and","break","do","else","elseif","end","false","for","functio
         local ents = Debug.FindAllEntitiesByPattern(name, true)
         local code = excode(...)
 
-        if IsInToolsMode() then
-            print("Doing code on entities named ("..name.."):", code)
-        end
+        -- if IsInToolsMode() then
+            print("Doing code on "..#ents.." entities named ("..name.."):", code)
+        -- end
 
         for _, ent in ipairs(ents) do
             local f,err = load(code, nil, nil, ent:GetOrCreatePrivateScriptScope())
