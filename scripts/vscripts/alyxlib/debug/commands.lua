@@ -101,6 +101,7 @@ RegisterAlyxLibCommand("alyxlib_diagnose", function (_, searchPattern)
     -- Standard AlyxLib and game info
     Msg("AlyxLib " .. ALYXLIB_VERSION .. "\n")
     Msg("VR Enabled: " .. (IsVREnabled() and "Yes" or "No") .. "\n")
+    Msg("Single Handed: " .. (Convars:GetBool("hlvr_single_controller_mode") and "Yes" or "No") .. "\n")
     Msg("Map: " .. GetMapName() .. "\n")
     if IsEntity(Player, true) then
         if IsVREnabled() then
@@ -113,6 +114,7 @@ RegisterAlyxLibCommand("alyxlib_diagnose", function (_, searchPattern)
 
     if searchPattern == nil then
         Msg("\nTo run diagnostics for an addon, type \"alyxlib_diagnose <addon_name>\"\n")
+        Msg("Use \"alyxlib_addons\" to see addons that can be diagnosed\n\n")
         return
     end
 
