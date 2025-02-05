@@ -93,6 +93,8 @@ local function callCallback(registeredData, value, ...)
     if result ~= nil then
         registeredData.value = convertToSafeVal(result)
     end
+
+    EasyConvars:Save(registeredData.name)
 end
 
 ---Default display function for convars
@@ -186,8 +188,6 @@ function EasyConvars:Register(ctype, name, defaultValue, onUpdate, helpText, fla
                 reg.displayFunc(reg)
             end
         end
-
-        self:Save(name)
     end, helpText, flags)
 end
 
