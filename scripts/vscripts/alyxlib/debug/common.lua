@@ -796,6 +796,18 @@ function Debug.EntStr(ent)
 end
 
 ---
+---Dumps a list of convars and their values to the console.
+---
+---@param convars string[] # List of convar names to dump
+function Debug.DumpConvars(convars)
+    for _, convar in ipairs(convars) do
+        if Convars:GetStr(convar) ~= nil then
+            Msg(convar .. " = " .. Convars:GetStr(convar).."\n")
+        end
+    end
+end
+
+---
 ---Finds an entity by its handle as a string.
 ---
 ---Certain parts of the string can be omitted and the following are all valid:
