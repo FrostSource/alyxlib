@@ -310,40 +310,20 @@ end, "Heals the player by a given amount", 0)
 ---
 RegisterAlyxLibCommand("ent_find_by_address", function (_, tblpart, colon, hash)
     if tblpart == nil and colon == nil and hash == nil then
-        print("Must provide a valid entity table string, e.g. table: 0x0012b03")
+        Msg("Must provide a valid entity table string, e.g. 'table: 0x0012b03'\n")
         return
     end
 
-    if colon == ":" then
-        hash = tblpart .. colon .. " " .. hash
-    elseif tblpart == "table:" then
-        hash = tblpart .." ".. colon
-    elseif tblpart:find("table:") then
-        hash = tblpart
-    elseif tblpart == "table" then
-        hash = "table: " .. colon
-    else
-        hash = "table: " .. tblpart
-    end
-
-    local foundEnt = nil
-    local ent = Entities:First()
-    while ent ~= nil do
-        if tostring(ent) == hash then
-            foundEnt = ent
-            break
-        end
-        ent = Entities:Next(ent)
-    end
+    local foundEnt = Debug.FindEntityByHandleString(tblpart, colon, hash)
 
     if foundEnt then
-        print("Info for " .. tostring(foundEnt))
-        prints("\tClassname", foundEnt:GetClassname())
-        prints("\tName", foundEnt:GetName())
-        prints("\tParent", foundEnt:GetMoveParent())
-        prints("\tModel", foundEnt:GetModelName())
+        Msg("Info for " .. tostring(foundEnt).."\n")
+        Msg("\tClassname" .. foundEnt:GetClassname().."\n")
+        Msg("\tName" .. foundEnt:GetName().."\n")
+        Msg("\tParent" .. foundEnt:GetMoveParent().."\n")
+        Msg("\tModel" .. foundEnt:GetModelName())
     else
-        print("Could not find any entity in the world matching " .. hash)
+        Msg("Could not find any entity matching '" .. hash .. "'")
     end
 end, "Prints info for an entity by its table address", 0)
 

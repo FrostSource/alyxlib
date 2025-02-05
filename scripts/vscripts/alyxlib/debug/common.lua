@@ -15,12 +15,20 @@ require "alyxlib.math.common"
 Debug = {}
 Debug.version = "v2.1.0"
 
-
+---
 ---Finds the first entity whose name, class or model matches `pattern`.
+---
+---`pattern` can also be an entity handle string, e.g. `0x0026caf8`
+---
 ---@param pattern string # The search pattern to look for.
 ---@param exact boolean? # If true the pattern must match exactly, otherwise wildcards will be used.
 ---@return EntityHandle
 function Debug.FindEntityByPattern(pattern, exact)
+
+    if Debug.IsEntityHandleString(pattern) then
+        return Debug.FindEntityByHandleString(pattern)
+    end
+
     local ent = nil
     ent = Entities:FindByName(nil, pattern)
     if ent == nil then
@@ -44,12 +52,20 @@ function Debug.FindEntityByPattern(pattern, exact)
     return ent
 end
 
+---
 ---Finds all entities whose name, class or model match `pattern`.
+---
+---`pattern` can also be an entity handle string, e.g. `0x0026caf8`
+---
 ---@param pattern string # The search pattern to look for.
 ---@param exact boolean? # If true the pattern must match exactly, otherwise wildcards will be used.
 ---@return EntityHandle[]
 function Debug.FindAllEntitiesByPattern(pattern, exact)
     local ents = {}
+
+    if Debug.IsEntityHandleString(pattern) then
+        return {Debug.FindEntityByHandleString(pattern)}
+    end
 
     ents = ArrayAppend(ents, Entities:FindAllByName(pattern))
     ents = ArrayAppend(ents, Entities:FindAllByClassname(pattern))
@@ -756,6 +772,73 @@ end
 ---@return string
 function Debug.EntStr(ent)
     return "[" .. ent:GetClassname() .. ", " .. ent:GetName() .. "]"
+end
+
+---
+---Finds an entity by its handle as a string.
+---
+---Certain parts of the string can be omitted and the following are all valid:
+---
+---    Debug.FindEntityByHandleString("table", ":", "0x0012b03")
+---    Debug.FindEntityByHandleString("table:", "0x0012b03")
+---    Debug.FindEntityByHandleString("table: 0x0012b03")
+---    Debug.FindEntityByHandleString("table", "0x0012b03")
+---    Debug.FindEntityByHandleString("0x0012b03")
+--- 
+---Please note that omitting the colon is not allowed in a single string, i.e. "table 0x0012b03" will not work.
+---
+---@param tblpart string # Entity table string
+---@param colon? string # The colon part
+---@param hash? string # The hash part
+---@return EntityHandle?
+function Debug.FindEntityByHandleString(tblpart, colon, hash)
+    if tblpart == nil and colon == nil and hash == nil then
+        devwarn("Must provide a valid entity table string, e.g. 'table: 0x0012b03'")
+        return nil
+    end
+
+    -- table : 0x0012b03 (all 3 separate parts)
+    if colon == ":" then
+        hash = tblpart .. colon .. " " .. hash
+    -- table: 0x0012b03 (colon embedded in tblpart)
+    elseif tblpart == "table:" then
+        hash = tblpart .." ".. colon
+    -- table: 0x0012b03 (given as single string)
+    elseif tblpart:find("table:") then
+        hash = tblpart
+    -- table 0x0012b03 (colon omitted)
+    elseif tblpart == "table" then
+        hash = "table: " .. colon
+    -- 0x0012b03 (prefix omitted)
+    else
+        hash = "table: " .. tblpart
+    end
+
+    local foundEnt = nil
+    local ent = Entities:First()
+    while ent ~= nil do
+        if tostring(ent) == hash then
+            foundEnt = ent
+            break
+        end
+        ent = Entities:Next(ent)
+    end
+
+    return foundEnt
+end
+
+---
+---Gets whether the string is in the format of an entity handle.
+---
+---@param handleString string # The handle string
+---@return string # The hash part or nil if not an entity handle
+function Debug.IsEntityHandleString(handleString)
+    local mtc = handleString:match("^(table:?%s*)")
+    if mtc then
+        handleString = handleString:sub(#mtc+1)
+    end
+
+    return string.match(handleString, "0x[%d%a][%d%a][%d%a][%d%a][%d%a][%d%a][%d%a][%d%a]$")
 end
 
 return Debug.version
