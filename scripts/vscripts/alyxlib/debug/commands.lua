@@ -235,7 +235,12 @@ end, "Prints all entities with class, name or model matching a pattern", 0)
 ---Show the position of an entity relative to the player using debug drawing.
 ---
 RegisterAlyxLibCommand("ent_show", function (_, name)
-    Debug.ShowEntity(name)
+    local entsFound = Debug.ShowEntity(name)
+    Msg("Searching for entities with class/target/model name containing substring: '" .. name .. "'\n")
+    for _, ent in ipairs(entsFound) do
+        Msg("\t'" .. ent:GetClassname() .. "' : '" .. ent:GetName() .. "' (" .. tostring(ent) .. ")\n")
+    end
+    Msg("Found " .. #entsFound .. " matches.")
 end, "Draws a debug line from the player to any entities with a name", 0)
 
 ---

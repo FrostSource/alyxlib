@@ -407,6 +407,7 @@ end
 ---
 ---@param ent EntityHandle|string # Handle or targetname of the entity(s) to find.
 ---@param duration number? # Number of seconds the debug should display for.
+---@return EntityHandle[]|EntityHandle? # Entities found, or the entity given
 function Debug.ShowEntity(ent, duration)
     duration = duration or 20
     if type(ent) == "string" then
@@ -414,7 +415,7 @@ function Debug.ShowEntity(ent, duration)
         for _,e in ipairs(ents) do
             Debug.ShowEntity(e)
         end
-        return
+        return ents
     end
 
     local from = Vector()
@@ -426,6 +427,8 @@ function Debug.ShowEntity(ent, duration)
     if radius == 0 then radius = 16 end
     DebugDrawCircle(ent:GetOrigin(), Vector(255), 128, radius, true, duration)
     DebugDrawSphere(ent:GetCenter(), Vector(255), 128, radius, true, duration)
+
+    return ent
 end
 CBaseEntity.DebugFind = Debug.ShowEntity
 
