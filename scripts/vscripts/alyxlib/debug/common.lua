@@ -295,10 +295,19 @@ local bailout_count = 9000
 local current_recursion_level = 0
 local current_print_count = 0
 
+---Gets the string representation of a value and its type.
+---@param value any # Value to get string representation of.
+---@return string # Value string
+---@return string # Type string
+local function getValueString(value)
+    local valueStr = (type(value) == "string" and ("\"" .. tostring(value) .. "\"") or tostring(value))
+    local typeStr = " ("..(IsEntity(value) and ("entity "..Debug.EntStr(value)) or type(value))..")"
+    return valueStr, typeStr
+end
+
 local function printKeyValue(key, value, prefix)
     prefix = prefix or ""
-    local vs = (type(value) == "string" and ("\"" .. tostring(value) .. "\"") or tostring(value))
-    local ts = " ("..(IsEntity(value) and ("entity "..Debug.EntStr(value)) or type(value))..")"
+    local vs, ts = getValueString(value)
     print( string.format( "\t%s%-32s %s", prefix, key, "= " .. format_string(vs) .. ts ) )
 end
 
@@ -400,6 +409,15 @@ function Debug.PrintList(tbl, prefix)
             print(prefix..frmt:format(key, value))
         end
     end
+end
+
+---
+---Prints a value and its type in an easy to read format.
+---
+---@param value any
+function Debug.PrintValue(value)
+    local vs, ts = getValueString(value)
+    print(vs..ts)
 end
 
 ---
