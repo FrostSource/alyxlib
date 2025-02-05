@@ -416,4 +416,13 @@ function CEntityInstance:RedirectOutputFunc(output, func, entity)
     return name
 end
 
+---
+---Gets the position in front of the entity's eyes at the specified position.
+---
+---@param distance number
+---@return Vector
+function CBaseEntity:DistanceFromEyes(distance)
+    return self:EyePosition() + self:EyeAngles():Forward() * distance
+end
+
 return version
