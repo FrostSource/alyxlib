@@ -425,4 +425,22 @@ function CBaseEntity:DistanceFromEyes(distance)
     return self:EyePosition() + self:EyeAngles():Forward() * distance
 end
 
+---
+---Gets the origin of a named attachment.
+---
+---@param name string
+---@return Vector
+function CBaseAnimating:GetAttachmentNameOrigin(name)
+    return self:GetAttachmentOrigin(self:ScriptLookupAttachment(name))
+end
+
+---
+---Gets the angles of a named attachment.
+---
+---@param name string
+---@return Vector
+function CBaseAnimating:GetAttachmentNameAngles(name)
+    return self:GetAttachmentAngles(self:ScriptLookupAttachment(name))
+end
+
 return version
