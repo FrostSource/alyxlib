@@ -11,6 +11,11 @@
 
 local version = "v1.1.0"
 
+---@class NoVR
+NoVR = {}
+
+--#region Interactions
+
 ---@class NoVrInteractClass
 ---@field class string
 ---@field hold? boolean
@@ -67,6 +72,24 @@ local interactClasses =
         weight = 1.1
     },
 }
+
+---
+---Add an interaction class for the NoVR player to interact with.
+---
+---@param title string # Text to show in-game on the entity
+---@param class string # Class to interact with
+---@param mustBeHeld boolean # If the player must hold the use button, to avoid accidental activation
+---@param input? string # Input to fire
+---@param output? string|string[] # Output(s) to fire, if no input is specified
+function NoVR:AddInteraction(title, class, mustBeHeld, input, output)
+    table.insert(interactClasses, {
+        title = title,
+        class = class,
+        hold = mustBeHeld,
+        input = input,
+        output = output,
+    })
+end
 
 local isUsePressed = false
 local usePressTime = 0
