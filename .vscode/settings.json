@@ -5,7 +5,7 @@
 {
     "Lua.completion.autoRequire": false,
     "Lua.diagnostics.ignoredFiles": "Enable",
-    "Lua.workspace.preloadFileSize": 300,
+    "Lua.workspace.preloadFileSize": 800,
     "files.exclude": {
         "**/__pycache__": true,
         "**/_bakeresourcecache": true,
@@ -13,10 +13,15 @@
         "/release/": true
     },
     "Lua.workspace.library": [
-        "../../hla_extravaganza/scripts",
         "${addons}/HLA-VScript/module/library"
     ],
     "Lua.runtime.version": "LuaJIT",
+    "Lua.type.weakUnionCheck": true,
+    "Lua.type.weakNilCheck": true,
+    "Lua.diagnostics.disable": [
+        "inject-field"
+    ],
+    "Lua.workspace.checkThirdParty": false,
     "Lua.runtime.builtin": {
         "coroutine": "enable",
         "debug": "enable",
@@ -31,10 +36,4 @@
         "bit32": "disable",
         "jit": "disable"
     },
-    "Lua.type.weakUnionCheck": true,
-    "Lua.type.weakNilCheck": true,
-    "Lua.diagnostics.disable": [
-        "inject-field"
-    ],
-    "Lua.workspace.checkThirdParty": false,
 }
