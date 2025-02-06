@@ -33,8 +33,8 @@ local playerActivated = false
 ---@alias PLAYER_EVENTS_ALL "novr_player"|"player_activate"|"vr_player_ready"|"item_pickup"|"item_released"|"primary_hand_changed"|"player_drop_ammo_in_backpack"|"player_retrieved_backpack_clip"|"player_stored_item_in_itemholder"|"player_removed_item_from_itemholder"|"player_drop_resin_in_backpack"|"weapon_switch"
 
 ---Register a callback function with for a player event.
----@param event PLAYER_EVENTS_ALL
----@param callback fun(params)
+---@param event PLAYER_EVENTS_ALL # Name of the event
+---@param callback function # The function that will be called when the event is fired
 ---@param context? table # Optional: The context to pass to the function as `self`. If omitted the context will not passed to the callback.
 ---@return integer eventID # ID used to unregister
 function ListenToPlayerEvent(event, callback, context)
@@ -53,6 +53,37 @@ function StopListeningToPlayerEvent(eventID)
     for _, event in pairs(registered_event_callbacks) do
         event[eventID] = nil
     end
+end
+
+
+---@type {entity:EntityHandle, callback:function, context:any}[]
+local entityPickupEvents = {}
+
+local entityPickupIndex = 1
+
+---
+---Listen to the pickup of a specific entity.
+---
+---@param entity EntityHandle # The entity to listen for
+---@param callback function # The function that will be called when the entity is picked up
+---@param context? any # Optional context passed into the callback as the first value
+---@return integer # ID used to unregister
+function ListenToEntityPickup(entity, callback, context)
+    entityPickupEvents[entityPickupIndex] = {
+        entity = entity,
+        callback = callback,
+        context = context
+    }
+    entityPickupIndex = entityPickupIndex + 1
+    return entityPickupIndex - 1
+end
+
+---
+---Stop listening to an entity pickup
+---
+---@param eventID integer # ID returned from [ListenToEntityPickup](lua://ListenToEntityPickup)
+function StopListeningToEntityPickup(eventID)
+    entityPickupEvents[eventID] = nil
 end
 
 -----------------
@@ -278,6 +309,16 @@ local function listenEventItemPickup(data)
     newdata.otherhand = otherhand
 
     eventCallback(data.game_event_name, newdata)
+
+    if #entityPickupEvents > 0 then
+        for _, event in pairs(entityPickupEvents) do
+            if event.entity == ent_held then
+                if event.context ~= nil then
+                    event.callback(event.context, newdata)
+                else
+                    event.callback(newdata)
+                end
+            end
         end
     end
 end
