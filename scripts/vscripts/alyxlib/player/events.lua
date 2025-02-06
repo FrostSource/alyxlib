@@ -659,22 +659,37 @@ local function listenEventWeaponSwitch(data)
     -- print("\n")
 
     Player.PreviouslyEquipped = Player.CurrentlyEquipped
-    if data.item == "hand_use_controller" then Player.CurrentlyEquipped = PLAYER_WEAPON_HAND
-    elseif data.item == "hlvr_weapon_energygun" then Player.CurrentlyEquipped = PLAYER_WEAPON_ENERGYGUN
-    elseif data.item == "hlvr_weapon_rapidfire" then Player.CurrentlyEquipped = PLAYER_WEAPON_RAPIDFIRE
-    elseif data.item == "hlvr_weapon_shotgun" then Player.CurrentlyEquipped = PLAYER_WEAPON_SHOTGUN
-    elseif data.item == "hlvr_multitool" then Player.CurrentlyEquipped = PLAYER_WEAPON_MULTITOOL
-    elseif data.item == "hlvr_weapon_generic_pistol" then Player.CurrentlyEquipped = PLAYER_WEAPON_GENERIC_PISTOL
-    end
 
-    -- Registered callback
-    for id, event_data in pairs(registered_event_callbacks[data.game_event_name]) do
-        if event_data.context ~= nil then
-            event_data.callback(event_data.context, data)
-        else
-            event_data.callback(data)
+    if data.item == "hand_use_controller" then
+        Player.CurrentlyEquipped = PLAYER_WEAPON_HAND
+    else
+        local weaponHandle = Entities:FindBestMatching("", data.item, Player.PrimaryHand:GetPalmPosition(), 64)
+        if data.item == "hlvr_weapon_energygun" then
+            Player.CurrentlyEquipped = PLAYER_WEAPON_ENERGYGUN
+            Player.Items.weapons.energygun = weaponHandle
+        elseif data.item == "hlvr_weapon_rapidfire" then
+            Player.CurrentlyEquipped = PLAYER_WEAPON_RAPIDFIRE
+            Player.Items.weapons.rapidfire = weaponHandle
+        elseif data.item == "hlvr_weapon_shotgun" then
+            Player.CurrentlyEquipped = PLAYER_WEAPON_SHOTGUN
+            Player.Items.weapons.shotgun = weaponHandle
+        elseif data.item == "hlvr_multitool" then
+            Player.CurrentlyEquipped = PLAYER_WEAPON_MULTITOOL
+            Player.Items.weapons.multitool = weaponHandle
+        elseif data.item == "hlvr_weapon_generic_pistol" then
+            Player.CurrentlyEquipped = PLAYER_WEAPON_GENERIC_PISTOL
+
+            -- Add this custom pistol if this is the first time encountering it
+            if not vlua.find(Player.Items.weapons.genericpistols, weaponHandle) then
+                table.insert(Player.Items.weapons.genericpistols, weaponHandle)
+            end
         end
     end
+
+    Player:UpdateWeaponsExistence()
+
+    savePlayerData()
+
     -- Registered callback
     eventCallback(data.game_event_name, data)
 end

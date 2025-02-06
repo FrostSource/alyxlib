@@ -212,6 +212,25 @@ CBasePlayer.Items = {
         generic_pistol = 0,
     },
 
+    ---Weapons in the inventory
+    weapons = {
+        ---The hlvr_weapon_energygun
+        ---@type EntityHandle
+        energygun = nil,
+        ---The hlvr_weapon_rapidfire
+        ---@type EntityHandle
+        rapidfire = nil,
+        ---The hlvr_weapon_shotgun
+        ---@type EntityHandle
+        shotgun = nil,
+        ---The hlvr_multitool
+        ---@type EntityHandle
+        multitool = nil,
+        ---List of generic pistols the player has
+        ---@type EntityHandle[]
+        genericpistols = {},
+    },
+
     ---Crafting currency the player has.
     ---@type integer
     resin = nil,
@@ -673,15 +692,15 @@ end
 ---@return EntityHandle|nil
 function CBasePlayer:GetWeapon()
     if self.CurrentlyEquipped == PLAYER_WEAPON_ENERGYGUN then
-        return Entities:FindByClassnameNearest("hlvr_weapon_energygun", self.PrimaryHand:GetOrigin(), 128)--[[@as EntityHandle]]
+        return Entities:FindByClassnameNearest("hlvr_weapon_energygun", self.PrimaryHand:GetPalmPosition(), 128)--[[@as EntityHandle]]
     elseif self.CurrentlyEquipped == PLAYER_WEAPON_RAPIDFIRE then
-        return Entities:FindByClassnameNearest("hlvr_weapon_rapidfire", self.PrimaryHand:GetOrigin(), 128)--[[@as EntityHandle]]
+        return Entities:FindByClassnameNearest("hlvr_weapon_rapidfire", self.PrimaryHand:GetPalmPosition(), 128)--[[@as EntityHandle]]
     elseif self.CurrentlyEquipped == PLAYER_WEAPON_SHOTGUN then
-        return Entities:FindByClassnameNearest("hlvr_weapon_shotgun", self.PrimaryHand:GetOrigin(), 128)--[[@as EntityHandle]]
+        return Entities:FindByClassnameNearest("hlvr_weapon_shotgun", self.PrimaryHand:GetPalmPosition(), 128)--[[@as EntityHandle]]
     elseif self.CurrentlyEquipped == PLAYER_WEAPON_GENERIC_PISTOL then
-        return Entities:FindByClassnameNearest("hlvr_weapon_generic_pistol", self.PrimaryHand:GetOrigin(), 128)--[[@as EntityHandle]]
+        return Entities:FindByClassnameNearest("hlvr_weapon_generic_pistol", self.PrimaryHand:GetPalmPosition(), 128)--[[@as EntityHandle]]
     elseif self.CurrentlyEquipped == PLAYER_WEAPON_MULTITOOL then
-        return Entities:FindByClassnameNearest("hlvr_multitool", self.PrimaryHand:GetOrigin(), 128)--[[@as EntityHandle]]
+        return Entities:FindByClassnameNearest("hlvr_multitool", self.PrimaryHand:GetPalmPosition(), 128)--[[@as EntityHandle]]
     else
         return nil
     end
@@ -694,7 +713,7 @@ end
 ---@return PlayerPistolUpgrades[]
 ---@overload fun(self: CBasePlayer): PlayerPistolUpgrades[]
 function CBasePlayer:GetPistolUpgrades(weapon)
-    local pistol = weapon or self:GetWeapons().hlvr_weapon_energygun
+    local pistol = weapon or self.Items.weapons.energygun
 
     if not pistol then
         return {}
@@ -724,7 +743,7 @@ end
 ---@return PlayerRapidfireUpgrades[]
 ---@overload fun(self: CBasePlayer): PlayerRapidfireUpgrades[]
 function CBasePlayer:GetRapidfireUpgrades(weapon)
-    local rapidfire = weapon or self:GetWeapons().hlvr_weapon_rapidfire
+    local rapidfire = weapon or self.Items.weapons.rapidfire
 
     if not rapidfire then
         return {}
@@ -751,10 +770,10 @@ end
 ---**This will NOT return "shotgun_upgrade_quick_fire" because there is no known way to detect this!**
 ---
 ---@param weapon? EntityHandle # Optional weapon to check instead of the player's weapon.
----@return PlayerRapidfireUpgrades[]
+---@return PlayerShotgunUpgrades[]
 ---@overload fun(self: CBasePlayer): PlayerShotgunUpgrades[]
 function CBasePlayer:GetShotgunUpgrades(weapon)
-    local shotgun = weapon or self:GetWeapons().hlvr_weapon_shotgun
+    local shotgun = weapon or self.Items.weapons.shotgun
 
     if not shotgun then
         return {}
@@ -781,12 +800,11 @@ end
 ---@param upgrade PlayerPistolUpgrades|PlayerRapidfireUpgrades|PlayerShotgunUpgrades
 ---@return boolean
 function CBasePlayer:HasWeaponUpgrade(upgrade)
-    local weapons = self:GetWeapons()
-    if vlua.find(self:GetPistolUpgrades(weapons.hlvr_weapon_energygun), upgrade) then
+    if vlua.find(self:GetPistolUpgrades(), upgrade) then
         return true
-    elseif vlua.find(self:GetRapidfireUpgrades(weapons.hlvr_weapon_generic_pistol), upgrade) then
+    elseif vlua.find(self:GetRapidfireUpgrades(), upgrade) then
         return true
-    elseif vlua.find(self:GetShotgunUpgrades(weapons.hlvr_weapon_shotgun), upgrade) then
+    elseif vlua.find(self:GetShotgunUpgrades(), upgrade) then
         return true
     end
     return false
@@ -903,49 +921,63 @@ local weaponClasses = {
 }
 
 ---
----Gets all EntityHandles for weapons/items attached to the player hand even if not currently equipped.
+---Updates the existence of weapons in [Player.Items.weapons](lua://Player.Items.weapons) by checking weapon switch entities.
 ---
----@return {hlvr_weapon_energygun:EntityHandle?,hlvr_weapon_rapidfire:EntityHandle?,hlvr_weapon_shotgun:EntityHandle?,hlvr_weapon_generic_pistol:EntityHandle?,hlvr_multitool:EntityHandle?}
+---This is called automatically whenever the weapon_switch event fires.
+---
+function CBasePlayer:UpdateWeaponsExistence()
+
+    local weapons = Player.Items.weapons
+
+    if weapons.energygun then
+        local swt = Entities:FindByName(nil, "wpnswitch_hlvr_weapon_energygun")
+        if not swt then
+            weapons.energygun = nil
+        end
+    end
+
+    if weapons.shotgun then
+        local swt = Entities:FindByName(nil, "wpnswitch_hlvr_weapon_shotgun")
+        if not swt then
+            weapons.shotgun = nil
+        end
+    end
+
+    if weapons.rapidfire then
+        local swt = Entities:FindByName(nil, "wpnswitch_hlvr_weapon_rapidfire")
+        if not swt then
+            weapons.rapidfire = nil
+        end
+    end
+
+    if weapons.multitool then
+        local swt = Entities:FindByName(nil, "wpnswitch_hlvr_multitool")
+        if not swt then
+            weapons.multitool = nil
+        end
+    end
+
+    for i = #weapons.genericpistols, 1, -1 do
+        local generic = weapons.genericpistols[i]
+        local swt = Entities:FindByName(nil, "wpnswitch_" .. generic:GetName())
+        if not swt then
+            table.remove(weapons.genericpistols, i)
+        end
+    end
+end
+
+---
+---Returns [Player.Items.weapons](lua://CBasePlayer.Items) flattened into a single array.
+---
+---@return EntityHandle[]
 function CBasePlayer:GetWeapons()
-    local hand = self.PrimaryHand
 
-    local foundWeapons = {}
-
-    local specialAttachmentsFound = {}
-    local attachments = {}
-    local attachment = hand:GetHandAttachment()
-    while attachment ~= nil do
-        if vlua.find(weaponClasses, attachment:GetClassname()) then
-            foundWeapons[attachment:GetClassname()] = attachment
-        end
-
-        -- Do not track multiple versions of the same entity
-        if not vlua.find(attachments, attachment) and not vlua.find(specialAttachmentsFound, attachment) then
-            -- Special attachments are handled separately
-            if vlua.find(specialAttachmentsOrder, attachment:GetClassname()) then
-                specialAttachmentsFound[attachment:GetClassname()] = attachment
-            else
-                table.insert(attachments, 1, attachment)
-            end
-        end
-
-        hand:RemoveHandAttachmentByHandle(attachment)
-        -- Get next current attachment
-        attachment = hand:GetHandAttachment()
-    end
-
-    -- Add special attachments back first to avoid crash
-    for _, specialName in ipairs(specialAttachmentsOrder) do
-        local specialAttachment = specialAttachmentsFound[specialName]
-        if specialAttachment then
-            hand:AddHandAttachment(specialAttachment)
-        end
-    end
-
-    -- Add back all other attachments
-    for _, removedAttachment in ipairs(attachments) do
-        hand:AddHandAttachment(removedAttachment)
-    end
+    local weapons = Player.Items.weapons
+    local foundWeapons = vlua.clone(weapons.genericpistols)
+    table.insert(foundWeapons, weapons.energygun)
+    table.insert(foundWeapons, weapons.rapidfire)
+    table.insert(foundWeapons, weapons.shotgun)
+    table.insert(foundWeapons, weapons.multitool)
 
     return foundWeapons
 end
