@@ -135,9 +135,11 @@ RegisterAlyxLibCommand("noclip_vr", function (_, on)
     end
 
     if noclipVREnabled then
+        SendToConsole("god 1")
         Player:SetMovementEnabled(false)
         Player:SetContextThink("noclip_vr_think", noclipVRThink, 0.1)
     else
+        SendToConsole("god 0")
         Player:SetMovementEnabled(true)
         Player:SetContextThink("noclip_vr_think", nil, 0)
     end
