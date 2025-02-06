@@ -1000,6 +1000,44 @@ function CBasePlayer:SetMovementEnabled(enabled, delay)
     Player:EntFire("EnableTeleport", enabled and "1" or "0", delay or 0)
 end
 
+---
+---Sets the forward vector of the HMD anchor while keeping the position the same relative to the player.
+---
+---Normally if the player is off-center when changing the forward vector the player may appear to move too.
+---
+---@param forward Vector # Normalized forward vector
+function CBasePlayer:SetAnchorForwardAroundPlayer(forward)
+    local oldPos = self:GetAbsOrigin()
+    local relativePos = self.HMDAnchor:TransformPointWorldToEntity(oldPos)
+    self.HMDAnchor:SetForwardVector(forward)
+    local newPos = self.HMDAnchor:TransformPointEntityToWorld(relativePos)
+    self.HMDAnchor:SetAbsOrigin(self.HMDAnchor:GetAbsOrigin() + (oldPos - newPos))
+end
+
+---
+---Sets the angle of the HMD anchor while keeping the position the same relative to the player.
+---
+---Normally if the player is off-center when changing the angle the player may appear to move too.
+---
+---@param angles QAngle # New angle of the anchor
+function CBasePlayer:SetAnchorAnglesAroundPlayer(angles)
+    local oldPos = self:GetAbsOrigin()
+    local relativePos = self.HMDAnchor:TransformPointWorldToEntity(oldPos)
+    self.HMDAnchor:SetQAngle(angles)
+    local newPos = self.HMDAnchor:TransformPointEntityToWorld(relativePos)
+    self.HMDAnchor:SetAbsOrigin(self.HMDAnchor:GetAbsOrigin() + (oldPos - newPos))
+end
+
+---
+---Sets the origin of the HMD anchor while keeping the position the same relative to the player.
+---
+---This essentially moves the player by moving the anchor and can be used in instances where setting the player origin does not work.
+---
+---@param pos Vector
+function CBasePlayer:SetAnchorOriginAroundPlayer(pos)
+    self.HMDAnchor:SetAbsOrigin(pos + (self.HMDAnchor:GetAbsOrigin() - self:GetAbsOrigin()))
+end
+
 -- Other player libraries
 require "alyxlib.player.hands"
 require "alyxlib.player.events"
