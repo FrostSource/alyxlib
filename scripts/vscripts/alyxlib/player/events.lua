@@ -185,6 +185,27 @@ local function listenEventPlayerActivate(data)
 end
 listenEventPlayerActivateID = ListenToGameEvent("player_activate", listenEventPlayerActivate, nil)
 
+---@type EntityHandle
+local lastPickedUpEntity = nil
+---@type number
+local lastPickedUpTime = 0
+
+---Track the last picked up entity to accurately determine the entity in later events.
+---@param params GameEventPhysgunPickup
+ListenToGameEvent("physgun_pickup", function (params)
+    -- print("\nPHYSGUN_PICKUP:")
+    -- Debug.PrintTable(params)
+    -- print("\n")
+
+    if params.entindex then
+        local ent = EntIndexToHScript(params.entindex)
+        if IsValidEntity(ent) then
+            lastPickedUpEntity = ent
+            lastPickedUpTime = Time()
+        end
+    end
+end, nil)
+
 ---@class PlayerEventItemPickup : GameEventItemPickup
 ---@field item EntityHandle # The entity handle of the item that was picked up.
 ---@field item_class string # Classname of the entity that was picked up.
@@ -197,13 +218,28 @@ local function listenEventItemPickup(data)
     -- print("\nITEM PICKUP:")
     -- Debug.PrintTable(data)
     -- print("\n")
+
     if data.vr_tip_attachment == nil then return end
     -- 1=primary,2=secondary converted to 0=left,1=right
     local handId = Util.GetHandIdFromTip(data.vr_tip_attachment)
     local hand = Player.Hands[handId + 1]
     local otherhand = Player.Hands[(1 - handId) + 1]
-    local palmPosition = hand:GetPalmPosition()
-    local ent_held = Entities:FindBestMatching(data.item_name, data.item, palmPosition)
+
+    ---@type EntityHandle
+    local ent_held
+
+    -- These kind of checks probably aren't necessary but just in case
+    -- events sometimes fire late or out of order, this ensures
+    -- we don't get unexpected errors or wildly inaccurate entities
+
+    -- This will fail with weapon_switch pickups
+    if lastPickedUpEntity and lastPickedUpTime == Time() then
+        ent_held = lastPickedUpEntity
+    else
+        -- Hopefully this code is never reached but just in case
+        local palmPosition = hand:GetPalmPosition()
+        ent_held = Entities:FindBestMatching(data.item_name, data.item, palmPosition)
+    end
 
     hand.ItemHeld = ent_held
     hand.LastItemGrabbed = ent_held
