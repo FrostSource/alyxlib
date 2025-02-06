@@ -105,27 +105,66 @@ end, "", 0)
 
 local noclipVREnabled = false
 
+---Tracks initial button press to prevent repeated logic execution while held
+local quickTurnFlag = false
+
 local function noclipVRThink()
-    ---@TODO Can the player choose to move with offhand? Is there a way to check?
-    local moveVector = Player:GetAnalogActionPositionForHand(Player.SecondaryHand.Literal, 3)
-    local moveType = Player:GetMoveType()
-    -- print(moveVector)
+    -- Check offhand first because it's most common, then check primary hand movement
+    local moveVector = Player:GetAnalogActionPositionForHand(Player.SecondaryHand.Literal, ANALOG_INPUT_TELEPORT_TURN)
+    if #moveVector == 0 then
+        moveVector = Player:GetAnalogActionPositionForHand(Player.PrimaryHand.Literal, ANALOG_INPUT_TELEPORT_TURN)
+    end
+
     if moveVector:Length() > 0 then
+        local moveType = Player:GetMoveType()
         local dir
+
         if moveType == PlayerMoveType.ContinuousHand then
             dir = (Player.SecondaryHand:GetAngles():Left() * moveVector.x) + (Player.SecondaryHand:GetAngles():Forward() * moveVector.y)
         else
             dir = (Player:EyeAngles():Left() * moveVector.x) + (Player:EyeAngles():Forward() * moveVector.y)
         end
+
         local velocity = dir * (Player:IsDigitalActionOnForHand(Player.SecondaryHand.Literal, 3) and Convars:GetFloat("noclip_vr_boost_speed") or Convars:GetFloat("noclip_vr_speed"))
-        -- print(velocity)
+
         Player.HMDAnchor:SetOrigin(Player.HMDAnchor:GetOrigin() + velocity)
     end
+
+    -- Custom turning is required because turning seems to stop working above certain speeds
+
+    local turnSign = 0
+    if Player:IsDigitalActionOnForHand(0, DIGITAL_INPUT_TURN_LEFT) or Player:IsDigitalActionOnForHand(1, DIGITAL_INPUT_TURN_LEFT) then
+        turnSign = 1
+    elseif Player:IsDigitalActionOnForHand(0, DIGITAL_INPUT_TURN_RIGHT) or Player:IsDigitalActionOnForHand(1, DIGITAL_INPUT_TURN_RIGHT) then
+        turnSign = -1
+    else
+        quickTurnFlag = false
+    end
+
+    if turnSign ~= 0 then
+        local angles = Player.HMDAnchor:GetAngles()
+        local amount = 0
+
+        if Convars:GetBool("vr_quick_turn_continuous_enable") then
+            local speed = Convars:GetFloat("vr_quick_turn_continuous_speed") or 0
+            amount = speed * FrameTime() * turnSign
+        elseif Convars:GetBool("vr_teleport_quick_turn_enable") and not quickTurnFlag then
+            local speed = Convars:GetFloat("vr_teleport_quick_turn_angle") or 0
+            amount = speed * turnSign
+            quickTurnFlag = true
+        end
+
+        Player.HMDAnchor:SetAngles(angles.x, angles.y + amount, angles.z)
+    end
+
     return 0
 end
 
 RegisterAlyxLibConvar("noclip_vr_speed", "2", "Speed of the VR noclip movement", 0)
 RegisterAlyxLibConvar("noclip_vr_boost_speed", "5", "Speed of the VR noclip movement when holding trigger", 0)
+
+---Used to track user's movement type so it can be reset
+local movetype = Convars:GetInt('hlvr_movetype_default')
 
 RegisterAlyxLibCommand("noclip_vr", function (_, on)
     if on == nil then
@@ -135,10 +174,18 @@ RegisterAlyxLibCommand("noclip_vr", function (_, on)
     end
 
     if noclipVREnabled then
+        movetype = Convars:GetInt("hlvr_movetype_default")
+
+        -- Movetype 2 blocks turning with movement disabled
+        -- This might cause problems if the server resets before the command is turned off
+        -- but the game does seem to remember the user's settings so far
+        SendToConsole("vr_movetype_set 2")
+
         SendToConsole("god 1")
         Player:SetMovementEnabled(false)
         Player:SetContextThink("noclip_vr_think", noclipVRThink, 0.1)
     else
+        SendToConsole("vr_movetype_set " .. movetype)
         SendToConsole("god 0")
         Player:SetMovementEnabled(true)
         Player:SetContextThink("noclip_vr_think", nil, 0)
