@@ -258,17 +258,16 @@ local function listenEventItemPickup(data)
     end
 
     -- Registered callback
-    ---@cast data PlayerEventItemPickup
-    data.item_class = data.item--[[@as string]]
-    ---@diagnostic disable-next-line: assign-type-mismatch
-    data.item = ent_held
-    data.hand = hand
-    data.otherhand = otherhand
+    local newdata = vlua.clone(data)--[[@as PlayerEventItemPickup]]
+    newdata.item_class = data.item
+    newdata.item = ent_held
+    newdata.hand = hand
+    newdata.otherhand = otherhand
     for id, event_data in pairs(registered_event_callbacks[data.game_event_name]) do
         if event_data.context ~= nil then
-            event_data.callback(event_data.context, data)
+            event_data.callback(event_data.context, newdata)
         else
-            event_data.callback(data)
+            event_data.callback(newdata)
         end
     end
 end
@@ -309,17 +308,16 @@ local function listenEventItemReleased(data)
     hand.ItemHeld = nil
 
     -- Registered callback
-    ---@cast data PlayerEventItemReleased
-    data.item_class = data.item--[[@as string]]
-    ---@diagnostic disable-next-line: assign-type-mismatch
-    data.item = hand.LastItemDropped
-    data.hand = hand
-    data.otherhand = otherhand
+    local newdata = vlua.clone(data)--[[@as PlayerEventItemReleased]]
+    newdata.item_class = data.item
+    newdata.item = hand.LastItemDropped
+    newdata.hand = hand
+    newdata.otherhand = otherhand
     for id, event_data in pairs(registered_event_callbacks[data.game_event_name]) do
         if event_data.context ~= nil then
-            event_data.callback(event_data.context, data)
+            event_data.callback(event_data.context, newdata)
         else
-            event_data.callback(data)
+            event_data.callback(newdata)
         end
     end
 end
@@ -331,23 +329,26 @@ ListenToGameEvent("item_released", listenEventItemReleased, nil)
 ---Tracking handedness.
 ---@param data GameEventPrimaryHandChanged
 local function listenEventPrimaryHandChanged(data)
-    ---@cast data PlayerEventPrimaryHandChanged
-    data.is_primary_left = (data.is_primary_left == 1) and true or false
+    local newdata = vlua.clone(data)--[[@as PlayerEventPrimaryHandChanged]]
+    newdata.is_primary_left = (data.is_primary_left == 1)
 
-    if data.is_primary_left then
+    -- Update quick-access player variables
+    if newdata.is_primary_left then
         Player.PrimaryHand = Player.LeftHand
         Player.SecondaryHand = Player.RightHand
     else
         Player.PrimaryHand = Player.RightHand
         Player.SecondaryHand = Player.LeftHand
     end
+
     Player.IsLeftHanded = Convars:GetBool("hlvr_left_hand_primary") --[[@as boolean]]
+
     -- Registered callback
     for id, event_data in pairs(registered_event_callbacks[data.game_event_name]) do
         if event_data.context ~= nil then
-            event_data.callback(event_data.context, data)
+            event_data.callback(event_data.context, newdata)
         else
-            event_data.callback(data)
+            event_data.callback(newdata)
         end
     end
 end
@@ -422,15 +423,14 @@ local function listenEventPlayerDropAmmoInBackpack(data)
     savePlayerData()
 
     -- Registered callback
-    ---@diagnostic disable-next-line: cast-type-mismatch
-    ---@cast data PlayerEventPlayerDropAmmoInBackpack
-    data.ammotype = ammotype
-    data.ammo_amount = ammo_amount
+    local newdata = vlua.clone(data)--[[@as PlayerEventPlayerDropAmmoInBackpack]]
+    newdata.ammotype = ammotype
+    newdata.ammo_amount = ammo_amount
     for id, event_data in pairs(registered_event_callbacks[data.game_event_name]) do
         if event_data.context ~= nil then
-            event_data.callback(event_data.context, data)
+            event_data.callback(event_data.context, newdata)
         else
-            event_data.callback(data)
+            event_data.callback(newdata)
         end
     end
 end
@@ -471,15 +471,14 @@ local function listenEventPlayerRetrievedBackpackClip(data)
                 Player.Items.ammo.shotgun = Player.Items.ammo.shotgun - ammo_amount
             end
             -- Registered callback
-            ---@diagnostic disable-next-line: cast-type-mismatch
-            ---@cast data PlayerEventPlayerRetrievedBackpackClip
-            data.ammotype = ammotype
-            data.ammo_amount = ammo_amount
+            local newdata = vlua.clone(data)--[[@as PlayerEventPlayerRetrievedBackpackClip]]
+            newdata.ammotype = ammotype
+            newdata.ammo_amount = ammo_amount
             for id, event_data in pairs(registered_event_callbacks[data.game_event_name]) do
                 if event_data.context ~= nil then
-                    event_data.callback(event_data.context, data)
+                    event_data.callback(event_data.context, newdata)
                 else
-                    event_data.callback(data)
+                    event_data.callback(newdata)
                 end
             end
         end, 0)
@@ -490,15 +489,14 @@ local function listenEventPlayerRetrievedBackpackClip(data)
     savePlayerData()
     -- Registered callback
     if do_callback then
-        ---@diagnostic disable-next-line: cast-type-mismatch
-        ---@cast data PlayerEventPlayerRetrievedBackpackClip
-        data.ammotype = ammotype
-        data.ammo_amount = ammo_amount
+        local newdata = vlua.clone(data)--[[@as PlayerEventPlayerRetrievedBackpackClip]]
+        newdata.ammotype = ammotype
+        newdata.ammo_amount = ammo_amount
         for id, event_data in pairs(registered_event_callbacks[data.game_event_name]) do
             if event_data.context ~= nil then
-                event_data.callback(event_data.context, data)
+                event_data.callback(event_data.context, newdata)
             else
-                event_data.callback(data)
+                event_data.callback(newdata)
             end
         end
     end
@@ -539,16 +537,15 @@ local function listenEventPlayerStoredItemInItemholder(data)
     savePlayerData()
 
     -- Registered callback
-    ---@cast data PlayerEventPlayerStoredItemInItemholder
-    data.item_class = data.item--[[@as string]]
-    ---@diagnostic disable-next-line: assign-type-mismatch
-    data.item = item
-    data.hand = hand
+    local newdata = vlua.clone(data)--[[@as PlayerEventPlayerStoredItemInItemholder]]
+    newdata.item_class = data.item
+    newdata.item = item
+    newdata.hand = hand
     for id, event_data in pairs(registered_event_callbacks[data.game_event_name]) do
         if event_data.context ~= nil then
-            event_data.callback(event_data.context, data)
+            event_data.callback(event_data.context, newdata)
         else
-            event_data.callback(data)
+            event_data.callback(newdata)
         end
     end
 end
@@ -593,16 +590,15 @@ local function listenEventPlayerRemovedItemFromItemholder(data)
     savePlayerData()
 
     -- Registered callback
-    ---@cast data PlayerEventPlayerRemovedItemFromItemholder
-    data.item_class = data.item--[[@as string]]
-    ---@diagnostic disable-next-line: assign-type-mismatch
-    data.item = item
-    data.hand = hand
+    local newdata = vlua.clone(data)--[[@as PlayerEventPlayerRemovedItemFromItemholder]]
+    newdata.item_class = data.item
+    newdata.item = item
+    newdata.hand = hand
     for id, event_data in pairs(registered_event_callbacks[data.game_event_name]) do
         if event_data.context ~= nil then
-            event_data.callback(event_data.context, data)
+            event_data.callback(event_data.context, newdata)
         else
-            event_data.callback(data)
+            event_data.callback(newdata)
         end
     end
 end
@@ -632,14 +628,15 @@ local function listenEventPlayerDropResinInBackpack(data)
     end
     last_resin_dropped = nil
 
-    ---@cast data PlayerEventPlayerDropResinInBackpack
-    data.resin_ent = last_resin_dropped
+    -- Registered callback
+    local newdata = vlua.clone(data)--[[@as PlayerEventPlayerDropResinInBackpack]]
+    newdata.resin_ent = last_resin_dropped
 
     for id, event_data in pairs(registered_event_callbacks[data.game_event_name]) do
         if event_data.context ~= nil then
-            event_data.callback(event_data.context, data)
+            event_data.callback(event_data.context, newdata)
         else
-            event_data.callback(data)
+            event_data.callback(newdata)
         end
     end
 end
