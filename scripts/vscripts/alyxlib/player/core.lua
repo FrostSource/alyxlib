@@ -995,8 +995,9 @@ end
 ---Enable or disable player movement. Including teleport movement.
 ---
 ---@param enabled boolean # True if movement should be enabled.
-function CBasePlayer:SetMovementEnabled(enabled)
-    Player:EntFire("EnableTeleport", enabled and "1" or "0")
+---@param delay? number # Optional delay for movement state will be changed
+function CBasePlayer:SetMovementEnabled(enabled, delay)
+    Player:EntFire("EnableTeleport", enabled and "1" or "0", delay or 0)
 end
 
 -- Other player libraries
