@@ -77,7 +77,7 @@ end
 ---
 ---@param addonIndex integer # The index of the addon for use in other AlyxLib functions
 ---@param func fun():boolean,(string|string[])? # Diagnostic function to check if the addon is working, and any diagnostic messages
-function ReigsterAlyxLibDiagnostic(addonIndex, func)
+function RegisterAlyxLibDiagnostic(addonIndex, func)
     local addon = AlyxLibAddons[addonIndex]
     addon.diagnosticFunction = func
 end
