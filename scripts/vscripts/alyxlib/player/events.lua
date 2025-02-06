@@ -88,6 +88,19 @@ local function loadPlayerData()
     Player.Items = Storage.LoadTable(Player, "PlayerItems", Player.Items)
 end
 
+---Callback logic for every player event.
+---@param eventName string # Name of the event, data.game_event_name
+---@param newdata table # Data to send to callbacks
+local function eventCallback(eventName, newdata)
+    for id, event_data in pairs(registered_event_callbacks[eventName]) do
+        if event_data.context ~= nil then
+            event_data.callback(event_data.context, newdata)
+        else
+            event_data.callback(newdata)
+        end
+    end
+end
+
 ---@class PlayerEventPlayerActivate : GameEventBase
 ---@field player CBasePlayer # The entity handle of the player.
 ---@field type "spawn"|"load"|"transition" # Type of player activate.
@@ -263,11 +276,8 @@ local function listenEventItemPickup(data)
     newdata.item = ent_held
     newdata.hand = hand
     newdata.otherhand = otherhand
-    for id, event_data in pairs(registered_event_callbacks[data.game_event_name]) do
-        if event_data.context ~= nil then
-            event_data.callback(event_data.context, newdata)
-        else
-            event_data.callback(newdata)
+
+    eventCallback(data.game_event_name, newdata)
         end
     end
 end
@@ -313,13 +323,7 @@ local function listenEventItemReleased(data)
     newdata.item = hand.LastItemDropped
     newdata.hand = hand
     newdata.otherhand = otherhand
-    for id, event_data in pairs(registered_event_callbacks[data.game_event_name]) do
-        if event_data.context ~= nil then
-            event_data.callback(event_data.context, newdata)
-        else
-            event_data.callback(newdata)
-        end
-    end
+    eventCallback(data.game_event_name, newdata)
 end
 ListenToGameEvent("item_released", listenEventItemReleased, nil)
 
@@ -344,13 +348,7 @@ local function listenEventPrimaryHandChanged(data)
     Player.IsLeftHanded = Convars:GetBool("hlvr_left_hand_primary") --[[@as boolean]]
 
     -- Registered callback
-    for id, event_data in pairs(registered_event_callbacks[data.game_event_name]) do
-        if event_data.context ~= nil then
-            event_data.callback(event_data.context, newdata)
-        else
-            event_data.callback(newdata)
-        end
-    end
+    eventCallback(data.game_event_name, newdata)
 end
 ListenToGameEvent("primary_hand_changed", listenEventPrimaryHandChanged, nil)
 
@@ -426,13 +424,7 @@ local function listenEventPlayerDropAmmoInBackpack(data)
     local newdata = vlua.clone(data)--[[@as PlayerEventPlayerDropAmmoInBackpack]]
     newdata.ammotype = ammotype
     newdata.ammo_amount = ammo_amount
-    for id, event_data in pairs(registered_event_callbacks[data.game_event_name]) do
-        if event_data.context ~= nil then
-            event_data.callback(event_data.context, newdata)
-        else
-            event_data.callback(newdata)
-        end
-    end
+    eventCallback(data.game_event_name, newdata)
 end
 ListenToGameEvent("player_drop_ammo_in_backpack", listenEventPlayerDropAmmoInBackpack, nil)
 
@@ -452,6 +444,10 @@ local function listenEventPlayerRetrievedBackpackClip(data)
     local do_callback = true
     local ammotype = player_weapon_to_ammotype[Player.CurrentlyEquipped]
     local ammo_amount = 0
+
+    local newdata = vlua.clone(data)--[[@as PlayerEventPlayerRetrievedBackpackClip]]
+    newdata.ammotype = ammotype
+
     if Player.CurrentlyEquipped == PLAYER_WEAPON_ENERGYGUN
     or Player.CurrentlyEquipped == PLAYER_WEAPON_HAND
     or Player.CurrentlyEquipped == PLAYER_WEAPON_MULTITOOL then
@@ -462,7 +458,7 @@ local function listenEventPlayerRetrievedBackpackClip(data)
         ammo_amount = 1
     elseif Player.CurrentlyEquipped == PLAYER_WEAPON_SHOTGUN then
         do_callback = false
-        -- Delayed think is used because item_pickup is fired after this event
+        -- Delayed think is used because item_pickup and physgun_pickup are fired after this event
         Player:SetContextThink("delay_shotgun_shellgroup", function()
             -- Player always retrieves a shellgroup even if no autoloader and single shell
             -- checking just in case
@@ -470,35 +466,24 @@ local function listenEventPlayerRetrievedBackpackClip(data)
             if Player.LastClassGrabbed == "item_hlvr_clip_shotgun_shellgroup" then
                 Player.Items.ammo.shotgun = Player.Items.ammo.shotgun - ammo_amount
             end
+
+            savePlayerData()
+
             -- Registered callback
-            local newdata = vlua.clone(data)--[[@as PlayerEventPlayerRetrievedBackpackClip]]
-            newdata.ammotype = ammotype
             newdata.ammo_amount = ammo_amount
-            for id, event_data in pairs(registered_event_callbacks[data.game_event_name]) do
-                if event_data.context ~= nil then
-                    event_data.callback(event_data.context, newdata)
-                else
-                    event_data.callback(newdata)
-                end
-            end
+            eventCallback(data.game_event_name, newdata)
+
         end, 0)
     elseif Player.CurrentlyEquipped == PLAYER_WEAPON_GENERIC_PISTOL then
         Player.Items.ammo.generic_pistol = Player.Items.ammo.generic_pistol - 1
         ammo_amount = 1
     end
-    savePlayerData()
+
     -- Registered callback
     if do_callback then
-        local newdata = vlua.clone(data)--[[@as PlayerEventPlayerRetrievedBackpackClip]]
-        newdata.ammotype = ammotype
+        savePlayerData()
         newdata.ammo_amount = ammo_amount
-        for id, event_data in pairs(registered_event_callbacks[data.game_event_name]) do
-            if event_data.context ~= nil then
-                event_data.callback(event_data.context, newdata)
-            else
-                event_data.callback(newdata)
-            end
-        end
+        eventCallback(data.game_event_name, newdata)
     end
 end
 ListenToGameEvent("player_retrieved_backpack_clip", listenEventPlayerRetrievedBackpackClip, nil)
@@ -541,13 +526,7 @@ local function listenEventPlayerStoredItemInItemholder(data)
     newdata.item_class = data.item
     newdata.item = item
     newdata.hand = hand
-    for id, event_data in pairs(registered_event_callbacks[data.game_event_name]) do
-        if event_data.context ~= nil then
-            event_data.callback(event_data.context, newdata)
-        else
-            event_data.callback(newdata)
-        end
-    end
+    eventCallback(data.game_event_name, newdata)
 end
 ListenToGameEvent("player_stored_item_in_itemholder", listenEventPlayerStoredItemInItemholder, nil)
 
@@ -594,13 +573,7 @@ local function listenEventPlayerRemovedItemFromItemholder(data)
     newdata.item_class = data.item
     newdata.item = item
     newdata.hand = hand
-    for id, event_data in pairs(registered_event_callbacks[data.game_event_name]) do
-        if event_data.context ~= nil then
-            event_data.callback(event_data.context, newdata)
-        else
-            event_data.callback(newdata)
-        end
-    end
+    eventCallback(data.game_event_name, newdata)
 end
 ListenToGameEvent("player_removed_item_from_itemholder", listenEventPlayerRemovedItemFromItemholder, nil)
 
@@ -631,14 +604,7 @@ local function listenEventPlayerDropResinInBackpack(data)
     -- Registered callback
     local newdata = vlua.clone(data)--[[@as PlayerEventPlayerDropResinInBackpack]]
     newdata.resin_ent = last_resin_dropped
-
-    for id, event_data in pairs(registered_event_callbacks[data.game_event_name]) do
-        if event_data.context ~= nil then
-            event_data.callback(event_data.context, newdata)
-        else
-            event_data.callback(newdata)
-        end
-    end
+    eventCallback(data.game_event_name, newdata)
 end
 ListenToGameEvent("player_drop_resin_in_backpack", listenEventPlayerDropResinInBackpack, nil)
 
@@ -668,6 +634,8 @@ local function listenEventWeaponSwitch(data)
             event_data.callback(data)
         end
     end
+    -- Registered callback
+    eventCallback(data.game_event_name, data)
 end
 ListenToGameEvent("weapon_switch", listenEventWeaponSwitch, nil)
 
