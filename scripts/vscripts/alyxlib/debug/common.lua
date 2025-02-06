@@ -874,4 +874,21 @@ function Debug.IsEntityHandleString(handleString)
     return string.match(handleString, "0x[%d%a][%d%a][%d%a][%d%a][%d%a][%d%a][%d%a][%d%a]$")
 end
 
+---
+---Converts a number to its ordinal string representation (e.g., 1 → "1st", 2 → "2nd", 3 → "3rd").
+---
+---@param n integer # Number to convert to ordinal representation
+---@return string
+function Debug.ToOrdinalString(n)
+    local lastTwo = n % 100
+    if lastTwo >= 11 and lastTwo <= 13 then
+        return n .. "th"
+    end
+
+    local lastDigit = n % 10
+    local suffixes = { [1] = "st", [2] = "nd", [3] = "rd" }
+
+    return n .. (suffixes[lastDigit] or "th")
+end
+
 return Debug.version
