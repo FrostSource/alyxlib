@@ -101,12 +101,13 @@ RegisterAlyxLibCommand("alyxlib_diagnose", function (_, searchPattern)
     -- Standard AlyxLib and game info
     Msg("AlyxLib " .. ALYXLIB_VERSION .. "\n")
     Msg("VR Enabled: " .. (IsVREnabled() and "Yes" or "No") .. "\n")
+    Msg("Left Handed: " .. (Convars:GetBool("hlvr_left_hand_primary") and "Yes" or "No") .. "\n")
     Msg("Single Handed: " .. (Convars:GetBool("hlvr_single_controller_mode") and "Yes" or "No") .. "\n")
     Msg("Map: " .. GetMapName() .. "\n")
     if IsEntity(Player, true) then
-        if IsVREnabled() then
+        if Player.HMDAvatar then
             Msg("VR Controller Type: " .. Input:GetControllerTypeDescription(Player:GetVRControllerType()) .. "\n")
-            Msg("VR Move Type: " .. vlua.find(PlayerMoveType, Player:GetMoveType()) .. "(" .. Player:GetMoveType() .. ")\n")
+            Msg("VR Move Type: " .. vlua.find(PlayerMoveType, Player:GetMoveType()) .. " (" .. Player:GetMoveType() .. ")\n")
         end
     else
         Msg("Player does not exist!\n")
@@ -125,7 +126,7 @@ RegisterAlyxLibCommand("alyxlib_diagnose", function (_, searchPattern)
         return
     end
 
-    Msg("Running diagnostics for addon \"" .. addon.name .. "\" " .. addon.version .. "\n")
+    Msg("\nRunning diagnostics for addon \"" .. addon.name .. "\" " .. addon.version .. "\n")
 
     if not addon.diagnosticFunction then
         warn("Addon \"" .. addon.name .. "\" does not have a diagnostic function")
@@ -146,10 +147,10 @@ RegisterAlyxLibCommand("alyxlib_diagnose", function (_, searchPattern)
 
             if result == true then
                 -- Use custom success message if returned
-                Msg("Diagnostic result: " .. (messages[1] or "Success") .. "\n")
+                Msg("Diagnostic result: " .. (messages[1] or "No issues") .. "\n")
             else
                 -- Print all error messages
-                Msg("Diagnostic result: Failed\n")
+                Msg("Diagnostic result: One or more issues detected\n")
                 for _, msg in ipairs(messages) do
                     Msg("\t" .. msg .. "\n")
                 end
