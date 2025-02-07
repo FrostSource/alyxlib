@@ -438,6 +438,33 @@ function EasyConvars:WasChangedByUser(name)
 end
 
 ---
+---Forces the convar to be considered changed by the user.
+---
+---This can be useful if you want to stop a convar from initializing because you're setting its value early.
+---Or if you're setting the value by some unusual means for the user.
+---
+---@param name string
+---@param wasChanged boolean
+function EasyConvars:SetWasChanged(name, wasChanged)
+    local reg = self.registered[name]
+    if not reg then return end
+    reg.wasChangedByUser = wasChanged
+end
+
+---
+---Sets the value of the convar if it hasn't been changed by the user.
+---
+---@param name string
+---@param value any # The value to set. Will be converted to a string representation.
+function EasyConvars:SetIfUnchanged(name, value)
+    local reg = self.registered[name]
+    if not reg then return end
+    if not reg.wasChangedByUser then
+        callCallback(reg, value)
+    end
+end
+
+---
 ---Sets the function to be called after all convars have been initialized.
 ---
 ---@param func function
