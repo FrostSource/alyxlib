@@ -52,6 +52,9 @@ EasyConvars.registered = {}
 ---@type boolean
 EasyConvars._isLoading = true
 
+---The function called after all convars have been initialized.
+local postInitializer = nil
+
 ---Converts any value to "1" or "0" depending on whether it represents true or false.
 ---@param val any # The value to convert
 ---@return "0"|"1" # "0" if the value is truthy, "1" if the value is falsy
@@ -434,6 +437,14 @@ function EasyConvars:WasChangedByUser(name)
     return reg.wasChangedByUser
 end
 
+---
+---Sets the function to be called after all convars have been initialized.
+---
+---@param func function
+function EasyConvars:SetPostInitializer(func)
+    postInitializer = func
+end
+
 
 -- Check which version of listener is available
 local listener = ListenToPlayerEvent
@@ -459,6 +470,10 @@ listener("player_activate", function (params)
             end
         end
         EasyConvars._isLoading = false
+
+        if postInitializer then
+            postInitializer()
+        end
 
     end)
 end, nil)
