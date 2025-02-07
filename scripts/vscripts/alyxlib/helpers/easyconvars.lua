@@ -462,7 +462,7 @@ listener("player_activate", function (params)
                         data.wasChangedByUser = true
                         devprints2("EasyConvars", name, "initializer won't be used because it has a user value of", tostring(data.value))
                     else
-                        data.value = tostring(data.initializer())
+                        data.value = convertToSafeVal(data.initializer())
                         data.defaultValue = data.value
                         devprints2("EasyConvars", name, "initializer value was", data.value)
                     end
