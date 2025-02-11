@@ -147,10 +147,10 @@ RegisterAlyxLibCommand("alyxlib_diagnose", function (_, searchPattern)
 
             if result == true then
                 -- Use custom success message if returned
-                Msg("Diagnostic result: " .. (messages[1] or "No issues") .. "\n")
+                Msg("\nDiagnostic result: " .. (messages[1] or "No issues were detected") .. "\n")
             else
                 -- Print all error messages
-                Msg("Diagnostic result: One or more issues detected\n")
+                Msg("\nDiagnostic result: One or more issues detected\n")
                 for _, msg in ipairs(messages) do
                     Msg("\t" .. msg .. "\n")
                 end
