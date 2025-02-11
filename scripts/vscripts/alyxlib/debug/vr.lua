@@ -190,6 +190,6 @@ RegisterAlyxLibCommand("noclip_vr", function (_, on)
         Player:SetMovementEnabled(true)
         Player:SetContextThink("noclip_vr_think", nil, 0)
     end
-end)
+end, "Enables a continuous movement noclip while in VR", 0)
 
 return version
