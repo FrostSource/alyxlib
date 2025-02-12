@@ -11,6 +11,10 @@
     ```
 ]]
 
+---
+---Utility functions to help reduce repetitive code and add general miscellaneous functionality.
+---
+---@class Util
 Util = {}
 Util.version = "v3.1.0"
 

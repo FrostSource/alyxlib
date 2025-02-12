@@ -91,7 +91,7 @@ RegisterAlyxLibCommand("alyxlib_addons", function ()
     Msg("Enabled addons made with AlyxLib:\n")
 
     for _, addon in ipairs(AlyxLibAddons) do
-        Msg("\t" .. addon.name .. " " .. addon.version .. "\n")
+        Msg("\t" .. addon.name .. " " .. addon.version .. " (" .. addon.shortName .. ", " .. addon.workshopID .. ")\n")
     end
 end, "Lists addons made and registered with AlyxLib")
 
@@ -101,10 +101,13 @@ RegisterAlyxLibCommand("alyxlib_diagnose", function (_, searchPattern)
     -- Standard AlyxLib and game info
     Msg("AlyxLib " .. ALYXLIB_VERSION .. "\n")
     Msg("VR Enabled: " .. (IsVREnabled() and "Yes" or "No") .. "\n")
+    Msg("Left Handed: " .. (Convars:GetBool("hlvr_left_hand_primary") and "Yes" or "No") .. "\n")
+    Msg("Single Handed: " .. (Convars:GetBool("hlvr_single_controller_mode") and "Yes" or "No") .. "\n")
     Msg("Map: " .. GetMapName() .. "\n")
     if IsEntity(Player, true) then
-        if IsVREnabled() then
+        if Player.HMDAvatar then
             Msg("VR Controller Type: " .. Input:GetControllerTypeDescription(Player:GetVRControllerType()) .. "\n")
+            Msg("VR Move Type: " .. vlua.find(PlayerMoveType, Player:GetMoveType()) .. " (" .. Player:GetMoveType() .. ")\n")
         end
     else
         Msg("Player does not exist!\n")
@@ -112,6 +115,7 @@ RegisterAlyxLibCommand("alyxlib_diagnose", function (_, searchPattern)
 
     if searchPattern == nil then
         Msg("\nTo run diagnostics for an addon, type \"alyxlib_diagnose <addon_name>\"\n")
+        Msg("Use \"alyxlib_addons\" to see addons that can be diagnosed\n\n")
         return
     end
 
@@ -122,7 +126,7 @@ RegisterAlyxLibCommand("alyxlib_diagnose", function (_, searchPattern)
         return
     end
 
-    Msg("Running diagnostics for addon \"" .. addon.name .. "\" " .. addon.version .. "\n")
+    Msg("\nRunning diagnostics for addon \"" .. addon.name .. "\" " .. addon.version .. "\n")
 
     if not addon.diagnosticFunction then
         warn("Addon \"" .. addon.name .. "\" does not have a diagnostic function")
@@ -143,10 +147,10 @@ RegisterAlyxLibCommand("alyxlib_diagnose", function (_, searchPattern)
 
             if result == true then
                 -- Use custom success message if returned
-                Msg("Diagnostic result: " .. (messages[1] or "Success") .. "\n")
+                Msg("\nDiagnostic result: " .. (messages[1] or "No issues were detected") .. "\n")
             else
                 -- Print all error messages
-                Msg("Diagnostic result: Failed\n")
+                Msg("\nDiagnostic result: One or more issues detected\n")
                 for _, msg in ipairs(messages) do
                     Msg("\t" .. msg .. "\n")
                 end
@@ -158,6 +162,120 @@ RegisterAlyxLibCommand("alyxlib_diagnose", function (_, searchPattern)
     Msg("\n")
 
 end, "Runs diagnostics for an addon")
+
+RegisterAlyxLibCommand("force_nearest_transition", function ()
+    local changelevel = Entities:FindByClassnameNearest("trigger_changelevel", Player:GetOrigin(), 10000)
+    if changelevel then
+        -- changelevel:Enable()
+        print(changelevel:GetName())
+        -- DoEntFire(changelevel:GetName(), "changelevel", "", 0, nil, nil)
+        -- changelevel:EntFire("ChangeLevel")
+        SendToConsole("ent_fire " .. changelevel:GetName() .. " changelevel")
+    else
+        Msg("Could not find trigger_changelevel near player!")
+    end
+end, "Forces the nearest trigger_changelevel to transition. WARNING: This may crash if the nearest changelevel goes to a previous map")
+
+---Util function for goto_transition
+---@param origin Vector
+---@param angles? QAngle
+local function tpPlayer(origin, angles)
+    local tp = SpawnEntityFromTableSynchronous("point_teleport", {
+        target = "!player",
+        origin = origin,
+        angles = angles or QAngle(),
+        spawnflags = '4'
+    })
+    tp:EntFire("Teleport", nil, 0)
+    tp:EntFire("Kill", nil, 0.1)
+end
+
+local currentChangeLevels = nil
+local currentChangeLevel = 0
+
+local transitionCoords = {
+    a1_intro_world = {Vector(604.448, -2332.67, -280.75)},
+    a1_intro_world_2 = {Vector(-1984, -5096, -12.93)},
+    a2_drainage = {Vector(1488, -1784, 31.9935), QAngle(0, 60, 0)},--{Vector(1496, -1744, 96), QAngle(0, 60, 0)},
+    a2_headcrabs_tunnel = {Vector(892, -2400, -208), QAngle(0, 180, 0)},
+    a2_hideout = {Vector(-317.156, -1848.54, -637.483), QAngle(0, 240, 0)},
+    a2_pistol = {Vector(-1970.06, -862.82, 384), QAngle(0, 270, 0)},
+    a2_quarantine_entrance = {Vector(-3399.61, 3184.06, 0), QAngle(0, 180, 0)},
+    a2_train_yard = {Vector(-2019.4, 3674.7, -660), QAngle(0, 180, 0)},
+    a3_c17_processing_plant = {Vector(-2268, -2960, 364), QAngle(0, 180, 0)},
+    a3_distillery = {Vector(-692.955, 1701.83, -215.061), QAngle(0, 255, 0)},
+    a3_hotel_interior_rooftop = {Vector(2304, -1480, 707), QAngle(0, 180, 0)},
+    a3_hotel_lobby_basement = {Vector(1442, -1156, -96), QAngle(0, 90, 0)},
+    a3_hotel_street = {Vector(116, 1548, 226.752), QAngle(0, 180, 0)},
+    a3_hotel_underground_pit = {Vector(1656, -1816, 273.194), QAngle(0, 180, 0)},
+    a3_station_street = {Vector(1296, -1448, 136), QAngle(0, 210, 0)},--{Vector(1312, -1432, 136), QAngle(0, 180, 0)},
+    a4_c17_parking_garage = {Vector(1472, -1920, 960), QAngle(0, 300, 0)},
+    a4_c17_tanker_yard = {Vector(2232, 6496, 96), QAngle(0, 90, 0)},
+    a4_c17_water_tower = {Vector(-208, 4928, -216)},
+    a4_c17_zoo = {Vector(6230, 2390, -224), QAngle(0, 105, 0)},
+    a5_ending = nil, -- No ending transition
+    a5_vault = {Vector()}
+}
+
+---
+---Teleports the player inside the current map transition trigger or otherwise near it.
+---
+---This can cause missing hands if player is forced away from transition immediately after
+---
+RegisterAlyxLibCommand("goto_transition", function()
+    local map = GetMapName()
+
+    if map == "a1_intro_world" then
+        -- This is a hardcoded transition by Valve. All map commands to this entity will go to a1_intro_world_2
+        DoEntFire("command_change_level", "command", "map a1_intro_world_2", 0.2, nil, nil)
+    end
+
+    local coords = transitionCoords[map]
+    if coords then
+        Msg("Teleporting player to exact transition coordinates for map " .. map .. " " .. Debug.SimpleVector(coords[1]).."\n")
+        tpPlayer(coords[1], coords[2])
+    else
+        -- Attempt to move to correct changelevel in non-campaign levels
+
+        if currentChangeLevels == nil or currentChangeLevel > #currentChangeLevels then
+            currentChangeLevels = Entities:FindAllByClassname("trigger_changelevel")
+            table.sort(currentChangeLevels, function (a, b)
+                return VectorDistance(a:GetOrigin(),Player:GetOrigin()) > VectorDistance(b:GetOrigin(),Player:GetOrigin())
+            end)
+            currentChangeLevel = 0
+        end
+
+        if #currentChangeLevels == 0 then
+            warn("There are no trigger_changelevel entities in this map!\n")
+            return
+        end
+
+        currentChangeLevel = currentChangeLevel + 1
+
+        Msg("Checking for " .. Debug.ToOrdinalString(currentChangeLevel) .. " trigger_changelevel...\n")
+
+        local changelevel = currentChangeLevels[currentChangeLevel]
+        if changelevel then
+            local origins = {
+                changelevel:GetCenter(),
+                changelevel:GetOrigin(),
+            }
+            for _, origin in ipairs(origins) do
+                local tr = TraceLineSimple(origin, origin + Vector(0, 0, -512))
+                if tr.hit then
+                    Msg("Found changelevel area, teleporting player...\n")
+                    Msg("If map transition doesn't occur make sure the trigger is enabled. Otherwise run the command again to move to the next trigger_changelevel.\n")
+                    tpPlayer(tr.pos)
+                    return
+                end
+            end
+        end
+
+        warn("Could not find a ground area for this changelevel! Run the command again to try the next trigger")
+
+        -- warn(map .. " is not a release map!")
+    end
+end, "Teleports the player to the end of the current map", 0)
 
 ---
 ---Prints all entities in the map, along with any supplied property patterns.
@@ -234,7 +352,12 @@ end, "Prints all entities with class, name or model matching a pattern", 0)
 ---Show the position of an entity relative to the player using debug drawing.
 ---
 RegisterAlyxLibCommand("ent_show", function (_, name)
-    Debug.ShowEntity(name)
+    local entsFound = Debug.ShowEntity(name)
+    Msg("Searching for entities with class/target/model name containing substring: '" .. name .. "'\n")
+    for _, ent in ipairs(entsFound) do
+        Msg("\t'" .. ent:GetClassname() .. "' : '" .. ent:GetName() .. "' (" .. tostring(ent) .. ")\n")
+    end
+    Msg("Found " .. #entsFound .. " matches.")
 end, "Draws a debug line from the player to any entities with a name", 0)
 
 ---
@@ -309,40 +432,20 @@ end, "Heals the player by a given amount", 0)
 ---
 RegisterAlyxLibCommand("ent_find_by_address", function (_, tblpart, colon, hash)
     if tblpart == nil and colon == nil and hash == nil then
-        print("Must provide a valid entity table string, e.g. table: 0x0012b03")
+        Msg("Must provide a valid entity table string, e.g. 'table: 0x0012b03'\n")
         return
     end
 
-    if colon == ":" then
-        hash = tblpart .. colon .. " " .. hash
-    elseif tblpart == "table:" then
-        hash = tblpart .." ".. colon
-    elseif tblpart:find("table:") then
-        hash = tblpart
-    elseif tblpart == "table" then
-        hash = "table: " .. colon
-    else
-        hash = "table: " .. tblpart
-    end
-
-    local foundEnt = nil
-    local ent = Entities:First()
-    while ent ~= nil do
-        if tostring(ent) == hash then
-            foundEnt = ent
-            break
-        end
-        ent = Entities:Next(ent)
-    end
+    local foundEnt = Debug.FindEntityByHandleString(tblpart, colon, hash)
 
     if foundEnt then
-        print("Info for " .. tostring(foundEnt))
-        prints("\tClassname", foundEnt:GetClassname())
-        prints("\tName", foundEnt:GetName())
-        prints("\tParent", foundEnt:GetMoveParent())
-        prints("\tModel", foundEnt:GetModelName())
+        Msg("Info for " .. tostring(foundEnt).."\n")
+        Msg("\tClassname" .. foundEnt:GetClassname().."\n")
+        Msg("\tName" .. foundEnt:GetName().."\n")
+        Msg("\tParent" .. foundEnt:GetMoveParent().."\n")
+        Msg("\tModel" .. foundEnt:GetModelName())
     else
-        print("Could not find any entity in the world matching " .. hash)
+        Msg("Could not find any entity matching '" .. hash .. "'")
     end
 end, "Prints info for an entity by its table address", 0)
 
@@ -419,9 +522,9 @@ local symbols = {"and","break","do","else","elseif","end","false","for","functio
         local ents = Debug.FindAllEntitiesByPattern(name, true)
         local code = excode(...)
 
-        if IsInToolsMode() then
-            print("Doing code on entities named ("..name.."):", code)
-        end
+        -- if IsInToolsMode() then
+            print("Doing code on "..#ents.." entities named ("..name.."):", code)
+        -- end
 
         for _, ent in ipairs(ents) do
             local f,err = load(code, nil, nil, ent:GetOrCreatePrivateScriptScope())

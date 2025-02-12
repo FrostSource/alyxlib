@@ -12,6 +12,7 @@
 ---
 ---The input class simplifies button tracking.
 ---
+---@class Input
 Input = {}
 Input.__index = Input
 Input.version = "v4.0.0"
@@ -162,7 +163,7 @@ end, nil)
 ---
 ---Button index pointing to its description.
 ---
-local DigitalDescriptions =
+local DigitalDescriptions = DefaultTable(
 {
     [0] = "Menu > Toggle Menu",
     [1] = "Menu > Menu Interact",
@@ -192,18 +193,18 @@ local DigitalDescriptions =
     [25] = "Move > Crouch Toggle",
     [26] = "Move > Stand toggle",
     [27] = "Move > Adjust Height",
-}
+}, "Invalid digital action")
 
-local AnalogDescriptions =
+local AnalogDescriptions = DefaultTable(
 {
     [0] = "Hand Curl",
     [1] = "Trigger Pull",
     [2] = "Squeeze Xen Grenade",
     [3] = "Teleport Turn",
     [4] = "Continuous Turn",
-}
+}, "Invalid analog action")
 
-local ControllerTypeDescriptions =
+local ControllerTypeDescriptions = DefaultTable(
 {
     [0] = "VR_CONTROLLER_TYPE_UNKNOWN",
     [1] = "VR_CONTROLLER_TYPE_X360",
@@ -216,7 +217,7 @@ local ControllerTypeDescriptions =
     [8] = "VR_CONTROLLER_TYPE_WINDOWSMR_SAMSUNG",
     [9] = "VR_CONTROLLER_TYPE_GENERIC_TRACKED",
     [10] = "VR_CONTROLLER_TYPE_COSMOS",
-}
+}, "Invalid controller type")
 
 ---
 ---Get the description of a given button.
@@ -614,7 +615,7 @@ function Input:Stop()
     end
 end
 
-ListenToGameEvent("player_activate", function()
+ListenToGameEvent("player_spawn", function()
     if Input.AutoStart then
         -- Delay init to get hmd
         local player = Entities:GetLocalPlayer()

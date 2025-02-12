@@ -135,12 +135,12 @@ if thisEntity then
     return
 end
 
-local debug_allowed = false
----Show a warning message in the console if debugging is enabled.
+local debug_allowed = true
+---Show a warning message in the console if `developer` is greater than 2.
 ---@param msg any
 local function Warn(msg)
-    -- if debug_allowed and Convars:GetBool( 'developer' ) then
-    if debug_allowed then
+    if debug_allowed and Convars:GetInt( 'developer' ) > 2 then
+    -- if debug_allowed then
         print(msg.."\n")
     end
 end
@@ -401,10 +401,20 @@ end
 ---@param handle EntityHandle # Entity to save on.
 ---@param name string # Name to save as.
 ---@param entity EntityHandle|nil # Entity to save.
----@param useClassname? boolean # If true the entity will be saved/loaded using its classname instead of targetname. Only use this if your entity is not allowed to have a name.
 ---@return boolean # If the save was successful.
 function Storage.SaveEntity(handle, name, entity, useClassname)
     handle = resolveHandle(handle)
+
+    -- Remove unique key from previous entity
+    -- This isn't strictly necessary and can be disabled for slight performance gain
+    local prevUniqueKey = handle:GetContext(name) --[[@as string]]
+    if prevUniqueKey then
+        local previouslySavedEnt = handle:LoadEntity(name)
+        if IsEntity(previouslySavedEnt, true) then
+            previouslySavedEnt:DeleteAttribute(prevUniqueKey)
+        end
+    end
+
     if entity == nil then
         Storage.SaveString(handle, name..separator.."targetname", "")
         Storage.SaveString(handle, name..separator.."classname", "")
@@ -419,18 +429,9 @@ function Storage.SaveEntity(handle, name, entity, useClassname)
     local uniqueKey = DoUniqueString("saved_entity")
     entity:Attribute_SetIntValue(uniqueKey, 1)
 
-    if useClassname then
-        Storage.SaveString(handle, name..separator.."classname", entity:GetClassname())
-        Storage.SaveString(handle, name..separator.."targetname", "")
-    else
-        local ent_name = entity:GetName()
-        if ent_name == "" then
-            ent_name = uniqueKey
-            entity:SetEntityName(ent_name)
-        end
-        Storage.SaveString(handle, name..separator.."targetname", ent_name)
-        Storage.SaveString(handle, name..separator.."classname", "")
-    end
+    Storage.SaveString(handle, name..separator.."targetname", entity:GetName())
+    Storage.SaveString(handle, name..separator.."classname", entity:GetClassname())
+
     handle:SetContext(name, uniqueKey, 0)
     handle:SetContext(name..separator.."type", "entity", 0)
     return true
@@ -666,7 +667,7 @@ function Storage.LoadEntity(handle, name, default)
     end
 
     for _, ent in ipairs(ents) do
-        if ent:Attribute_GetIntValue(uniqueKey, 0) == 1 then
+        if ent:HasAttribute(uniqueKey) then
             return ent
         end
     end
