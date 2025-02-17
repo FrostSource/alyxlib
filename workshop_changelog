@@ -1,0 +1,23 @@
+Update v1.3.0 (Minor update)
+
+General:
+
+Changed the way libraries are initialized, also nicer to look at in the console
+weighted_random and animation libraries are now automatically initialized
+Improved tracking of user values for addons using EasyConvars
+
+Debug:
+
+Added alyxlib_addons to print all registered addons
+Added alyxlib_commands to print all registered commands
+Added alyxlib_info to print basic information about this version of AlyxLib
+Added alyxlib_diagnose to run diagnostics for an addon
+Added noclip_vr to give a continuous movement style noclip in VR
+Added noclip_vr_speed to change the noclip speed
+Added noclip_vr_boost_speed to change the noclip speed when holding trigger
+Added goto_transition to teleport the player to the furthest trigger_changelevel
+Simplified vector printing in entity lists
+Added pattern searching for models
+Improved entity pattern searching
+Renamed ent_table_string_info to ent_find_by_address
+Changed novr_player_use_vr_speed command to a toggle
