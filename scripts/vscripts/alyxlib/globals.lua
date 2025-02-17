@@ -26,7 +26,7 @@ local _version = "v2.6.0"
 ---@field minAlyxLibVersion string # Minimum AlyxLib version that this addon works with
 ---@field maxAlyxLibVersion string # Maximum AlyxLib version that this addon works with 
 ---@field workshopID string? # The ID of the addon on the Steam workshop
----@field diagnosticFunction fun():boolean,(string|string[]) # Diagnostic function to check if the addon is working, and any diagnostic messages
+---@field diagnosticFunction fun():boolean,(string|string[])? # Diagnostic function to check if the addon is working, and any diagnostic messages
 
 ---
 ---List of registered addons using AlyxLib.
@@ -67,7 +67,7 @@ function RegisterAlyxLibAddon(name, version, workshopID, shortName, minAlyxLibVe
 end
 
 ---
----Registers a diagnostic function for an addon to help users describe issues.
+---Registers a diagnostic function for an addon to help users describe issues back to the developer.
 ---
 ---The diagnostic function should return two values:
 ---  - `true` if the addon is working as expected, `false` otherwise
@@ -76,8 +76,8 @@ end
 ---Common AlyxLib and game information will be printed alongside the diagnostic messages for users to copy.
 ---
 ---@param addonIndex integer # The index of the addon for use in other AlyxLib functions
----@param func fun():boolean,(string|string[]) # Diagnostic function to check if the addon is working, and any diagnostic messages
-function ReigsterAlyxLibDiagnostic(addonIndex, func)
+---@param func fun():boolean,(string|string[])? # Diagnostic function to check if the addon is working, and any diagnostic messages
+function RegisterAlyxLibDiagnostic(addonIndex, func)
     local addon = AlyxLibAddons[addonIndex]
     addon.diagnosticFunction = func
 end

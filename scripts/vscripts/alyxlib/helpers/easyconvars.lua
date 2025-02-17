@@ -29,6 +29,7 @@ EasyConvars.version = "v1.2.0"
 ---@field persistent boolean # If the value is saved to player on change.
 ---@field wasChangedByUser boolean # Whether the value was changed by the user.
 ---@field displayFunc? fun(val:any) # The function called when the convar is called without any parameters. By default it just prints the value.
+---@field defaultValue? string # The default value of the convar given by the registration. Not the value set in cfg or launch options.
 
 ---Types of convars.
 ---@alias EasyConvarsType
@@ -50,6 +51,9 @@ EasyConvars.registered = {}
 ---Internal variable set when convars are being loaded.
 ---@type boolean
 EasyConvars._isLoading = true
+
+---The function called after all convars have been initialized.
+local postInitializer = nil
 
 ---Converts any value to "1" or "0" depending on whether it represents true or false.
 ---@param val any # The value to convert
@@ -93,6 +97,8 @@ local function callCallback(registeredData, value, ...)
     if result ~= nil then
         registeredData.value = convertToSafeVal(result)
     end
+
+    EasyConvars:Save(registeredData.name)
 end
 
 ---Default display function for convars
@@ -144,14 +150,18 @@ function EasyConvars:Register(ctype, name, defaultValue, onUpdate, helpText, fla
     local reg = self.registered[name]
 
     --Assign the initializer only if no launch value is set by user
-    if type(defaultValue) == "function" then
-        if launchVal == nil then
+
+    if launchVal == nil then
+        if type(defaultValue) == "function" then
             reg.initializer = defaultValue
         else
-            devprints2("EasyConvars", name, "initializer won't be used because it has a launch value of", launchVal)
+            reg.value = convertToSafeVal(defaultValue) or "0"
+            reg.defaultValue = reg.value
         end
     else
-        reg.value = convertToSafeVal(defaultValue) or "0"
+        -- Launch option counts as user change
+        reg.wasChangedByUser = true
+        devprints2("EasyConvars", name, "initializer won't be used because it has a launch value of", launchVal)
     end
 
     helpText = helpText or ""
@@ -186,8 +196,6 @@ function EasyConvars:Register(ctype, name, defaultValue, onUpdate, helpText, fla
                 reg.displayFunc(reg)
             end
         end
-
-        self:Save(name)
     end, helpText, flags)
 end
 
@@ -429,6 +437,41 @@ function EasyConvars:WasChangedByUser(name)
     return reg.wasChangedByUser
 end
 
+---
+---Forces the convar to be considered changed by the user.
+---
+---This can be useful if you want to stop a convar from initializing because you're setting its value early.
+---Or if you're setting the value by some unusual means for the user.
+---
+---@param name string
+---@param wasChanged boolean
+function EasyConvars:SetWasChanged(name, wasChanged)
+    local reg = self.registered[name]
+    if not reg then return end
+    reg.wasChangedByUser = wasChanged
+end
+
+---
+---Sets the value of the convar if it hasn't been changed by the user.
+---
+---@param name string
+---@param value any # The value to set. Will be converted to a string representation.
+function EasyConvars:SetIfUnchanged(name, value)
+    local reg = self.registered[name]
+    if not reg then return end
+    if not reg.wasChangedByUser then
+        callCallback(reg, value)
+    end
+end
+
+---
+---Sets the function to be called after all convars have been initialized.
+---
+---@param func function
+function EasyConvars:SetPostInitializer(func)
+    postInitializer = func
+end
+
 
 -- Check which version of listener is available
 local listener = ListenToPlayerEvent
@@ -443,15 +486,21 @@ listener("player_activate", function (params)
             if not EasyConvars:Load(name) then
                 if data.initializer then
                     if data.value ~= nil then
+                        data.wasChangedByUser = true
                         devprints2("EasyConvars", name, "initializer won't be used because it has a user value of", tostring(data.value))
                     else
-                        data.value = tostring(data.initializer())
-                        devprints("EasyConvars", name, "initializer value was", data.value)
+                        data.value = convertToSafeVal(data.initializer())
+                        data.defaultValue = data.value
+                        devprints2("EasyConvars", name, "initializer value was", data.value)
                     end
                 end
             end
         end
         EasyConvars._isLoading = false
+
+        if postInitializer then
+            postInitializer()
+        end
 
     end)
 end, nil)

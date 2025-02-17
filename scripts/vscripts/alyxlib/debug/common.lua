@@ -15,12 +15,20 @@ require "alyxlib.math.common"
 Debug = {}
 Debug.version = "v2.1.0"
 
-
+---
 ---Finds the first entity whose name, class or model matches `pattern`.
+---
+---`pattern` can also be an entity handle string, e.g. `0x0026caf8`
+---
 ---@param pattern string # The search pattern to look for.
 ---@param exact boolean? # If true the pattern must match exactly, otherwise wildcards will be used.
 ---@return EntityHandle
 function Debug.FindEntityByPattern(pattern, exact)
+
+    if Debug.IsEntityHandleString(pattern) then
+        return Debug.FindEntityByHandleString(pattern)
+    end
+
     local ent = nil
     ent = Entities:FindByName(nil, pattern)
     if ent == nil then
@@ -44,12 +52,20 @@ function Debug.FindEntityByPattern(pattern, exact)
     return ent
 end
 
+---
 ---Finds all entities whose name, class or model match `pattern`.
+---
+---`pattern` can also be an entity handle string, e.g. `0x0026caf8`
+---
 ---@param pattern string # The search pattern to look for.
 ---@param exact boolean? # If true the pattern must match exactly, otherwise wildcards will be used.
 ---@return EntityHandle[]
 function Debug.FindAllEntitiesByPattern(pattern, exact)
     local ents = {}
+
+    if Debug.IsEntityHandleString(pattern) then
+        return {Debug.FindEntityByHandleString(pattern)}
+    end
 
     ents = ArrayAppend(ents, Entities:FindAllByName(pattern))
     ents = ArrayAppend(ents, Entities:FindAllByClassname(pattern))
@@ -279,10 +295,19 @@ local bailout_count = 9000
 local current_recursion_level = 0
 local current_print_count = 0
 
+---Gets the string representation of a value and its type.
+---@param value any # Value to get string representation of.
+---@return string # Value string
+---@return string # Type string
+local function getValueString(value)
+    local valueStr = (type(value) == "string" and ("\"" .. tostring(value) .. "\"") or tostring(value))
+    local typeStr = " ("..(IsEntity(value) and ("entity "..Debug.EntStr(value)) or type(value))..")"
+    return valueStr, typeStr
+end
+
 local function printKeyValue(key, value, prefix)
     prefix = prefix or ""
-    local vs = (type(value) == "string" and ("\"" .. tostring(value) .. "\"") or tostring(value))
-    local ts = " ("..(IsEntity(value) and "entity" or type(value))..")"
+    local vs, ts = getValueString(value)
     print( string.format( "\t%s%-32s %s", prefix, key, "= " .. format_string(vs) .. ts ) )
 end
 
@@ -307,16 +332,18 @@ end
 ---
 ---This is different from `DeepPrintTable` in that it will not print members of entity handles.
 ---
----@param tbl table # Table to print.
----@param prefix? string # Optional prefix for each line.
----@param ignore? any[] # Optional nested tables to ignore.
----@param meta? boolean # If meta tables should be printed.
-function Debug.PrintTable(tbl, prefix, ignore, meta)
+---@param tbl table # Table to print
+---@param prefix? string # Optional prefix for each line
+---@param ignore? any[] # Optional nested tables to ignore
+---@param meta? boolean # If meta tables should be printed
+---@param customIterator? function # Optional custom iterator to use (default=pairs)
+function Debug.PrintTable(tbl, prefix, ignore, meta, customIterator)
     if type(tbl) ~= "table" then return end
     prefix = prefix or ""
     ignore = ignore or {tbl}
+    customIterator = customIterator or pairs
     print(prefix.."{")
-    for key, value in pairs(tbl) do
+    for key, value in customIterator(tbl) do
         -- Return up a level
         if current_print_count >= bailout_count or current_print_count == -1 then
             if current_print_count >= bailout_count then
@@ -385,10 +412,20 @@ function Debug.PrintList(tbl, prefix)
 end
 
 ---
+---Prints a value and its type in an easy to read format.
+---
+---@param value any
+function Debug.PrintValue(value)
+    local vs, ts = getValueString(value)
+    print(vs..ts)
+end
+
+---
 ---Draws a debug line to an entity in game.
 ---
 ---@param ent EntityHandle|string # Handle or targetname of the entity(s) to find.
 ---@param duration number? # Number of seconds the debug should display for.
+---@return EntityHandle[]|EntityHandle? # Entities found, or the entity given
 function Debug.ShowEntity(ent, duration)
     duration = duration or 20
     if type(ent) == "string" then
@@ -396,7 +433,7 @@ function Debug.ShowEntity(ent, duration)
         for _,e in ipairs(ents) do
             Debug.ShowEntity(e)
         end
-        return
+        return ents
     end
 
     local from = Vector()
@@ -408,6 +445,8 @@ function Debug.ShowEntity(ent, duration)
     if radius == 0 then radius = 16 end
     DebugDrawCircle(ent:GetOrigin(), Vector(255), 128, radius, true, duration)
     DebugDrawSphere(ent:GetCenter(), Vector(255), 128, radius, true, duration)
+
+    return ent
 end
 CBaseEntity.DebugFind = Debug.ShowEntity
 
@@ -418,7 +457,19 @@ CBaseEntity.DebugFind = Debug.ShowEntity
 function Debug.PrintEntityCriteria(ent)
     local c = {}
     ent:GatherCriteria(c)
-    Debug.PrintTable(c)
+
+    Debug.PrintTable(c, nil, nil, nil, function(tbl)
+        local sorted_keys = {}
+        for key in next, tbl do
+            table.insert(sorted_keys, key)
+        end
+        table.sort(sorted_keys)
+        local i = 0
+        return function()
+            i = i + 1
+            return sorted_keys[i], tbl[sorted_keys[i]]
+        end
+    end)
 end
 CBaseEntity.PrintCriteria = Debug.PrintEntityCriteria
 
@@ -742,6 +793,102 @@ end
 ---@return string
 function Debug.EntStr(ent)
     return "[" .. ent:GetClassname() .. ", " .. ent:GetName() .. "]"
+end
+
+---
+---Dumps a list of convars and their values to the console.
+---
+---@param convars string[] # List of convar names to dump
+function Debug.DumpConvars(convars)
+    for _, convar in ipairs(convars) do
+        if Convars:GetStr(convar) ~= nil then
+            Msg(convar .. " = " .. Convars:GetStr(convar).."\n")
+        end
+    end
+end
+
+---
+---Finds an entity by its handle as a string.
+---
+---Certain parts of the string can be omitted and the following are all valid:
+---
+---    Debug.FindEntityByHandleString("table", ":", "0x0012b03")
+---    Debug.FindEntityByHandleString("table:", "0x0012b03")
+---    Debug.FindEntityByHandleString("table: 0x0012b03")
+---    Debug.FindEntityByHandleString("table", "0x0012b03")
+---    Debug.FindEntityByHandleString("0x0012b03")
+--- 
+---Please note that omitting the colon is not allowed in a single string, i.e. "table 0x0012b03" will not work.
+---
+---@param tblpart string # Entity table string
+---@param colon? string # The colon part
+---@param hash? string # The hash part
+---@return EntityHandle?
+function Debug.FindEntityByHandleString(tblpart, colon, hash)
+    if tblpart == nil and colon == nil and hash == nil then
+        devwarn("Must provide a valid entity table string, e.g. 'table: 0x0012b03'")
+        return nil
+    end
+
+    -- table : 0x0012b03 (all 3 separate parts)
+    if colon == ":" then
+        hash = tblpart .. colon .. " " .. hash
+    -- table: 0x0012b03 (colon embedded in tblpart)
+    elseif tblpart == "table:" then
+        hash = tblpart .." ".. colon
+    -- table: 0x0012b03 (given as single string)
+    elseif tblpart:find("table:") then
+        hash = tblpart
+    -- table 0x0012b03 (colon omitted)
+    elseif tblpart == "table" then
+        hash = "table: " .. colon
+    -- 0x0012b03 (prefix omitted)
+    else
+        hash = "table: " .. tblpart
+    end
+
+    local foundEnt = nil
+    local ent = Entities:First()
+    while ent ~= nil do
+        if tostring(ent) == hash then
+            foundEnt = ent
+            break
+        end
+        ent = Entities:Next(ent)
+    end
+
+    return foundEnt
+end
+
+---
+---Gets whether the string is in the format of an entity handle.
+---
+---@param handleString string # The handle string
+---@return string # The hash part or nil if not an entity handle
+function Debug.IsEntityHandleString(handleString)
+    local mtc = handleString:match("^(table:?%s*)")
+    if mtc then
+        handleString = handleString:sub(#mtc+1)
+    end
+
+    return string.match(handleString, "0x[%d%a][%d%a][%d%a][%d%a][%d%a][%d%a][%d%a][%d%a]$")
+end
+
+---
+---Converts a number to its ordinal string representation (e.g., 1 → "1st", 2 → "2nd", 3 → "3rd").
+---
+---@param n integer # Number to convert to ordinal representation
+---@return string
+function Debug.ToOrdinalString(n)
+    local lastTwo = n % 100
+    if lastTwo >= 11 and lastTwo <= 13 then
+        return n .. "th"
+    end
+
+    local lastDigit = n % 10
+    local suffixes = { [1] = "st", [2] = "nd", [3] = "rd" }
+
+    return n .. (suffixes[lastDigit] or "th")
 end
 
 return Debug.version

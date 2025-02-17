@@ -37,6 +37,28 @@ if IsInToolsMode() then
     end
 end
 
+local addonTable
+
+if IsServer() then
+    ---
+    ---All init scripts running on the server.
+    ---
+    ---The key is the workshop ID of the addon, and the value is a boolean indicating if there is an init script for the addon.
+    ---
+    ---@type table<string, boolean>
+    _G.SERVER_ADDONS = {}
+    addonTable = _G.SERVER_ADDONS
+else
+    ---
+    ---All init scripts running on the server.
+    ---
+    ---The key is the workshop ID of the addon, and the value is a boolean indicating if there is an init script for the addon.
+    ---
+    ---@type table<string, boolean>
+    _G.CLIENT_ADDONS = {}
+    addonTable = _G.CLIENT_ADDONS
+end
+
 for workshopID in addonList:gmatch("[^,]+") do
 
     for _, DIRECTORY in pairs(DIRECTORIES) do
@@ -46,6 +68,7 @@ for workshopID in addonList:gmatch("[^,]+") do
         xpcall(function()
             require(path)
             print("Executed " .. path .. ".lua")
+            addonTable[workshopID] = true
         end,
         function(errorMessage)
             if not errorMessage:find(path .. "\']Failed to find") then

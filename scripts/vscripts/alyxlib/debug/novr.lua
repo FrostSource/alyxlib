@@ -11,6 +11,14 @@
 
 local version = "v1.1.0"
 
+---@class NoVR
+NoVR = {}
+
+---If the game starts in tools mode, [NoVR:EnableAllDebugging](lua://NoVR.EnableAllDebugging) is called.
+NoVR.AutoStartInToolsMode = false
+
+--#region Interactions
+
 ---@class NoVrInteractClass
 ---@field class string
 ---@field hold? boolean
@@ -67,6 +75,24 @@ local interactClasses =
         weight = 1.1
     },
 }
+
+---
+---Add an interaction class for the NoVR player to interact with.
+---
+---@param title string # Text to show in-game on the entity
+---@param class string # Class to interact with
+---@param mustBeHeld boolean # If the player must hold the use button, to avoid accidental activation
+---@param input? string # Input to fire
+---@param output? string|string[] # Output(s) to fire, if no input is specified
+function NoVR:AddInteraction(title, class, mustBeHeld, input, output)
+    table.insert(interactClasses, {
+        title = title,
+        class = class,
+        hold = mustBeHeld,
+        input = input,
+        output = output,
+    })
+end
 
 local isUsePressed = false
 local usePressTime = 0
@@ -129,13 +155,13 @@ local function activateEntity(entity, data)
     debugoverlay:Text(getTextPosition(entity, data), 0, getText(data), 0, 50, 255, 50, 255, 2)
 end
 
-local function think()
+local function interactThink()
 
     ---@type EntityHandle
     local bestEnt = nil
     ---@type number
     local bestScore = 0
-    
+
     ---@type NoVrInteractClass
     local data = nil
 
@@ -194,16 +220,52 @@ local function think()
     return 0.1
 end
 
+--#endregion Interactions
+
 local cl_forwardspeed, cl_backspeed, cl_sidespeed
 
-ListenToPlayerEvent("novr_player", function (params)
-    SendToConsole("buddha 1; impulse 101;")
-    Player:SetContextThink("think", think, 0)
+---
+---Does the following:
+---
+---* Enables `buddha` mode
+---* Gives all weapons and ammo `impulse 101`
+---* Binds V to noclip toggling
+---* Enables novr entity interaction
+---
+function NoVR:EnableAllDebugging()
+    SendToConsole("buddha 1; impulse 101")
+    NoVR:BindKey("V", "noclip")
+    Player:SetContextThink("novrInteractThink", interactThink, 0)
+end
 
+---
+---Undoes all operations performed by [NoVR:EnableAllDebugging](lua://NoVR.EnableAllDebugging)
+---
+---Except removing weapons.
+---
+function NoVR:DisableAllDebugging()
+    SendToConsole("buddha 0")
+    SendToConsole("unbind V")
+    Player:SetContextThink("novrInteractThink", nil, 0)
+end
+
+ListenToPlayerEvent("novr_player", function (params)
     cl_forwardspeed = Convars:GetFloat("cl_forwardspeed")
     cl_backspeed = Convars:GetFloat("cl_backspeed")
     cl_sidespeed = Convars:GetFloat("cl_sidespeed")
+
+    if NoVR.AutoStartInToolsMode and IsInToolsMode() then
+        NoVR:EnableAllDebugging()
+    end
 end)
+
+Convars:RegisterCommand("novr_enable_all_debugging", function (_)
+    NoVR:EnableAllDebugging()
+end, "Enables all novr debugging commands and bindings, like buddha, impulse 101 and V=noclip", 0)
+
+Convars:RegisterCommand("novr_disable_all_debugging", function (_)
+    NoVR:DisableAllDebugging()
+end, "Undoes everything by novr_enable_all_debugging", 0)
 
 local novr_vr_speed_on = false
 
@@ -225,5 +287,165 @@ Convars:RegisterCommand("novr_player_use_vr_speed", function (_, on)
         Msg("NoVR->VR Move Speed OFF")
     end
 end, "", 0)
+
+---@alias KeyboardKey
+---|"mouse1"
+---|"mouse2"
+---|"mouse3"
+---|"mouse4"
+---|"mouse5"
+---|"A"
+---|"B"
+---|"C"
+---|"D"
+---|"E"
+---|"F"
+---|"G"
+---|"H"
+---|"I"
+---|"J"
+---|"K"
+---|"L"
+---|"M"
+---|"N"
+---|"O"
+---|"P"
+---|"Q"
+---|"R"
+---|"S"
+---|"T"
+---|"U"
+---|"V"
+---|"W"
+---|"X"
+---|"Y"
+---|"Z"
+---|"1"
+---|"2"
+---|"3"
+---|"4"
+---|"5"
+---|"6"
+---|"7"
+---|"8"
+---|"9"
+---|"0"
+---|"F1"
+---|"F2"
+---|"F3"
+---|"F4"
+---|"F5"
+---|"F6"
+---|"F7"
+---|"F8"
+---|"F9"
+---|"F10"
+---|"F11"
+---|"F12"
+---|"F13"
+---|"F14"
+---|"F15"
+---|"F16"
+---|"F17"
+---|"F18"
+---|"F19"
+---|"F20"
+---|"F21"
+---|"F22"
+---|"F23"
+---|"F24"
+---|"SPACE"
+---|"ENTER"
+---|"ESCAPE"
+---|"LEFT"
+---|"UP"
+---|"RIGHT"
+---|"DOWN"
+---|"INS"
+---|"DEL"
+---|"HOME"
+---|"END"
+---|"PGUP"
+---|"PGDN"
+---|"CAPSLOCK"
+---|"TAB"
+---|"NUMLOCK"
+---|"SCROLLLOCK"
+---|"SEMICOLON"
+---|"SHIFT"
+---|"RSHIFT"
+---|"CTRL"
+---|"RCTRL"
+---|"ALT"
+---|"RALT"
+---|"BACKSPACE"
+---|"PAUSE"
+---|"'"
+---|"["
+---|"]"
+---|","
+---|"."
+---|"\\"
+---|"/"
+---|"KP_0"
+---|"KP_1"
+---|"KP_2"
+---|"KP_3"
+---|"KP_4"
+---|"KP_5"
+---|"KP_6"
+---|"KP_7"
+---|"KP_8"
+---|"KP_9"
+---|"KP_MULTIPLY"
+---|"KP_DIVIDE"
+---|"KP_MINUS"
+---|"KP_PLUS"
+---|"KP_ENTER"
+---|"KP_DEL"
+
+---@type { name: string, callback: function, key: string }[]
+local novrBindings = {}
+
+---
+---Unbind all keys bound by [NoVR:BindKey](lua://NoVR.BindKey)
+---
+function NoVR:UnbindKeys()
+    -- for _, binding in ipairs(novrBindings) do
+    --     SendToConsole("unbind " .. binding.key)
+    -- end
+
+    -- For now just default binds to avoid unbinding standard keys
+    SendToConsole("binddefaults")
+end
+
+---
+---Bind a keyboard key to a callback function.
+---
+---@param key KeyboardKey
+---@param callback fun()|string # Callback function or command string
+---@param name? string # Optional name for the callback command
+function NoVR:BindKey(key, callback, name)
+    if type(callback) == "string" then
+        SendToConsole("bind " .. key .. " " .. callback)
+    else
+        name = name or ("novr_keybind_" .. UniqueString())
+        Convars:RegisterCommand(name, callback, "", 0)
+        SendToConsole("bind " .. key .. " " .. name)
+    end
+
+    table.insert(novrBindings, {
+        name = name,
+        callback = callback,
+        key = key
+    })
+end
+
+ListenToGameEvent("server_shutdown", function()
+    if #novrBindings > 0 then
+        devprint2("Unbinding " .. #novrBindings .. " novr keys")
+        NoVR:UnbindKeys()
+    end
+end, nil)
 
 return version
