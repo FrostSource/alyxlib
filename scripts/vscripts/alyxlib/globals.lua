@@ -564,6 +564,7 @@ end
 ---@param tbl table # The table to count.
 ---@return number # The size of the table.
 function TableSize(tbl)
+    if tbl == nil then return 0 end
     local size = 0
     for _, l in pairs(tbl) do
         size = size + 1
