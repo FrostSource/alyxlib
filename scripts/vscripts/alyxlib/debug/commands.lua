@@ -63,14 +63,28 @@ end, "Displays all AlyxLib commands in the console", 0)
 ---
 ---Searches for an addon by name, short name, or workshop ID.
 ---
----@param searchPattern string
----@return AlyxLibAddon?
+---@param searchPattern string|string[] # The name pattern or list of patterns to search for
+---@return AlyxLibAddon? addon # The addon that matches the search pattern
 local function findAddon(searchPattern)
-    for _, addon in ipairs(AlyxLibAddons) do
-        if string.find(addon.name, searchPattern)
-        or string.find(addon.shortName, searchPattern)
-        or string.find(addon.workshopID, searchPattern) then
-            return addon
+    if type(searchPattern) == "table" then
+        for _, addon in ipairs(AlyxLibAddons) do
+            for _, pattern in ipairs(searchPattern) do
+                pattern = string.lower(pattern)
+                if string.find(string.lower(addon.name), pattern, nil, false)
+                or string.find(string.lower(addon.shortName), pattern, nil, false)
+                or string.find(addon.workshopID, pattern, nil, false) then
+                    return addon
+                end
+            end
+        end
+    else
+        searchPattern = string.lower(searchPattern)
+        for _, addon in ipairs(AlyxLibAddons) do
+            if string.find(string.lower(addon.name), searchPattern, nil, false)
+            or string.find(string.lower(addon.shortName), searchPattern, nil, false)
+            or string.find(addon.workshopID, searchPattern, nil, false) then
+                return addon
+            end
         end
     end
 end
@@ -95,7 +109,7 @@ RegisterAlyxLibCommand("alyxlib_addons", function ()
     end
 end, "Lists addons made and registered with AlyxLib")
 
-RegisterAlyxLibCommand("alyxlib_diagnose", function (_, searchPattern)
+RegisterAlyxLibCommand("alyxlib_diagnose", function (_, ...)
     Msg("\n")
 
     -- Standard AlyxLib and game info
@@ -113,16 +127,18 @@ RegisterAlyxLibCommand("alyxlib_diagnose", function (_, searchPattern)
         Msg("Player does not exist!\n")
     end
 
-    if searchPattern == nil then
+    local searchPatterns = {...}
+
+    if searchPatterns == nil or #searchPatterns == 0 then
         Msg("\nTo run diagnostics for an addon, type \"alyxlib_diagnose <addon_name>\"\n")
         Msg("Use \"alyxlib_addons\" to see addons that can be diagnosed\n\n")
         return
     end
 
-    local addon = findAddon(searchPattern)
+    local addon = findAddon(searchPatterns)
 
     if not addon then
-        warn("No addon exists matching \"" .. searchPattern .. "\"")
+        warn("No addon exists matching \"" .. table.concat(searchPatterns, ", ") .. "\"")
         return
     end
 
@@ -218,9 +234,9 @@ local transitionCoords = {
 }
 
 ---
----Teleports the player inside the current map transition trigger or otherwise near it.
+---Teleports the player inside the furthest trigger_changelevel or the next one found for subsequent calls.
 ---
----This can cause missing hands if player is forced away from transition immediately after
+---This can cause missing hands if player is forced away from transition immediately after.
 ---
 RegisterAlyxLibCommand("goto_transition", function()
     local map = GetMapName()
