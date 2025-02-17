@@ -259,17 +259,17 @@ ListenToPlayerEvent("novr_player", function (params)
     end
 end)
 
-Convars:RegisterCommand("novr_enable_all_debugging", function (_)
+RegisterAlyxLibCommand("novr_enable_all_debugging", function (_)
     NoVR:EnableAllDebugging()
 end, "Enables all novr debugging commands and bindings, like buddha, impulse 101 and V=noclip", 0)
 
-Convars:RegisterCommand("novr_disable_all_debugging", function (_)
+RegisterAlyxLibCommand("novr_disable_all_debugging", function (_)
     NoVR:DisableAllDebugging()
 end, "Undoes everything by novr_enable_all_debugging", 0)
 
 local novr_vr_speed_on = false
 
-Convars:RegisterCommand("novr_player_use_vr_speed", function (_, on)
+RegisterAlyxLibCommand("novr_player_use_vr_speed", function (_, on)
     if on == nil then
         on = not novr_vr_speed_on
     end
