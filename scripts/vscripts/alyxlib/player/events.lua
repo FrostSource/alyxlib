@@ -142,7 +142,6 @@ end
 ---@alias PlayerEventNoVRPlayer PlayerEventPlayerActivate
 
 -- Setting up player values.
-local listenEventPlayerActivateID
 local function listenEventPlayerActivate(data)
     playerActivated = true
     Player = GetListenServerHost()
@@ -225,9 +224,8 @@ local function listenEventPlayerActivate(data)
             event_data.callback(data)
         end
     end
-    StopListeningToGameEvent(listenEventPlayerActivateID)
 end
-listenEventPlayerActivateID = ListenToGameEvent("player_activate", listenEventPlayerActivate, nil)
+ListenToGameEvent("player_activate", listenEventPlayerActivate, nil)
 
 ---@type EntityHandle
 local lastPickedUpEntity = nil
