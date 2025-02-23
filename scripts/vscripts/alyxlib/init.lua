@@ -1,5 +1,5 @@
 --[[
-    v1.2.0
+    v1.2.1
     https://github.com/FrostSource/alyxlib
 
     The main initializer script loads any standard libraries that it can find.
@@ -11,12 +11,12 @@
 ]]
 
 -- Version of this file
-local version = "v1.2.0"
+local version = "v1.2.1"
 
 ---ID of AlyxLib in the Steam workshop
 ALYXLIB_WORKSHOP_ID = "3329679071"
 ---The current version of AlyxLib as a whole
-ALYXLIB_VERSION = "v1.3.0"
+ALYXLIB_VERSION = "v1.3.1"
 
 print("Initializing AlyxLib system ".. ALYXLIB_VERSION .." ...")
 
