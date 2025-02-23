@@ -1,3 +1,9 @@
+Update v1.3.1 (Patch update)
+
+General:
+
+Fixed the Input API not automatically starting on a game load. This should not break any older game saves.
+
 Update v1.3.0 (Minor update)
 
 General:
