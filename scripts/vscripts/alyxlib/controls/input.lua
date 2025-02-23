@@ -615,7 +615,9 @@ function Input:Stop()
     end
 end
 
-ListenToGameEvent("player_spawn", function()
+local listener = ListenToPlayerEvent or ListenToGameEvent
+
+listener("player_activate", function()
     if Input.AutoStart then
         -- Delay init to get hmd
         local player = Entities:GetLocalPlayer()
