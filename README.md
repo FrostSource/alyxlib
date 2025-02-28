@@ -73,5 +73,9 @@ You can also join us on our <img src="https://github.com/user-attachments/assets
 ## 🌟Projects using AlyxLib
 
 <p align="center">
+<a title="Body Holsters" href="https://steamcommunity.com/sharedfiles/filedetails/?id=3144612716"><img src="https://images.steamusercontent.com/ugc/2318858611175367914/A9DF9C6F4BDAD028C899210A34ECB1573674D6B7/" width="23%"></img></a>
+<a title="Resin Watch (Item Tracker)" href="https://steamcommunity.com/sharedfiles/filedetails/?id=3145397582"><img src="https://images.steamusercontent.com/ugc/44575774847459108/06988C83A5882E4D8FA70D047A2A1501D8E7AD87/" width="23%"></img></a>
+<a title="Partial Clip Storage" href="https://steamcommunity.com/sharedfiles/filedetails/?id=3329684800"><img src="https://images.steamusercontent.com/ugc/2397692528303495590/700AD9E3DD1C2984BCD4F2D588ACDD8BE2EB6EAD/" width="23%"></img></a>
+<a title="Alyx Wears Glasses" href="https://steamcommunity.com/sharedfiles/filedetails/?id=2703180455"><img src="https://images.steamusercontent.com/ugc/2397692528303482230/73852A6226202BAA79D1D7E3C88083D71F356D87/" width="23%"></img></a>
 <a title="Combine Shoot and Scoot" href="https://steamcommunity.com/sharedfiles/filedetails/?id=3426415080"><img src="https://images.steamusercontent.com/ugc/6295179234055719/14236C86CACFA0CCEF2A506B1EC6C07E980819CC/" width="23%"></img></a>
 </p>
