@@ -46,6 +46,7 @@ Convars:RegisterCommand("alyxlib_start_print_controller_button_presses", functio
                         if buttonsPressed[h][i] ~= nil then
                             buttonsPressed[h][i] = nil
                             Msg(desc .. " controller: [".. i .."] " .. Input:GetButtonDescription(i) .. " Released\n")
+                            msgPrinted = true
                         end
                     end
                 end
