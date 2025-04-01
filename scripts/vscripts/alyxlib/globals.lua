@@ -262,6 +262,14 @@ function IsVREnabled()
 end
 
 ---
+---Gets if the game was started with `+vr_enable_fake_vr 1`.
+---
+---@return boolean
+function IsFakeVREnabled()
+    return GlobalSys:CommandLineInt("+vr_enable_fake_vr", 0) == 1
+end
+
+---
 ---Prints all arguments with spaces between instead of tabs.
 ---
 ---@param ... any
