@@ -792,6 +792,10 @@ end
 ---@param ent EntityHandle
 ---@return string
 function Debug.EntStr(ent)
+    if ent == nil then
+        return "[nil, nil]"
+    end
+
     return "[" .. ent:GetClassname() .. ", " .. ent:GetName() .. "]"
 end
 
