@@ -455,11 +455,11 @@ RegisterAlyxLibCommand("ent_find_by_address", function (_, tblpart, colon, hash)
     local foundEnt = Debug.FindEntityByHandleString(tblpart, colon, hash)
 
     if foundEnt then
-        Msg("Info for " .. tostring(foundEnt).."\n")
-        Msg("\tClassname" .. foundEnt:GetClassname().."\n")
-        Msg("\tName" .. foundEnt:GetName().."\n")
-        Msg("\tParent" .. foundEnt:GetMoveParent().."\n")
-        Msg("\tModel" .. foundEnt:GetModelName())
+        Msg("Info for " .. tostring(foundEnt) .."\n")
+        Msg("\tClassname: " .. foundEnt:GetClassname() .."\n")
+        Msg("\tName: " .. foundEnt:GetName().."\n")
+        Msg("\tParent: " .. (tostring(foundEnt:GetMoveParent() or "[none]")) .."\n")
+        Msg("\tModel: " .. foundEnt:GetModelName())
     else
         Msg("Could not find any entity matching '" .. hash .. "'")
     end
