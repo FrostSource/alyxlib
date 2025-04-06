@@ -648,6 +648,8 @@ end
 ListenToGameEvent("player_drop_resin_in_backpack", listenEventPlayerDropResinInBackpack, nil)
 
 ---@class PlayerEventWeaponSwitch : GameEventWeaponSwitch
+---@field item EntityHandle|nil # The handle of the weapon being switched to or nil if no weapon.
+---@field item_class string # Classname of the entity that was switched to.
 
 ---Track weapon equipped
 ---@param data GameEventWeaponSwitch
@@ -658,10 +660,13 @@ local function listenEventWeaponSwitch(data)
 
     Player.PreviouslyEquipped = Player.CurrentlyEquipped
 
+    ---@type EntityHandle
+    local weaponHandle = nil
+
     if data.item == "hand_use_controller" then
         Player.CurrentlyEquipped = PLAYER_WEAPON_HAND
     else
-        local weaponHandle = Entities:FindBestMatching("", data.item, Player.PrimaryHand:GetPalmPosition(), 64)
+        weaponHandle = Entities:FindBestMatching("", data.item, Player.PrimaryHand:GetPalmPosition(), 64)
         if data.item == "hlvr_weapon_energygun" then
             Player.CurrentlyEquipped = PLAYER_WEAPON_ENERGYGUN
             Player.Items.weapons.energygun = weaponHandle
@@ -689,6 +694,9 @@ local function listenEventWeaponSwitch(data)
     savePlayerData()
 
     -- Registered callback
+    local newdata = vlua.clone(data)--[[@as PlayerEventWeaponSwitch]]
+    newdata.item = weaponHandle
+    newdata.item_class = data.item
     eventCallback(data.game_event_name, data)
 end
 ListenToGameEvent("weapon_switch", listenEventWeaponSwitch, nil)
