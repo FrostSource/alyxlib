@@ -697,7 +697,7 @@ local function listenEventWeaponSwitch(data)
     local newdata = vlua.clone(data)--[[@as PlayerEventWeaponSwitch]]
     newdata.item = weaponHandle
     newdata.item_class = data.item
-    eventCallback(data.game_event_name, data)
+    eventCallback(data.game_event_name, newdata)
 end
 ListenToGameEvent("weapon_switch", listenEventWeaponSwitch, nil)
 
