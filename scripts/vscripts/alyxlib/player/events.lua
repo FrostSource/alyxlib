@@ -691,6 +691,8 @@ local function listenEventWeaponSwitch(data)
 
     Player:UpdateWeaponsExistence()
 
+    Player.PrimaryHand.ItemHeld = weaponHandle
+
     savePlayerData()
 
     -- Registered callback
