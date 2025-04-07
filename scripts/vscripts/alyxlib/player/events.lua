@@ -107,6 +107,10 @@ local player_weapon_to_ammotype =
 ---
 local function savePlayerData()
     Storage.SaveTable(Player, "PlayerItems", Player.Items)
+
+    -- Weapons aren't re-equipped on load so we need to save this
+    Storage.SaveString(Player, "PlayerCurrentlyEquipped", Player.CurrentlyEquipped)
+
     if Player and Player.LeftHand then
         Storage.SaveEntity(Player, "LeftWristItem", Player.LeftHand.WristItem)
     end
@@ -117,6 +121,15 @@ end
 
 local function loadPlayerData()
     Player.Items = Storage.LoadTable(Player, "PlayerItems", Player.Items)
+
+    Player.CurrentlyEquipped = Storage.LoadString(Player, "PlayerCurrentlyEquipped", Player.CurrentlyEquipped)
+
+    if Player and Player.LeftHand then
+        Player.LeftHand.WristItem = Storage.LoadEntity(Player, "LeftWristItem", Player.LeftHand.WristItem)
+    end
+    if Player and Player.RightHand then
+        Player.RightHand.WristItem = Storage.LoadEntity(Player, "RightWristItem", Player.RightHand.WristItem)
+    end
 end
 
 ---Callback logic for every player event.
