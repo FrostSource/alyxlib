@@ -895,4 +895,13 @@ function Debug.ToOrdinalString(n)
     return n .. (suffixes[lastDigit] or "th")
 end
 
+---
+---Get the script name and line number of a function or traceback level.
+---
+---@param f integer|function # Level or function
+---@return string
+function Debug.GetSourceLine(f)
+    return debug.getinfo(f, "S").short_src..":"..tostring(debug.getinfo(f, "l").currentline)
+end
+
 return Debug.version
