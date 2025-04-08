@@ -1038,6 +1038,27 @@ function CBasePlayer:SetAnchorOriginAroundPlayer(pos)
     self.HMDAnchor:SetAbsOrigin(pos + (self.HMDAnchor:GetAbsOrigin() - self:GetAbsOrigin()))
 end
 
+---
+---Sets the enabled state of the cough handpose attached to the HMD avatar.
+---
+---@param enabled boolean # True if the cough handpose should be enabled
+function CBasePlayer:SetCoughHandEnabled(enabled)
+    if not self.HMDAvatar then
+        return
+    end
+
+    for _, child in ipairs(self.HMDAvatar:GetChildrenMemSafe()) do
+        if child:GetModelName() == "models/props/handposes/handpose_cough.vmdl" then
+            if enabled then
+                child:EntFire("Enable")
+            else
+                child:EntFire("Disable")
+            end
+            break
+        end
+    end
+end
+
 -- Other player libraries
 require "alyxlib.player.hands"
 require "alyxlib.player.events"

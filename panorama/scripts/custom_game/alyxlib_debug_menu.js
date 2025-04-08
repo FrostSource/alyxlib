@@ -4,6 +4,13 @@
 
 if(false)p=require("./panoramadoc");
 
+/**
+ * Fires a Panorama output with the given name and arguments.
+ * The output is routed to the panel's input 'RunScriptCode'.
+ * 
+ * @param {string} outputName - The name of the output to fire.
+ * @param {...*} args - The arguments to pass to the output.
+ */
 function FireOutput(outputName, ...args) {
     if (args === undefined) args = [];
     const formattedArgs = args.map(arg =>
@@ -99,29 +106,10 @@ class Category
         this.content.AddClass("content");
 
         // Create category button
-        // this.button = $.CreatePanel("Button", $("#CategoryBar"), `${this.id}_button`);
-        // this.button.AddClass("CategoryButton");
-        // this.button.SetPanelEvent("onactivate", () => SetCategoryVisible(this.id));
         this.button = CreateDebugMenuButton($("#CategoryBar"), () => SetCategoryVisible(this.id), "CategoryButton", `${this.id}_button`);
         let label = $.CreatePanel("Label", this.button, `${this.id}_label`);
         label.text = this.name;
     }
-
-    // AddToPanel(panel)
-    // {
-    //     if (this.panel == null)
-    //     {
-    //         this.panel = $.CreatePanel("Panel", panel, this.id);
-    //         this.panel.AddClass("submenu");
-    //         this.panel.AddClass("scroll");
-    //         this.content = $.CreatePanel("Panel", this.panel, `${this.id}_content`);
-    //         this.content.AddClass("content");
-    //     }
-    //     else
-    //         this.panel.SetParent(panel);
-
-    //     this.root = panel;
-    // }
 
     SetVisible(visible)
     {
@@ -145,61 +133,14 @@ class Category
             this.button.visible = false;
     }
 
-    /**
-     * Adds a button to this category.
-     * @param {string} id Unique identifier for the button.
-     * @param {string} text Text to display on the button.
-     * @param {function} callback Function to call when the button is pressed.
-     * @example
-     * let button = myCategory.AddButton("my_button", "My Button", () => {
-     *     $.Msg("Button pressed!");
-     * });
-     */
-    // _AddButtonInternal(id, text, callback)
-    // {
-    //     if (this.content == null)
-    //     {
-    //         // Display warning
-    //         $.Msg(`You must call AddToPanel() before adding buttons to a category!`);
-    //         return;
-    //     }
-    //     //
-
-    //     // let button = $.CreatePanel("Button", this.content, `${id}_button`);
-    //     // button.AddClass("ButtonTest");
-    //     // if (callback != null)
-    //     //     button.SetPanelEvent("onactivate", callback);
-    //     let button = CreateDebugMenuButton(this.content, callback, "ButtonTest", `${this.id}_${id}`);
-
-    //     let buttonLabel = $.CreatePanel("Label", button, `${id}_label`);
-    //     buttonLabel.AddClass("button_label");
-    //     buttonLabel.text = text;
-        
-    //     let buttonBullet = $.CreatePanel("Image", button, `${id}_bullet`);
-    //     buttonBullet.AddClass("button_bullet");
-    //     buttonBullet.SetImage("s2r://panorama/images/game_menu_ui/btn_bullet_child_page_png.vtex")
-
-    // }
-
     SetItemText(id, text)
     {
-        // let option = this.content.FindChildTraverse(`${this.id}_${id}`);
-        // if (option === null)
-        // {
-        //     // Display warning
-        //     $.Msg(`Option ${id} does not exist! Did you call AddToPanel()?`);
-        //     return;
-        // }
-
-        // option
-
         // Find item with id in this.options
         let combinedId = `${this.id}_${id}`;
         let item = this.items.find(o => o.id === combinedId);
         if (item === undefined)
         {
             this.items.forEach((o) => $.Msg(o.id));
-            // Display warning
             $.Msg(`Item ${id} does not exist!`);
             return;
         }
@@ -212,11 +153,6 @@ class Category
 
     AddButton(id, text)
     {
-        // this._AddButtonInternal(id, text, () => {
-        //     // $.DispatchEvent("ClientUI_FireOutputStr", 0, `_DebugMenuCallbackButton('${id}')`);
-        //     FireOutput("_DebugMenuCallbackButton", id);
-        // });
-
         let button = new SubMenuButton(`${this.id}_${id}`, text, () => {
             FireOutput("_DebugMenuCallbackButton", id);
         });
@@ -224,19 +160,8 @@ class Category
         this.items.push(button);
     }
 
-    // _AddToggleInternal(id, text, callback, startsOn)
-    // {
-    //     let toggle = new SubMenuToggle(id, text, callback, startsOn);
-    //     toggle.AddToPanel(this.content);
-    // }
-
     AddToggle(id, text, startsOn)
     {
-        // this._AddToggleInternal(id, text, startsOn, (on) => {
-        //     // $.DispatchEvent("ClientUI_FireOutputStr", 0, `_DebugMenuCallbackToggle('${this.id}',${on})`);
-        //     FireOutput("_DebugMenuCallbackToggle", id, on);
-        // });
-
         let toggle = new SubMenuToggle(`${this.id}_${id}`, text, startsOn, (on) => {
             FireOutput("_DebugMenuCallbackToggle", id, on);
         });
@@ -312,12 +237,6 @@ class SubMenuToggle
     {
         if (this.panel == null)
         {
-            // this.panel = $.CreatePanel("Button", panel, `${this.id}_button`);
-            // this.panel.AddClass("ButtonTest");
-            // if (this.callback != null)
-            //     this.panel.SetPanelEvent("onactivate", () => this.Toggle());
-                // this.panel.SetPanelEvent("onactivate", this.callback);
-
             this.panel = CreateDebugMenuButton(panel, () => this.Toggle(), "ButtonTest", this.id);
 
             this.panel.AddClass("custom_switch");

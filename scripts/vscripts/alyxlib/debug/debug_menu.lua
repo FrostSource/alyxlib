@@ -1,9 +1,19 @@
+--[[
+    v1.0.0
+    https://github.com/FrostSource/alyxlib
 
+    The debug menu allows for easier VR testing by offering a customizable in-game menu.
+]]
 
 RegisterAlyxLibCommand("alyxlib_debug_menu_show", function (name, ...)
     DebugMenu:ShowMenu()
-end, "", 0)
+end, "Forces the debug menu to show")
 
+RegisterAlyxLibConvar("alyxlib_debug_menu_hand", "1", "Hand to attach the debug menu to, 0 = Secondary : 1 = Primary")
+
+---
+---The debug menu allows for easier VR testing by offering a customizable in-game menu.
+---
 ---@class DebugMenu
 DebugMenu = {}
 
@@ -20,19 +30,14 @@ DebugMenu = {}
 ---@field type "button"|"toggle"|"separator"
 ---@field default any
 
+---The panel entity.
 ---@type CPointClientUIWorldPanel
 DebugMenu.panel = nil
 
 ---@type DebugMenuCategory[]
 DebugMenu.categories = {}
 
--- ---All options added to all categories
--- ---@type table<string, DebugMenuOption>
--- DebugMenu.options = {}
-
--- local options = DebugMenu.options
-
-local buttonActivatethink = function()
+local listenForMenuActivationThink = function()
     local buttonPressesToActivate = 5
     local buttonPresses = 0
     local timeToResetBetweenPresses = 0.6
@@ -68,6 +73,11 @@ local buttonActivatethink = function()
     end, 0)
 end
 
+---
+---The scope of the debug menu script.
+---
+---These functions handle Panorama callbacks.
+---
 local debugPanelScriptScope = {
     _DebugMenuCallbackButton = function(id)
         local item = DebugMenu:GetItem(id)
@@ -110,8 +120,7 @@ local debugPanelScriptScope = {
     end,
 }
 
-
-
+---Forces the debug menu panel to add all categories and items.
 local function updateDebugMenu()
     if not DebugMenu.panel then
         return
@@ -136,12 +145,10 @@ local function updateDebugMenu()
     end
 end
 
-
+---
+---Creates and displays the debug menu panel on the player's chosen hand.
+---
 function DebugMenu:ShowMenu()
-    -- if spawnMenu ~= nil then
-    --     --return
-    --     HideMenu()
-    -- end
 
     local menu = SpawnEntityFromTableSynchronous("point_clientui_world_panel", {
         targetname = "spawnmenu",
@@ -158,7 +165,6 @@ function DebugMenu:ShowMenu()
         horizontal_align = "1",
     })
 
-
     if not Player.HMDAvatar then
         local localPlayer = Entities:GetLocalPlayer()
         local eyePos = localPlayer:EyePosition()
@@ -168,54 +174,22 @@ function DebugMenu:ShowMenu()
         menu:SetQAngle(a)
         menu:SetOrigin(eyePos + dir * 16)
     else
-        -- menu:SetParent(Player.HMDAvatar,"")
-        -- menu:SetLocalOrigin(Vector(16))
-        -- menu:SetLocalAngles(0,-90,90)
-        -- menu:SetParent(nil, "")
+        local hand = Convars:GetInt("alyxlib_debug_menu_hand") == 1 and Player.PrimaryHand or Player.SecondaryHand
 
-        menu:SetParent(Player.LeftHand, "")
+        menu:SetParent(hand, "")
         menu:SetLocalAngles(40,-10,10)
         menu:SetLocalOrigin(Vector(0,8,-2))
 
-        for _, child in ipairs(Player.HMDAvatar:GetChildrenMemSafe()) do
-            if child:GetModelName() == "models/props/handposes/handpose_cough.vmdl" then
-                child:EntFire("Disable")
-            end
-        end
+        -- Cough handpose gets in the way for close menus
+        Player:SetCoughHandEnabled(false)
 
-        -- local collision = SpawnEntityFromTableSynchronous("func_clip_interaction_layer", {
-        --     targetname = "col",
-        --     InteractsWith = "LeftHand",
-        --     InteractsAs = "LeftHand",
-        --     -- model="models/alyxlib/debug_menu_collision2.vmdl",
-        --     model="models/alyxlib/debug_menu_collision.vmdl",
-        -- })
+        -- Handle distant button presses
+        Input:ListenToButton("press", InputHandPrimary, DIGITAL_INPUT_MENU_INTERACT, 1, function (params)
+            self:ClickHoveredButton()
+        end, self)
 
-        -- local collision2 = SpawnEntityFromTableSynchronous("prop_dynamic", {
-        --     targetname = "col1",
-        --     -- InteractsWith = "LeftHand",
-        --     -- InteractsAs = "LeftHand",
-        --     model="models/alyxlib/debug_menu_collision2.vmdl",
-        --     -- model="models/alyxlib/debug_menu_collision.vmdl",
-        -- })
-        -- collision2:SetAbsScale(5)
-        -- -- collision:SetSize(Vector(-16, -16, -16), Vector(16, 16, 16))
-        -- collision2:SetParent(menu, "")
-        -- collision2:ResetLocal()
-        -- collision2:SetLocalOrigin(Vector(0,0,2.7))
-
-        -- -- collision:SetModel("models/alyxlib/debug_menu_collision2.vmdl")
-        -- collision:SetAbsScale(5)
-        -- -- collision:SetSize(Vector(-16, -16, -16), Vector(16, 16, 16))
-        -- collision:SetParent(menu, "")
-        -- collision:ResetLocal()
-        -- collision:SetLocalOrigin(Vector(0,0,2.7))
     end
 
-    -- EntFireByHandle(thisEntity, menu, "AddOutput", "CustomOutput0>spawnmenu_script>RunScriptCode>>>")
-    -- for addon,loaded in pairs(loadedAddons) do
-    --     menu:AddCSSClasses("addon_"..addon) 
-    -- end
     menu:AddCSSClasses("Visible")
 
     local scope = menu:GetOrCreatePrivateScriptScope()
@@ -228,18 +202,22 @@ function DebugMenu:ShowMenu()
 
     updateDebugMenu()
 
-    Input:ListenToButton("press", InputHandPrimary, DIGITAL_INPUT_MENU_INTERACT, 1, function (params)
-        self:ClickHoveredButton()
-    end, self)
-
 end
 
+---
+---Clicks the active button on the debug menu panel (the one highlighted by the finger).
+---
+---This is handled automatically in most cases.
+---
 function DebugMenu:ClickHoveredButton()
     if self.panel then
         Panorama:Send(self.panel, "ClickHoveredButton")
     end
 end
 
+---
+---Closes the debug menu panel.
+---
 function DebugMenu:CloseMenu()
     if self.panel then
         self.panel:Kill()
@@ -247,7 +225,9 @@ function DebugMenu:CloseMenu()
 
         Input:StopListeningByContext(self)
 
-        buttonActivatethink()
+        Player:SetCoughHandEnabled(true)
+
+        listenForMenuActivationThink()
     end
 end
 
@@ -381,7 +361,7 @@ end
 
 ListenToPlayerEvent("player_activate", function()
     Player:Delay(function()
-        buttonActivatethink()
+        listenForMenuActivationThink()
     end, 0.2)
 end)
 

@@ -212,11 +212,6 @@ Button.custom_switch:active
     text-align: right;
 }
 
-.custom_switch.mini_option Label
-{
-    /*font-size: 70px;*/
-}
-
 .custom_switch:hover
 {
     color: #fff;
@@ -254,34 +249,4 @@ Button
 .submenu Label
 {
     font-size: 33px;
-}
-
-
-.single_controller_on .custom_switch.single_controller:hover:not(.disabled) .switch_image,
-.custom_switch:hover:not(.disabled) .switch_image
-{
-    background-image: url("s2r://panorama/images/game_menu_ui/component_switch_on_hover_png.vtex");
-    brightness: 1.0;
-}
-
-.single_controller_off .custom_switch.single_controller:hover:not(.disabled) .switch_image,
-.custom_switch.switch_off:hover:not(.disabled) .switch_image
-{
-    background-image: url("s2r://panorama/images/game_menu_ui/component_switch_off_hover_png.vtex");
-    brightness: 1.0;
-}
-
-
-.single_controller_off .custom_switch.single_controller:active:not(.disabled) .switch_image,
-.custom_switch.switch_off:active:not(.disabled) .switch_image
-{
-    background-image: url("s2r://panorama/images/game_menu_ui/component_switch_off_press_png.vtex");
-    brightness: 1.0;
-}
-
-.single_controller_on .custom_switch.single_controller:active:not(.disabled) .switch_image,
-.custom_switch:active:not(.disabled) .switch_image
-{
-    background-image: url("s2r://panorama/images/game_menu_ui/component_switch_on_press_png.vtex");
-    brightness: 1.0;
 }
