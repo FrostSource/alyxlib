@@ -119,10 +119,10 @@ InputHandPrimary = 2
 InputHandSecondary = 3
 
 ---@alias InputHandKind
----| `INPUT_HAND_LEFT`
----| `INPUT_HAND_RIGHT`
----| `INPUT_HAND_PRIMARY`
----| `INPUT_HAND_SECONDARY`
+---| `InputHandLeft`
+---| `InputHandRight`
+---| `InputHandPrimary`
+---| `InputHandSecondary`
 ---| 0  # Left Hand.
 ---| 1  # Right Hand.
 ---| 2  # Primary Hand.

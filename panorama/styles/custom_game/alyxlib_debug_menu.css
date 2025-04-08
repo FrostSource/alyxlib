@@ -1,0 +1,287 @@
+#background_panel.bg
+{
+    /*opacity-mask: url("s2r://panorama/images/game_menu_ui/menu_type_mask_psd.vtex");*/
+    flow-children: down;
+    width: 100%;
+    background-color: gradient( radial, 50% 50%, 0% 0%, 100% 100%, from( #553c18 ), color-stop( 0.97, #000000 ), to( #000000 ) );
+    box-shadow: inset #995e0011 2px 2px 4px 4px;
+    opacity: .9;
+}
+#background_panel .row .col_body
+{
+    /*overflow: scroll;*/
+}
+Panel.submenu
+{
+    width: 100%;
+    border-right: 1px solid #FFBE5544;
+    flow-children: down;
+    visibility: collapse;
+    height: 100%;
+}
+Panel.submenu.scroll
+{
+    overflow: squish scroll;
+}
+Panel.submenu.Visible
+{
+    visibility: visible;
+}
+Panel.submenu Panel.content
+{
+    width: 100%;
+    flow-children: down;
+    height: fit-children;
+}
+Panel.submenu.scroll Panel.content
+{
+    padding-right: 50px;
+}
+TextEntry
+{
+    width: 100%;
+    flow-children: none;
+    border: 1px solid #FFBE5588;
+    vertical-align: center;
+    text-transform: uppercase;
+    text-align: right;
+    font-size: 44px;
+    height: 100px;
+    margin-left: 24px;
+    margin-right: 24px;
+}
+TextEntry Label
+{
+    width: 100%;
+    vertical-align: center;
+    text-transform: uppercase;
+    text-align: right;
+    font-size: 44px;
+    margin-left: 24px;
+    margin-right: 24px;
+}
+
+TextEntry:hover
+{
+    color: #fff;
+    background-color: #FFBE5588;
+    transition-property: background-color;
+    transition-duration: .38s;
+    transition-timing-function: cubic-bezier( 0.785, 0.385, 0.555, 1.505 );
+
+}
+
+TextEntry:active
+{
+    color: #000000;
+    background-color: #ffd800;
+}
+
+Button.custom_button_with_subtitle.error_msg.disabled, Button.custom_button_with_subtitle:not(.error_msg)
+{
+    flow-children: down;
+    height: 44px;
+}
+Button.custom_button_with_subtitle.error_msg.disabled Label.button_label,Button.custom_button_with_subtitle:not(.error_msg) Label.button_label
+{
+    padding: 0;
+    margin: 0;
+}
+Button.custom_button_with_subtitle.error_msg.disabled Label.button_label.sub,Button.custom_button_with_subtitle:not(.error_msg) Label.button_label.sub
+{
+    padding: 0;
+    margin: 0;
+    font-size: 20px;
+}
+Button.custom_button_with_subtitle.error_msg:not(.disabled) Label.button_label.sub
+{
+    visibility: collapse;
+}
+
+#CategoryCycler
+{
+    flow-children: right;
+    width: 100%;
+    /* background-color: green; */
+}
+
+.CycleCategory
+{
+    /* margin-left: 9px; */
+    flow-children: left;
+    /* horizontal-align: right; */
+    width: 100%;
+}
+.CycleCategoryLeft
+{
+    flow-children: left;
+    horizontal-align: left;
+    overflow: clip clip;
+    /* background-color: red; */
+    width: 10%;
+}
+.CycleCategoryRight
+{
+    flow-children: left;
+    horizontal-align: right;
+    overflow: clip clip;
+    /* background-color: blue; */
+    width: 10%;
+}
+.cycle_image
+{
+    /* background-color: yellow; */
+    horizontal-align: left;
+    margin: 0px 40px 10px 10px;
+}
+
+.CategoryBar
+{
+    flow-children: right;
+    /* background-color: yellow; */
+    width: fill-parent-flow(1);
+    height: 100%;
+    opacity: 0.5;
+}
+.CategoryButton
+{
+    width: 20%;
+    height: 100%;
+    /* background-color: red; */
+    horizontal-align: left;
+
+    border-bottom: 5px solid #FFBE55;
+    margin: 0px 5px 0px 5px;
+}
+.CategoryButton.Selected
+{
+    color: #fff;
+    background-color: #FFBE5588;
+}
+.CategoryButton Label
+{
+    text-align: left;
+    horizontal-align: center;
+    /* white-space: nowrap; */
+    /* text-overflow: ellipsis; */
+    overflow: clip;
+    font-size: 30px;
+    text-align: center;
+    /* background-color: green; */
+}
+
+Button.disabled Label
+{
+    color: #FFBE55;
+    blur: gaussian(1.5);
+    brightness: 0.75;
+    opacity: .7;
+}
+
+Button:active
+{
+    sound: "PanoUI.Click";
+}
+
+Button.custom_switch:active
+{
+    sound: "PanoUI.ToggleOption";
+}
+
+.custom_switch
+{
+    width: 100%;
+    min-height: 116px;
+    /* This is confusing. Why can't I apply this style further up the heirarchy? */
+    flow-children: right;
+    horizontal-align: right;
+    text-align: right;
+    /* Hover 'Off' values */
+    background-color: #FFBE5500;
+    transition-property: background-color;
+    transition-duration: 0s;
+}
+
+.custom_switch Label
+{
+    vertical-align: center;
+    horizontal-align: right;
+    font-size: 44px;
+    text-transform: uppercase;
+    /* text-shadow: 0px 0px 64px 3 #f4ec8e33; */
+    text-align: right;
+}
+
+.custom_switch.mini_option Label
+{
+    /*font-size: 70px;*/
+}
+
+.custom_switch:hover
+{
+    color: #fff;
+    background-color: #FFBE5588;
+    transition-property: background-color;
+    transition-duration: .38s;
+    transition-timing-function: cubic-bezier( 0.785, 0.385, 0.555, 1.505 );
+
+}
+
+.custom_switch:active
+{
+    background-color: #FFBE55;
+    color: #000;
+    transition-property: background-color;
+    transition-duration: 0s;
+}
+
+Button
+{
+    min-height: 80px;
+}
+
+.button_bullet
+{
+    padding-right: 5px;
+}
+
+.button_label
+{
+    padding-right: 30px;
+}
+
+
+.submenu Label
+{
+    font-size: 33px;
+}
+
+
+.single_controller_on .custom_switch.single_controller:hover:not(.disabled) .switch_image,
+.custom_switch:hover:not(.disabled) .switch_image
+{
+    background-image: url("s2r://panorama/images/game_menu_ui/component_switch_on_hover_png.vtex");
+    brightness: 1.0;
+}
+
+.single_controller_off .custom_switch.single_controller:hover:not(.disabled) .switch_image,
+.custom_switch.switch_off:hover:not(.disabled) .switch_image
+{
+    background-image: url("s2r://panorama/images/game_menu_ui/component_switch_off_hover_png.vtex");
+    brightness: 1.0;
+}
+
+
+.single_controller_off .custom_switch.single_controller:active:not(.disabled) .switch_image,
+.custom_switch.switch_off:active:not(.disabled) .switch_image
+{
+    background-image: url("s2r://panorama/images/game_menu_ui/component_switch_off_press_png.vtex");
+    brightness: 1.0;
+}
+
+.single_controller_on .custom_switch.single_controller:active:not(.disabled) .switch_image,
+.custom_switch:active:not(.disabled) .switch_image
+{
+    background-image: url("s2r://panorama/images/game_menu_ui/component_switch_on_press_png.vtex");
+    brightness: 1.0;
+}

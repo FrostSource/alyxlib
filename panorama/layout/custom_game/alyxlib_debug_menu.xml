@@ -1,0 +1,70 @@
+<root>
+    <styles>
+        <include src="s2r://panorama/styles/game_menus/game_menu_main.vcss_c" />
+        <include src="s2r://panorama/styles/language_shared.vcss_c" />
+        <include src="s2r://panorama/styles/custom_game/alyxlib_debug_menu.vcss_c" />
+    </styles>
+    <scripts>
+        <include src="s2r://panorama/scripts/custom_game/panorama_lua.vjs_c" />
+        <include src="s2r://panorama/scripts/custom_game/alyxlib_debug_menu.vjs_c" />
+    </scripts>
+    <GameMenuPanel class="game_menu_root" onactivate="GameMenuNavigation_Cmd( 'GoTo Root' )">
+        <Panel class="base_container" id="layout_root">
+
+            <Panel class="vr_affordance_container">
+
+                <Panel id="vr_affordance_left" class="VRaffordance">
+                    <Panel id="vr_affordance_interior"/>
+                </Panel>
+                <Panel id="vr_affordance_right" class="VRaffordance">
+                    <Panel id="vr_affordance_interior"/>
+                </Panel>
+
+                <Panel id="background_panel" class="bg">
+                    <Panel class="header">
+                        <Label class="header" />
+                    </Panel>
+                    <Panel class="empty_row" />
+                    <Panel class="row">
+                        <Panel id="CategoriesContainer" class="col_body">
+                            
+                            <!-- Close menu button -->
+                            <Button id="CloseMenuButton" onactivate="CloseMenu()">
+                                <Label class="button_label" text="Close Menu"/>
+                                <Image class="button_bullet" src="s2r://panorama/images/game_menu_ui/btn_bullet_child_page_png.vtex" />
+                            </Button>
+
+                            <!-- Cycle left -->
+                            <Panel id="CategoryCycler" class="cycle_item custom_cycle">
+                                <Button id="CycleCategoryLeftButton" class="CycleCategoryLeft" onactivate="CycleCategories(-1)">
+                                    <Panel class="cycle_image cycle_image_left"/>
+                                </Button>
+
+                                <!-- Category buttons are kept here -->
+                                <Panel id="CategoryBar" class="CategoryBar" />
+
+                                <!-- Cycle right -->
+                                <Button id="CycleCategoryRightButton" class="CycleCategoryRight" onactivate="CycleCategories(1)">
+                                    <Panel class="cycle_image cycle_image_right"/>
+                                </Button>
+                            </Panel>
+                            
+                            <!-- Category sub menu separator -->
+                            <Panel class="row_divider">
+                                <Panel class="button_label">
+                                    <Panel class="row_divider_line" />
+                                </Panel>
+                                <Panel class="button_bullet" />
+                            </Panel>
+
+                            <!-- Individual submenus are added here at the end of CategoriesContainer -->
+                            
+                        </Panel>
+                    </Panel>
+                    <Panel class="empty_row" />
+                    <Panel class="empty_row_bottomR_corner" />
+                </Panel>
+            </Panel>
+        </Panel>
+    </GameMenuPanel>
+</root>

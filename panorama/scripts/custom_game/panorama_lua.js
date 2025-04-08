@@ -22,12 +22,13 @@ if(false)p=require("./panoramadoc");
  * @param {null} _ Unused variable.
  * @param {string} encoded String of data separated by a pipe.
  */
-function LuaCallback(_,encoded)
+function LuaCallback(_, encoded)
 {
-    $.Msg(encoded)
+    // $.Msg(encoded)
     let decoded = encoded.split("|");
     let panel = $.GetContextPanel();
     //$.Msg(decoded[0], panel.BHasClass(decoded[0]))
+
     // Check if the data being sent belongs to this panel
     if (panel.BHasClass(decoded[0]))
     {
@@ -58,7 +59,6 @@ function LuaCallback(_,encoded)
 
 (function()
 {
-    $.Msg("panorama_lua.js loaded")
-    $.RegisterForUnhandledEvent('AddStyleToEachChild',LuaCallback);
+    $.RegisterForUnhandledEvent('AddStyleToEachChild', LuaCallback);
 })();
 

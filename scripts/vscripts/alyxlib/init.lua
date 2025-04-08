@@ -92,6 +92,7 @@ if IsVREnabled() then
 else
     alyxlib_require "alyxlib.debug.novr"
 end
+alyxlib_require "alyxlib.debug.debug_menu"
 
 -- Common third-party libraries
 

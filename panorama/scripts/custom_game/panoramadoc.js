@@ -40,7 +40,7 @@
 * "oncontextmenu_hide" | "oncontextmenu_show" | "oncontextmenu_query" | "oncontextmenu_refresh" |
 * "ondatechanged" | "onmodalaccepted" | "onmodalcanceled" | "onmodalprompt" | "onmodalselect" |
 * "onmodalsubmit" | "onselectionchange" | "onselectquery" | "onsliding" | "onsubmenuswitch" |
-* "ontooltiphide" | "ontooltipshow")} Event
+* "ontooltiphide" | "ontooltipshow")} PanoramaEvent
 */
 
 
@@ -470,7 +470,13 @@ class Panel {
     GetChild(int){}
     GetChildIndex(unknown){}
     Children(){}
-    FindChildrenWithClassTraverse(className){}
+
+    /**
+     * Find children with a given class name.
+     * @param {string} className Class to search for
+     * @returns {Panel[]} Panels with the class
+     */
+    FindChildrenWithClassTraverse(className){return}
 
     /**
      * Gets the parent panel.
@@ -536,7 +542,16 @@ class Panel {
     SetReadyForDisplay(bool){}
     SetPositionInPixels(float1, float2, float3){}
     Data(unknown){}
-    SetPanelEvent(unknown){}
+    /**
+     * Sets an event handler for a Panorama UI panel.
+     * @param {Event} event The event to listen for.
+     * @param {function} callback The function to execute when the event is triggered.
+     * @example
+     * myButton.SetPanelEvent("onactivate", () => {
+     *     $.Msg("Button pressed!");
+     * });
+     */
+    SetPanelEvent(event, callback){}
     RunScriptInPanelContext(unknown){}
     rememberchildfocus(bool){}
     paneltype(){}
