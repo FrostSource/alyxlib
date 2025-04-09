@@ -111,6 +111,15 @@ class Category
         label.text = this.name;
     }
 
+    /**
+     * Deletes this category and all of its items.
+     */
+    Delete()
+    {
+        this.panel.DeleteAsync(0);
+        this.button.DeleteAsync(0);
+    }
+
     SetVisible(visible)
     {
         if (visible)
@@ -510,6 +519,12 @@ function ParseCommand(command, args)
             ClickHoveredButton();
             break;
         }
+
+        case "removeallcategories": {
+            categories.forEach((category) => category.Delete());
+            categories = [];
+            break;
+        }
     }
 }
 
@@ -519,4 +534,9 @@ function ParseCommand(command, args)
     TurnButtonIntoDebugMenuButton($("#CloseMenuButton"));
     TurnButtonIntoDebugMenuButton($("#CycleCategoryLeftButton"));
     TurnButtonIntoDebugMenuButton($("#CycleCategoryRightButton"));
+
+    // Tells Lua that the menu has been reloaded so it can repopulate the menu
+    // This helps with hot reloading panel changes
+    $.Schedule(0.1, () => FireOutput("_DebugMenuReloaded"));
+
 })();
