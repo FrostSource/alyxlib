@@ -250,3 +250,13 @@ Button
 {
     font-size: 33px;
 }
+
+Label.custom_label
+{
+    text-align: center;
+    horizontal-align: center;
+    font-size: 30px;
+    padding-left: 24px;
+    padding-right: 24px;
+
+}

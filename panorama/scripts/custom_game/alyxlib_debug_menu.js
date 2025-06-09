@@ -178,6 +178,15 @@ class Category
         this.items.push(toggle);
     }
 
+    AddLabel(id, text)
+    {
+        let label = $.CreatePanel("Label", this.content, `${this.id}_${id}`);
+        label.AddClass("custom_label");
+        label.text = text;
+
+        this.items.push(label);
+    }
+
     AddSeparator()
     {
         let rowDivider = $.CreatePanel("Panel", this.content, undefined);
@@ -486,6 +495,20 @@ function ParseCommand(command, args)
             let toggleText = args[2] || args[1];
             let toggleStartsOn = args[3] === "true";
             category.AddToggle(toggleId, toggleText, toggleStartsOn);
+            break;
+        }
+
+        case "addlabel": {
+            let category = GetCategory(args[0]);
+            if (category === null)
+            {
+                $.Msg(`Category ${args[0]} does not exist!`);
+                break;
+            }
+
+            let labelId = args[1];
+            let labelText = args[2] || args[1];
+            category.AddLabel(labelId, labelText);
             break;
         }
 

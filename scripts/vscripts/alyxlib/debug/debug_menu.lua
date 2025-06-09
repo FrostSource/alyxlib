@@ -335,6 +335,27 @@ function DebugMenu:AddToggle(categoryId, toggleId, text, command, startsOn)
 end
 
 ---
+---Add a center aligned label to a category.
+---
+---@param categoryId string # The category ID to add the label to
+---@param labelId string # The unique ID for this label
+---@param text string # The text to display on this label
+function DebugMenu:AddLabel(categoryId, labelId, text)
+    local category = self:GetCategory(categoryId)
+    if not category then
+        warn("Cannot add label '"..labelId.."': Category '"..categoryId.."' does not exist!")
+        return
+    end
+
+    table.insert(category.items, {
+        categoryId = categoryId,
+        id = labelId,
+        text = text,
+        type = "label",
+    })
+end
+
+---
 ---Set the text of an item.
 ---
 ---@param categoryId string # The category ID
@@ -374,6 +395,8 @@ function DebugMenu:SendCategoriesToPanel()
                 Panorama:Send(panel, "AddToggle", item.categoryId, item.id, item.text, item.default)
             elseif item.type == "button" then
                 Panorama:Send(panel, "AddButton", item.categoryId, item.id, item.text)
+            elseif item.type == "label" then
+                Panorama:Send(panel, "AddLabel", item.categoryId, item.id, item.text)
             elseif item.type == "separator" then
                 Panorama:Send(panel, "AddSeparator", item.categoryId)
             else
@@ -446,7 +469,7 @@ function DebugMenu:StopListeningForMenuActivation()
     Player:SetContextThink("debug_menu_activate", nil, 0)
 end
 
-ListenToPlayerEvent("player_activate", function()
+ListenToPlayerEvent("vr_player_ready", function()
     Player:Delay(function()
         DebugMenu:StartListeningForMenuActivation()
     end, 0.2)
