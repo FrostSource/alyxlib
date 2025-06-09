@@ -443,4 +443,13 @@ function CBaseAnimating:GetAttachmentNameAngles(name)
     return self:GetAttachmentAngles(self:ScriptLookupAttachment(name))
 end
 
+---
+---Gets the forward vector of a named attachment.
+---
+---@param name string
+---@return Vector
+function CBaseAnimating:GetAttachmentNameForward(name)
+    return self:GetAttachmentForward(self:ScriptLookupAttachment(name))
+end
+
 return version
