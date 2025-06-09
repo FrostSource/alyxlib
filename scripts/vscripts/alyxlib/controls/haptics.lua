@@ -39,6 +39,11 @@ function HapticSequenceClass:Fire(hand)
         hand = Entities:GetLocalPlayer():GetHMDAvatar():GetVRHand(hand)
     end
 
+    if not IsValidEntity(hand) then
+        warn("Invalid hand entity for haptic sequence!")
+        return
+    end
+
     local ref = {
         increment = 0,
         prevTime = Time(),
