@@ -796,6 +796,10 @@ function Debug.EntStr(ent)
         return "[nil, nil]"
     end
 
+    if ent:IsNull() then
+        return "[invalid, invalid]"
+    end
+
     return "[" .. ent:GetClassname() .. ", " .. ent:GetName() .. "]"
 end
 
