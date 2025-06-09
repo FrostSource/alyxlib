@@ -491,11 +491,13 @@ function DebugMenu:StopListeningForMenuActivation()
     Player:SetContextThink("debug_menu_activate", nil, 0)
 end
 
-ListenToPlayerEvent("vr_player_ready", function()
-    Player:Delay(function()
-        DebugMenu:StartListeningForMenuActivation()
-    end, 0.2)
-end)
+if Convars:GetInt("developer") > 0 then
+    ListenToPlayerEvent("vr_player_ready", function()
+        Player:Delay(function()
+            DebugMenu:StartListeningForMenuActivation()
+        end, 0.2)
+    end)
+end
 
 -- AlyxLib defaults
 
