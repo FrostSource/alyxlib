@@ -469,15 +469,19 @@ end
 ---Resume the entity think function.
 ---@luadoc-ignore
 function EntityClass:ResumeThink()
-    self:SetContextThink("__EntityThink", function() return self:Think() end, 0)
-    self.IsThinking = true
+    if not self:IsNull() then
+        self:SetContextThink("__EntityThink", function() return self:Think() end, 0)
+        self.IsThinking = true
+    end
 end
 
 ---Pause the entity think function.
 ---@luadoc-ignore
 function EntityClass:PauseThink()
-    self:SetContextThink("__EntityThink", nil, 0)
-    self.IsThinking = false
+    if not self:IsNull() then
+        self:SetContextThink("__EntityThink", nil, 0)
+        self.IsThinking = false
+    end
 end
 
 ---Define a function to redirected to `output` on spawn.
