@@ -225,10 +225,11 @@ end
 ---
 ---@param id string # The category ID
 ---@return DebugMenuCategory? # The category if it exists
+---@return number? # The index of the category in the categories table
 function DebugMenu:GetCategory(id)
-    for _, category in ipairs(self.categories) do
+    for index, category in ipairs(self.categories) do
         if category.id == id then
-            return category
+            return category, index
         end
     end
 end
@@ -373,6 +374,27 @@ function DebugMenu:SetItemText(categoryId, itemId, text)
     if self.panel then
         Panorama:Send(self.panel, "SetItemText", categoryId, itemId, text)
     end
+end
+
+---
+---Sets the index of a category in the debug menu.
+---Categories are ordered by their index, starting from 1.
+---
+---This is an advanced function and should be used with caution.
+---
+---@param categoryId any
+---@param index any
+function DebugMenu:SetCategoryIndex(categoryId, index)
+    local category, currentIndex = self:GetCategory(categoryId)
+    if not category then
+        warn("Cannot set category index '"..categoryId.."': Category does not exist!")
+        return
+    end
+
+    index = math.max(1, math.min(index, #self.categories)) -- Clamp index to valid range
+
+    table.remove(self.categories, currentIndex)
+    table.insert(self.categories, index, category)
 end
 
 ---
