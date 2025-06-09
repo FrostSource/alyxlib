@@ -514,18 +514,13 @@ DebugMenu:AddButton("alyxlib", "alyxlib_demo_recording", "Start Recording Demo",
         currentDemo = ""
         isRecordingDemo = false
         DebugMenu:SetItemText("alyxlib", "alyxlib_demo_recording", "Start Recording Demo")
-        -- Panorama:Send(DebugMenu.panel, "SetItemText", "alyxlib", "alyxlib_demo_recording", "Start Recording Demo")
     else
-        -- Panorama:Send(DebugMenu.panel, "SetItemText", "alyxlib", "alyxlib_demo_recording", "Stop Recording Demo")
         local localtime = LocalTime()
-        -- remove all whitespace and slashes`
+        -- remove all whitespace and slashes
         local sanitizedMap = GetMapName():gsub("%s+", ""):gsub("/", "_")
         currentDemo = "demo_" .. sanitizedMap .. "_" .. localtime.Hours .. "-" .. localtime.Minutes .. "-" .. localtime.Seconds
         SendToConsole("record " .. currentDemo)
         isRecordingDemo = true
         DebugMenu:SetItemText("alyxlib", "alyxlib_demo_recording", "Stop Recording Demo")
-        -- Player:Delay(function()
-        --     DebugMenu:Refresh()
-        -- end, 0.5)
     end
 end)
