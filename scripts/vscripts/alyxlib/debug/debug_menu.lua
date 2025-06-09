@@ -77,7 +77,7 @@ local debugPanelScriptScope = {
         if item then
             item.callback(on)
             -- Hack for keeping state after close
-            item.startsOn = on
+            item.default = on
         end
     end,
 
