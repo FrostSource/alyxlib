@@ -1,5 +1,5 @@
 --[[
-    v4.2.0
+    v4.2.1
     https://github.com/FrostSource/alyxlib
 
     Player script allows for more advanced player manipulation and easier
@@ -100,7 +100,7 @@ require "alyxlib.globals"
 require "alyxlib.extensions.entity"
 require "alyxlib.storage"
 
-local version = "v4.2.0"
+local version = "v4.2.1"
 
 -----------------------------
 -- Class extension members --
