@@ -28,16 +28,20 @@ jobs:
             fi
           done
 
+          # Check ALYXLIB_VERSION specifically
+          ALYX_INIT_FILE="scripts/vscripts/alyxlib/init.lua"
+          OLD_ALYXLIB_VERSION=$(git show origin/main:$ALYX_INIT_FILE | grep -oP 'ALYXLIB_VERSION\s*=\s*"v\d+\.\d+\.\d+"' | grep -oP 'v\d+\.\d+\.\d+' || true)
+          NEW_ALYXLIB_VERSION=$(grep -oP 'ALYXLIB_VERSION\s*=\s*"v\d+\.\d+\.\d+"' "$ALYX_INIT_FILE" | grep -oP 'v\d+\.\d+\.\d+' || true)
+          
+          if [ "$OLD_ALYXLIB_VERSION" = "$NEW_ALYXLIB_VERSION" ]; then
+            ERROR_FILES="$ERROR_FILES\n- $ALYX_INIT_FILE (ALYXLIB_VERSION not updated, still $NEW_ALYXLIB_VERSION)"
+          fi
+          
           if [ -n "$ERROR_FILES" ]; then
-            echo -e "❌ The following Lua files were modified, but their version comments were not updated:$ERROR_FILES"
-            echo "Please update the version (e.g., v2.1.1) in the top comment block of each changed file."
+            echo -e "❌ The following issues were found with version updates:$ERROR_FILES"
+            echo "Please update the version numbers appropriately, including matching member versions."
             echo "Showing diffs for changed Lua files:\n"
-            for file in $CHANGED_LUA; do
-              echo "=== Diff for $file ==="
-              git --no-pager diff origin/main...HEAD -- "$file"
-              echo ""
-            done
             exit 1
           else
-            echo "✅ All modified Lua files have updated version comments."
+            echo "✅ All version checks passed."
           fi
