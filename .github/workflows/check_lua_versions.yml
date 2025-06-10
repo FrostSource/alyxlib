@@ -2,7 +2,7 @@ name: Check Lua Version Bumps
 
 on:
   pull_request:
-    branches: [ actions_test ]
+    branches: [ main, actions_test ]
 
 jobs:
   version-check:
