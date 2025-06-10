@@ -704,7 +704,10 @@ local function listenEventWeaponSwitch(data)
 
     Player:UpdateWeaponsExistence()
 
-    Player.PrimaryHand.ItemHeld = weaponHandle
+    -- This event can fire before the player has a hand
+    if Player.PrimaryHand then
+        Player.PrimaryHand.ItemHeld = weaponHandle
+    end
 
     savePlayerData()
 
