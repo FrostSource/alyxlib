@@ -803,6 +803,9 @@ function Debug.EntStr(ent)
     return "[" .. ent:GetClassname() .. ", " .. ent:GetName() .. "]"
 end
 
+---@diagnostic disable-next-line: lowercase-global
+entstr = Debug.EntStr
+
 ---
 ---Dumps a list of convars and their values to the console.
 ---
