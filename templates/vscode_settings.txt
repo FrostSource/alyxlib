@@ -1,0 +1,28 @@
+{
+    "Lua.workspace.library": [
+        "${addons}/HLA-VScript/module/library"
+    ],
+    "Lua.runtime.version": "LuaJIT",
+    "Lua.runtime.builtin": {
+        "coroutine": "enable",
+        "debug": "enable",
+        "io": "disable",
+        "math": "enable",
+        "os": "disable",
+        "package": "enable",
+        "string": "enable",
+        "table": "enable",
+        "utf8": "disable",
+        "bit": "enable",
+        "bit32": "disable",
+        "jit": "disable"
+    },
+    "Lua.type.weakUnionCheck": true,
+    "Lua.type.weakNilCheck": true,
+    "Lua.diagnostics.disable": [
+        "inject-field"
+    ],
+    "Lua.workspace.checkThirdParty": false,
+    "Lua.diagnostics.ignoredFiles": "Enable",
+    "Lua.workspace.useGitIgnore": false
+}
