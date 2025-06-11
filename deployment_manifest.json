@@ -6,13 +6,15 @@
         "type": "symlink",
         "description": "AlyxLib library symlink",
         "source": "{AlyxLib}/scripts/vscripts/alyxlib",
-        "destination": "{AddonContent}/scripts/vscripts/alyxlib"
+        "destination": "{AddonContent}/scripts/vscripts/alyxlib",
+        "remove": true
       },
       {
         "type": "symlink",
         "description": "gameinit.lua symlink",
         "source": "{AlyxLib}/scripts/vscripts/game/gameinit.lua",
-        "destination": "{AddonContent}/scripts/vscripts/game/gameinit.lua"
+        "destination": "{AddonContent}/scripts/vscripts/game/gameinit.lua",
+        "remove": true
       },
       {
         "type": "copy",
