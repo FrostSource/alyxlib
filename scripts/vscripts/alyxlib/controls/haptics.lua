@@ -1,5 +1,5 @@
 --[[
-    v1.0.1
+    v1.0.2
     https://github.com/FrostSource/alyxlib
 
     Haptic sequences allow for more complex vibrations than the one-shot pulses that the base API provides.
@@ -28,7 +28,7 @@ local HapticSequenceClass = {
     pulseWidth_us = 0,
 }
 HapticSequenceClass.__index = HapticSequenceClass
-HapticSequenceClass.version = "v1.0.1"
+HapticSequenceClass.version = "v1.0.2"
 
 ---
 ---Start the haptic sequence on a given hand.
@@ -37,6 +37,11 @@ HapticSequenceClass.version = "v1.0.1"
 function HapticSequenceClass:Fire(hand)
     if type(hand) == "number" then
         hand = Entities:GetLocalPlayer():GetHMDAvatar():GetVRHand(hand)
+    end
+
+    if not IsValidEntity(hand) then
+        warn("Invalid hand entity for haptic sequence!")
+        return
     end
 
     local ref = {

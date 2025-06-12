@@ -1,5 +1,5 @@
 --[[
-    v2.1.0
+    v2.2.0
     https://github.com/FrostSource/alyxlib
 
     Debug utility functions.
@@ -13,7 +13,7 @@ require "alyxlib.extensions.entity"
 require "alyxlib.math.common"
 
 Debug = {}
-Debug.version = "v2.1.0"
+Debug.version = "v2.2.0"
 
 ---
 ---Finds the first entity whose name, class or model matches `pattern`.
@@ -792,8 +792,19 @@ end
 ---@param ent EntityHandle
 ---@return string
 function Debug.EntStr(ent)
+    if ent == nil then
+        return "[nil, nil]"
+    end
+
+    if ent:IsNull() then
+        return "[invalid, invalid]"
+    end
+
     return "[" .. ent:GetClassname() .. ", " .. ent:GetName() .. "]"
 end
+
+---@diagnostic disable-next-line: lowercase-global
+entstr = Debug.EntStr
 
 ---
 ---Dumps a list of convars and their values to the console.
@@ -889,6 +900,15 @@ function Debug.ToOrdinalString(n)
     local suffixes = { [1] = "st", [2] = "nd", [3] = "rd" }
 
     return n .. (suffixes[lastDigit] or "th")
+end
+
+---
+---Get the script name and line number of a function or traceback level.
+---
+---@param f integer|function # Level or function
+---@return string
+function Debug.GetSourceLine(f)
+    return debug.getinfo(f, "S").short_src..":"..tostring(debug.getinfo(f, "l").currentline)
 end
 
 return Debug.version

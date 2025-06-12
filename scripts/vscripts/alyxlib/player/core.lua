@@ -1,106 +1,20 @@
 --[[
-    v4.2.0
+    v4.2.2
     https://github.com/FrostSource/alyxlib
 
     Player script allows for more advanced player manipulation and easier
     entity access for player related entities by extending the player class.
 
-    If not using `vscripts/alyxlib/core.lua`, load this file at game start using the following line:
+    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
 
-    ```lua
     require "alyxlib.player.core"
-    ```
-
-    This module returns the version string.
-
-    ======================================== Usage ========================================
-
-    Common method for referencing the player and related entities is:
-
-    ```lua
-    local player = Entities:GetLocalPlayer()
-    local hmd_avatar = player:GetHMDAvatar()
-    local left_hand = hmd_avatar:GetVRHand(0)
-    local right_hand = hmd_avatar:GetVRHand(1)
-    ```
-
-    This script simplifies the above code significantly by automatically
-    caching player entity handles when the player spawns and introducing
-    the global variable 'Player' which references the base player entity:
-
-    ```lua
-    local player = Player
-    local hmd_avatar = Player.HMDAvatar
-    local left_hand = Player.LeftHand
-    local right_hand = Player.RightHand
-    ```
-
-    Since this script extends the player entity class directly you can mix and match your scripting style
-    without worrying that you're referencing the wrong player table.
-
-    ```lua
-    Entities:GetLocalPlayer() == Player
-    ```
-    
-    ======================================== Player Callbacks ========================================
-
-    Many game events related to the player are used to track player activity and callbacks can be
-    registered to hook into them the same way you would a game event:
-
-    ```lua
-    RegisterPlayerEventCallback("vr_player_ready", function(params)
-        ---@cast params PLAYER_EVENT_VR_PLAYER_READY
-        if params.game_loaded then
-            -- Load params
-        end
-    end)
-    ```
-
-    Although most of the player events are named after the same game events, the data that is passed to
-    the callback is pre-processed and extended to provide better context for the event:
-
-    ```lua
-    ---@param params PLAYER_EVENT_ITEM_PICKUP
-    RegisterPlayerEventCallback("item_pickup", function(params)
-        if params.hand == Player.PrimaryHand and params.item_name == "@gun" then
-            params.item:DoNotDrop(true)
-        end
-    end)
-    ```
-
-    ======================================== Tracking Items ========================================
-
-    The script attempts to track player items, both inventory and physically held objects.
-    These can be accessed through several new player tables and variables.
-    
-    Below are a few of the new variables that point an entity handle that the player has interacted with:
-
-    ```lua
-    Player.PrimaryHand.WristItem
-    Player.PrimaryHand.ItemHeld
-    Player.PrimaryHand.LastItemDropped
-    ```
-
-    The player might not be holding anything so remember to nil check:
-
-    ```lua
-    local item = Player.PrimaryHand.ItemHeld
-    if item then
-        local primary_held_name = item:GetName()
-    end
-    ```
-
-    The `Player.Items` table keeps track of the ammo and resin the player has in the backpack.
-    One addition value tracked is `resin_found` which is the amount of resin the player has
-    collected regardless of removing from backpack or spending on upgrades.
-
 ]]
 require "alyxlib.utils.common"
 require "alyxlib.globals"
 require "alyxlib.extensions.entity"
 require "alyxlib.storage"
 
-local version = "v4.2.0"
+local version = "v4.2.2"
 
 -----------------------------
 -- Class extension members --
@@ -957,11 +871,16 @@ function CBasePlayer:UpdateWeaponsExistence()
         end
     end
 
-    for i = #weapons.genericpistols, 1, -1 do
-        local generic = weapons.genericpistols[i]
-        local swt = Entities:FindByName(nil, "wpnswitch_" .. generic:GetName())
-        if not swt then
-            table.remove(weapons.genericpistols, i)
+    if #weapons.genericpistols > 0 then
+        for i = #weapons.genericpistols, 1, -1 do
+            local generic = weapons.genericpistols[i]
+            -- Server change seems to destroy weapons before this is run
+            if IsValidEntity(generic) then
+                local swt = Entities:FindByName(nil, "wpnswitch_" .. generic:GetName())
+                if not swt then
+                    table.remove(weapons.genericpistols, i)
+                end
+            end
         end
     end
 end

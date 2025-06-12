@@ -1,5 +1,5 @@
 --[[
-    v1.1.0
+    v1.1.1
     https://github.com/FrostSource/alyxlib
 
     If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
@@ -7,7 +7,7 @@
     require "alyxlib.debug.commands"
 ]]
 
-local version = "v1.1.0"
+local version = "v1.1.1"
 
 local alyxlibCommands = {}
 
@@ -455,11 +455,11 @@ RegisterAlyxLibCommand("ent_find_by_address", function (_, tblpart, colon, hash)
     local foundEnt = Debug.FindEntityByHandleString(tblpart, colon, hash)
 
     if foundEnt then
-        Msg("Info for " .. tostring(foundEnt).."\n")
-        Msg("\tClassname" .. foundEnt:GetClassname().."\n")
-        Msg("\tName" .. foundEnt:GetName().."\n")
-        Msg("\tParent" .. foundEnt:GetMoveParent().."\n")
-        Msg("\tModel" .. foundEnt:GetModelName())
+        Msg("Info for " .. tostring(foundEnt) .."\n")
+        Msg("\tClassname: " .. foundEnt:GetClassname() .."\n")
+        Msg("\tName: " .. foundEnt:GetName().."\n")
+        Msg("\tParent: " .. (tostring(foundEnt:GetMoveParent() or "[none]")) .."\n")
+        Msg("\tModel: " .. foundEnt:GetModelName())
     else
         Msg("Could not find any entity matching '" .. hash .. "'")
     end

@@ -1,5 +1,5 @@
 --[[
-    v2.6.1
+    v2.7.0
     https://github.com/FrostSource/alyxlib
 
     Provides base entity extension methods.
@@ -9,7 +9,7 @@
     require "alyxlib.extensions.entity"
 ]]
 
-local version = "v2.6.1"
+local version = "v2.7.0"
 
 ---
 ---Get the entities parented to this entity. Including children of children.
@@ -44,6 +44,52 @@ function CBaseEntity:GetTopChildren()
     end
     return children
 end
+
+---
+---Get the first child in the hierarchy that has targetname or classname.
+---
+---@param name string # The name or classname to look for, supports wildcard '*'
+---@return EntityHandle?
+function CBaseEntity:GetChild(name)
+    local usePattern = name:find("%*") ~= nil
+    local pattern
+
+    ---@TODO Consider moving wildcard logic to a utility function
+    if usePattern then
+        -- Escape pattern special characters, then replace '*' with '.*'
+        pattern = "^" .. name
+            :gsub("([%^%$%(%)%%%.%[%]%+%-%?])", "%%%1")
+            :gsub("%*", ".*") .. "$"
+    end
+
+    local child = self:FirstMoveChild()
+    while IsValidEntity(child) do
+        local childName = child:GetName()
+        local className = child:GetClassname()
+
+        local match = false
+        if usePattern then
+            match = childName:match(pattern) or className:match(pattern)
+        else
+            match = childName == name or className == name
+        end
+
+        if match then
+            return child
+        end
+
+        -- Check children recursively
+        local result = child:GetChild(name)
+        if result then
+            return result
+        end
+
+        child = child:NextMovePeer()
+    end
+
+    return nil
+end
+
 
 ---
 ---Send an input to this entity.
@@ -441,6 +487,15 @@ end
 ---@return Vector
 function CBaseAnimating:GetAttachmentNameAngles(name)
     return self:GetAttachmentAngles(self:ScriptLookupAttachment(name))
+end
+
+---
+---Gets the forward vector of a named attachment.
+---
+---@param name string
+---@return Vector
+function CBaseAnimating:GetAttachmentNameForward(name)
+    return self:GetAttachmentForward(self:ScriptLookupAttachment(name))
 end
 
 return version

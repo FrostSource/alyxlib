@@ -1,11 +1,11 @@
 --[[
-    v2.1.3
+    v2.2.0
     https://github.com/FrostSource/alyxlib
 
     
 ]]
 
-local version = "v2.1.3"
+local version = "v2.2.0"
 
 ---@class __PlayerRegisteredEventData
 ---@field callback function
@@ -107,6 +107,10 @@ local player_weapon_to_ammotype =
 ---
 local function savePlayerData()
     Storage.SaveTable(Player, "PlayerItems", Player.Items)
+
+    -- Weapons aren't re-equipped on load so we need to save this
+    Storage.SaveString(Player, "PlayerCurrentlyEquipped", Player.CurrentlyEquipped)
+
     if Player and Player.LeftHand then
         Storage.SaveEntity(Player, "LeftWristItem", Player.LeftHand.WristItem)
     end
@@ -117,6 +121,15 @@ end
 
 local function loadPlayerData()
     Player.Items = Storage.LoadTable(Player, "PlayerItems", Player.Items)
+
+    Player.CurrentlyEquipped = Storage.LoadString(Player, "PlayerCurrentlyEquipped", Player.CurrentlyEquipped)
+
+    if Player and Player.LeftHand then
+        Player.LeftHand.WristItem = Storage.LoadEntity(Player, "LeftWristItem", Player.LeftHand.WristItem)
+    end
+    if Player and Player.RightHand then
+        Player.RightHand.WristItem = Storage.LoadEntity(Player, "RightWristItem", Player.RightHand.WristItem)
+    end
 end
 
 ---Callback logic for every player event.
@@ -648,6 +661,8 @@ end
 ListenToGameEvent("player_drop_resin_in_backpack", listenEventPlayerDropResinInBackpack, nil)
 
 ---@class PlayerEventWeaponSwitch : GameEventWeaponSwitch
+---@field item EntityHandle|nil # The handle of the weapon being switched to or nil if no weapon.
+---@field item_class string # Classname of the entity that was switched to.
 
 ---Track weapon equipped
 ---@param data GameEventWeaponSwitch
@@ -658,10 +673,13 @@ local function listenEventWeaponSwitch(data)
 
     Player.PreviouslyEquipped = Player.CurrentlyEquipped
 
+    ---@type EntityHandle
+    local weaponHandle = nil
+
     if data.item == "hand_use_controller" then
         Player.CurrentlyEquipped = PLAYER_WEAPON_HAND
     else
-        local weaponHandle = Entities:FindBestMatching("", data.item, Player.PrimaryHand:GetPalmPosition(), 64)
+        weaponHandle = Entities:FindBestMatching("", data.item, Player.PrimaryHand:GetPalmPosition(), 64)
         if data.item == "hlvr_weapon_energygun" then
             Player.CurrentlyEquipped = PLAYER_WEAPON_ENERGYGUN
             Player.Items.weapons.energygun = weaponHandle
@@ -686,10 +704,18 @@ local function listenEventWeaponSwitch(data)
 
     Player:UpdateWeaponsExistence()
 
+    -- This event can fire before the player has a hand
+    if Player.PrimaryHand then
+        Player.PrimaryHand.ItemHeld = weaponHandle
+    end
+
     savePlayerData()
 
     -- Registered callback
-    eventCallback(data.game_event_name, data)
+    local newdata = vlua.clone(data)--[[@as PlayerEventWeaponSwitch]]
+    newdata.item = weaponHandle
+    newdata.item_class = data.item
+    eventCallback(data.game_event_name, newdata)
 end
 ListenToGameEvent("weapon_switch", listenEventWeaponSwitch, nil)
 

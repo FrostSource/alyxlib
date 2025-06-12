@@ -1,13 +1,12 @@
 
 <p align="center">
 <picture>
-    <source srcset="https://github.com/user-attachments/assets/5888846f-88b6-4a35-bf83-51e31cdfdcff" media="(prefers-color-scheme: light)">
+    <!-- <source srcset="https://github.com/user-attachments/assets/5888846f-88b6-4a35-bf83-51e31cdfdcff" media="(prefers-color-scheme: light)">
     <source srcset="https://github.com/user-attachments/assets/27af88d4-265f-4c58-83ef-d68cba14f1f9" media="(prefers-color-scheme: dark)">
-    <img alt="AlyxLib Logo" src="https://github.com/user-attachments/assets/27af88d4-265f-4c58-83ef-d68cba14f1f9" width="250">
+    <img alt="AlyxLib Logo" src="https://github.com/user-attachments/assets/27af88d4-265f-4c58-83ef-d68cba14f1f9" width="250"> -->
+    <img alt="AlyxLib Logo" src="./assets/256x256.png" width="128">
 </picture>
 </p>
-
-&nbsp;
 
 <div align="center">
 

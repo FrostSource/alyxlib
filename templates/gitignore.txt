@@ -1,0 +1,12 @@
+# Source 2 ignores
+
+/_bakeresourcecache/
+*bakeresourcecache.vpk
+__pycache__
+
+# AlyxLib ignores
+
+scripts/vscripts/alyxlib
+scripts/vscripts/game/gameinit.lua
+.vscode/alyxlib.code-snippets
+.vscode/vlua_snippets.code-snippets
