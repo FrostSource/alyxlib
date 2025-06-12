@@ -46,7 +46,6 @@ jobs:
           if [ -n "$ERROR_FILES" ]; then
             echo -e "❌ The following issues were found with version updates:$ERROR_FILES"
             echo "Please update the version numbers appropriately, including matching member versions."
-            echo "Showing diffs for changed Lua files:\n"
             exit 1
           else
             echo "✅ All version checks passed."
