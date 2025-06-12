@@ -36,10 +36,12 @@ jobs:
           if [ "$OLD_ALYXLIB_VERSION" = "$NEW_ALYXLIB_VERSION" ]; then
             ERROR_FILES="$ERROR_FILES\n- $ALYX_INIT_FILE (ALYXLIB_VERSION not updated, still $NEW_ALYXLIB_VERSION)"
           fi
-          
+
+          # Read version from version.json
           JSON_VERSION=$(jq -r '.version' version.json || echo "")
+          CLEAN_ALYXLIB_VERSION=${NEW_ALYXLIB_VERSION#v}  # remove 'v' prefix
           
-          if [ "$JSON_VERSION" != "$NEW_ALYXLIB_VERSION" ]; then
+          if [ "$JSON_VERSION" != "$CLEAN_ALYXLIB_VERSION" ]; then
             ERROR_FILES="$ERROR_FILES\n- version.json version ($JSON_VERSION) does not match ALYXLIB_VERSION ($NEW_ALYXLIB_VERSION)"
           fi
           
