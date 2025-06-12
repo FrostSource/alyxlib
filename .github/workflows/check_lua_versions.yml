@@ -17,7 +17,7 @@ jobs:
           git fetch origin main
           CHANGED_LUA=$(git diff --name-only origin/main...HEAD -- '*.lua')
           ERROR_FILES=""
-
+          
           for file in $CHANGED_LUA; do
             # Extract version line from the first few lines of the old and new file
             OLD_VERSION=$(git show origin/main:$file | head -n 10 | grep -oP 'v\d+\.\d+\.\d+' || true)
@@ -27,7 +27,7 @@ jobs:
               ERROR_FILES="$ERROR_FILES\n- $file (version not updated, still $NEW_VERSION)"
             fi
           done
-
+          
           # Check ALYXLIB_VERSION specifically
           ALYX_INIT_FILE="scripts/vscripts/alyxlib/init.lua"
           OLD_ALYXLIB_VERSION=$(git show origin/main:$ALYX_INIT_FILE | grep -oP 'ALYXLIB_VERSION\s*=\s*"v\d+\.\d+\.\d+"' | grep -oP 'v\d+\.\d+\.\d+' || true)
@@ -35,6 +35,12 @@ jobs:
           
           if [ "$OLD_ALYXLIB_VERSION" = "$NEW_ALYXLIB_VERSION" ]; then
             ERROR_FILES="$ERROR_FILES\n- $ALYX_INIT_FILE (ALYXLIB_VERSION not updated, still $NEW_ALYXLIB_VERSION)"
+          fi
+          
+          JSON_VERSION=$(jq -r '.version' version.json || echo "")
+          
+          if [ "$JSON_VERSION" != "$NEW_ALYXLIB_VERSION" ]; then
+            ERROR_FILES="$ERROR_FILES\n- version.json version ($JSON_VERSION) does not match ALYXLIB_VERSION ($NEW_ALYXLIB_VERSION)"
           fi
           
           if [ -n "$ERROR_FILES" ]; then
