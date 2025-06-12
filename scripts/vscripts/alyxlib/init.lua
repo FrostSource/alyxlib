@@ -1,5 +1,5 @@
 --[[
-    v1.2.1
+    v1.2.2
     https://github.com/FrostSource/alyxlib
 
     The main initializer script loads any standard libraries that it can find.
@@ -11,7 +11,7 @@
 ]]
 
 -- Version of this file
-local version = "v1.2.1"
+local version = "v1.2.2"
 
 ---ID of AlyxLib in the Steam workshop
 ALYXLIB_WORKSHOP_ID = "3329679071"
