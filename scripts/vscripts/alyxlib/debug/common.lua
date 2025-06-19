@@ -911,4 +911,19 @@ function Debug.GetSourceLine(f)
     return debug.getinfo(f, "S").short_src..":"..tostring(debug.getinfo(f, "l").currentline)
 end
 
+---
+---Safely calls a function while handling any errors.
+---
+---If an error occurs, a warning will be printed to the console.
+---
+---@param action function # The function to call
+---@param ... any # Optional arguments to pass
+function Debug.Try(action, ...)
+    local success, result = pcall(action, ...)
+
+    if not success then
+        warn(result)
+    end
+end
+
 return Debug.version
