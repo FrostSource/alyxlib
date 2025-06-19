@@ -29,6 +29,38 @@ function CBaseEntity:GetChildrenMemSafe()
     return childrenArray
 end
 
+---Returns a `function` that iterates on all children of this entity.
+---The `function` returns the next child every time it is called until no more children exist,
+---in which case `nil` is returned.
+---
+---Useful in `for` loops:
+---
+---     for child in thisEntity:IterateChildren() do
+---         print(Debug.EntStr(child))
+---     end
+---
+---This function is memory safe.
+---
+---@return fun(...:any):EntityHandle # The new iterator function
+function CBaseEntity:IterateChildren()
+    local function traverse(entity)
+        coroutine.yield(entity)
+        local child = entity:FirstMoveChild()
+        while child do
+            traverse(child)
+            child = child:NextMovePeer()
+        end
+    end
+
+    return coroutine.wrap(function()
+        local child = self:FirstMoveChild()
+        while child do
+            traverse(child)
+            child = child:NextMovePeer()
+        end
+    end)
+end
+
 ---
 ---Get the top level entities parented to this entity. Not children of children.
 ---
