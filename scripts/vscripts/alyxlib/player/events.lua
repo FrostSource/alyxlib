@@ -280,6 +280,8 @@ local function listenEventItemPickup(data)
     local hand = Player.Hands[handId + 1]
     local otherhand = Player.Hands[(1 - handId) + 1]
 
+    Player.LastGrabHand = hand
+
     ---@type EntityHandle
     local ent_held
 

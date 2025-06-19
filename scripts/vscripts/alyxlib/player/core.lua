@@ -59,6 +59,9 @@ CBasePlayer.LastItemGrabbed = nil
 ---**The classname of the last entity grabbed by the player. In case the entity no longer exists.**
 ---@type string
 CBasePlayer.LastClassGrabbed = ""
+---**The player hand that last grabbed an object.**
+---@type CPropVRHand
+CBasePlayer.LastGrabHand = nil
 
 ---@alias PLAYER_WEAPON_HAND           "hand_use_controller"
 ---@alias PLAYER_WEAPON_ENERGYGUN      "hlvr_weapon_energygun"
