@@ -530,4 +530,11 @@ function CBaseAnimating:GetAttachmentNameForward(name)
     return self:GetAttachmentForward(self:ScriptLookupAttachment(name))
 end
 
+---
+---Unparents this entity if it is parented.
+---
+function CBaseEntity:ClearParent()
+    self:SetParent(nil, nil)
+end
+
 return version
