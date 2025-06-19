@@ -35,6 +35,7 @@ end
 
 ---Loads a library if it exists and prints version.
 ---@param path string # The path to the library
+---@param required? boolean # If not true, any errors will be suppressed
 local function alyxlib_require(path, required)
     if required then
         print_version(path, require(path))
