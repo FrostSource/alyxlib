@@ -394,13 +394,20 @@ function Debug.PrintTableShallow(tbl)
     print("}")
 end
 
+---
+---Prints an ordered table as a numbered list in the console.
+---
+---@param tbl table # Table to print.
+---@param prefix? string # Optional prefix for each line.
 function Debug.PrintList(tbl, prefix)
     local m = 0
     prefix = prefix or ""
+
+    -- Pre-determine alignment padding
     for key, value in pairs(tbl) do
         m = max(m, #tostring(key)+1)
     end
-    m = 0
+
     local frmt = "%"..m.."s  %s"
     for key, value in pairs(tbl) do
         if type(key) == "number" then
