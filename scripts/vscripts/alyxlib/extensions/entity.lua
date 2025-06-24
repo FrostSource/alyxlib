@@ -1,5 +1,5 @@
 --[[
-    v2.7.0
+    v2.7.1
     https://github.com/FrostSource/alyxlib
 
     Provides base entity extension methods.
@@ -9,7 +9,7 @@
     require "alyxlib.extensions.entity"
 ]]
 
-local version = "v2.7.0"
+local version = "v2.7.1"
 
 ---
 ---Get the entities parented to this entity. Including children of children.
@@ -446,10 +446,11 @@ end
 ---Quickly start a think function on the entity with a random name and no delay.
 ---
 ---@param func fun(...):number? # The think function.
+---@param delay? number # Delay before starting the think.
 ---@return string # The name of the think for stopping later if desired.
-function CBaseEntity:QuickThink(func)
+function CBaseEntity:QuickThink(func, delay)
     local name = DoUniqueString("QuickThink")
-    self:SetContextThink(name, func, 0)
+    self:SetContextThink(name, func, delay or 0)
     return name
 end
 
