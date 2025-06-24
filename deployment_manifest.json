@@ -82,12 +82,14 @@
 
     "panorama": [
       {
-        "type": "copy",
+        "type": "symlink",
+        "description": "Panorama Lua integration symlink",
         "source": "{AlyxLib}/panorama/scripts/custom_game/panorama_lua.js",
         "destination": "{AddonContent}/panorama/scripts/custom_game/panorama_lua.js"
       },
       {
-        "type": "copy",
+        "type": "symlink",
+        "description": "Panorama code completion symlink",
         "source": "{AlyxLib}/panorama/scripts/custom_game/panoramadoc.js",
         "destination": "{AddonContent}/panorama/scripts/custom_game/panoramadoc.js"
       }
