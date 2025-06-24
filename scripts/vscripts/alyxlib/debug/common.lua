@@ -419,6 +419,20 @@ function Debug.PrintList(tbl, prefix)
 end
 
 ---
+---Prints all the values in a table, one value per line, without any numbering or padding.
+---
+---@param tbl table # Table to print.
+function Debug.PrintSimpleTable(tbl)
+    if type(tbl) ~= "table" then
+        return warn("Parameter 'tbl' is not a table " .. Debug.GetSourceLine(3))
+    end
+
+    for _, value in pairs(tbl) do
+        print(value)
+    end
+end
+
+---
 ---Prints a value and its type in an easy to read format.
 ---
 ---@param value any
