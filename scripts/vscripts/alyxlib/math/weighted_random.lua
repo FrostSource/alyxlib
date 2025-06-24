@@ -1,5 +1,5 @@
 --[[
-    v1.2.3
+    v1.2.4
     https://github.com/FrostSource/alyxlib
 
     Weighted random allows you to assign chances to tables keys.
@@ -9,7 +9,7 @@
     require "alyxlib.math.weighted_random"
 ]]
 
-local version = "v1.2.3"
+local version = "v1.2.4"
 
 ---
 ---A list of tables with associated weights.
@@ -117,7 +117,7 @@ end
 ---
 ---Pick a random table from the list of weighted tables.
 ---
----@return WeightedRandomItem # The chosen table.
+---@return WeightedRandomItem|table # The chosen table.
 function WR:Random()
     local weight_sum = self:TotalWeight()
     local weight_remaining
