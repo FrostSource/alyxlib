@@ -25,8 +25,8 @@ local _version = "v2.6.0"
 ---@field shortName string # Short unique name of the addon without spaces, e.g. "myaddon"
 ---@field minAlyxLibVersion string # Minimum AlyxLib version that this addon works with
 ---@field maxAlyxLibVersion string # Maximum AlyxLib version that this addon works with 
----@field workshopID string? # The ID of the addon on the Steam workshop
----@field diagnosticFunction fun():boolean,(string|string[])? # Diagnostic function to check if the addon is working, and any diagnostic messages
+---@field workshopID? string # The ID of the addon on the Steam workshop
+---@field diagnosticFunction? fun():boolean,(string|string[]) # Diagnostic function to check if the addon is working, and any diagnostic messages
 
 ---
 ---List of registered addons using AlyxLib.

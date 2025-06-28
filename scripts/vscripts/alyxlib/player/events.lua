@@ -132,7 +132,8 @@ local function eventCallback(eventName, newdata)
     end
 end
 
----@class PlayerEventPlayerActivate : GameEventBase
+---The player event that fires after the player spawned and activated.
+---@class PlayerEventPlayerActivate : GameEventPlayerActivate
 ---@field player CBasePlayer # The entity handle of the player.
 ---@field type "spawn"|"load"|"transition" # Type of player activate.
 

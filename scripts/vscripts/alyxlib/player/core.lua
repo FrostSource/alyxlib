@@ -349,6 +349,7 @@ Expose(CBasePlayer.GrabCaller, "GrabCaller", CBasePlayer)
 
 ---Force the player to grab the activator entity.
 ---@param data IOParams
+---@exposed GrabActivator
 function CBasePlayer:GrabActivator(data)
     self:GrabByHandle(data.activator)
 end

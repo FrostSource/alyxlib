@@ -1,0 +1,97 @@
+site_name: AlyxLib
+site_url: https://github.com/FrostSource/alyxlib
+site_dir: site # Change on release
+
+theme:
+  name: material
+  palette:
+    scheme: slate
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.tracking
+    - navigation.path
+    # - navigation.prune # Only if docs get big
+    - navigation.indexes
+    - content.code.copy
+    - content.code.annotate
+    - navigation.top
+
+nav:
+  - Console: console/index.md
+  - Reference:
+    - Class: reference/class.md
+    - Globals: reference/globals.md
+    - Precache: reference/precache.md
+    - Storage: reference/storage.md
+    - Controls:
+      - Gesture: reference/controls/gesture.md
+      - Haptics: reference/controls/haptics.md
+      - Input: reference/controls/input.md
+    - Data:
+      - Color: reference/data/color.md
+      - Inventory: reference/data/inventory.md
+      - Queue: reference/data/queue.md
+      - Stack: reference/data/stack.md
+    - Debug:
+      - Common: reference/debug/common.md
+      - NoVR: reference/debug/novr.md
+      - Profiling: reference/debug/profiling.md
+    - Extensions:
+      - Entities: reference/extensions/entities.md
+      - Entity: reference/extensions/entity.md
+      - NPC: reference/extensions/npc.md
+      - String: reference/extensions/string.md
+      - Template: reference/extensions/template.md
+      - Vector: reference/extensions/vector.md
+    - Helpers:
+      - Animation: reference/helpers/animation.md
+      - EasyConvars: reference/helpers/easyconvars.md
+    - Math:
+      - Common: reference/math/common.md
+      - Weighted Random: reference/math/weighted_random.md
+    - Panorama:
+      - Core: reference/panorama/core.md
+    - Player:
+      - Core: reference/player/core.md
+      - Events: reference/player/events.md
+      - Hands: reference/player/hands.md
+      - Wrist Attachments: reference/player/wrist_attachments.md
+    - Utils:
+      - Common: reference/utils/common.md
+
+plugins:
+  - offline
+  - search
+  - privacy
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.caret
+  - pymdownx.tilde
+  - tables
+  - def_list
+
+  - pymdownx.tabbed:
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+      alternate_style: true
+
+  - attr_list
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  
+  - admonition
+  - pymdownx.details
+
+extra_css:
+  - stylesheets/exposed.css
+

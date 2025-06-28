@@ -1,0 +1,1 @@
+Page telling user what commands offered and stuff

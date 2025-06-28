@@ -1,0 +1,667 @@
+controls/gesture:
+  aliases:
+    - GestureNames
+  types:
+    - GestureTable
+    - GESTURE_CALLBACK
+  fields:
+    - Gesture.version
+    - Gesture.AutoStart
+    - Gesture.DebugEnabled
+    - Gesture.Duration
+    - Gesture.Gestures
+    - Gesture.CurrentGesture
+    - Gesture.PreviousGesture
+    - Gesture.DicrepancyTolerance
+  methods:
+    - Gesture:AddGesture
+    - Gesture:RemoveGesture
+    - Gesture:RemoveGestures
+    - Gesture:GetGesture
+    - Gesture:GetGestureRaw
+    - Gesture:RegisterCallback
+    - Gesture:UnregisterCallback
+    - Gesture:Start
+    - Gesture:Stop
+
+controls/haptics:
+  replacements:
+    - HapticSequenceClass: HapticSequence
+  # fields:
+  #   - HapticSequenceClass.version
+  methods:
+    - HapticSequenceClass:Fire
+  functions:
+    - HapticSequence
+
+controls/input:
+  methods:
+    - Input:GetButtonDescription
+    - Input:GetAnalogDescription
+    - Input:GetControllerTypeDescription
+    - Input:GetHandName
+    - Input:ListenToButton
+    - Input:ListenToAnalog
+    - Input:ModifyAnalogCallback
+    - Input:StopListening
+    - Input:StopListeningCallbackContext
+    - Input:StopListeningByContext
+  fields:
+    - Input.version
+    - Input.AutoStart
+    - Input.MultiplePressInterval
+  globals:
+    - InputHandBoth
+    - InputHandLeft
+    - InputHandRight
+    - InputHandPrimary
+    - InputHandSecondary
+  types:
+    - InputPressCallback
+    - InputReleaseCallback
+    - InputAnalogCallback
+  aliases:
+    - NamedDigitalInputAction
+    - InputHandKind
+    - AnalogValueType
+
+data/color:
+  replacements:
+    - ColorClass: Color
+  types:
+    - Color
+  methods:
+    - Storage.LoadColor
+    - Storage.SaveColor
+    - ColorClass:ToHexString
+    - ColorClass:ToVector
+    - ColorClass:ToDecimalVector
+    - ColorClass:SetRGB
+    - ColorClass:GetHSL
+    - ColorClass:SetHSL
+  functions:
+    - Color
+    - IsColor
+
+data/inventory:
+  replacements:
+    - InventoryClass: Inventory
+  types:
+    - Inventory
+  methods:
+    - Storage.SaveInventory
+    - Storage.LoadInventory
+    - InventoryClass:Add
+    - InventoryClass:Remove
+    - InventoryClass:Get
+    - InventoryClass:Highest
+    - InventoryClass:Lowest
+    - InventoryClass:Contains
+    - InventoryClass:Length
+    - InventoryClass:IsEmpty
+    - InventoryClass:pairs
+  functions:
+    - Inventory
+
+data/queue:
+  replacements:
+    - QueueClass: Queue
+  types:
+    - Queue
+  methods:
+    - Storage.SaveQueue
+    - Storage.LoadQueue
+    - QueueClass:Enqueue
+    - QueueClass:Dequeue
+    - QueueClass:Front
+    - QueueClass:Back
+    - QueueClass:Remove
+    - QueueClass:MoveToBack
+    - QueueClass:MoveToFront
+    - QueueClass:Contains
+    - QueueClass:Length
+    - QueueClass:IsEmpty
+    - QueueClass:pairs
+  functions:
+    - Queue
+
+data/stack:
+  replacements:
+    - StackClass: Stack
+  types:
+    - Stack
+  methods:
+    - Storage.SaveStack
+    - Storage.LoadStack
+    - StackClass:Push
+    - StackClass:Pop
+    - StackClass:Top
+    - StackClass:Bottom
+    - StackClass:Remove
+    - StackClass:MoveToTop
+    - StackClass:MoveToBottom
+    - StackClass:Contains
+    - StackClass:Length
+    - StackClass:IsEmpty
+    - StackClass:pairs
+  functions:
+    - Stack
+
+debug/common:
+  fields:
+    - Debug.version
+  methods:
+    - Debug.FindEntityByPattern
+    - Debug.FindAllEntitiesByPattern
+    - Debug.PrintEntityList
+    - Debug.PrintAllEntities
+    - Debug.PrintDiffEntities
+    - Debug.PrintEntities
+    - Debug.PrintAllEntitiesInSphere
+    - Debug.PrintTable
+    - Debug.PrintTableShallow
+    - Debug.PrintList
+    - Debug.PrintValue
+    - Debug.ShowEntity
+    - Debug.PrintEntityCriteria
+    - Debug.PrintEntityBaseCriteria
+    - Debug.GetClassname
+    - Debug.PrintMetaClasses
+    - Debug.PrintGraph
+    - Debug.PrintInheritance
+    - Debug.SimpleVector
+    - Debug.Sphere
+    - Debug.Line
+    - Debug.EntStr
+    - Debug.DumpConvars
+    - Debug.FindEntityByHandleString
+    - Debug.IsEntityHandleString
+    - Debug.ToOrdinalString
+
+debug/novr:
+  fields:
+    - NoVR.AutoStartInToolsMode
+  types:
+    - NoVrInteractClass
+  methods:
+    - NoVR:AddInteraction
+    - NoVR:EnableAllDebugging
+    - NoVR:DisableAllDebugging
+    - NoVR:UnbindKeys
+    - NoVR:BindKey
+  # aliases:
+  #   - KeyboardKey # Too long
+
+debug/profiling:
+  replacements:
+    - profiler: Profiler
+  types:
+    - Profiler
+  methods:
+    - profiler:Profile
+    - profiler:GetMean
+    - profiler:GetMedian
+    - profiler:GetStandardDeviation
+  functions:
+    - Profiler
+
+extensions/entities:
+  methods:
+    - Entities:FindBestMatching
+    - Entities:All
+    - Entities:Random
+    - Entities:FindInPrefab
+    - CEntityInstance:FindInPrefab
+    - Entities:FindAllInCone
+    - Entities:FindAllInBounds
+    - Entities:FindAllInBox
+    - Entities:FindAllInCube
+    - Entities:FindNearest
+    - Entities:FindAllByClassnameList
+    - Entities:FindAllByClassnameListWithin
+    - Entities:FindByClassnameListNearest
+    - Entities:FindAllNPCs
+    - Entities:IterateAllNPCs
+    - Entities:FindAllByModelWithin
+    - Entities:FindByModelNearest
+    - Entities:FindByModelPattern
+    - Entities:FindAllByModelPattern
+
+extensions/entity:
+  methods:
+    - CBaseEntity:GetChildrenMemSafe
+    - CBaseEntity:GetTopChildren
+    - CBaseEntity:EntFire
+    - CBaseEntity:GetFirstChildWithClassname
+    - CBaseEntity:GetFirstChildWithName
+    - CBaseEntity:SetQAngle
+    - CBaseEntity:SetAngle
+    - CBaseEntity:ResetLocal
+    - CBaseEntity:GetSize
+    - CBaseEntity:GetBiggestBounding
+    - CBaseEntity:GetRadius
+    - CBaseEntity:GetVolume
+    - CBaseEntity:GetBoundingCorners
+    - CBaseEntity:IsWithinBounds
+    - CBaseEntity:DisablePickup
+    - CBaseEntity:EnablePickup
+    - CBaseEntity:Delay
+    - CBaseEntity:GetParents
+    - CBaseEntity:DoNotDrop
+    - CBaseEntity:GetCriteria
+    - CBaseEntity:GetOwnedEntities
+    - CBaseEntity:SetRenderAlphaAll
+    - CBaseEntity:SetCenter
+    - CBaseEntity:SetOriginByAttachment
+    - CBaseEntity:TrackProperty
+    - CBaseEntity:UntrackProperty
+    - CBaseEntity:QuickThink
+    - CBaseEntity:SetRenderingEnabled
+    - CBaseEntity:SetCastShadow
+    - CBaseEntity:RedirectOutput
+    - CBaseEntity:DistanceFromEyes
+    - CBaseEntity:GetAttachmentNameOrigin
+    - CBaseEntity:GetAttachmentNameAngles
+
+extensions/npc:
+  methods:
+    - CAI_BaseNPC:StartSchedule
+    - CAI_BaseNPC:StopSchedule
+    - CAI_BaseNPC:SetState
+    - CAI_BaseNPC:HasEnemyTarget
+    - CAI_BaseNPC:EstimateEnemyTarget
+    - CAI_BaseNPC:SetRelationship
+    - CAI_BaseNPC:IsCreature
+    - CAI_BaseNPC:IsCombine
+    - CAI_BaseNPC:IsXen
+    - CAI_BaseNPC:GetSquadMembers
+  aliases:
+    - RelationshipDisposition
+
+# Only has operator overloads
+# extensions/qangle:
+
+extensions/string:
+  methods:
+    - string.startswith
+    - string.endswith
+    - string.splitraw
+    - string.split
+    - string.truncate
+    - string.trimleft
+    - string.trimright
+    - string.capitalize
+
+extensions/template:
+  methods:
+    - CPointTemplate:ForceSpawnAtCaller
+
+extensions/vector:
+  replacements:
+    - meta: Vector
+  methods:
+    - meta:Perpendicular
+    - meta:IsPerpendicular
+    - meta:IsParallelTo
+    - meta:Slerp
+    - meta:LocalTranslate
+    - meta:AngleDiff
+    - meta:SignedAngleDiff
+    - meta:Unpack
+    - meta:LengthSquared
+    - meta:IsSimilarTo
+    - meta:Clone
+
+helpers/animation:
+  methods:
+    - Animation:CreateAnimation
+    - Animation:Animate
+    - CBaseEntity:Animate
+
+helpers/easyconvars:
+  methods:
+    - EasyConvars:Register
+    - EasyConvars:Warn
+    - EasyConvars:Msg
+    - EasyConvars:Save
+    - EasyConvars:Load
+    - EasyConvars:SetPersistent
+    - EasyConvars:RegisterConvar
+    - EasyConvars:RegisterCommand
+    - EasyConvars:RegisterToggle
+    - EasyConvars:GetStr
+    - EasyConvars:GetBool
+    - EasyConvars:GetFloat
+    - EasyConvars:GetInt
+    - EasyConvars:SetStr
+    - EasyConvars:SetBool
+    - EasyConvars:SetFloat
+    - EasyConvars:SetInt
+    - EasyConvars:SetRaw
+    - EasyConvars:WasChangedByUser
+    - EasyConvars:SetWasChanged
+    - EasyConvars:SetIfUnchanged
+    - EasyConvars:SetPostInitializer
+  types:
+    - EasyConvarsRegisteredData
+  aliases:
+    - EasyConvarsType
+  globals:
+    - EASYCONVARS_CONVAR
+    - EASYCONVARS_COMMAND
+    - EASYCONVARS_TOGGLE
+
+math/common:
+  methods:
+    - math.sign
+    - math.trunc
+    - math.round
+    - math.isclose
+    - math.has_frac
+    - math.get_frac
+
+math/weighted_random:
+  replacements:
+    - WR: WeightedRandom
+  types:
+    - WeightedRandom
+    - WeightedRandomItem
+  methods:
+    - Storage.SaveWeightedRandom
+    - Storage.LoadWeightedRandom
+    - WR:Add
+    - WR:TotalWeight
+    - WR:Random
+  functions:
+    - WeightedRandom
+
+panorama/core:
+  globals:
+    - Panorama
+  methods:
+    - Panorama:InitPanel
+    - Panorama:Send
+    - Panorama:ToJSON
+    - Panorama:GetId
+
+player/core:
+  fields:
+    - CBasePlayer.HMDAvatar
+    - CBasePlayer.HMDAnchor
+    - CBasePlayer.Hands
+    - CBasePlayer.LeftHand
+    - CBasePlayer.RightHand
+    - CBasePlayer.PrimaryHand
+    - CBasePlayer.SecondaryHand
+    - CBasePlayer.IsLeftHanded
+    - CBasePlayer.LastItemDropped
+    - CBasePlayer.LastClassDropped
+    - CBasePlayer.LastItemGrabbed
+    - CBasePlayer.LastClassGrabbed
+    - CBasePlayer.CurrentlyEquipped
+    - CBasePlayer.PreviouslyEquipped
+    - CBasePlayer.Items
+    - CPropVRHand.ItemHeld
+    - CPropVRHand.LastItemDropped
+    - CPropVRHand.LastClassDropped
+    - CPropVRHand.LastItemGrabbed
+    - CPropVRHand.LastClassGrabbed
+    - CPropVRHand.Literal
+    - CPropVRHand.WristItem
+    - CPropVRHand.Opposite
+  methods:
+    - CBasePlayer:DropByHandle
+    - CBasePlayer:DropLeftHand
+    - CBasePlayer:DropRightHand
+    - CBasePlayer:DropPrimaryHand
+    - CBasePlayer:DropSecondaryHand
+    - CBasePlayer:DropCaller
+    - CBasePlayer:DropActivator
+    - CBasePlayer:GrabByHandle
+    - CBasePlayer:GrabCaller
+    - CBasePlayer:GrabActivator
+    - CBasePlayer:GetMoveType
+    - CBasePlayer:SetMoveType
+    - CBasePlayer:GetLookingAt
+    - CBasePlayer:DisableFallDamage
+    - CBasePlayer:EnableFallDamage
+    - CBasePlayer:AddResources
+    - CBasePlayer:SetResources
+    - CBasePlayer:SetItems
+    - CBasePlayer:AddPistolAmmo
+    - CBasePlayer:AddShotgunAmmo
+    - CBasePlayer:AddRapidfireAmmo
+    - CBasePlayer:AddResin
+    - CBasePlayer:GetImmediateItems
+    - CBasePlayer:GetGrenades
+    - CBasePlayer:GetHealthPens
+    - CBasePlayer:MergePropWithHand
+    - CBasePlayer:HasWeaponEquipped
+    - CBasePlayer:GetCurrentWeaponReserves
+    - CBasePlayer:HasItemHolder
+    - CBasePlayer:HasGrabbityGloves
+    - CBasePlayer:GetFlashlight
+    - CBasePlayer:GetFlashlightPointedAt
+    - CBasePlayer:GetResin
+    - CBasePlayer:IsHolding
+    - CBasePlayer:GetWeapon
+    - CBasePlayer:GetPistolUpgrades
+    - CBasePlayer:GetRapidfireUpgrades
+    - CBasePlayer:GetShotgunUpgrades
+    - CBasePlayer:HasWeaponUpgrade
+    - CBasePlayer:GetWorldForward
+    - CBasePlayer:UpdateWeapons
+    - CBasePlayer:RemoveWeapons
+    - CBasePlayer:SetWeapon
+    - CBasePlayer:UpdateWeaponsExistence
+    - CBasePlayer:GetWeapons
+    - CBasePlayer:GetBackpack
+    - CBasePlayer:SetMovementEnabled
+    - CBasePlayer:SetAnchorForwardAroundPlayer
+    - CBasePlayer:SetAnchorAnglesAroundPlayer
+    - CBasePlayer:SetAnchorOriginAroundPlayer
+  globals:
+    - PLAYER_WEAPON_HAND
+    - PLAYER_WEAPON_ENERGYGUN
+    - PLAYER_WEAPON_RAPIDFIRE
+    - PLAYER_WEAPON_SHOTGUN
+    - PLAYER_WEAPON_MULTITOOL
+    - PLAYER_WEAPON_GENERIC_PISTOL
+  aliases:
+    - PlayerPistolUpgrades
+    - PlayerRapidfireUpgrades
+    - PlayerShotgunUpgrades
+    - PlayerWeaponUpgrades
+  enums: # Not supported yet
+    - PlayerMoveType
+
+player/events:
+  aliases:
+    - PLAYER_EVENTS_ALL
+    - PlayerEventNoVRPlayer
+  types:
+    - PlayerEventPlayerActivate
+    - PlayerEventVRPlayerReady
+    - PlayerEventItemPickup
+    - PlayerEventItemReleased
+    - PlayerEventPrimaryHandChanged
+    - PlayerEventPlayerDropAmmoInBackpack
+    - PlayerEventPlayerRetrievedBackpackClip
+    - PlayerEventPlayerStoredItemInItemholder
+    - PlayerEventPlayerRemovedItemFromItemholder
+    - PlayerEventPlayerDropResinInBackpack
+    - PlayerEventWeaponSwitch
+  functions:
+    - ListenToPlayerEvent
+    - StopListeningToPlayerEvent
+    - ListenToEntityPickup
+    - StopListeningToEntityPickup
+
+player/hands:
+  methods:
+    - CPropVRHand:MergeProp
+    - CPropVRHand:IsHoldingItem
+    - CPropVRHand:Drop
+    - CPropVRHand:GetGlove
+    - CPropVRHand:GetGrabbityGlove
+    - CPropVRHand:IsButtonPressed
+    - CPropVRHand:GetPalmPosition
+    - CBaseEntity:Drop
+    - CBaseEntity:Grab
+
+player/wrist_attachments:
+  globals:
+    - WristAttachments
+  aliases:
+    - WristAttachmentHandType
+  types:
+    - WristAttachmentData
+  methods:
+    - WristAttachments:Add
+    - WristAttachments:SetHand
+    - WristAttachments:GetHand
+    - WristAttachments:GetEntityAttachment
+    - WristAttachments:IsEntityAttached
+    - WristAttachments:Update
+
+utils/common:
+  globals:
+    - Util
+  methods:
+    - Util.GetHandIdFromTip
+    - Util.FindKeyFromValue
+    - Util.FindDKeyFromValueDeep
+    - Util.TableSize
+    - Util.Delay
+    - Util.QAngleFromVector
+    - Util.CreateConstraint
+    - Util.CreateExplosion
+    - Util.Choose
+    - Util.VectorFromString
+  aliases:
+    - ExplosionType
+
+class:
+  globals:
+    - EntityClassNameMap
+    - READY_NORMAL
+    - READY_GAME_LOAD
+    - READY_TRANSITION
+  aliases:
+    - OnReadyType
+  functions:
+    - inherit
+    - entity
+    - printinherits
+    - getvalvemeta
+    - getinherits
+    - isinstance
+    - IsClassEntity
+  types:
+    - EntityClass
+  methods:
+    # - EntityClass:Set DEPRECATED
+    - EntityClass:Save
+    - EntityClass:Think
+    - EntityClass:ResumeThink
+    - EntityClass:PauseThink
+    - EntityClass:Output
+    - EntityClass:GameEvent
+    - EntityClass:PlayerEvent
+
+globals:
+  types:
+    - AlyxLibAddon
+    - TraceTableLineExt
+  globals:
+    - AlyxLibAddons
+  functions:
+    - RegisterAlyxLibAddon
+    - RegisterAlyxLibDiagnostic
+    - CompareVersions
+    - GetScriptFile
+    - GetEnabledAddons
+    - IsEntity
+    - AddOutput
+    - module_exists
+    - ifrequire
+    - IncludeScript
+    - IsVREnabled
+    - prints
+    - printn
+    - devprint
+    - devprints
+    - devprintn
+    - devprint2
+    - devprints2
+    - devprintn2
+    - warn
+    - devwarn
+    - Expose
+    - IsVector
+    - IsQAngle
+    - DeepCopyTable
+    - TableRemove
+    - TableRandom
+    - TableKeys
+    - TableValues
+    - TableSize
+    - ArrayRandom
+    - ArrayShuffle
+    - ArrayRemove
+    - ArrayRemoveVal
+    - ArrayAppend
+    - ArrayAppends
+    - TraceLineExt
+    - TraceLineWorld
+    - TraceLineEntity
+    - TraceLineSimple
+    - IsWorld
+    - GetWorld
+    - IsPhysicsObject
+    - haskey
+    - truthy
+    - SearchEntity
+    - LerpAngle
+    - CalcClosestPointOnEntityOBBAdjusted
+    - DefaultTable
+    - Wrap
+    - CreateToggleBehavior
+    - CalcClosestCornerOnEntityAABB
+
+precache:
+  types:
+    AlyxLibGlobalPrecacheItem
+  aliases:
+    - AlyxLibGlobalPrecacheType
+  functions:
+    - GlobalPrecache
+    - _PrecacheGlobalItems
+
+storage:
+  fields:
+    - Storage.version
+  methods:
+    - Storage.RegisterType
+    - Storage.UnregisterType
+    - Storage.Join
+    - Storage.SaveType
+    - Storage.SaveString
+    - Storage.SaveNumber
+    - Storage.SaveBoolean
+    - Storage.SaveVector
+    - Storage.SaveQAngle
+    - Storage.SaveTableCustom
+    - Storage.SaveTable
+    - Storage.SaveEntity
+    - Storage.Save
+    - Storage.LoadString
+    - Storage.LoadNumber
+    - Storage.LoadBoolean
+    - Storage.LoadVector
+    - Storage.LoadQAngle
+    - Storage.LoadTableCustom
+    - Storage.LoadTable
+    - Storage.LoadEntity
+    - Storage.Load
+    - Storage.LoadAll
