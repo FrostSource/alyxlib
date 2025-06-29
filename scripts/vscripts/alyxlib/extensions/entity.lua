@@ -20,11 +20,8 @@ local version = "v2.7.1"
 ---@return EntityHandle[]
 function CBaseEntity:GetChildrenMemSafe()
     local childrenArray = {}
-    local child = self:FirstMoveChild()
-    while child do
-        table.insert(childrenArray, child)
-        vlua.extend(childrenArray, child:GetChildrenMemSafe())
-        child = child:NextMovePeer()
+    for child in self:IterateChildren() do
+        table.insert(childrenArray, 1, child)
     end
     return childrenArray
 end
