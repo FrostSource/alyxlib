@@ -367,7 +367,7 @@ function CBaseEntity:GetParents()
     local parents = {}
     local parent = self:GetMoveParent()
     while parent ~= nil do
-        parents[#parents+1] = parent
+        table.insert(parents, parent)
         parent = parent:GetMoveParent()
     end
     return parents
