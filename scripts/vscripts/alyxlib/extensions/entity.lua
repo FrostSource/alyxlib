@@ -26,7 +26,8 @@ function CBaseEntity:GetChildrenMemSafe()
     return childrenArray
 end
 
----Returns a `function` that iterates on all children of this entity.
+---
+---Returns a `function` that iterates over all children of this entity.
 ---The `function` returns the next child every time it is called until no more children exist,
 ---in which case `nil` is returned.
 ---
@@ -215,7 +216,7 @@ end
 ---
 ---Set entity pitch, yaw, roll from a `QAngle`.
 ---
----@param qangle QAngle
+---@param qangle QAngle # The rotation to set (pitch, yaw, roll).
 function CBaseEntity:SetQAngle(qangle)
     self:SetAngles(qangle.x, qangle.y, qangle.z)
 end
@@ -223,7 +224,7 @@ end
 ---
 ---Set entity local pitch, yaw, roll from a `QAngle`.
 ---
----@param qangle QAngle
+---@param qangle QAngle # The rotation to set (pitch, yaw, roll).
 function CBaseEntity:SetLocalQAngle(qangle)
     self:SetLocalAngles(qangle.x, qangle.y, qangle.z)
 end
@@ -231,16 +232,16 @@ end
 ---
 ---Set entity pitch, yaw or roll. Supply `nil` for any parameter to leave it unchanged.
 ---
----@param pitch number|nil
----@param yaw number|nil
----@param roll number|nil
+---@param pitch? number # Pitch angle, or nil to leave unchanged.
+---@param yaw? number # Pitch angle, or nil to leave unchanged.
+---@param roll? number # Pitch angle, or nil to leave unchanged.
 function CBaseEntity:SetAngle(pitch, yaw, roll)
     local angles = self:GetAngles()
     self:SetAngles(pitch or angles.x, yaw or angles.y, roll or angles.z)
 end
 
 ---
----Resets local origin and angle to [0,0,0]
+---Resets local origin and angle to [0,0,0].
 ---
 function CBaseEntity:ResetLocal()
     self:SetLocalOrigin(Vector())
@@ -250,7 +251,7 @@ end
 ---
 ---Get the bounding size of the entity.
 ---
----@return Vector
+---@return Vector # Bounding size of the entity as a Vector.
 function CBaseEntity:GetSize()
     return self:GetBoundingMaxs() - self:GetBoundingMins()
 end
@@ -259,24 +260,25 @@ end
 ---Get the biggest bounding box axis of the entity.
 ---This will be `size.x`, `size.y` or `size.z`.
 ---
----@return number
+---@return number # The largest bounding value.
 function CBaseEntity:GetBiggestBounding()
     local size = self:GetSize()
     return math.max(size.x, size.y, size.z)
 end
 
 ---
----Get the radius of the entity bounding box. This is half the size of the sphere.
+---Get the radius of the entity's bounding box.
+---This is half the size of the bounding box along its largest axis.
 ---
----@return number
+---@return number # The bounding radius value.
 function CBaseEntity:GetRadius()
     return self:GetSize():Length() * 0.5
 end
 
 ---
----Get the volume of the entity bounds in inches cubed.
+---Get the volume of the entity bounds in cubic inches.
 ---
----@return number
+---@return number # The volume of the entity bounds.
 function CBaseEntity:GetVolume()
     local size = self:GetSize() * self:GetAbsScale()
     return size.x * size.y * size.z
@@ -285,8 +287,8 @@ end
 ---
 ---Get each corner of the entity's bounding box.
 ---
----@param rotated? boolean # If the corners should be rotated with the entity angle.
----@return Vector[]
+---@param rotated? boolean # If true, corners are rotated by the entity's angles.
+---@return Vector[] # List of 8 corner positions.
 function CBaseEntity:GetBoundingCorners(rotated)
     local bounds = self:GetBounds()
     local origin = self:GetOrigin()
@@ -353,8 +355,8 @@ end
 ---
 ---Delay some code using this entity.
 ---
----@param func fun()
----@param delay number?
+---@param func fun() # The function to delay.
+---@param delay? number # Optional delay in seconds (default 0).
 function CBaseEntity:Delay(func, delay)
     self:SetContextThink(DoUniqueString("delay"), function() func() end, delay or 0)
 end
@@ -362,7 +364,7 @@ end
 ---
 ---Get all parents in the hierarchy upwards.
 ---
----@return EntityHandle[]
+---@return EntityHandle[] # List of parent entities, from immediate parent up to the root.
 function CBaseEntity:GetParents()
     local parents = {}
     local parent = self:GetMoveParent()
@@ -386,20 +388,20 @@ function CBaseEntity:DoNotDrop(enabled)
 end
 
 ---
----Get all criteria as a table.
+---Get all criteria on this entity as a table.
 ---
----@return CriteriaTable
+---@return CriteriaTable # A table of criteria key-value pairs.
 function CBaseEntity:GetCriteria()
     local c = {}
     self:GatherCriteria(c)
     return c
 end
-
 ---
----Get all entities which are owned by this entity
+---Get all entities owned by this entity.
 ---
 ---**Note:** This searches all entities in the map and should be used sparingly.
----@return EntityHandle[]
+---
+---@return EntityHandle[] # List of owned entities.
 function CBaseEntity:GetOwnedEntities()
     local ents = {}
     local ent = Entities:First()
@@ -413,9 +415,9 @@ function CBaseEntity:GetOwnedEntities()
 end
 
 ---
----Set the alpha modulation of this entity, plus any children that can have their alpha set.
+---Set the alpha modulation of this entity, plus any children that support [SetRenderAlpha](lua://CBaseModelEntity.SetRenderAlpha).
 ---
----@param alpha integer
+---@param alpha integer # Alpha value (0 = fully transparent, 255 = fully opaque).
 function CBaseModelEntity:SetRenderAlphaAll(alpha)
     for _, child in ipairs(self:GetChildren()) do
         if child.SetRenderAlpha then
@@ -426,9 +428,9 @@ function CBaseModelEntity:SetRenderAlphaAll(alpha)
 end
 
 ---
----Center the entity at a new position.
+---Moves the entity so that its center is at the given position.
 ---
----@param position Vector
+---@param position Vector # The new center position.
 function CBaseEntity:SetCenter(position)
     local center = self:GetCenter()
     local origin = self:GetOrigin()
@@ -441,10 +443,10 @@ end
 
 
 ---
----Set the origin of this entity around one of its attachment points.
+---Set the entity's origin so that the specified attachment point aligns with the given world position.
 ---
----@param position Vector
----@param attachment string
+---@param position Vector # The target world position for the attachment point.
+---@param attachment string # The name of the attachment point to align.
 function CBaseAnimating:SetOriginByAttachment(position, attachment)
     local offset = self:GetAttachmentOrigin(self:ScriptLookupAttachment(attachment))
     local origin = self:GetOrigin()
@@ -543,37 +545,37 @@ function CEntityInstance:RedirectOutputFunc(output, func, entity)
 end
 
 ---
----Gets the position in front of the entity's eyes at the specified position.
+---Gets the position in front of the entity’s eyes at the specified distance.
 ---
----@param distance number
----@return Vector
+---@param distance number # How far in front of the eyes to get the position.
+---@return Vector # The world position in front of the eyes.
 function CBaseEntity:DistanceFromEyes(distance)
     return self:EyePosition() + self:EyeAngles():Forward() * distance
 end
 
 ---
----Gets the origin of a named attachment.
+---Gets the world origin position of a named attachment point.
 ---
----@param name string
----@return Vector
+---@param name string # The name of the attachment.
+---@return Vector # The world position of the attachment.
 function CBaseAnimating:GetAttachmentNameOrigin(name)
     return self:GetAttachmentOrigin(self:ScriptLookupAttachment(name))
 end
 
 ---
----Gets the angles of a named attachment.
+---Gets the world angles (rotation) of a named attachment point.
 ---
----@param name string
----@return Vector
+---@param name string # The name of the attachment.
+---@return Vector # The world rotation angles of the attachment.
 function CBaseAnimating:GetAttachmentNameAngles(name)
     return self:GetAttachmentAngles(self:ScriptLookupAttachment(name))
 end
 
 ---
----Gets the forward vector of a named attachment.
+---Gets the forward direction vector of a named attachment.
 ---
----@param name string
----@return Vector
+---@param name string # The name of the attachment.
+---@return Vector # The forward unit vector of the attachment in world space.
 function CBaseAnimating:GetAttachmentNameForward(name)
     return self:GetAttachmentForward(self:ScriptLookupAttachment(name))
 end
