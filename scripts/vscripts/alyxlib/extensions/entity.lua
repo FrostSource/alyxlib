@@ -177,32 +177,38 @@ function CBaseEntity:EntFire(action, value, delay, activator, caller)
 end
 
 ---
----Get the first child in this entity's hierarchy with a given classname.
+---Get the first child in this entity's hierarchy with a given `classname`.
+---Searches using **breadth-first traversal**, so it finds the closest matching child first.
 ---
 ---This function is memory safe.
 ---
----@param classname string # Classname to find.
----@return EntityHandle|nil # The child found.
+---@param classname string # Classname to search for.
+---@return EntityHandle? # The first matching child found, or `nil` if none exists.
 function CBaseEntity:GetFirstChildWithClassname(classname)
-    for _, child in ipairs(self:GetChildrenMemSafe()) do
+    for child in self:IterateChildrenBreadthFirst() do
         if child:GetClassname() == classname then
             return child
         end
     end
+
     return nil
 end
 
 ---
----Get the first child in this entity's hierarchy with a given target name.
+---Get the first child in this entity's hierarchy with a given `name`.
+---Searches using **breadth-first traversal**, so it finds the closest matching child first.
 ---
----@param name string # Targetname to find.
----@return EntityHandle|nil # The child found.
+---This function is memory safe.
+---
+---@param name string # Targetname to search for.
+---@return EntityHandle? # The first matching child found, or `nil` if none exists.
 function CBaseEntity:GetFirstChildWithName(name)
-    for _, child in ipairs(self:GetChildren()) do
+    for child in self:IterateChildrenBreadthFirst() do
         if child:GetName() == name then
             return child
         end
     end
+
     return nil
 end
 
