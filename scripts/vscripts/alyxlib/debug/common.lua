@@ -92,7 +92,7 @@ end
 ---Property patterns do not need to be functions.
 ---
 ---@param list EntityHandle[] # List of entities to print.
----@param properties string[] # List of property patterns to search for.
+---@param properties? string[] # List of property patterns to search for.
 function Debug.PrintEntityList(list, properties)
 
     if #list == 0 then
