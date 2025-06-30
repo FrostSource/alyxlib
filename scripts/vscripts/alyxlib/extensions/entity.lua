@@ -59,6 +59,50 @@ function CBaseEntity:IterateChildren()
 end
 
 ---
+---Returns a `function` that iterates over all children of this entity in **breadth-first order**.
+---The `function` returns the next child every time it is called until no more children exist,
+---in which case `nil` is returned.
+---
+---Useful in `for` loops:
+---
+---     for child in thisEntity:IterateChildrenBreadthFirst() do
+---         print(Debug.EntStr(child))
+---     end
+---
+---Unlike [IterateChildren](lua://CBaseEntity.IterateChildren), this visits all immediate children first,
+---then their children, and so on.
+---
+---This function is memory safe.
+---
+---@return fun(...:any):EntityHandle # The new iterator function
+function CBaseEntity:IterateChildrenBreadthFirst()
+    return coroutine.wrap(function()
+        local queue = {}
+
+        -- start with direct children
+        local child = self:FirstMoveChild()
+        while child do
+            table.insert(queue, child)
+            child = child:NextMovePeer()
+        end
+
+        -- process the queue
+        while #queue > 0 do
+            local entity = table.remove(queue, 1) -- pop front
+            coroutine.yield(entity)
+
+            -- enqueue this entity's direct children
+            local subchild = entity:FirstMoveChild()
+            while subchild do
+                table.insert(queue, subchild)
+                subchild = subchild:NextMovePeer()
+            end
+        end
+    end)
+end
+
+
+---
 ---Get the top level entities parented to this entity. Not children of children.
 ---
 ---This function is memory safe.
