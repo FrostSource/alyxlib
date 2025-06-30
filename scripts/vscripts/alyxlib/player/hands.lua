@@ -45,6 +45,22 @@ function CPropVRHand:Drop()
     end
 end
 
+---Grab the entity
+---@param ent EntityHandle|string
+function CPropVRHand:Grab(ent)
+    if type(ent) == "string" then
+        print('search for ' .. ent)
+        local name = ent
+        ent = Entities:FindByName(nil, name)
+        print(ent)
+        if ent == nil then
+            return warn("Could not find entity to grab with name " .. name)
+        end
+    end
+
+    ent:Grab(self)
+end
+
 ---Get the rendered glove entity for this hand, i.e. the first `hlvr_prop_renderable_glove` class.
 ---@return EntityHandle|nil
 function CPropVRHand:GetGlove()
