@@ -148,24 +148,28 @@ Animation.Curves = {
 ---@return fun(time:number):boolean # New animation function
 function Animation:CreateAnimation(entity, getter, setter, targetValue, curveFunc)
     local startValue = getter(entity)
+    local adjustedTarget = targetValue
 
     local special = nil
     if IsVector(targetValue) then
         special = Vector
     elseif IsQAngle(targetValue) then
         special = QAngle
+        adjustedTarget = QAngle(
+            startValue.x + AngleDiff(targetValue.x, startValue.x),
+            startValue.y + AngleDiff(targetValue.y, startValue.y),
+            startValue.z + AngleDiff(targetValue.z, startValue.z)
+        )
     end
 
     return function(t)
         local currentValue = getter(entity)
         if not special then
-            currentValue = curveFunc(startValue, targetValue, t)
+            currentValue = curveFunc(startValue, adjustedTarget, t)
         else
-            currentValue = special(
-                curveFunc(startValue.x, targetValue.x, t),
-                curveFunc(startValue.y, targetValue.y, t),
-                curveFunc(startValue.z, targetValue.z, t)
-            )
+            currentValue.x = curveFunc(startValue.x, adjustedTarget.x, t)
+            currentValue.y = curveFunc(startValue.y, adjustedTarget.y, t)
+            currentValue.z = curveFunc(startValue.z, adjustedTarget.z, t)
         end
         setter(entity, currentValue)
 
