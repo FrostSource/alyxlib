@@ -465,6 +465,25 @@ RegisterAlyxLibCommand("ent_find_by_address", function (_, tblpart, colon, hash)
     end
 end, "Prints info for an entity by its table address", 0)
 
+---
+---Renames the first entity found using `pattern`.
+---
+RegisterAlyxLibCommand("ent_rename", function(_, pattern, newName)
+    local ent = Debug.FindEntityByPattern(pattern)
+    if not ent then
+        warn("Could not find entity with pattern '"..pattern.."'")
+        return
+    end
+
+    if newName == nil or newName == "" then
+        Msg("Removing name from " .. Debug.EntStr(ent))
+        ent:SetEntityName("")
+    else
+        Msg("Renaming " .. Debug.EntStr(ent) .. " to '" .. newName .. "'")
+        ent:SetEntityName(newName)
+    end
+end, "Renames the first entity found using a pattern to a new name", 0)
+
 local symbols = {"and","break","do","else","elseif","end","false","for","function","if","in","local","nil","not","or","repeat","return","then","true","until","while"}
 
 -- if IsInToolsMode() then
