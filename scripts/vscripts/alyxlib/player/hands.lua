@@ -98,6 +98,19 @@ function CPropVRHand:GetPalmPosition()
     end
 end
 
+---
+---Gets the 'hand_use_controller' entity associated with this hand.
+---
+---@return EntityHandle
+function CPropVRHand:GetHandUseController()
+    for _, controller in ipairs(Entities:FindAllByClassname("hand_use_controller")) do
+        if controller:GetOwner() == self then
+            return controller
+        end
+---@diagnostic disable-next-line: missing-return
+    end
+end
+
 ---Forces the player to drop this entity if held.
 ---@param self CBaseEntity
 function CBaseEntity:Drop()
