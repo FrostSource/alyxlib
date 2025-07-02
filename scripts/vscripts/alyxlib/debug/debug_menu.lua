@@ -124,7 +124,7 @@ function DebugMenu:ShowMenu()
         panel_dpi = 64,
         ignore_input = 0,
         lit = 0,
-        interact_distance = 8,
+        interact_distance = 12,
 
         vertical_align = "1",
         -- orientation = "0",
