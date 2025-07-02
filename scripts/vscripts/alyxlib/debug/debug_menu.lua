@@ -520,6 +520,20 @@ DebugMenu:AddToggle("alyxlib", "alyxlib_noclip_vr", "NoClip VR", "noclip_vr")
 
 DebugMenu:AddToggle("alyxlib", "alyxlib_godmode", "God Mode", "god")
 
+DebugMenu:AddToggle("alyxlib", "alyxlib_lefthanded", "Left Handed", "hlvr_left_hand_primary")
+
+DebugMenu:AddSeparator("alyxlib")
+
+DebugMenu:AddButton("alyxlib", "alyxlib_giveammo", "Give 999 Ammo", function()
+    SendToConsole("hlvr_setresources 999 999 999 " .. Player:GetResin())
+end)
+
+DebugMenu:AddButton("alyxlib", "alyxlib_giveresin", "Give 999 Resin", function()
+    SendToConsole("hlvr_addresources 0 0 0 " .. (999 - Player:GetResin()))
+end)
+
+DebugMenu:AddSeparator("alyxlib")
+
 local isRecordingDemo = false
 local currentDemo = ""
 
