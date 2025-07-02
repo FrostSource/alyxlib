@@ -157,7 +157,7 @@ end
 
 ListenToGameEvent("primary_hand_changed", function(data)
     ---@cast data GameEventPrimaryHandChanged
-    updatePrimaryHandId(data.is_primary_left and 0 or 1)
+    updatePrimaryHandId(1 - data.is_primary_left)
 end, nil)
 
 ---
