@@ -22,7 +22,7 @@
 
                 <Panel id="background_panel" class="bg">
                     <Panel class="header">
-                        <Label class="header" />
+                        <Label class="header" text="Debug Menu" />
                     </Panel>
                     <Panel class="empty_row" />
                     <Panel class="row">
