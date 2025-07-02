@@ -551,6 +551,32 @@ function ParseCommand(command, args)
     }
 }
 
+let scrollHelperScheduleCancel = false;
+let scrollHelperScheduleEvent = "";
+
+function ScrollHelperSchedule() {
+    if (scrollHelperScheduleCancel || currentlySelectedCategory === null) {
+        scrollHelperScheduleCancel = false;
+        return;
+    }
+    $.DispatchEvent(scrollHelperScheduleEvent, currentlySelectedCategory.panel);
+    $.Schedule(0.1, ScrollHelperSchedule);
+}
+function ScrollHelperClick() {
+    if (currentlySelectedCategory === null) return;
+
+    switch (scrollHelperScheduleEvent){
+        case "ScrollDown":
+            $.DispatchEvent("ScrollToBottom", currentlySelectedCategory.panel);
+            break;
+
+        case "ScrollUp":
+            $.DispatchEvent("ScrollToTop", currentlySelectedCategory.panel);
+            break;
+    }
+    
+}
+
 (function()
 {
     // Modify preset layout buttons to work with controller trigger
@@ -561,5 +587,15 @@ function ParseCommand(command, args)
     // Tells Lua that the menu has been reloaded so it can repopulate the menu
     // This helps with hot reloading panel changes
     $.Schedule(0.1, () => FireOutput("_DebugMenuReloaded"));
+
+    // Scroll helpers for sub-menus
+    // Valve kindly didn't allow us to raytrace click panels like the main menu
+    // so this is a work around for scrolling
+    $('#ScrollHelperDown').SetPanelEvent("onmouseover", () =>{ $.Schedule(0.1, ScrollHelperSchedule); scrollHelperScheduleEvent="ScrollDown"});
+    $('#ScrollHelperDown').SetPanelEvent("onmouseout", () => scrollHelperScheduleCancel = true);
+    $('#ScrollHelperDown').SetPanelEvent("onactivate", ScrollHelperClick);
+    $('#ScrollHelperUp').SetPanelEvent("onmouseover", () =>{ $.Schedule(0.1, ScrollHelperSchedule); scrollHelperScheduleEvent="ScrollUp"});
+    $('#ScrollHelperUp').SetPanelEvent("onmouseout", () => scrollHelperScheduleCancel = true);
+    $('#ScrollHelperUp').SetPanelEvent("onactivate", ScrollHelperClick);
 
 })();

@@ -57,12 +57,27 @@
                                 <Panel class="button_bullet" />
                             </Panel>
 
+                            <Button id="ScrollHelperUp" class="scroll_helper up">
+                                <Panel style="flow-children: right; horizontal-align: center;">
+                                    <Panel class="chevron_arrow" />
+                                    <Panel class="chevron_arrow" />
+                                    <Panel class="chevron_arrow" />
+                                </Panel>
+                            </Button>
+
                             <!-- Individual submenus are added here at the end of CategoriesContainer -->
                             
                         </Panel>
                     </Panel>
-                    <Panel class="empty_row" />
-                    <Panel class="empty_row_bottomR_corner" />
+                        <Button id="ScrollHelperDown" class="scroll_helper down">
+                            <Panel style="flow-children: right; horizontal-align: center;">
+                                <Panel class="chevron_arrow" />
+                                <Panel class="chevron_arrow" />
+                                <Panel class="chevron_arrow" />
+                            </Panel>
+                        </Button>
+                    <!-- <Panel class="empty_row" />
+                    <Panel class="empty_row_bottomR_corner" /> -->
                 </Panel>
             </Panel>
         </Panel>
