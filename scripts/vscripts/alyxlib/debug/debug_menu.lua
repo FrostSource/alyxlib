@@ -329,6 +329,7 @@ function DebugMenu:AddToggle(categoryId, toggleId, text, command, startsOn)
 
     local callback
     if type(command) == "string" then
+        startsOn = startsOn or Convars:GetBool(command) or false
         callback = function(on)
             SendToConsole(command .. " " .. (on and 1 or 0))
         end
