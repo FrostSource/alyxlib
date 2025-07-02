@@ -93,11 +93,29 @@ local debugPanelScriptScope = {
 }
 
 ---
+---Updates the physical menu by attaching it to the correct hand.
+---
+function DebugMenu:UpdateMenuAttachment()
+    local hand = Convars:GetBool("alyxlib_debug_menu_hand") and Player.PrimaryHand or Player.SecondaryHand
+    if hand == Player.RightHand then
+        self.panel:SetParent(hand, "constraint1")
+        self.panel:ResetLocal()
+        self.panel:SetLocalAngles(0, 180, 0)
+        self.panel:SetLocalOrigin(Vector(4, -9, 0))
+    else
+        self.panel:SetParent(hand, "constraint1")
+        self.panel:ResetLocal()
+        self.panel:SetLocalAngles(0, 0, 0)
+        self.panel:SetLocalOrigin(Vector(4, 9, 0))
+    end
+end
+
+---
 ---Creates and displays the debug menu panel on the player's chosen hand.
 ---
 function DebugMenu:ShowMenu()
 
-    local menu = SpawnEntityFromTableSynchronous("point_clientui_world_panel", {
+    self.panel = SpawnEntityFromTableSynchronous("point_clientui_world_panel", {
         targetname = "alyxlib_debug_menu",
         dialog_layout_name = "file://{resources}/layout/custom_game/alyxlib_debug_menu.xml",
         width = 16,--24,
@@ -118,25 +136,10 @@ function DebugMenu:ShowMenu()
         local dir = localPlayer:EyeAngles():Forward()
         local a = VectorToAngles(dir)
         a = RotateOrientation(a, QAngle(0,-90,90))
-        menu:SetQAngle(a)
-        menu:SetOrigin(eyePos + dir * 16)
+        self.panel:SetQAngle(a)
+        self.panel:SetOrigin(eyePos + dir * 16)
     else
-        if Convars:GetInt("alyxlib_debug_menu_hand") == 1 then
-            menu:SetParent(Player.PrimaryHand, "constraint1")
-            menu:ResetLocal()
-            menu:SetLocalAngles(0, 180, 0)
-            menu:SetLocalOrigin(Vector(4, -9, 0))
-            -- menu:SetLocalAngles(0,0,0)
-            -- menu:SetLocalAngles(40,-10,10)
-            -- menu:SetLocalOrigin(Vector(0,8,-2))
-        else
-            menu:SetParent(Player.SecondaryHand, "constraint1")
-            menu:ResetLocal()
-            menu:SetLocalAngles(0, 0, 0)
-            menu:SetLocalOrigin(Vector(4, 9, 0))
-            -- menu:SetLocalAngles(40,-10,10)
-            -- menu:SetLocalOrigin(Vector(0,8,-2))
-        end
+        self:UpdateMenuAttachment()
 
         -- Cough handpose gets in the way for close menus
         Player:SetCoughHandEnabled(false)
@@ -149,19 +152,22 @@ function DebugMenu:ShowMenu()
                 self:ClickHoveredButton()
             end, self)
 
+        handChangedListener = ListenToPlayerEvent("primary_hand_changed", function()
+            self:UpdateMenuAttachment()
+        end)
+
     end
 
-    menu:AddCSSClasses("Visible")
+    self.panel:AddCSSClasses("Visible")
 
-    local scope = menu:GetOrCreatePrivateScriptScope()
+    local scope = self.panel:GetOrCreatePrivateScriptScope()
     vlua.tableadd(scope, debugPanelScriptScope)
 
-    menu:AddOutput("CustomOutput0", "!self", "RunScriptCode")
+    self.panel:AddOutput("CustomOutput0", "!self", "RunScriptCode")
 
-    Panorama:InitPanel(menu, "alyxlib_debug_menu")
-    self.panel = menu
+    Panorama:InitPanel(self.panel, "alyxlib_debug_menu")
 
-    menu:Delay(function()
+    self.panel:Delay(function()
         debugMenuOpen = true
     end, 0.2)
 
@@ -177,6 +183,11 @@ function DebugMenu:CloseMenu()
         self.panel = nil
 
         debugMenuOpen = false
+
+        if handChangedListener ~= nil then
+            StopListeningToPlayerEvent(handChangedListener)
+            handChangedListener = nil
+        end
 
         Input:StopListeningByContext(self)
 
@@ -465,7 +476,9 @@ function DebugMenu:StartListeningForMenuActivation()
             timeSinceLastButtonPress = math.huge
         end
 
-        if Player:IsDigitalActionOnForHand(Player.SecondaryHand.Literal, DIGITAL_INPUT_TOGGLE_MENU) then
+        local hand = Convars:GetBool("alyxlib_debug_menu_hand") and Player.SecondaryHand or Player.PrimaryHand
+
+        if Player:IsDigitalActionOnForHand(hand.Literal, DIGITAL_INPUT_TOGGLE_MENU) then
             if not buttonPressed then
                 buttonPressed = true
                 timeSinceLastButtonPress = Time()
