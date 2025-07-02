@@ -38,6 +38,7 @@ DebugMenu.panel = nil
 DebugMenu.categories = {}
 
 local debugMenuOpen = false
+local handChangedListener = nil
 
 ---
 ---The scope of the debug menu script.
@@ -506,11 +507,12 @@ function DebugMenu:StopListeningForMenuActivation()
 end
 
 if Convars:GetInt("developer") > 0 then
-    ListenToPlayerEvent("vr_player_ready", function()
+    local listenFunc = ListenToPlayerEvent or ListenToGameEvent
+    listenFunc("vr_player_ready", function()
         Player:Delay(function()
             DebugMenu:StartListeningForMenuActivation()
         end, 0.2)
-    end)
+    end, nil)
 end
 
 -- AlyxLib defaults
