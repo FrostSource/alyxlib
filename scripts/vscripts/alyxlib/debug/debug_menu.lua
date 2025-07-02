@@ -464,7 +464,7 @@ end
 ---Starts listening for the debug menu activation button.
 ---
 function DebugMenu:StartListeningForMenuActivation()
-    local buttonPressesToActivate = 5
+    local buttonPressesToActivate = 3
     local buttonPresses = 0
     local timeToResetBetweenPresses = 0.6
     local buttonPressed = false
