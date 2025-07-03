@@ -299,14 +299,19 @@ Label.custom_label
 .col_body
 {
     /* Allows the scroll helper to show */
-    min-height: 631px;
+    min-height: 657px;
 }
 
 .scroll_helper {
     width: 100%;
-    height: 53px;
+    height: 36px;
+    min-height: 0px;
     flow-children:down;
-    border-top: 2px solid #FFBE55;
+}
+.scroll_helper.down {
+    border-top: 2px solid #FFBE5577;
+}.scroll_helper.up {
+    border-bottom: 2px solid #FFBE5577;
 }
 .scroll_helper.down .chevron_arrow{
     transform: rotateZ( 90deg );
@@ -319,8 +324,8 @@ Label.custom_label
     margin-left: 10px;
     margin-right: 10px;
     background-color: #FFBE55;
-    height: 40px;
-    width: 40px;
+    height: 32px;
+    width: 32px;
     horizontal-align: center;
     vertical-align: center;
 
