@@ -484,6 +484,8 @@ end
 ---Starts listening for the debug menu activation button.
 ---
 function DebugMenu:StartListeningForMenuActivation()
+    if Player.HMDAvatar == nil then return end
+
     local buttonPressesToActivate = 3
     local buttonPresses = 0
     local timeToResetBetweenPresses = 0.6
