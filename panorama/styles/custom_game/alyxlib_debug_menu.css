@@ -225,7 +225,8 @@ Button.custom_switch:active
 .custom_switch
 {
     width: 100%;
-    min-height: 116px;
+    min-height: 80px;
+    max-height: 90px;
     /* This is confusing. Why can't I apply this style further up the heirarchy? */
     flow-children: right;
     horizontal-align: right;
