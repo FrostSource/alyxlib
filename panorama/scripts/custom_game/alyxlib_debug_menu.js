@@ -570,6 +570,34 @@ function ParseCommand(command, args)
             categories = [];
             break;
         }
+
+        case "setcategoryindex": {
+            let category = GetCategory(args[0]);
+            if (category === null)
+            {
+                $.Msg(`Category ${args[0]} does not exist!`);
+                break;
+            }
+
+            const index = parseInt(args[1]);
+            const categoryBar = $("#CategoryBar");
+            const childToMove = category.button;
+            if (index <= 0){
+                // Move to front
+                let firstChild = categoryBar.GetChild(0);
+                categoryBar.MoveChildBefore(childToMove, firstChild);
+            } else {
+                // Move after the previous child
+                let prevChild = categoryBar.GetChild(index - 1);
+                categoryBar.MoveChildAfter(childToMove, prevChild)
+            }
+
+            const currentPos = categories.indexOf(category);
+            if (currentPos !== -1 && index >= 0 && index < categories.length) {
+                categories.splice(currentPos, 1);
+                categories.splice(index, 0, category);
+            }
+        }
     }
 }
 

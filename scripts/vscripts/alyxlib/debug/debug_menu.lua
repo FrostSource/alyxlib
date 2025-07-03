@@ -408,6 +408,10 @@ function DebugMenu:SetCategoryIndex(categoryId, index)
 
     table.remove(self.categories, currentIndex)
     table.insert(self.categories, index, category)
+
+    if self.panel then
+        Panorama:Send(self.panel, "SetCategoryIndex", categoryId, index-1)
+    end
 end
 
 ---
