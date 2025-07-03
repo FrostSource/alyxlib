@@ -576,3 +576,13 @@ DebugMenu:AddButton("alyxlib", "alyxlib_demo_recording", "Start Recording Demo",
         DebugMenu:SetItemText("alyxlib", "alyxlib_demo_recording", "Stop Recording Demo")
     end
 end)
+
+DebugMenu:AddSeparator("alyxlib")
+
+DebugMenu:AddButton("alyxlib", "alyxlib_enableextras", "Enable Extras Tab", function()
+    require "alyxlib.debug.debug_menu_extras"
+    -- Update the panel immediately
+    local id = "alyxlib_extras"
+    DebugMenu:SendCategoryToPanel(DebugMenu:GetCategory(id))
+    DebugMenu:SetCategoryIndex(id, 2)
+end)
