@@ -171,6 +171,38 @@ Button.custom_button_with_subtitle.error_msg:not(.disabled) Label.button_label.s
     margin: 5px;
     /* background-color: green; */
 }
+.CategoryButton.flash {
+    animation-name: FlashOnce;
+    animation-duration: 0.5s;
+    animation-timing-function: ease;
+    animation-iteration-count: 1;
+}
+
+@define flashColor:     #FFBE5588;
+
+@keyframes 'FlashOnce'
+{
+  0% {
+    background-color: flashColor;
+    transform: translateY(0);
+  }
+  30% {
+    background-color: flashColor;
+    transform: translateY(-20px);
+  }
+  50% {
+    background-color: #FFBE5544;
+    transform: translateY(5px);
+  }
+  70% {
+    background-color: #FFBE5511;
+    transform: translateY(-8px);
+  }
+  100% {
+    background-color: transparent;
+    transform: translateY(0);
+  }
+}
 
 Button.disabled Label
 {

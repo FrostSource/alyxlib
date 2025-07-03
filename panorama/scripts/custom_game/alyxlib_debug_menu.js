@@ -4,6 +4,8 @@
 
 if(false)p=require("./panoramadoc");
 
+let panelReady = false;
+
 /**
  * Fires a Panorama output with the given name and arguments.
  * The output is routed to the panel's input 'RunScriptCode'.
@@ -110,6 +112,11 @@ class Category
 
         // Create category button
         this.button = CreateDebugMenuButton($("#CategoryBar"), () => SetCategoryVisible(this.id), "CategoryButton", `${this.id}_button`);
+        
+        // Animate this new tab if being added after the menu is open
+        if (panelReady)
+            this.button.AddClass("flash");
+        
         let label = $.CreatePanel("Label", this.button, `${this.id}_label`);
         label.text = this.name;
 
@@ -614,5 +621,7 @@ function ScrollHelperClick() {
     $('#ScrollHelperUp').SetPanelEvent("onmouseover", () =>{ $.Schedule(0.1, ScrollHelperSchedule); scrollHelperScheduleEvent="ScrollUp"});
     $('#ScrollHelperUp').SetPanelEvent("onmouseout", () => scrollHelperScheduleCancel = true);
     $('#ScrollHelperUp').SetPanelEvent("onactivate", ScrollHelperClick);
+
+    $.Schedule(1.0, () => panelReady = true);
 
 })();
