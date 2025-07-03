@@ -145,7 +145,7 @@ Button.custom_button_with_subtitle.error_msg:not(.disabled) Label.button_label.s
 }
 .CategoryButton
 {
-    width: 20%;
+    width: 150px;
     height: 100%;
     /* background-color: red; */
     horizontal-align: left;
@@ -162,11 +162,13 @@ Button.custom_button_with_subtitle.error_msg:not(.disabled) Label.button_label.s
 {
     text-align: left;
     horizontal-align: center;
-    /* white-space: nowrap; */
-    /* text-overflow: ellipsis; */
+    white-space: normal;
+    text-overflow: ellipsis;
+    line-height: 20px;
     overflow: clip;
     font-size: 30px;
     text-align: center;
+    margin: 5px;
     /* background-color: green; */
 }
 
