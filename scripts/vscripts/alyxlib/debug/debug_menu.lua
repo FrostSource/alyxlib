@@ -427,21 +427,21 @@ function DebugMenu:SendCategoryToPanel(category)
 
     local panel = self.panel
 
-        Panorama:Send(panel, "AddCategory", category.id, category.name)
+    Panorama:Send(panel, "AddCategory", category.id, category.name)
 
-        for _, item in ipairs(category.items) do
-            if item.type == "toggle" then
-                Panorama:Send(panel, "AddToggle", item.categoryId, item.id, item.text, item.default)
-            elseif item.type == "button" then
-                Panorama:Send(panel, "AddButton", item.categoryId, item.id, item.text)
-            elseif item.type == "label" then
-                Panorama:Send(panel, "AddLabel", item.categoryId, item.id, item.text)
-            elseif item.type == "separator" then
-                Panorama:Send(panel, "AddSeparator", item.categoryId)
-            else
-                warn("Unknown item type '"..item.type.."'")
-            end
+    for _, item in ipairs(category.items) do
+        if item.type == "toggle" then
+            Panorama:Send(panel, "AddToggle", item.categoryId, item.id, item.text, item.default)
+        elseif item.type == "button" then
+            Panorama:Send(panel, "AddButton", item.categoryId, item.id, item.text)
+        elseif item.type == "label" then
+            Panorama:Send(panel, "AddLabel", item.categoryId, item.id, item.text)
+        elseif item.type == "separator" then
+            Panorama:Send(panel, "AddSeparator", item.categoryId)
+        else
+            warn("Unknown item type '"..item.type.."'")
         end
+    end
 end
 
 ---
