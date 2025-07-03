@@ -583,6 +583,8 @@ function ScrollHelperClick() {
     TurnButtonIntoDebugMenuButton($("#CloseMenuButton"));
     TurnButtonIntoDebugMenuButton($("#CycleCategoryLeftButton"));
     TurnButtonIntoDebugMenuButton($("#CycleCategoryRightButton"));
+    TurnButtonIntoDebugMenuButton($("#ScrollHelperDown"));
+    TurnButtonIntoDebugMenuButton($("#ScrollHelperUp"));
 
     // Tells Lua that the menu has been reloaded so it can repopulate the menu
     // This helps with hot reloading panel changes
