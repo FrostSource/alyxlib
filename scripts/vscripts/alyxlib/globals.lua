@@ -1,5 +1,5 @@
 --[[
-    v2.6.0
+    v2.7.0
     https://github.com/FrostSource/alyxlib
 
     Provides common global functions used throughout extravaganza libraries.
@@ -14,7 +14,7 @@
 -- These are expected by globals
 require 'alyxlib.utils.common'
 
-local _version = "v2.6.0"
+local _version = "v2.7.0"
 
 ---
 ---A registered AlyxLib addon.

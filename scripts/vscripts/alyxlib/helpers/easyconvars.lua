@@ -83,7 +83,9 @@ local function callCallback(registeredData, value, ...)
 
     local result = nil
     if registeredData.type == EASYCONVARS_COMMAND then
-        result = registeredData.callback(value, ...)
+        if type(registeredData.callback) == "function" then
+            result = registeredData.callback(value, ...)
+        end
     else
         if registeredData.type == EASYCONVARS_TOGGLE and value == nil then
             registeredData.value = valueToBoolStr(not truthy(registeredData.value))
@@ -91,7 +93,9 @@ local function callCallback(registeredData, value, ...)
             registeredData.value = convertToSafeVal(value)
         end
 
-        result = registeredData.callback(registeredData.value, oldValue)
+        if type(registeredData.callback) == "function" then
+            result = registeredData.callback(registeredData.value, oldValue)
+        end
     end
 
     if result ~= nil then

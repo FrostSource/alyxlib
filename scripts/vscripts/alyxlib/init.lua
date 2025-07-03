@@ -1,5 +1,5 @@
 --[[
-    v1.2.1
+    v1.2.2
     https://github.com/FrostSource/alyxlib
 
     The main initializer script loads any standard libraries that it can find.
@@ -11,12 +11,12 @@
 ]]
 
 -- Version of this file
-local version = "v1.2.1"
+local version = "v1.2.2"
 
 ---ID of AlyxLib in the Steam workshop
 ALYXLIB_WORKSHOP_ID = "3329679071"
 ---The current version of AlyxLib as a whole
-ALYXLIB_VERSION = "v1.3.1"
+ALYXLIB_VERSION = "v1.4.0"
 
 print("Initializing AlyxLib system ".. ALYXLIB_VERSION .." ...")
 
@@ -35,6 +35,7 @@ end
 
 ---Loads a library if it exists and prints version.
 ---@param path string # The path to the library
+---@param required? boolean # If not true, any errors will be suppressed
 local function alyxlib_require(path, required)
     if required then
         print_version(path, require(path))

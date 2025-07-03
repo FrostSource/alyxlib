@@ -72,7 +72,7 @@ function _PrecacheGlobalItems(context)
     if #AlyxLibGlobalPrecacheList > 0 then
         devprints("Globally precaching", #AlyxLibGlobalPrecacheList, "resources...")
         for _, item in ipairs(AlyxLibGlobalPrecacheList) do
-            devprints("\nPrecaching", item.type, item.path)
+            devprints("\tPrecaching", item.type, item.path)
             if item.type == "model" then
                 PrecacheModel(item.path, context)
             elseif item.type == "entity" then

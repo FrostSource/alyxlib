@@ -132,6 +132,32 @@ Animation.Curves = {
         end
     end,
 
+    -- Smooth start and end, fast middle
+    easeInOutQuad = function(a, b, t)
+        if t < 0.5 then
+            return a + (b - a) * (2 * t * t)
+        else
+            return a + (b - a) * (1 - 2 * (1 - t) * (1 - t))
+        end
+    end,
+
+    -- Sharp snap with slight overshoot
+    easeOutBack = function(a, b, t)
+        local c1 = 1.70158
+        local c3 = c1 + 1
+        return a + (b - a) * (c3 * (t - 1)^3 + c1 * (t - 1)^2 + 1)
+    end,
+
+    -- Fast start, gentle slow finish
+    easeOutQuart = function(a, b, t)
+        return a + (b - a) * (1 - (1 - t)^4)
+    end,
+
+    -- Quick start, smooth deceleration
+    easeOutCubic = function(a, b, t)
+        return a + (b - a) * (1 - (1 - t)^3)
+    end,
+
 }
 
 ---
@@ -148,24 +174,28 @@ Animation.Curves = {
 ---@return fun(time:number):boolean # New animation function
 function Animation:CreateAnimation(entity, getter, setter, targetValue, curveFunc)
     local startValue = getter(entity)
+    local adjustedTarget = targetValue
 
     local special = nil
     if IsVector(targetValue) then
         special = Vector
     elseif IsQAngle(targetValue) then
         special = QAngle
+        adjustedTarget = QAngle(
+            startValue.x + AngleDiff(targetValue.x, startValue.x),
+            startValue.y + AngleDiff(targetValue.y, startValue.y),
+            startValue.z + AngleDiff(targetValue.z, startValue.z)
+        )
     end
 
     return function(t)
         local currentValue = getter(entity)
         if not special then
-            currentValue = curveFunc(startValue, targetValue, t)
+            currentValue = curveFunc(startValue, adjustedTarget, t)
         else
-            currentValue = special(
-                curveFunc(startValue.x, targetValue.x, t),
-                curveFunc(startValue.y, targetValue.y, t),
-                curveFunc(startValue.z, targetValue.z, t)
-            )
+            currentValue.x = curveFunc(startValue.x, adjustedTarget.x, t)
+            currentValue.y = curveFunc(startValue.y, adjustedTarget.y, t)
+            currentValue.z = curveFunc(startValue.z, adjustedTarget.z, t)
         end
         setter(entity, currentValue)
 
