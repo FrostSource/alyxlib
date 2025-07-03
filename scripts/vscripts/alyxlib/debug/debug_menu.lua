@@ -415,18 +415,18 @@ function DebugMenu:SetCategoryIndex(categoryId, index)
 end
 
 ---
----Forces the debug menu panel to add all categories and items.
+---Sends a category and all its elements to the panel.
 ---
 ---This should only be used if modifying the menu in a non-standard way.
 ---
-function DebugMenu:SendCategoriesToPanel()
+---@param category DebugMenuCategory
+function DebugMenu:SendCategoryToPanel(category)
     if not self.panel then
         return
     end
 
     local panel = self.panel
 
-    for categoryId, category in pairs(DebugMenu.categories) do
         Panorama:Send(panel, "AddCategory", category.id, category.name)
 
         for _, item in ipairs(category.items) do
@@ -442,6 +442,20 @@ function DebugMenu:SendCategoriesToPanel()
                 warn("Unknown item type '"..item.type.."'")
             end
         end
+end
+
+---
+---Forces the debug menu panel to add all categories and items.
+---
+---This should only be used if modifying the menu in a non-standard way.
+---
+function DebugMenu:SendCategoriesToPanel()
+    if not self.panel then
+        return
+    end
+
+    for categoryId, category in pairs(DebugMenu.categories) do
+        self:SendCategoryToPanel(category)
     end
 end
 
