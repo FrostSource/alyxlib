@@ -236,12 +236,14 @@ class $ {
 /**
  * Global selector function used to find panels by id.
  * @param {string} searchString String used to find a panel.
- * @returns {Panel}
+ * @returns {AllPanelTypes}
  * @example
  * let panel = $('#MyPanelID')
  */
 // @ts-ignore
 function $(searchString){return}
+
+/**@typedef {Panel|Label|Button|TextButton|RadioButton|ToggleButton|DropDown|ProgressBar|CircularProgressBar|Countdown|TextEntry|SlottedSlider|Slider|NumberEntry|Image|Carousel|Grid|Movie|HTML} AllPanelTypes */
 
 /**
  * Panel class.
@@ -410,6 +412,12 @@ class Panel {
     isValid;
 
     /**
+     * Unknown.
+     * @type {string}
+     */
+    paneltype;
+
+    /**
      * Adds a class to this panel.
      * @param {string} className Name of class to add.
      */
@@ -491,6 +499,11 @@ class Panel {
     SetParent(panel){}
 
     FindChild(str){}
+    /**
+     * 
+     * @param {string} str Id to look for.
+     * @returns {Panel?}
+     */
     FindChildTraverse(str){}
     FindChildInLayoutFile(str){}
     FindPanelInLayoutFile(str){}
@@ -542,6 +555,7 @@ class Panel {
     SetReadyForDisplay(bool){}
     SetPositionInPixels(float1, float2, float3){}
     Data(unknown){}
+    
     /**
      * Sets an event handler for a Panorama UI panel.
      * @param {Event} event The event to listen for.
@@ -552,15 +566,13 @@ class Panel {
      * });
      */
     SetPanelEvent(event, callback){}
+
     RunScriptInPanelContext(unknown){}
     rememberchildfocus(bool){}
-    paneltype(){}
+}
 
-
-    /**
-     * Label members.
-     */
-
+class Label extends Panel
+{
     /**
      * Text of the panel.
      * @type {string}
@@ -584,35 +596,75 @@ class Panel {
      * @param {string} text 
      */
     SetAlreadyLocalizedText(text){}
+}
 
-    /**
-     * ToggleButton members.
-     */
+class Button extends Panel
+{
+}
 
+class TextButton extends Button
+{
+    text;
+}
+
+class RadioButton extends Panel
+{
+    GetSelectedButton(){}
+    group;
+}
+
+class ToggleButton extends Panel
+{
     /**
      * Set if the button is selected or not.
      * @param {boolean} selected 
      */
     SetSelected(selected){}
+}
 
+class DropDown extends Panel
+{
+    /**
+     * Adds a panel to the drop down.
+     * @param {Panel} panel The panel to add.
+     */
+    AddOption(panel){}
 
     /**
-     * DropDown members.
+     * Checks if this drop down has an option with a given id.
+     * @param {string} id Id of the panel to search for.
+     * @returns {boolean} True if this drop down as the panel.
      */
+    HasOption(id){}
+    
+    /**
+     * 
+     * @param {unknown} unknown 
+     */
+    RemoveOption(unknown){}
 
-
-    AddOption(){}
-    HasOption(){}
-    RemoveOption(){}
+    /**
+     * Removes all options from this drop down.
+     */
     RemoveAllOptions(){}
+
+    /**
+     * Gets the currently selected panel.
+     * @return {Panel?} The currently selected panel.
+     */
     GetSelected(){}
     FindDropDownMenuChild(){}
     AccessDropDownMenu(){}
-    
-    /**
-     * ProgressBar members.
-     */
 
+    /**
+     * Sets a panel as selected either by object reference or id.
+     * @param {Panel|string} panel The panel or id to set as selected.
+     */
+    SetSelected(panel){}
+}
+
+class ProgressBar extends Panel
+{
     /**
      * @type {number}
      */
@@ -628,11 +680,39 @@ class Panel {
      */
     max;
 
+    // exist?
+    // hasNotches;
+    // valuePerNotch;
+}
+
+class CircularProgressBar extends Panel
+{
+    /**
+     * @type {number}
+     */
+    value;
 
     /**
-     * TextEntry members.
+     * @type {number}
      */
+    min;
 
+    /**
+     * @type {number}
+     */
+    max;
+}
+
+class Countdown extends Panel
+{
+    startTime = 0;
+    endTime = 0;
+    updateInterval = 1;
+    timeDialogVariable = 'countdown_time';
+}
+
+class TextEntry extends Panel
+{
     SetMaxChars(){}
     GetMaxCharCount(){}
     GetCursorOffset(){}
@@ -640,42 +720,63 @@ class Panel {
     ClearSelection(){}
     SelectAll(){}
     RaiseChangeEvents(){}
-    
+}
 
-    /**
-     * SlottedSlider/Slider members.
-     */
+class SlottedSlider extends Slider
+{
 
+}
+
+class Slider extends Panel
+{
+    value;
+    min;
+    max;
     increment;
     default;
     mousedown;
-    SetDirection(){}
-    SetShowDefaultValue(){}
-    SetRequiresSelection(){}
-    SetValueNoEvents(){}
-    
+    SetDirection(unknown){}
+    SetShowDefaultValue(showDefaultValue){}
+    SetRequiresSelection(requiresSelection){}
+    SetValueNoEvents(value){}
+}
 
-    /**
-     * Image members.
-     */
+class NumberEntry extends Panel
+{
+    value;
+    min;
+    max;
+    increment;
+}
 
-    SetImage(){}
-    SetScaling(){}
-    
+class Image extends Panel
+{
+    SetImage(path){}
+    SetScaling(unknown){}
+}
 
-    /**
-     * Carousel members.
-     */
-
+class Carousel extends Panel
+{
     SetSelectedChild(){}
     GetFocusChild(){}
     GetFocusIndex(){}
-    
+}
 
-    /**
-     * Movie members.
-     */
+class Grid extends Panel
+{
+    verticalcount;
+    horizontalcount;
+    focusmargin;
+    scrolldirection;
+    scrollprogress;
+    SetIgnoreFastMotion(){}
+    GetFocusedChildVisibleIndex(){}
+    ScrollPanelToLeftEdge(){}
+    MoveFocusToTopLeft(){}
+}
 
+class Movie extends Panel
+{
     SetMovie(){}
     SetControls(){}
     SetTitle(){}
@@ -685,18 +786,14 @@ class Panel {
     SetRepeat(){}
     SetPlaybackVolume(){}
     BAdjustingVolume(){}
-    
-
 }
 
-// class Label extends Panel
-// {
-//     /**
-//      * Text of the panel, if the panel is a Label.
-//      * @type {string}
-//      */
-//      text;
-// }
+class HTML extends Panel
+{
+    SetURL(){}
+    RunJavascript(){}
+    SetIgnoreCursor(){}
+}
 
 // /**
 //  * @alias $
