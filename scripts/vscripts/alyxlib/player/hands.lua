@@ -49,10 +49,8 @@ end
 ---@param ent EntityHandle|string
 function CPropVRHand:Grab(ent)
     if type(ent) == "string" then
-        print('search for ' .. ent)
         local name = ent
         ent = Entities:FindByName(nil, name)
-        print(ent)
         if ent == nil then
             return warn("Could not find entity to grab with name " .. name)
         end
