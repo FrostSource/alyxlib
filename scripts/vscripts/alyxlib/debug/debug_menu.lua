@@ -335,7 +335,9 @@ end
 ---Add a separator line to a category.
 ---
 ---@param categoryId string # The category ID to add the separator to
-function DebugMenu:AddSeparator(categoryId)
+---@param separatorId? string # Optional ID for the separator if you want to modify it later
+---@param text? string # Optional title text to display on the separator
+function DebugMenu:AddSeparator(categoryId, separatorId, text)
     local category = self:GetCategory(categoryId)
     if not category then
         warn("Cannot add separator: Category '"..categoryId.."' does not exist!")
@@ -345,6 +347,8 @@ function DebugMenu:AddSeparator(categoryId)
     table.insert(category.items, {
         categoryId = categoryId,
         type = "separator",
+        id = separatorId or DoUniqueString("separator"),
+        text = text or ""
     })
 end
 
@@ -629,7 +633,7 @@ function DebugMenu:SendCategoryToPanel(category)
             Panorama:Send(panel, "AddLabel", item.categoryId, item.id, item.text)
 
         elseif item.type == "separator" then
-            Panorama:Send(panel, "AddSeparator", item.categoryId)
+            Panorama:Send(panel, "AddSeparator", item.categoryId, item.id, item.text)
 
         elseif item.type == "slider" then
             local default = resolveDefault(item.default)

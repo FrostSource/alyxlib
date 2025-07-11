@@ -236,17 +236,28 @@ class Category
         this.items.push(label);
     }
 
-    AddSeparator()
+    /**
+     * Adds a new separator to the menu with optional text.
+     * @param {string} id Id for this separator.
+     * @param {string?} text Text displayed on the separator.
+     */
+    AddSeparator(id, text = "")
     {
-        let rowDivider = $.CreatePanel("Panel", this.content, undefined);
-        rowDivider.AddClass("row_divider");
+        const separator = new SubMenuSeparator(`${this.id}_${id}`, text);
+        separator.AddToPanel(this.content);
+        this.items.push(separator);
+    }
 
-        let rowDividerLabel = $.CreatePanel("Panel", rowDivider, undefined);
-        rowDividerLabel.AddClass("button_label");
-
-        let rowDividerLine = $.CreatePanel("Panel", rowDividerLabel, undefined);
-        rowDividerLine.AddClass("row_divider_line");
-
+    /**
+     * **CURRENTLY NOT SUPPORTED IN DEBUG_MENU.LUA**
+     * Adds a solid header to the category.
+     * @param {string} title Text displayed in the header.
+     */
+    AddHeader(title)
+    {
+        const header = CreatePanel("Panel", this.content, null, "header");
+        const label = CreatePanel("Label", header, null);
+        label.text = "This be header";
     }
 
     /**
@@ -699,6 +710,57 @@ class SubMenuCycle
     }
 }
 
+class SubMenuSeparator
+{
+    /**
+     * Creates a new sub menu separator instance.
+     * @param {string} id Id for this separator.
+     * @param {string?} text Text to display with this separator.
+     */
+    constructor(id, text = "")
+    {
+        this.id = id;
+        this.text = text;
+
+        /**@type {Panel} */
+        this.panel = null;
+    }
+
+    /**
+     * Creates all required elements as children of `panel`.
+     * @param {Panel} panel Panel to add this separator to.
+     */
+    AddToPanel(panel)
+    {
+        this.panel = CreatePanel("Panel", panel, this.id, "options_divider");
+        const label = CreatePanel("Label", this.panel, null);
+        label.text = this.text;
+        CreatePanel("Panel", this.panel, null, "horizontal_line");
+    }
+
+    /**
+     * Sets or removes the text displayed with this separator.
+     * @param {string?} text The text to display with this separator.
+     */
+    SetText(text = "")
+    {
+        this.text = text;
+        const label = this.panel.GetChild(0);
+        if (label) {
+            label.text = text;
+        }
+    }
+
+    /**
+     * Gets the text displayed with this separator.
+     * @returns {string}
+     */
+    GetText()
+    {
+        return this.text;
+    }
+}
+
 /**
  * Shows a specific category and hides all others.
  * @param {string} id ID of the category to show.
@@ -937,7 +999,9 @@ function ParseCommand(command, args)
                 break;
             }
 
-            category.AddSeparator();
+            const id = args[1];
+            const text = args[2];
+            category.AddSeparator(id, text);
             break;
         }
 
