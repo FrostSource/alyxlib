@@ -16,6 +16,7 @@ RegisterAlyxLibConvar("alyxlib_debug_menu_hand", "1", "Hand to attach the debug 
 ---
 ---@class DebugMenu
 DebugMenu = {}
+DebugMenu.version = "v1.0.0"
 
 ---@class DebugMenuCategory
 ---@field id string
@@ -835,3 +836,5 @@ DebugMenu:AddButton(categoryId, "enableextras", "Enable Extras Tab...", function
         DebugMenu:SetItemText(categoryId, "enableextras", "Extras Tab Enabled!")
     end
 end)
+
+return DebugMenu.version
