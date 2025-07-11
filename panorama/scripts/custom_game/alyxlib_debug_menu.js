@@ -1107,15 +1107,40 @@ function ParseCommand(command, args)
 
 let scrollHelperScheduleCancel = false;
 let scrollHelperScheduleEvent = "";
+let scrollHelperSpeed = 0.1;
 
+/**
+ * Scroll logic for the scroll helper schedule.
+ */
 function ScrollHelperSchedule() {
-    if (scrollHelperScheduleCancel || currentlySelectedCategory === null) {
+    if (scrollHelperScheduleCancel || scrollHelperScheduleEvent === "" || currentlySelectedCategory === null) {
         scrollHelperScheduleCancel = false;
         return;
     }
+
     $.DispatchEvent(scrollHelperScheduleEvent, currentlySelectedCategory.panel);
-    $.Schedule(0.1, ScrollHelperSchedule);
+    $.Schedule(scrollHelperSpeed, ScrollHelperSchedule);
 }
+
+/**
+ * Start scrolling the category page in a direction.
+ * @param {"ScrollDown"|"ScrollUp"|string} eventName Name of the event to fire on the current category.
+ */
+function StartScrollHelper(eventName) {
+    if (scrollHelperScheduleEvent !== eventName) {
+        scrollHelperScheduleEvent = eventName;
+        $.Schedule(scrollHelperSpeed, ScrollHelperSchedule);
+    }
+}
+
+/**
+ * Stop scroll the category page.
+ */
+function StopScrollHelper() {
+    scrollHelperScheduleCancel = true;
+    scrollHelperScheduleEvent = "";
+}
+
 function ScrollHelperClick() {
     if (currentlySelectedCategory === null) return;
 
@@ -1147,11 +1172,11 @@ function ScrollHelperClick() {
     // Scroll helpers for sub-menus
     // Valve kindly didn't allow us to raytrace click panels like the main menu
     // so this is a work around for scrolling
-    $('#ScrollHelperDown').SetPanelEvent("onmouseover", () =>{ $.Schedule(0.1, ScrollHelperSchedule); scrollHelperScheduleEvent="ScrollDown"});
-    $('#ScrollHelperDown').SetPanelEvent("onmouseout", () => scrollHelperScheduleCancel = true);
+    $('#ScrollHelperDown').SetPanelEvent("onmouseover", () => StartScrollHelper("ScrollDown"));
+    $('#ScrollHelperDown').SetPanelEvent("onmouseout", () => StopScrollHelper());
     $('#ScrollHelperDown').SetPanelEvent("onactivate", ScrollHelperClick);
-    $('#ScrollHelperUp').SetPanelEvent("onmouseover", () =>{ $.Schedule(0.1, ScrollHelperSchedule); scrollHelperScheduleEvent="ScrollUp"});
-    $('#ScrollHelperUp').SetPanelEvent("onmouseout", () => scrollHelperScheduleCancel = true);
+    $('#ScrollHelperUp').SetPanelEvent("onmouseover", () => StartScrollHelper("ScrollUp"));
+    $('#ScrollHelperUp').SetPanelEvent("onmouseout", () => StopScrollHelper());
     $('#ScrollHelperUp').SetPanelEvent("onactivate", ScrollHelperClick);
 
     $.Schedule(1.0, () => panelReady = true);
