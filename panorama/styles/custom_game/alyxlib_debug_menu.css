@@ -128,12 +128,11 @@ Button.custom_button_with_subtitle.error_msg:not(.disabled) Label.button_label.s
     /* background-color: blue; */
     width: 10%;
 }
-.cycle_image
+/* .cycle_image
 {
-    /* background-color: yellow; */
     horizontal-align: left;
     margin: 0px 40px 10px 10px;
-}
+} */
 
 .CategoryBar
 {
@@ -281,10 +280,10 @@ Button
 }
 
 
-.submenu Label
+/* .submenu Label
 {
     font-size: 33px;
-}
+} */
 
 Label.custom_label
 {
@@ -333,4 +332,58 @@ Label.custom_label
 }
 .ScrollDownButton:hover .chevron_arrow{
     background-color:#fff;
+}
+
+.cycler
+{
+    width: 100%;
+    
+    flow-children: right;
+    horizontal-align: right;
+    text-align: right;
+    background-color: #FFBE5500;
+    transition-property: background-color;
+    transition-duration: 0s;
+}
+
+/* Bring styles over from HLVR_SettingsSlider to custom .SubMenuSlider */
+
+.SubMenuSlider
+{
+    width: 100%;
+    flow-children: none;
+}
+
+.SubMenuSlider:hover
+{
+    color: #fff;
+    /*background-color: #FFBE5588;*/
+    transition-property: background-color;
+    transition-duration: .38s;
+    transition-timing-function: cubic-bezier( 0.785, 0.385, 0.555, 1.505 );
+}
+
+.SubMenuSlider:active
+{
+    color: #000000;
+    background-color: #ffd800;
+}
+
+.SubMenuSlider:hover .OptionsSlider #SliderTrackProgress
+{
+    width: 100%;
+    height: 85%;
+    vertical-align: center;
+    border: 1px solid #FFBE5588;
+    background-color: #FFBE5588;
+}
+
+.Background .SubMenuSlider
+{
+    opacity: .1;
+}
+
+/* Make slider value fit even with many decimal places */
+.slider_value {
+    text-overflow: shrink;
 }

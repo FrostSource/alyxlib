@@ -21,7 +21,7 @@ function FireOutput(outputName, ...args) {
     const callString = `${outputName}(${formattedArgs.join(",")})`;
     $.DispatchEvent("ClientUI_FireOutputStr", 0, callString);
 
-    $.Msg(callString);
+    // $.Msg(callString);
 }
 
 /**
@@ -66,12 +66,30 @@ function CreateDebugMenuButton(parent, callback, _class, id)
 {
     let button = $.CreatePanel("Button", parent, id);
     button.AddClass(_class);
-    if (callback !== null && callback !== undefined)
-        button.SetPanelEvent("onactivate", callback);
 
-    TurnButtonIntoDebugMenuButton(button);
+    TurnButtonIntoDebugMenuButton(button, callback);
 
     return button;
+}
+
+/**
+ * Create a panel, optionally with a set of classes.
+ * @param {string} type Type of panel (e.g. Panel, Button).
+ * @param {Panel} parent Parent of this new panel.
+ * @param {string?} id Id of this new panel.
+ * @param {string?} classes Classes for this panel.
+ * @returns {Panel}
+ */
+function CreatePanel(type, parent, id, classes)
+{
+    id = id || '';
+    const panel = $.CreatePanel(type, parent, id);
+    if (classes !== undefined) {
+        for (let _class of classes.split(' ')) {
+            panel.AddClass(_class);
+        }
+    }
+    return panel;
 }
 
 /**
@@ -220,8 +238,45 @@ class Category
         let rowDividerLine = $.CreatePanel("Panel", rowDividerLabel, undefined);
         rowDividerLine.AddClass("row_divider_line");
 
-        let rowDividerBullet = $.CreatePanel("Panel", rowDivider, undefined);
-        rowDividerBullet.AddClass("button_bullet");
+    }
+
+    /**
+     * Adds a new slider to this category.
+     * @param {string} id The id for this slider.
+     * @param {string} text Text to display in the slider.
+     * @param {string} convar The convar to tie this slider to.
+     * @param {number} min Minimum value this slider can have.
+     * @param {number} max Maximum value this slider can have.
+     * @param {number} value Starting value for this slider.
+     * @param {boolean} isPercentage Value is displayed as a percentage instead of raw value.
+     * @param {number} truncate Number of decimal places the value can be set to (-1 for no truncating).
+     * @param {number} increment Increment value to snap to.
+     */
+    AddSlider(id, text, convar, min, max, value, isPercentage = true, truncate = -1, increment = 0)
+    {
+        
+        let slider = new SubMenuSlider(`${this.id}_${id}`, convar, text, min, max, isPercentage, (value) => {
+            FireOutput("_DebugMenuCallbackSlider", id, value);
+        }, value, truncate, increment);
+        slider.AddToPanel(this.content);
+        this.items.push(slider);
+    }
+
+    /**
+     * Adds a new value cycler to this category.
+     * @param {string} id String id for this cycle.
+     * @param {string} convar Convar to tie this cycle to (currently unsued in JS).
+     * @param {SubMenuCycleItem[]} values Text/value pairs for this cycle.
+     * @param {string?} selectedValue Starting selected value.
+     */
+    AddCycle(id, convar, values, selectedValue)
+    {
+        let cycle = new SubMenuCycle(`${this.id}_${id}`, convar, values, (index) => {
+            FireOutput("_DebugMenuCallbackCycle", id, index + 1);
+        });
+        cycle.AddToPanel(this.content);
+        cycle.SetSelectedValueNoFire(selectedValue);
+        this.items.push(cycle);
     }
 }
 
@@ -363,6 +418,278 @@ class SubMenuToggle
     }
 }
 
+class SubMenuSlider
+{
+    constructor(id, convar, text, min, max, isPercentage, callback, currentValue = 0, truncate = -1, increment = 0) {
+        this.id = id;
+        this.convar = convar;
+        this.text = text;
+        this.min = min;
+        this.max = max;
+        this.isPercentage = false;
+        this.callback = callback;
+
+        this.truncate = truncate;
+        this.increment = increment;
+
+        this.value = currentValue;//Clamp(currentValue  || 0, this.min, this.max);
+        /**@type {Panel} */
+        this.panel = null;
+        /**@type {Slider} */
+        this.slider = null;
+    }
+
+    AddToPanel(panel) {
+        this.panel = CreatePanel("Panel", panel, this.id, "SubMenuSlider");
+        this.slider = $.CreatePanelWithProperties("Slider", this.panel, "Slider", { class:"OptionsSlider", direction:"horizontal", });
+        this.slider.min = this.min;
+        this.slider.max = this.max;
+        const container = CreatePanel("Panel", this.slider, null, "SliderContainer");
+        const row = CreatePanel("Panel", container, "SliderRow", "SliderRow");
+        const textLabel = CreatePanel("Label", row, "Title", "slider_label");
+        textLabel.text = this.text;
+        CreatePanel("Panel", row, null, "slider_divider");
+        const valueLabel = CreatePanel("Label", row, "Value", "slider_value");
+
+        this.SetValue(this.value);
+
+        // This only works in VR
+        TurnButtonIntoDebugMenuButton(this.panel, () => {
+            const pos = GetAffordancePosition();
+            if (pos !== null) {
+                // Slider does not have actualxoffset or actuallayoutwidth THANKS AGAIN VALVE
+                // These magic numbers are estimates of where the slider is in relation to the parent panel
+                const xoffset = this.panel.actualxoffset + 25;
+                const width = this.panel.actuallayoutwidth - 25;
+                const val = RemapValueClamped(pos.x,
+                    xoffset,
+                    width,
+                    this.slider.min,
+                    this.slider.max
+                );
+                // Changing value automatically fires "onvaluechanged"
+                this.slider.value = val;
+            }
+        });
+
+        this.slider.SetPanelEvent("onvaluechanged", () => {
+            let prevValue = this.value;
+            this._SetValueInternal(this.slider.value);
+            if (this.value !== prevValue)
+                this.callback(this.value);
+        });
+    }
+
+    /**
+     * Sets the slider to a given value.
+     * @param {number} value 
+     */
+    SetValue(value) {
+        this._SetValueInternal(value);
+        this.slider.SetValueNoEvents(this.value);
+        // this.slider.value = this.value;
+    }
+
+    /**
+     * Sets the internal value of the slider and updates labels.
+     * The visible slider is not updated.
+     * @param {number} value 
+     */
+    _SetValueInternal(value) {
+        const valueLabel = this.panel.FindChildTraverse("Value");
+        if (this.increment > 0) value = Math.round(value / this.increment) * this.increment;
+        if (this.truncate > -1) value = parseFloat(value.toFixed(this.truncate));
+        value = Clamp(value, this.min, this.max);
+        this.value = value;
+        
+        if (this.isPercentage)
+            valueLabel.text = this.GetValueAsPercentage().toFixed(0);
+        else
+            valueLabel.text = this.value.toFixed(this.truncate);
+    }
+
+    /**
+     * 
+     * @returns {number}
+     */
+    GetValueAsPercentage() {
+        return RemapValueClamped(this.value, this.min, this.max, 0, 100);
+    }
+
+    SetText(text) {
+        const /**@type {Label} */ title = this.panel.FindChildTraverse("Title");
+        if (title)
+            title.text = text;
+    }
+}
+
+/**
+ * @typedef {Object} SubMenuCycleItem
+ * @property {string} text
+ * @property {string?} value
+ */
+
+class SubMenuCycle
+{
+    /**
+     * 
+     * @param {string} id 
+     * @param {string} convar 
+     * @param {SubMenuCycleItem[]} values Maximum of 6 items
+     * @param {function} callback 
+     * @param {number} selectedIndex
+     */
+    constructor(id, convar, values, callback, selectedIndex) {
+        this.id = id;
+        this.convar = convar;
+        this.values = values;//values.slice(0, 6);
+        this.callback = callback;
+
+        /** @type {Panel} */
+        this.panel = null;
+
+        this.selectedIndex = selectedIndex || 0;
+    }
+
+    AddToPanel(panel) {
+        /// Recreate GameMenuOptionCyclePanel hierarchy to preserve styles, with dynamically added items
+
+        this.panel = CreatePanel("Panel", panel, this.id, "cycler");
+        const row = CreatePanel("Panel", this.panel, null, "row");
+        const btnLeft = CreateDebugMenuButton(row, () => this.CycleLeft(), "cycle_button_left", "button_left");
+        CreatePanel("Panel", btnLeft, null, "cycle_image cycle_image_left");
+        const btnRight = CreateDebugMenuButton(row, () => this.CycleRight(), "cycle_button_right", "button_right");
+        const col = CreatePanel("Panel", btnRight, null, "cycle_button_right_col");
+        for (let [index,item] of this.values.entries()) {
+            /**@type {Label} */
+            const text = CreatePanel("Label", col, "item"+index, "cycle_label");
+            text.text = item.text;
+        }
+        CreatePanel("Label", col, "custom", "cycle_label").text = "Custom";
+        const dotRow = CreatePanel("Panel", col, null, "dot_row");
+        for (let [index,item] of this.values.entries()) {
+            /**@type {Label} */
+            const dot = CreatePanel("Label", dotRow, "dot"+index, "cycle_dots");
+            dot.text = " ■ ";
+        }
+        CreatePanel("Panel", dotRow);
+        const imgCont = CreatePanel("Panel", btnRight, null, "cycle_button_right_image");
+        CreatePanel("Panel", imgCont, null, "cycle_image cycle_image_right");
+        CreatePanel("Panel", this.panel);
+
+        this.SetSelectedIndexNoFire(this.selectedIndex);
+    }
+
+    /**
+     * Cycles to the left, wrapping around to the right if below `0`.
+     */
+    CycleLeft() {
+        if (this.selectedIndex == -1) this.selectedIndex = 0;
+        this.SetSelectedIndex(this.selectedIndex - 1);
+    }
+
+    /**
+     * Cycles to the right, wrapping around to the left if above `this.values.length`.
+     */
+    CycleRight() {
+        this.SetSelectedIndex(this.selectedIndex + 1);
+    }
+
+    /**
+     * Sets the selected option without firing the callback.
+     * @param {number} index The index of the option to select, starting from 0.
+     */
+    SetSelectedIndexNoFire(index) {
+        index = (index + this.values.length) % this.values.length;
+
+        for (let i = 0; i < this.values.length; i++) {
+            if (i == index) {
+                this.SetSelectedValueNoFire(this.values[i].value);
+                return;
+            }
+        }
+    }
+
+    /**
+     * Sets the selected option.
+     * @param {number} index The index of the option to select, starting from 0.
+     */
+    SetSelectedIndex(index) {
+        this.SetSelectedIndexNoFire(index);
+        this.callback(this.selectedIndex);
+    }
+
+    SetSelectedValueNoFire(value) {
+        let foundValue = false;
+        
+        // Find the matching value index
+        for (let i = 0; i < this.values.length; i++) {
+            const _value = this.values[i].value;
+            const item = this.panel.FindChildTraverse("item" + i);
+            const dot = this.panel.FindChildTraverse("dot" + ((this.values.length-1) - i));
+            if (_value === value) {
+                item.visible = true;
+                dot.SetHasClass("cycle_dots_selected", true);
+                foundValue = true;
+                this.selectedIndex = i;
+            } else {
+                item.visible = false;
+                dot.SetHasClass("cycle_dots_selected", false);
+            }
+        }
+
+        // Reveal custom value if needed
+        const custom = this.panel.FindChildTraverse("custom");
+        if (foundValue) {
+            custom.visible = false;
+        } else {
+            this.selectedIndex = -1;
+            custom.text = `Custom (${value})`;
+            custom.visible = true;
+        }
+    }
+
+    SetSelectedValue(value) {
+        this.SetSelectedValueNoFire(value);
+        this.callback(this.selectedIndex);
+    }
+
+    /**
+     * Gets the left cycle button.
+     * @returns {Button}
+     */
+    GetLeftButton() {
+        return this.panel.FindChildTraverse("button_left");
+    }
+    
+    /**
+     * Gets the right cycle button.
+     * @returns {Button}
+     */
+    GetRightButton() {
+        return this.panel.FindChildTraverse("button_right");
+    }
+
+    /**
+     * Gets the currently selected item.
+     * @returns {Panel}
+     */
+    GetSelectedItem() {
+        for (let i = 0; i < this.values.length; i++) {
+            const item = this.panel.FindChildTraverse("item" + i);
+            if (item.visible) return item;
+        }
+    }
+
+    /**
+     * Gets the currently selected index.
+     * @returns {number}
+     */
+    GetSelectedIndex() {
+        return this.selectedIndex;
+    }
+}
+
 /**
  * Shows a specific category and hides all others.
  * @param {string} id ID of the category to show.
@@ -467,16 +794,76 @@ function CloseMenu()
 }
 
 /**
+ * Gets the position of the left or right 'affordance' circle for the VR finger interacting with the menu.
+ * @returns {{x:number,y:number}?}
+ */
+function GetAffordancePosition() {
+    const left = $('#vr_affordance_left');
+    if (left.visible)
+        return { x: left.actualxoffset, y: left.actualyoffset };
+
+    const right = $('#vr_affordance_left');
+    if (right.visible)
+        return { x: right.actualxoffset, y: right.actualyoffset };
+
+    return null;
+}
+
+/**
+ * Remaps a number from one range to another.
+ * @param {number} value - The input value to remap.
+ * @param {number} low1 - Lower bound of the input range.
+ * @param {number} high1 - Upper bound of the input range.
+ * @param {number} low2 - Lower bound of the output range.
+ * @param {number} high2 - Upper bound of the output range.
+ * @returns {number} The remapped value in the output range.
+ */
+function RemapValue(value, low1, high1, low2, high2) {
+    return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
+}
+
+/**
+ * Remaps a number from one range to another while clamping within the range.
+ * @param {number} value - The input value to remap.
+ * @param {number} low1 - Lower bound of the input range.
+ * @param {number} high1 - Upper bound of the input range.
+ * @param {number} low2 - Lower bound of the output range.
+ * @param {number} high2 - Upper bound of the output range.
+ * @returns {number} The remapped value in the output range.
+ */
+function RemapValueClamped(value, low1, high1, low2, high2){
+    return RemapValue(Clamp(value, low1, high1), low1, high1, low2, high2);
+}
+
+/**
+ * Clamps a number between a minimum and maximum value.
+ * @param {number} value - The value to clamp.
+ * @param {number} min - The minimum allowable value.
+ * @param {number} max - The maximum allowable value.
+ * @returns {number} The clamped value.
+ */
+function Clamp(value, min, max) {
+    return Math.min(Math.max(value, min), max);
+}
+
+/**
  * Virtually clicks the currently active button.
  */
 function ClickHoveredButton()
 {
     if (currentlyActiveButton !== null)
     {
-        $.DispatchEvent("Activated", currentlyActiveButton, "mouse");
+        const button = currentlyActiveButton;
+        // $.Msg(`Pressing ${button.id} : ${button.paneltype}`);
+        $.DispatchEvent("Activated", button, "mouse");
     }
 }
 
+/**
+ * Parses the incoming Lua command.
+ * @param {string} command 
+ * @param {string[]} args 
+ */
 function ParseCommand(command, args)
 {
     command = command.toLowerCase();
@@ -500,7 +887,6 @@ function ParseCommand(command, args)
             
             let buttonId = args[1];
             let buttonText = args[2];
-            $.Msg("ID: " + buttonId + ", Text: " + buttonText);
             category.AddButton(buttonId, buttonText);
             break;
         }
@@ -545,6 +931,51 @@ function ParseCommand(command, args)
             category.AddSeparator();
             break;
         }
+
+        case "addslider": {
+            const category = GetCategory(args[0]);
+            if (category === null)
+            {
+                $.Msg(`Category ${args[0]} does not exist!`);
+                break;
+            }
+            
+            const id = args[1];
+            const text = args[2] || args[3];
+            const convar = args[3];
+            const min = parseFloat(args[4]);
+            const max = parseFloat(args[5]);
+            const value = parseFloat(args[6]);
+            const isPercentage = args[7] == "true";
+            const truncate = parseInt(args[8]);
+            const increment = parseFloat(args[9]);
+            category.AddSlider(id, text, convar, min, max, value, isPercentage, truncate, increment);
+            break;
+        }
+
+        case "addcycle":
+            const category = GetCategory(args[0]);
+            if (category === null)
+            {
+                $.Msg(`Category ${args[0]} does not exist!`);
+                break;
+            }
+
+            const id = args[1];
+            const convar = args[2];
+            const currentValue = args[3];
+            const rawValues = args.slice(4);
+            /**@type {SubMenuCycleItem[]} */
+            const values = [];
+            for (let i = 0; i < rawValues.length; i+=2) {
+                values.push({
+                    text: rawValues[i],
+                    value: rawValues[i+1]
+                });
+            }
+
+            category.AddCycle(id, convar, values, currentValue);
+            break;
 
         case "setitemtext": {
             let category = GetCategory(args[0]);
