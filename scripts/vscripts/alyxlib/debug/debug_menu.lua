@@ -764,35 +764,53 @@ end
 
 -- AlyxLib defaults
 
-DebugMenu:AddCategory("alyxlib", "AlyxLib")
+local categoryId = "alyxlib"
 
-DebugMenu:AddToggle("alyxlib", "alyxlib_noclip_vr", "NoClip VR", "noclip_vr")
+DebugMenu:AddCategory(categoryId, "AlyxLib")
 
-DebugMenu:AddToggle("alyxlib", "alyxlib_godmode", "God Mode", "god")
+DebugMenu:AddSeparator(categoryId, nil, "Basic")
 
-DebugMenu:AddToggle("alyxlib", "alyxlib_lefthanded", "Left Handed", "hlvr_left_hand_primary")
+DebugMenu:AddToggle(categoryId, "noclip_vr", "NoClip VR", "noclip_vr", function ()
+    return Convars:GetBool("noclip_vr_enabled")
+end)
+DebugMenu:AddLabel(categoryId, "noclip_vr_label", "Hold movement trigger to boost")
+DebugMenu:AddSlider(categoryId, "noclip_vr_speed", "NoClip VR Speed", 0.5, 10, false, "noclip_vr_speed", 2)
+DebugMenu:AddSlider(categoryId, "noclip_vr_boost_speed", "NoClip VR Boost Speed", 0.5, 10, false, "noclip_vr_boost_speed", 2)
 
-DebugMenu:AddSeparator("alyxlib")
+DebugMenu:AddToggle(categoryId, "buddha", "Buddha Mode", "buddha")
 
-DebugMenu:AddButton("alyxlib", "alyxlib_giveammo", "Give 999 Ammo", function()
+DebugMenu:AddToggle(categoryId, "lefthanded", "Left Handed", "hlvr_left_hand_primary")
+
+DebugMenu:AddToggle(categoryId, "gameinstructor", "Game Instructor Hints",
+function(on)
+    Convars:SetBool("gameinstructor_enable", on)
+    Convars:SetBool("sv_gameinstructor_disable", not on)
+end,
+function()
+    return Convars:GetBool("gameinstructor_enable") and not Convars:GetBool("sv_gameinstructor_disable")
+end)
+
+DebugMenu:AddSeparator(categoryId, nil, "Equipment")
+
+DebugMenu:AddButton(categoryId, "giveammo", "Give 999 Ammo", function()
     SendToConsole("hlvr_setresources 999 999 999 " .. Player:GetResin())
 end)
 
-DebugMenu:AddButton("alyxlib", "alyxlib_giveresin", "Give 999 Resin", function()
+DebugMenu:AddButton(categoryId, "giveresin", "Give 999 Resin", function()
     SendToConsole("hlvr_addresources 0 0 0 " .. (999 - Player:GetResin()))
 end)
 
-DebugMenu:AddSeparator("alyxlib")
+DebugMenu:AddSeparator(categoryId, nil, "Session")
 
 local isRecordingDemo = false
 local currentDemo = ""
 
-DebugMenu:AddButton("alyxlib", "alyxlib_demo_recording", "Start Recording Demo", function()
+DebugMenu:AddButton(categoryId, "demo_recording", "Start Recording Demo", function()
     if isRecordingDemo then
         SendToConsole("stop")
         currentDemo = ""
         isRecordingDemo = false
-        DebugMenu:SetItemText("alyxlib", "alyxlib_demo_recording", "Start Recording Demo")
+        DebugMenu:SetItemText(categoryId, "demo_recording", "Start Recording Demo")
     else
         local localtime = LocalTime()
         -- remove all whitespace and slashes
@@ -800,16 +818,20 @@ DebugMenu:AddButton("alyxlib", "alyxlib_demo_recording", "Start Recording Demo",
         currentDemo = "demo_" .. sanitizedMap .. "_" .. localtime.Hours .. "-" .. localtime.Minutes .. "-" .. localtime.Seconds
         SendToConsole("record " .. currentDemo)
         isRecordingDemo = true
-        DebugMenu:SetItemText("alyxlib", "alyxlib_demo_recording", "Stop Recording Demo")
+        DebugMenu:SetItemText(categoryId, "demo_recording", "Stop Recording Demo")
     end
 end)
 
-DebugMenu:AddSeparator("alyxlib")
+DebugMenu:AddSeparator(categoryId)
 
-DebugMenu:AddButton("alyxlib", "alyxlib_enableextras", "Enable Extras Tab", function()
-    require "alyxlib.debug.debug_menu_extras"
-    -- Update the panel immediately
-    local id = "alyxlib_extras"
-    DebugMenu:SendCategoryToPanel(DebugMenu:GetCategory(id))
-    DebugMenu:SetCategoryIndex(id, 2)
+DebugMenu:AddButton(categoryId, "enableextras", "Enable Extras Tab...", function()
+    if package.loaded["alyxlib.debug.debug_menu_extras"] == nil then
+        require "alyxlib.debug.debug_menu_extras"
+        -- Update the panel immediately
+        local id = "alyxlib_extras"
+        DebugMenu:SendCategoryToPanel(DebugMenu:GetCategory(id))
+        DebugMenu:SetCategoryIndex(id, 2)
+        ---@TODO Allow disabling extras tab
+        DebugMenu:SetItemText(categoryId, "enableextras", "Extras Tab Enabled!")
+    end
 end)
