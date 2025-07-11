@@ -1,8 +1,7 @@
+/// <reference path="panoramadoc.js" />
 "use strict";
 
 ///TODO: Add pop up for warnings and errors
-
-if(false)p=require("./panoramadoc");
 
 let panelReady = false;
 
