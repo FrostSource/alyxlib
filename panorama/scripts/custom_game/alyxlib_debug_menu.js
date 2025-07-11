@@ -43,7 +43,7 @@ let currentlySelectedCategory = null;
  */
 let currentlyActiveButton = null;
 
-function TurnButtonIntoDebugMenuButton(button)
+function TurnButtonIntoDebugMenuButton(button, callback)
 {
     if (button == null) return;
 
@@ -51,6 +51,12 @@ function TurnButtonIntoDebugMenuButton(button)
     button.SetPanelEvent("onmouseout", () => {
         if (currentlyActiveButton == button) currentlyActiveButton = null;
     });
+
+    if (callback !== null && callback !== undefined)
+        if (button.paneltype == "HLVR_SettingsSlider")
+            button.SetPanelEvent("onvaluechanged", callback);
+        else
+            button.SetPanelEvent("onactivate", callback);
 }
 
 /**
@@ -188,8 +194,12 @@ class Category
         let item = this.items.find(o => o.id === combinedId);
         if (item === undefined)
         {
-            this.items.forEach((o) => $.Msg(o.id));
             $.Msg(`Item ${id} does not exist!`);
+            return;
+        }
+
+        if (!item.SetText) {
+            $.Msg(`Item ${id} does not support SetItemText!`);
             return;
         }
 
