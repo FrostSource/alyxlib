@@ -229,9 +229,8 @@ class Category
 
     AddLabel(id, text)
     {
-        let label = $.CreatePanel("Label", this.content, `${this.id}_${id}`);
-        label.AddClass("custom_label");
-        label.text = text;
+        const label = new SubMenuLabel(`${this.id}_${id}`, text);
+        label.AddToPanel(this.content);
 
         this.items.push(label);
     }
@@ -758,6 +757,43 @@ class SubMenuSeparator
     GetText()
     {
         return this.text;
+    }
+}
+
+class SubMenuLabel
+{
+    /**
+     * Creates a new sub menu label instance.
+     * @param {string} id Id for this label.
+     * @param {string} text Text to display with this label.
+     */
+    constructor(id, text)
+    {
+        this.id = id;
+        this.text = text;
+
+        /**@type {Panel} */
+        this.panel = null;
+    }
+
+    /**
+     * Creates all required elements as children of `panel`.
+     * @param {Panel} panel Panel to add this label to.
+     */
+    AddToPanel(panel)
+    {
+        this.panel = CreatePanel("Label", this.content, this.id, "custom_label");
+        this.panel.text = this.text;
+    }
+
+    /**
+     * Sets or removes the text displayed with this label.
+     * @param {string?} text The text to display with this label.
+     */
+    SetText(text = "")
+    {
+        this.text = text;
+        this.panel.text = text;
     }
 }
 
