@@ -815,6 +815,8 @@ DebugMenu:AddSeparator(categoryId, nil, "Session")
 local isRecordingDemo = false
 local currentDemo = ""
 
+DebugMenu:AddLabel(categoryId, "demo_recording_label", "Last Demo: N/A")
+
 DebugMenu:AddButton(categoryId, "demo_recording", "Start Recording Demo", function()
     if isRecordingDemo then
         SendToConsole("stop")
@@ -827,6 +829,7 @@ DebugMenu:AddButton(categoryId, "demo_recording", "Start Recording Demo", functi
         local sanitizedMap = GetMapName():gsub("%s+", ""):gsub("/", "_")
         currentDemo = "demo_" .. sanitizedMap .. "_" .. localtime.Hours .. "-" .. localtime.Minutes .. "-" .. localtime.Seconds
         SendToConsole("record " .. currentDemo)
+        DebugMenu:SetItemText(categoryId, "demo_recording_label", "Last Demo: " .. currentDemo .. ".dem")
         isRecordingDemo = true
         DebugMenu:SetItemText(categoryId, "demo_recording", "Stop Recording Demo")
     end
