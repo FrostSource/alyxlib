@@ -18,25 +18,31 @@ RegisterAlyxLibConvar("alyxlib_debug_menu_hand", "1", "Hand to attach the debug 
 DebugMenu = {}
 DebugMenu.version = "v1.0.0"
 
+---
+---A category of items in the debug menu.
+---
 ---@class DebugMenuCategory
----@field id string
----@field name string
----@field items DebugMenuItem[]
+---@field id string # The unique ID for this category.
+---@field name string # The display name for this category.
+---@field items DebugMenuItem[] # The items in this category.
 
+---
+---An item in the debug menu.
+---
 ---@class DebugMenuItem
----@field categoryId string
----@field id string
----@field text string
----@field callback function
+---@field categoryId string # The ID of the category this item is in.
+---@field id string # The unique ID for this item.
+---@field text string # The text to display for this item (if applicable).
+---@field callback function # The function to call when this item is clicked.
 ---@field type "button"|"toggle"|"separator"|"slider"|"cycle" # Type of menu element this item is.
 ---@field default any|function # The default value sent to the menu. If this is a function the return value will be used.
 ---@field min number # Minimum value of this slider.
 ---@field max number # Maxmimum value of this slider.
 ---@field isPercentage boolean # If true, this slider displays its value as a percentage of min/max.
 ---@field convar string # The console variable associated with this element. 
----@field values any[] # Text/value pairs for this cycler.
----@field truncate number # Used for slider
----@field increment number # Used for slider
+---@field values {text:string,value:any}[] # Text/value pairs for this cycler.
+---@field truncate number # The number of decimal places to truncate the slider value to (-1 for no truncating).
+---@field increment number  # The increment value to snap the slider value to (0 for no snapping).
 
 ---The panel entity.
 ---@type CPointClientUIWorldPanel
@@ -269,7 +275,7 @@ end
 ---
 ---Returns whether the debug menu is currently open.
 ---
----@return boolean
+---@return boolean # True if the debug menu is open
 function DebugMenu:IsOpen()
     return self.panel ~= nil and debugMenuOpen
 end
@@ -599,8 +605,8 @@ function DebugMenu:SetCategoryIndex(categoryId, index)
 end
 
 ---Resolves the default value of an element by running any value getter functions.
----@param default any
----@return any
+---@param default any|fun():any # The default value to resolve
+---@return any # The resolved value
 local function resolveDefault(default)
     if type(default) == "function" then
         return default()
@@ -613,7 +619,7 @@ end
 ---
 ---This should only be used if modifying the menu in a non-standard way.
 ---
----@param category DebugMenuCategory
+---@param category DebugMenuCategory # The category to send
 function DebugMenu:SendCategoryToPanel(category)
     if not self.panel then
         return
@@ -763,7 +769,10 @@ if Convars:GetInt("developer") > 0 then
     end, nil)
 end
 
--- AlyxLib defaults
+--[[
+    Default AlyxLib tab
+]]
+---@TODO Move to its own file
 
 local categoryId = "alyxlib"
 
