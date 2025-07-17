@@ -1,5 +1,5 @@
 --[[
-    v1.1.0
+    v1.2.0
     https://github.com/FrostSource/alyxlib
 
     Provides functionality for animating getter/setter entity methods using curves.
@@ -15,7 +15,7 @@
 ---@diagnostic disable: undefined-field
 ---@class Animation
 Animation = {}
-Animation.version = "v1.1.0"
+Animation.version = "v1.2.0"
 
 local localBounceOut = function(a, b, t)
     local normalizedT = t

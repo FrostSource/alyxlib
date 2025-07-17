@@ -1,12 +1,12 @@
 --[[
-    v1.2.0
+    v1.3.0
     https://github.com/FrostSource/alyxlib
 
     Code for player hands.
     
 ]]
 
-local version = "v1.2.0"
+local version = "v1.3.0"
 
 ---Merge an existing prop with this hand.
 ---@param prop EntityHandle|string # The prop handle or targetname.
