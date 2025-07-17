@@ -560,7 +560,7 @@ class:
   types:
     - EntityClass
   methods:
-    # - EntityClass:Set DEPRECATED
+    - EntityClass:Set
     - EntityClass:Save
     - EntityClass:Think
     - EntityClass:ResumeThink

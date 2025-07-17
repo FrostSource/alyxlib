@@ -58,6 +58,7 @@ class Method:
     is_method: bool = True
     class_name: str = ""
     exposed_name: str = ""
+    is_deprecated: bool = False
 
 @dataclass
 class TypeField:
@@ -347,6 +348,7 @@ class LuaDocParser:
         params: list[Parameter] = []
         returns = []
         exposed_name: str = ''
+        is_deprecated: bool = False
         
         for line in comment_lines:
             if line.startswith('@param'):
@@ -382,6 +384,8 @@ class LuaDocParser:
                 match = re.match(r'@exposed\s+(\w+)\s*', line)
                 if match:
                     exposed_name = match.group(1)
+            elif line.startswith('@deprecated'):
+                is_deprecated = True
             elif not line.startswith('@'):
                 if description_lines and description_lines[-1].strip() == '' and self._looks_like_example_code(line):
                     description_lines.append(f"`{line.strip()}`")
@@ -407,7 +411,8 @@ class LuaDocParser:
             returns=returns,
             is_method=is_method,
             class_name=class_name,
-            exposed_name=exposed_name
+            exposed_name=exposed_name,
+            is_deprecated=is_deprecated
         )
     
     def _extract_type_definition(self, content: str, lines: List[str], type_name: str) -> Optional[TypeDef]:
@@ -674,6 +679,11 @@ class MarkdownGenerator:
         sections = []
         
         sections.append(f"### {method.name}")
+
+        if method.is_deprecated:
+            sections.append(f"!!! danger \"This method is deprecated.\"")
+            sections.append("")
+
         sections.append("")
         if method.description:
             sections.append(method.description)
