@@ -74,4 +74,5 @@ You can also join us on our <img src="https://github.com/user-attachments/assets
 <a title="Partial Clip Storage" href="https://steamcommunity.com/sharedfiles/filedetails/?id=3329684800"><img src="https://images.steamusercontent.com/ugc/2397692528303495590/700AD9E3DD1C2984BCD4F2D588ACDD8BE2EB6EAD/" width="23%"></img></a>
 <a title="Alyx Wears Glasses" href="https://steamcommunity.com/sharedfiles/filedetails/?id=2703180455"><img src="https://images.steamusercontent.com/ugc/2397692528303482230/73852A6226202BAA79D1D7E3C88083D71F356D87/" width="23%"></img></a>
 <a title="Combine Shoot and Scoot" href="https://steamcommunity.com/sharedfiles/filedetails/?id=3426415080"><img src="https://images.steamusercontent.com/ugc/6295179234055719/14236C86CACFA0CCEF2A506B1EC6C07E980819CC/" width="23%"></img></a>
+<a title="Removable Health Vials" href="https://steamcommunity.com/sharedfiles/filedetails/?id=3527754624"><img src="https://images.steamusercontent.com/ugc/17381853478388583576/123BD1E044FCBA6D52324E594F845AFBB623F6E2/" width="23%"></img></a>
 </p>
