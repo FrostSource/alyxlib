@@ -102,8 +102,8 @@ Convars:RegisterCommand("add_hand_attachment", function (_, classname, handName)
     hand:AddHandAttachment(ent)
 end, "", 0)
 
-
-local noclipVREnabled = false
+---Hidden convar state that can be retrieved by other scripts
+RegisterAlyxLibConvar("noclip_vr_enabled", "0", "True if noclip_vr is enabled (readonly)", FCVAR_HIDDEN)
 
 ---Tracks initial button press to prevent repeated logic execution while held
 local quickTurnFlag = false
@@ -167,11 +167,13 @@ RegisterAlyxLibConvar("noclip_vr_boost_speed", "5", "Speed of the VR noclip move
 local movetype = Convars:GetInt('hlvr_movetype_default')
 
 RegisterAlyxLibCommand("noclip_vr", function (_, on)
+    local noclipVREnabled
     if on == nil then
-        noclipVREnabled = not noclipVREnabled
+        noclipVREnabled = not Convars:GetBool("noclip_vr_enabled")
     else
         noclipVREnabled = truthy(on)
     end
+    Convars:SetBool("noclip_vr_enabled", noclipVREnabled)
 
     if noclipVREnabled then
         movetype = Convars:GetInt("hlvr_movetype_default")
