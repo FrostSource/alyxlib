@@ -1,3 +1,15 @@
+Update v2.0.0 (Major update)
+
+New:
+
+Added a new in-game menu. Addons can create their own tabs to allow in-game customization.
+
+The menu can be enabled by adding "-dev" to the Half-Life: Alyx launch parameters in Steam. After loading into a map, press the pause menu button 3 times in a row to open the AlyxLib menu.
+
+Any AlyxLib addons using EasyConvars will need to be updated to the new standards to be compatible.
+
+There are also many various improvements and fixes.
+
 Update v1.3.1 (Patch update)
 
 General:

@@ -6,6 +6,7 @@ __pycache__
 /test_release/
 __test*
 *.bak
+check_lua_versions.sh
 
 # MkDocs
 .cache

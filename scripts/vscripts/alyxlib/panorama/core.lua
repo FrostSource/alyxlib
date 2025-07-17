@@ -1,12 +1,12 @@
 --[[
-    v1.1.0
+    v1.1.1
     https://github.com/FrostSource/alyxlib
 
     Panorama core library.
 ]]
 
 Panorama = {}
-Panorama.version = "v1.1.0"
+Panorama.version = "v1.1.1"
 
 ---Filters text string to replace problematic characters.
 ---@param text string
@@ -56,15 +56,18 @@ function Panorama:Send(panelEntity, ...)
     local dataString = id .. "|"
     local data = {...}
     local i = 1
-    local dataLength = #data
+
+    local flattenedData = {}
 
     -- Flatten nested tables into data
-    while i <= dataLength do
-        if type(data[i]) == "table" then
-            data = vlua.extend(vlua.slice(data, 1, dataLength), data[i])
+    for _, value in ipairs(data) do
+        if type(value) == "table" then
+            data = vlua.extend(flattenedData, value)
+        else
+            table.insert(flattenedData, value)
         end
-        i = i + 1
     end
+    local dataLength = #flattenedData
 
     -- Put all values into a single pipe separated string
     for index, value in ipairs(data) do
