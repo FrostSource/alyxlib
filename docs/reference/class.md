@@ -13,6 +13,24 @@
 
 ## Methods
 
+### Set
+!!! danger "This method is deprecated."
+
+
+Assign a new value to entity's field `name`.
+This also saves the field.
+
+```lua
+EntityClass:Set(name, value)
+```
+
+**Parameters**
+
+- **`name`**  
+  `string`  
+- **`value`**  
+  `any`  
+
 ### Save
 
 Save a given entity field. Call with no arguments to save all data.

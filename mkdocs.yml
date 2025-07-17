@@ -18,6 +18,18 @@ theme:
     - navigation.top
 
 nav:
+  - Components:
+    - components/index.md
+    - AlyxLib: components/alyxlib.md
+    - Player: components/player.md
+    - Classes: components/classes.md
+    - Input: components/input.md
+    - Panorama: components/panorama.md
+    - Global Precache: components/global_precache.md
+    - Debugging: components/debug.md
+    - Entity Mods:
+      - trigger_look_arbitrary: components/entity_mods/trigger_look_arbitrary.md
+      - another_test: components/entity_mods/another_test.md
   - Console: console/index.md
   - Reference:
     - Class: reference/class.md

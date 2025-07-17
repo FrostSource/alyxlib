@@ -337,7 +337,7 @@ CBasePlayer:GrabActivator(data)
 - **`data`**  
   `IOParams`  
 
-!!! exposed "Exposed To Hammer as `GrabActivator` [:material-link:](PUT LINK HERE)"
+!!! exposed "[Exposed](PUT LINK HERE) To Hammer as `GrabActivator`"
 
 ### GetMoveType
 

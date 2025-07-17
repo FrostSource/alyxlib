@@ -27,6 +27,8 @@ Util:GetHandIdFromTip(vr_tip_attachment)
 - **`0|1`**
 
 ### FindKeyFromValue
+!!! danger "This method is deprecated."
+
 
 Attempt to find a key in `tbl` pointing to `value`.
 
