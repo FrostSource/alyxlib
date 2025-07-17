@@ -1,5 +1,5 @@
 --[[
-    v1.1.0
+    v1.1.1
     https://github.com/FrostSource/alyxlib
 
     If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
@@ -7,7 +7,7 @@
     require "alyxlib.debug.commands"
 ]]
 
-local version = "v1.1.0"
+local version = "v1.1.1"
 
 local alyxlibCommands = {}
 
@@ -455,15 +455,34 @@ RegisterAlyxLibCommand("ent_find_by_address", function (_, tblpart, colon, hash)
     local foundEnt = Debug.FindEntityByHandleString(tblpart, colon, hash)
 
     if foundEnt then
-        Msg("Info for " .. tostring(foundEnt).."\n")
-        Msg("\tClassname" .. foundEnt:GetClassname().."\n")
-        Msg("\tName" .. foundEnt:GetName().."\n")
-        Msg("\tParent" .. foundEnt:GetMoveParent().."\n")
-        Msg("\tModel" .. foundEnt:GetModelName())
+        Msg("Info for " .. tostring(foundEnt) .."\n")
+        Msg("\tClassname: " .. foundEnt:GetClassname() .."\n")
+        Msg("\tName: " .. foundEnt:GetName().."\n")
+        Msg("\tParent: " .. (tostring(foundEnt:GetMoveParent() or "[none]")) .."\n")
+        Msg("\tModel: " .. foundEnt:GetModelName())
     else
         Msg("Could not find any entity matching '" .. hash .. "'")
     end
 end, "Prints info for an entity by its table address", 0)
+
+---
+---Renames the first entity found using `pattern`.
+---
+RegisterAlyxLibCommand("ent_rename", function(_, pattern, newName)
+    local ent = Debug.FindEntityByPattern(pattern)
+    if not ent then
+        warn("Could not find entity with pattern '"..pattern.."'")
+        return
+    end
+
+    if newName == nil or newName == "" then
+        Msg("Removing name from " .. Debug.EntStr(ent))
+        ent:SetEntityName("")
+    else
+        Msg("Renaming " .. Debug.EntStr(ent) .. " to '" .. newName .. "'")
+        ent:SetEntityName(newName)
+    end
+end, "Renames the first entity found using a pattern to a new name", 0)
 
 local symbols = {"and","break","do","else","elseif","end","false","for","function","if","in","local","nil","not","or","repeat","return","then","true","until","while"}
 

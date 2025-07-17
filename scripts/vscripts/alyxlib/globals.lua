@@ -1,5 +1,5 @@
 --[[
-    v2.6.0
+    v2.7.0
     https://github.com/FrostSource/alyxlib
 
     Provides common global functions used throughout extravaganza libraries.
@@ -14,7 +14,7 @@
 -- These are expected by globals
 require 'alyxlib.utils.common'
 
-local _version = "v2.6.0"
+local _version = "v2.7.0"
 
 ---
 ---A registered AlyxLib addon.
@@ -259,6 +259,14 @@ end
 ---@return boolean
 function IsVREnabled()
     return GlobalSys:CommandLineCheck('-vr')
+end
+
+---
+---Gets if the game was started with `+vr_enable_fake_vr 1`.
+---
+---@return boolean
+function IsFakeVREnabled()
+    return GlobalSys:CommandLineInt("+vr_enable_fake_vr", 0) == 1
 end
 
 ---

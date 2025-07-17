@@ -1,5 +1,5 @@
 --[[
-    v1.0.1
+    v1.0.2
     https://github.com/FrostSource/alyxlib
 
     Precaching can only be done with an entity attached script, so this script collects a list of assets to be automatically
@@ -31,7 +31,7 @@ if thisEntity then
     return
 end
 
-local version = "v1.0.1"
+local version = "v1.0.2"
 
 require "alyxlib.player.core"
 
@@ -72,7 +72,7 @@ function _PrecacheGlobalItems(context)
     if #AlyxLibGlobalPrecacheList > 0 then
         devprints("Globally precaching", #AlyxLibGlobalPrecacheList, "resources...")
         for _, item in ipairs(AlyxLibGlobalPrecacheList) do
-            devprints("\nPrecaching", item.type, item.path)
+            devprints("\tPrecaching", item.type, item.path)
             if item.type == "model" then
                 PrecacheModel(item.path, context)
             elseif item.type == "entity" then

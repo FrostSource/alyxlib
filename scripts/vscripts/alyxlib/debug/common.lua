@@ -1,5 +1,5 @@
 --[[
-    v2.1.0
+    v2.2.0
     https://github.com/FrostSource/alyxlib
 
     Debug utility functions.
@@ -13,7 +13,7 @@ require "alyxlib.extensions.entity"
 require "alyxlib.math.common"
 
 Debug = {}
-Debug.version = "v2.1.0"
+Debug.version = "v2.2.0"
 
 ---
 ---Finds the first entity whose name, class or model matches `pattern`.
@@ -92,7 +92,7 @@ end
 ---Property patterns do not need to be functions.
 ---
 ---@param list EntityHandle[] # List of entities to print.
----@param properties string[] # List of property patterns to search for.
+---@param properties? string[] # List of property patterns to search for.
 function Debug.PrintEntityList(list, properties)
 
     if #list == 0 then
@@ -394,13 +394,20 @@ function Debug.PrintTableShallow(tbl)
     print("}")
 end
 
+---
+---Prints an ordered table as a numbered list in the console.
+---
+---@param tbl table # Table to print.
+---@param prefix? string # Optional prefix for each line.
 function Debug.PrintList(tbl, prefix)
     local m = 0
     prefix = prefix or ""
+
+    -- Pre-determine alignment padding
     for key, value in pairs(tbl) do
         m = max(m, #tostring(key)+1)
     end
-    m = 0
+
     local frmt = "%"..m.."s  %s"
     for key, value in pairs(tbl) do
         if type(key) == "number" then
@@ -408,6 +415,20 @@ function Debug.PrintList(tbl, prefix)
         else
             print(prefix..frmt:format(key, value))
         end
+    end
+end
+
+---
+---Prints all the values in a table, one value per line, without any numbering or padding.
+---
+---@param tbl table # Table to print.
+function Debug.PrintSimpleTable(tbl)
+    if type(tbl) ~= "table" then
+        return warn("Parameter 'tbl' is not a table " .. Debug.GetSourceLine(3))
+    end
+
+    for _, value in pairs(tbl) do
+        print(value)
     end
 end
 
@@ -792,8 +813,19 @@ end
 ---@param ent EntityHandle
 ---@return string
 function Debug.EntStr(ent)
+    if ent == nil then
+        return "[nil, nil]"
+    end
+
+    if ent:IsNull() then
+        return "[invalid, invalid]"
+    end
+
     return "[" .. ent:GetClassname() .. ", " .. ent:GetName() .. "]"
 end
+
+---@diagnostic disable-next-line: lowercase-global
+entstr = Debug.EntStr
 
 ---
 ---Dumps a list of convars and their values to the console.
@@ -889,6 +921,30 @@ function Debug.ToOrdinalString(n)
     local suffixes = { [1] = "st", [2] = "nd", [3] = "rd" }
 
     return n .. (suffixes[lastDigit] or "th")
+end
+
+---
+---Get the script name and line number of a function or traceback level.
+---
+---@param f integer|function # Level or function
+---@return string
+function Debug.GetSourceLine(f)
+    return debug.getinfo(f, "S").short_src..":"..tostring(debug.getinfo(f, "l").currentline)
+end
+
+---
+---Safely calls a function while handling any errors.
+---
+---If an error occurs, a warning will be printed to the console.
+---
+---@param action function # The function to call
+---@param ... any # Optional arguments to pass
+function Debug.Try(action, ...)
+    local success, result = pcall(action, ...)
+
+    if not success then
+        warn(result)
+    end
 end
 
 return Debug.version

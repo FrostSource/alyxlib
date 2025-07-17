@@ -1,12 +1,12 @@
 --[[
-    v1.2.0
+    v1.3.0
     https://github.com/FrostSource/alyxlib
 
     Code for player hands.
     
 ]]
 
-local version = "v1.2.0"
+local version = "v1.3.0"
 
 ---Merge an existing prop with this hand.
 ---@param prop EntityHandle|string # The prop handle or targetname.
@@ -45,6 +45,20 @@ function CPropVRHand:Drop()
     end
 end
 
+---Grab the entity
+---@param ent EntityHandle|string
+function CPropVRHand:Grab(ent)
+    if type(ent) == "string" then
+        local name = ent
+        ent = Entities:FindByName(nil, name)
+        if ent == nil then
+            return warn("Could not find entity to grab with name " .. name)
+        end
+    end
+
+    ent:Grab(self)
+end
+
 ---Get the rendered glove entity for this hand, i.e. the first `hlvr_prop_renderable_glove` class.
 ---@return EntityHandle|nil
 function CPropVRHand:GetGlove()
@@ -79,6 +93,19 @@ function CPropVRHand:GetPalmPosition()
         return glove:GetAttachmentOrigin(glove:ScriptLookupAttachment("vr_palm"))
     else
         return self:GetAttachmentOrigin(self:ScriptLookupAttachment("vr_hand_origin"))
+    end
+end
+
+---
+---Gets the 'hand_use_controller' entity associated with this hand.
+---
+---@return EntityHandle
+function CPropVRHand:GetHandUseController()
+    for _, controller in ipairs(Entities:FindAllByClassname("hand_use_controller")) do
+        if controller:GetOwner() == self then
+            return controller
+        end
+---@diagnostic disable-next-line: missing-return
     end
 end
 

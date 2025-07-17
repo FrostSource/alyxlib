@@ -1,5 +1,5 @@
 --[[
-    v4.0.1
+    v4.0.2
     https://github.com/FrostSource/alyxlib
 
     Simplifies the tracking of digital action presses/releases and analog values.
@@ -15,7 +15,7 @@
 ---@class Input
 Input = {}
 Input.__index = Input
-Input.version = "v4.0.1"
+Input.version = "v4.0.2"
 
 ---
 ---If the input system should start automatically on player spawn.
@@ -119,10 +119,10 @@ InputHandPrimary = 2
 InputHandSecondary = 3
 
 ---@alias InputHandKind
----| `INPUT_HAND_LEFT`
----| `INPUT_HAND_RIGHT`
----| `INPUT_HAND_PRIMARY`
----| `INPUT_HAND_SECONDARY`
+---| `InputHandLeft`
+---| `InputHandRight`
+---| `InputHandPrimary`
+---| `InputHandSecondary`
 ---| 0  # Left Hand.
 ---| 1  # Right Hand.
 ---| 2  # Primary Hand.
@@ -157,7 +157,7 @@ end
 
 ListenToGameEvent("primary_hand_changed", function(data)
     ---@cast data GameEventPrimaryHandChanged
-    updatePrimaryHandId(data.is_primary_left and 0 or 1)
+    updatePrimaryHandId(1 - data.is_primary_left)
 end, nil)
 
 ---
@@ -305,8 +305,8 @@ function Input:ListenToButton(kind, hand, button, presses, callback, context)
         kind = kind,
 
         multiple_press_count = 0,
-        press_time = -1,
-        release_time = 0,
+        press_time = vlua.select(kind == "press", 0, -1),
+        release_time = vlua.select(kind == "release", 0, -1),
         prev_press_time = 0,
     }
 
