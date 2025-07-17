@@ -16,7 +16,7 @@ local version = "v1.2.2"
 ---ID of AlyxLib in the Steam workshop
 ALYXLIB_WORKSHOP_ID = "3329679071"
 ---The current version of AlyxLib as a whole
-ALYXLIB_VERSION = "v1.4.0"
+ALYXLIB_VERSION = "v2.0.0"
 
 print("Initializing AlyxLib system ".. ALYXLIB_VERSION .." ...")
 
