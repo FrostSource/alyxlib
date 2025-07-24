@@ -55,7 +55,6 @@ function Panorama:Send(panelEntity, ...)
 
     local dataString = id .. "|"
     local data = {...}
-    local i = 1
 
     local flattenedData = {}
 
