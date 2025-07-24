@@ -782,7 +782,7 @@ class SubMenuLabel
      */
     AddToPanel(panel)
     {
-        this.panel = CreatePanel("Label", this.content, this.id, "custom_label");
+        this.panel = CreatePanel("Label", panel, this.id, "custom_label");
         this.panel.text = this.text;
     }
 
