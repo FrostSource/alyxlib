@@ -1,4 +1,9 @@
+<img src="assets/alyxlib_logo.svg" alt="drawing" width="128"/>
+
 # Welcome to AlyxLib
+
+<!-- ![logo](assets/alyxlib_logo.svg) -->
+
 
 For full documentation visit [mkdocs.org](https://www.mkdocs.org).
 

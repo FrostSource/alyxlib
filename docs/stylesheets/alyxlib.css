@@ -1,0 +1,92 @@
+/* [data-md-color-scheme="alyxlib"] {
+  --md-primary-fg-color:        #232430;
+  --md-primary-fg-color--light: #a4ffe0;
+  --md-primary-fg-color--dark:  #027b5a;
+} */
+
+:root  > * {
+/* --md-primary-fg-color:        #21c996;
+--md-primary-fg-color--light: #6fe1bc;
+--md-primary-fg-color--dark:  #056f52; */
+
+/* darker */
+/* --md-primary-fg-color:        #1db88a;
+--md-primary-fg-color--light: #5ed9b0;
+--md-primary-fg-color--dark:  #045c44; */
+
+/* darker still */
+--md-primary-fg-color:        #159972;
+--md-primary-fg-color--light: #45ba99;
+--md-primary-fg-color--dark:  #034f3a;
+
+}
+
+[data-md-color-scheme="alyxlib-light"] {
+  /* Use a neutral/dark primary for top bar */
+  --md-primary-fg-color:        #232530;
+  --md-primary-fg-color--light: #3a3c4a;
+  --md-primary-fg-color--dark:  #1a1b23;
+
+  /* Accent color is the brand green */
+  --md-accent-fg-color:         #09f7a0;
+  --md-accent-fg-color--light:  #8effd2;
+  --md-accent-fg-color--dark:   #027b5a;
+
+  /* Optional blue accent if needed */
+  --md-accent-alt-fg-color:     #6c6f93;
+
+  /* Backgrounds (light mode) */
+  --md-default-bg-color:        #ffffff;
+  --md-code-bg-color:           #f5f5f7;
+  --md-footer-bg-color:         #eefcf7;
+}
+
+  /* Dark mode override */
+[data-md-color-scheme="alyxlib-dark"] {
+    --md-primary-fg-color:        #232530;
+    --md-primary-fg-color--light: #2e303e;
+    --md-primary-fg-color--dark:  #1a1b23;
+
+    --md-accent-fg-color:         #09f7a0;
+    --md-accent-fg-color--light:  #30ffc0;
+    --md-accent-fg-color--dark:   #027b5a;
+
+    --md-accent-alt-fg-color:     #6c6f93;
+
+    --md-default-bg-color:        #232530;
+    --md-code-bg-color:           #2e303e;
+    --md-footer-bg-color:         #1c1d24;
+
+    --md-typeset-color:           #f5f5f5;
+  }
+
+/* [data-md-color-scheme="alyxlib-light"] {
+  --md-primary-fg-color:        #232530;
+  --md-primary-fg-color--light: #3a3c4a;
+  --md-primary-fg-color--dark:  #1a1b23;
+
+  --md-accent-fg-color:         #09f7a0;
+  --md-accent-fg-color--light:  #8effd2;
+  --md-accent-fg-color--dark:   #027b5a;
+
+  --md-default-bg-color:        #ffffff;
+  --md-code-bg-color:           #f5f5f7;
+  --md-footer-bg-color:         #eefcf7;
+}
+
+[data-md-color-scheme="alyxlib-dark"] {
+  --md-primary-fg-color:        #232530;
+  --md-primary-fg-color--light: #2e303e;
+  --md-primary-fg-color--dark:  #1a1b23;
+
+  --md-accent-fg-color:         #09f7a0;
+  --md-accent-fg-color--light:  #30ffc0;
+  --md-accent-fg-color--dark:   #027b5a;
+
+  --md-default-bg-color:        #232530;
+  --md-code-bg-color:           #2e303e;
+  --md-footer-bg-color:         #1c1d24;
+
+  --md-typeset-color:           #f5f5f5;
+} */
+
