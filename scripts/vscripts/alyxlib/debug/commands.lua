@@ -484,6 +484,21 @@ RegisterAlyxLibCommand("ent_rename", function(_, pattern, newName)
     end
 end, "Renames the first entity found using a pattern to a new name", 0)
 
+---
+---Prints the children of an entity found using `pattern`.
+---
+RegisterAlyxLibCommand("ent_print_children", function(_, pattern)
+    local ent = Debug.FindEntityByPattern(pattern)
+    if not ent then
+        warn("Could not find entity with pattern '"..pattern.."'")
+        return
+    end
+
+    print(entstr(ent))
+
+    Debug.PrintEntityList(ent:GetChildrenMemSafe())
+end)
+
 local symbols = {"and","break","do","else","elseif","end","false","for","function","if","in","local","nil","not","or","repeat","return","then","true","until","while"}
 
 -- if IsInToolsMode() then
