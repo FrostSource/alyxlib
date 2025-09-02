@@ -143,6 +143,9 @@ CBasePlayer.Items = {
         ---The hlvr_multitool
         ---@type EntityHandle
         multitool = nil,
+        ---The current hlvr_weapon_generic_pistol equipped
+        ---@type EntityHandle
+        generic_pistol = nil,
         ---List of generic pistols the player has
         ---@type EntityHandle[]
         genericpistols = {},
@@ -609,15 +612,20 @@ end
 ---@return EntityHandle|nil
 function CBasePlayer:GetWeapon()
     if self.CurrentlyEquipped == PLAYER_WEAPON_ENERGYGUN then
-        return Entities:FindByClassnameNearest("hlvr_weapon_energygun", self.PrimaryHand:GetPalmPosition(), 128)--[[@as EntityHandle]]
+        return self.Items.weapons.energygun
+            or Entities:FindByClassnameNearest("hlvr_weapon_energygun", self.PrimaryHand:GetPalmPosition(), 128)--[[@as EntityHandle]]
     elseif self.CurrentlyEquipped == PLAYER_WEAPON_RAPIDFIRE then
-        return Entities:FindByClassnameNearest("hlvr_weapon_rapidfire", self.PrimaryHand:GetPalmPosition(), 128)--[[@as EntityHandle]]
+        return self.Items.weapons.rapidfire
+            or Entities:FindByClassnameNearest("hlvr_weapon_rapidfire", self.PrimaryHand:GetPalmPosition(), 128)--[[@as EntityHandle]]
     elseif self.CurrentlyEquipped == PLAYER_WEAPON_SHOTGUN then
-        return Entities:FindByClassnameNearest("hlvr_weapon_shotgun", self.PrimaryHand:GetPalmPosition(), 128)--[[@as EntityHandle]]
+        return self.Items.weapons.shotgun
+            or Entities:FindByClassnameNearest("hlvr_weapon_shotgun", self.PrimaryHand:GetPalmPosition(), 128)--[[@as EntityHandle]]
     elseif self.CurrentlyEquipped == PLAYER_WEAPON_GENERIC_PISTOL then
-        return Entities:FindByClassnameNearest("hlvr_weapon_generic_pistol", self.PrimaryHand:GetPalmPosition(), 128)--[[@as EntityHandle]]
+        return self.Items.weapons.generic_pistol
+            or Entities:FindByClassnameNearest("hlvr_weapon_generic_pistol", self.PrimaryHand:GetPalmPosition(), 128)--[[@as EntityHandle]]
     elseif self.CurrentlyEquipped == PLAYER_WEAPON_MULTITOOL then
-        return Entities:FindByClassnameNearest("hlvr_multitool", self.PrimaryHand:GetPalmPosition(), 128)--[[@as EntityHandle]]
+        return self.Items.weapons.multitool
+            or Entities:FindByClassnameNearest("hlvr_multitool", self.PrimaryHand:GetPalmPosition(), 128)--[[@as EntityHandle]]
     else
         return nil
     end

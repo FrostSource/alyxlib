@@ -7,6 +7,8 @@
 
 local version = "v2.2.0"
 
+local playerData = require "alyxlib.player.data"
+
 ---@class __PlayerRegisteredEventData
 ---@field callback function
 ---@field context any
@@ -102,35 +104,7 @@ local player_weapon_to_ammotype =
     [PLAYER_WEAPON_GENERIC_PISTOL] = "AlyxGun",
 }
 
----
----Save the Player.Items table
----
-local function savePlayerData()
-    Storage.SaveTable(Player, "PlayerItems", Player.Items)
 
-    -- Weapons aren't re-equipped on load so we need to save this
-    Storage.SaveString(Player, "PlayerCurrentlyEquipped", Player.CurrentlyEquipped)
-
-    if Player and Player.LeftHand then
-        Storage.SaveEntity(Player, "LeftWristItem", Player.LeftHand.WristItem)
-    end
-    if Player and Player.RightHand then
-        Storage.SaveEntity(Player, "RightWristItem", Player.RightHand.WristItem)
-    end
-end
-
-local function loadPlayerData()
-    Player.Items = Storage.LoadTable(Player, "PlayerItems", Player.Items)
-
-    Player.CurrentlyEquipped = Storage.LoadString(Player, "PlayerCurrentlyEquipped", Player.CurrentlyEquipped)
-
-    if Player and Player.LeftHand then
-        Player.LeftHand.WristItem = Storage.LoadEntity(Player, "LeftWristItem", Player.LeftHand.WristItem)
-    end
-    if Player and Player.RightHand then
-        Player.RightHand.WristItem = Storage.LoadEntity(Player, "RightWristItem", Player.RightHand.WristItem)
-    end
-end
 
 ---Callback logic for every player event.
 ---@param eventName string # Name of the event, data.game_event_name
@@ -158,7 +132,7 @@ end
 local function listenEventPlayerActivate(data)
     playerActivated = true
     Player = GetListenServerHost()
-    loadPlayerData()
+    playerData.LoadPlayerData()
     local previous_map = Storage.LoadString(Player, "PlayerPreviousMap", "")
     Storage.SaveString(Player, "PlayerPreviousMap", GetMapName())
 
@@ -472,7 +446,7 @@ local function listenEventPlayerDropAmmoInBackpack(data)
     else
         warn("Couldn't figure out ammo for "..tostring(ammotype))
     end
-    savePlayerData()
+    playerData.SavePlayerData()
 
     -- Registered callback
     local newdata = vlua.clone(data)--[[@as PlayerEventPlayerDropAmmoInBackpack]]
@@ -521,7 +495,7 @@ local function listenEventPlayerRetrievedBackpackClip(data)
                 Player.Items.ammo.shotgun = Player.Items.ammo.shotgun - ammo_amount
             end
 
-            savePlayerData()
+            playerData.SavePlayerData()
 
             -- Registered callback
             newdata.ammo_amount = ammo_amount
@@ -535,7 +509,7 @@ local function listenEventPlayerRetrievedBackpackClip(data)
 
     -- Registered callback
     if do_callback then
-        savePlayerData()
+        playerData.SavePlayerData()
         newdata.ammo_amount = ammo_amount
         eventCallback(data.game_event_name, newdata)
     end
@@ -573,7 +547,7 @@ local function listenEventPlayerStoredItemInItemholder(data)
     -- elseif data.item == "item_healthvial" then
     --     Player.Items.healthpen = Player.Items.healthpen + 1
     -- end
-    savePlayerData()
+    playerData.SavePlayerData()
 
     -- Registered callback
     local newdata = vlua.clone(data)--[[@as PlayerEventPlayerStoredItemInItemholder]]
@@ -620,7 +594,7 @@ local function listenEventPlayerRemovedItemFromItemholder(data)
     -- elseif data.item == "item_healthvial" then
     --     Player.Items.healthpen = Player.Items.healthpen - 1
     -- end
-    savePlayerData()
+    playerData.SavePlayerData()
 
     -- Registered callback
     local newdata = vlua.clone(data)--[[@as PlayerEventPlayerRemovedItemFromItemholder]]
@@ -673,45 +647,15 @@ local function listenEventWeaponSwitch(data)
     -- Debug.PrintTable(data)
     -- print("\n")
 
-    Player.PreviouslyEquipped = Player.CurrentlyEquipped
+    local weaponHandle = playerData.SyncEquippedWeaponState(data.item)
 
-    ---@type EntityHandle
-    local weaponHandle = nil
+    -- Nil return means sync in paused
+    if not weaponHandle then return end
 
-    if data.item == "hand_use_controller" then
-        Player.CurrentlyEquipped = PLAYER_WEAPON_HAND
-    else
-        weaponHandle = Entities:FindBestMatching("", data.item, Player.PrimaryHand:GetPalmPosition(), 64)
-        if data.item == "hlvr_weapon_energygun" then
-            Player.CurrentlyEquipped = PLAYER_WEAPON_ENERGYGUN
-            Player.Items.weapons.energygun = weaponHandle
-        elseif data.item == "hlvr_weapon_rapidfire" then
-            Player.CurrentlyEquipped = PLAYER_WEAPON_RAPIDFIRE
-            Player.Items.weapons.rapidfire = weaponHandle
-        elseif data.item == "hlvr_weapon_shotgun" then
-            Player.CurrentlyEquipped = PLAYER_WEAPON_SHOTGUN
-            Player.Items.weapons.shotgun = weaponHandle
-        elseif data.item == "hlvr_multitool" then
-            Player.CurrentlyEquipped = PLAYER_WEAPON_MULTITOOL
-            Player.Items.weapons.multitool = weaponHandle
-        elseif data.item == "hlvr_weapon_generic_pistol" then
-            Player.CurrentlyEquipped = PLAYER_WEAPON_GENERIC_PISTOL
-
-            -- Add this custom pistol if this is the first time encountering it
-            if not vlua.find(Player.Items.weapons.genericpistols, weaponHandle) then
-                table.insert(Player.Items.weapons.genericpistols, weaponHandle)
-            end
-        end
+    -- Hand entity isn't returned, so nil it
+    if weaponHandle == Player.LeftHand or weaponHandle == Player.RightHand then
+        weaponHandle = nil
     end
-
-    Player:UpdateWeaponsExistence()
-
-    -- This event can fire before the player has a hand
-    if Player.PrimaryHand then
-        Player.PrimaryHand.ItemHeld = weaponHandle
-    end
-
-    savePlayerData()
 
     -- Registered callback
     local newdata = vlua.clone(data)--[[@as PlayerEventWeaponSwitch]]
