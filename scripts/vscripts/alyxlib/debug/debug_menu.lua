@@ -495,7 +495,7 @@ function DebugMenu:AddSlider(categoryId, sliderId, text, min, max, isPercentage,
         max = max,
         convar = convar,
         isPercentage = isPercentage or false,
-        truncate = truncate or -1,
+        truncate = truncate or 2,
         increment = increment or 0
     })
 end
@@ -647,7 +647,7 @@ function DebugMenu:SendCategoryToPanel(category)
             if default == nil then
                 default = Convars:GetFloat(item.convar) or item.min
             end
-            Panorama:Send(panel, "AddSlider", item.categoryId, item.id, item.text, item.convar, item.min, item.max, default, item.isPercentage, item.truncate, item.increment)
+            Panorama:Send(panel, "AddSlider", item.categoryId, item.id, item.text or item.convar, item.convar, item.min, item.max, default, item.isPercentage, item.truncate, item.increment)
 
         elseif item.type == "cycle" then
             -- Flatten values into an array of text

@@ -445,7 +445,7 @@ class SubMenuSlider
         this.text = text;
         this.min = min;
         this.max = max;
-        this.isPercentage = false;
+        this.isPercentage = isPercentage;
         this.callback = callback;
 
         this.truncate = truncate;
@@ -523,8 +523,12 @@ class SubMenuSlider
         
         if (this.isPercentage)
             valueLabel.text = this.GetValueAsPercentage().toFixed(0);
-        else
-            valueLabel.text = this.value.toFixed(this.truncate);
+        else {
+            if (this.truncate > -1 && this.truncate < 20)
+                valueLabel.text = this.value.toFixed(this.truncate);
+            else
+                valueLabel.text = this.value;
+        }
     }
 
     /**
