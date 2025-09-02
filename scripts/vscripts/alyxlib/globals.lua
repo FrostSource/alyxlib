@@ -1071,4 +1071,12 @@ function CalcClosestCornerOnEntityAABB(entity, position)
     return closestCorner
 end
 
+---
+---Sets the absolute world velocity of an entity.
+---
+---@param velocity Vector The target velocity in units/second.
+function SetPhysVelocity(entity, velocity)
+    entity:SetAbsVelocity(velocity)
+end
+
 return _version

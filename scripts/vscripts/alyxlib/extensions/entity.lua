@@ -587,4 +587,16 @@ function CBaseEntity:ClearParent()
     self:SetParent(nil, nil)
 end
 
+---
+---Sets the absolute world velocity of the entity.
+---
+---@param velocity Vector The target velocity in units/second.
+function CBaseEntity:SetAbsVelocity(velocity)
+    local currentVelocity = GetPhysVelocity(self)
+
+    local impulse = velocity - currentVelocity
+
+    self:ApplyAbsVelocityImpulse(impulse)
+end
+
 return version
