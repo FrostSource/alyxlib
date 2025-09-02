@@ -780,12 +780,14 @@ DebugMenu:AddCategory(categoryId, "AlyxLib")
 
 DebugMenu:AddSeparator(categoryId, nil, "Basic")
 
-DebugMenu:AddToggle(categoryId, "noclip_vr", "NoClip VR", "noclip_vr", function ()
-    return Convars:GetBool("noclip_vr_enabled")
-end)
-DebugMenu:AddLabel(categoryId, "noclip_vr_label", "Hold movement trigger to boost")
-DebugMenu:AddSlider(categoryId, "noclip_vr_speed", "NoClip VR Speed", 0.5, 10, false, "noclip_vr_speed", 2)
-DebugMenu:AddSlider(categoryId, "noclip_vr_boost_speed", "NoClip VR Boost Speed", 0.5, 10, false, "noclip_vr_boost_speed", 2)
+if IsVREnabled() then
+    DebugMenu:AddToggle(categoryId, "noclip_vr", "NoClip VR", "noclip_vr", function ()
+        return Convars:GetBool("noclip_vr_enabled")
+    end)
+    DebugMenu:AddLabel(categoryId, "noclip_vr_label", "Hold movement trigger to boost")
+    DebugMenu:AddSlider(categoryId, "noclip_vr_speed", "NoClip VR Speed", 0.5, 10, false, "noclip_vr_speed", 2)
+    DebugMenu:AddSlider(categoryId, "noclip_vr_boost_speed", "NoClip VR Boost Speed", 0.5, 10, false, "noclip_vr_boost_speed", 2)
+end
 
 DebugMenu:AddToggle(categoryId, "buddha", "Buddha Mode", "buddha")
 
