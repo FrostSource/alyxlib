@@ -356,7 +356,6 @@ function CBasePlayer:AddResources(pistol_ammo, rapidfire_ammo, shotgun_ammo, res
         nil,
         self.Items.ammo.rapidfire + rapidfire_ammo,
         self.Items.ammo.shotgun + shotgun_ammo,
-        nil,nil,nil,
         self.Items.resin + resin
     )
 end
@@ -379,7 +378,6 @@ function CBasePlayer:SetResources(pistol_ammo, rapidfire_ammo, shotgun_ammo, res
         nil,
         rapidfire_ammo or self.Items.ammo.rapidfire,
         shotgun_ammo or self.Items.ammo.shotgun,
-        nil,nil,nil,
         resin or self.Items.resin
     )
 end
@@ -391,27 +389,18 @@ end
 ---@param generic_pistol_ammo? integer
 ---@param rapidfire_ammo? integer
 ---@param shotgun_ammo? integer
----@param frag_grenades? integer
----@param xen_grenades? integer
----@param healthpens? integer
 ---@param resin? integer
 function CBasePlayer:SetItems(
     energygun_ammo,
     generic_pistol_ammo,
     rapidfire_ammo,
     shotgun_ammo,
-    frag_grenades,
-    xen_grenades,
-    healthpens,
     resin
 )
     self.Items.ammo.energygun = energygun_ammo or self.Items.ammo.energygun
     self.Items.ammo.generic_pistol = generic_pistol_ammo or self.Items.ammo.generic_pistol
     self.Items.ammo.rapidfire = rapidfire_ammo or self.Items.ammo.rapidfire
     self.Items.ammo.shotgun = shotgun_ammo or self.Items.ammo.shotgun
-    self.Items.grenades.frag = frag_grenades or self.Items.grenades.frag
-    self.Items.grenades.xen = xen_grenades or self.Items.grenades.xen
-    self.Items.healthpen = healthpens or self.Items.healthpen
     self.Items.resin = resin or self.Items.resin
 
     ---@TODO: Consider moving save function above this
