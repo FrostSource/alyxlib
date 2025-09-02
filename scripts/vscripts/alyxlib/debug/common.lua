@@ -900,8 +900,9 @@ end
 ---Gets whether the string is in the format of an entity handle.
 ---
 ---@param handleString string # The handle string
----@return string # The hash part or nil if not an entity handle
+---@return string? # The hash part or nil if not an entity handle
 function Debug.IsEntityHandleString(handleString)
+    if handleString == nil then return nil end
     local mtc = handleString:match("^(table:?%s*)")
     if mtc then
         handleString = handleString:sub(#mtc+1)
