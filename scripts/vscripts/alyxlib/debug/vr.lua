@@ -120,6 +120,9 @@ RegisterAlyxLibConvar("noclip_vr_enabled", "0", "True if noclip_vr is enabled (r
 ---Tracks initial button press to prevent repeated logic execution while held
 local quickTurnFlag = false
 
+---Used to track user's movement type so it can be reset
+local movetype = Convars:GetInt('hlvr_movetype_default')
+
 local function noclipVRThink()
     -- Check offhand first because it's most common, then check primary hand movement
     local moveVector = Player:GetAnalogActionPositionForHand(Player.SecondaryHand.Literal, ANALOG_INPUT_TELEPORT_TURN)
@@ -128,10 +131,9 @@ local function noclipVRThink()
     end
 
     if moveVector:Length() > 0 then
-        local moveType = Player:GetMoveType()
         local dir
 
-        if moveType == PlayerMoveType.ContinuousHand then
+        if movetype == PlayerMoveType.ContinuousHand then
             dir = (Player.SecondaryHand:GetAngles():Left() * moveVector.x) + (Player.SecondaryHand:GetAngles():Forward() * moveVector.y)
         else
             dir = (Player:EyeAngles():Left() * moveVector.x) + (Player:EyeAngles():Forward() * moveVector.y)
@@ -174,9 +176,6 @@ end
 
 RegisterAlyxLibConvar("noclip_vr_speed", "2", "Speed of the VR noclip movement", 0)
 RegisterAlyxLibConvar("noclip_vr_boost_speed", "5", "Speed of the VR noclip movement when holding trigger", 0)
-
----Used to track user's movement type so it can be reset
-local movetype = Convars:GetInt('hlvr_movetype_default')
 
 RegisterAlyxLibCommand("noclip_vr", function (_, on)
     local noclipVREnabled
