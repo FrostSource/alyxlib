@@ -114,25 +114,30 @@ Button.custom_button_with_subtitle.error_msg:not(.disabled) Label.button_label.s
 }
 .CycleCategoryLeft
 {
-    flow-children: left;
-    horizontal-align: left;
+    flow-children: none;
     overflow: clip clip;
-    /* background-color: red; */
     width: 10%;
+}
+.CycleCategoryLeft Label
+{
+    font-size: 22px;
+    text-align: left;
+    transform: translateX(5px);
+    width: 50%;
 }
 .CycleCategoryRight
 {
-    flow-children: left;
-    horizontal-align: right;
+    flow-children: none;
     overflow: clip clip;
-    /* background-color: blue; */
     width: 10%;
 }
-/* .cycle_image
+.CycleCategoryRight Label
 {
-    horizontal-align: left;
-    margin: 0px 40px 10px 10px;
-} */
+    font-size: 22px;
+    text-align: right;
+    transform: translateX(-58px);
+    width: 50%;
+}
 
 .CategoryBar
 {

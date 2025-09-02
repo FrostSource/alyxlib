@@ -850,6 +850,12 @@ function UpdateCategoryBarVisibility()
         categoryBarCycleIndex = selectedIndex - numberOfVisibleCategories + 1;
     }
 
+    const leftCategoryCount = categoryBarCycleIndex;
+    $("#CycleCategoryLeftButtonLabel").text = leftCategoryCount > 0 ? leftCategoryCount.toString() : "";
+    
+    const rightCategoryCount = Math.max(0, categories.length - categoryBarCycleIndex - numberOfVisibleCategories);
+    $("#CycleCategoryRightButtonLabel").text = rightCategoryCount > 0 ? rightCategoryCount.toString() : "";
+
     categories.forEach((category, index) => {
         const isVisible = index >= categoryBarCycleIndex && index < categoryBarCycleIndex + numberOfVisibleCategories;
         category.SetBarButtonVisible(isVisible);
@@ -872,6 +878,8 @@ function CreateCategory(id, name)
 
     if (currentlySelectedCategory == null)
         SetCategoryVisible(category.id);
+    
+    UpdateCategoryBarVisibility();
 
     return category;
 }
