@@ -88,7 +88,7 @@ alyxlib_require "alyxlib.panorama.core"
 alyxlib_require "alyxlib.debug.common"
 alyxlib_require "alyxlib.debug.commands"
 alyxlib_require "alyxlib.debug.controller"
-if IsVREnabled() then
+if IsVREnabled() or IsFakeVREnabled() then
     alyxlib_require "alyxlib.debug.vr"
 else
     alyxlib_require "alyxlib.debug.novr"
