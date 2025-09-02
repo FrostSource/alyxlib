@@ -22,8 +22,12 @@ Debug.version = "v2.2.0"
 ---
 ---@param pattern string # The search pattern to look for.
 ---@param exact boolean? # If true the pattern must match exactly, otherwise wildcards will be used.
----@return EntityHandle
+---@return EntityHandle? # The found entity, or nil if not found.
 function Debug.FindEntityByPattern(pattern, exact)
+
+    if pattern == nil then
+        return nil
+    end
 
     if Debug.IsEntityHandleString(pattern) then
         return Debug.FindEntityByHandleString(pattern)
