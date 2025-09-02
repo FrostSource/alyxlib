@@ -102,6 +102,18 @@ Convars:RegisterCommand("add_hand_attachment", function (_, classname, handName)
     hand:AddHandAttachment(ent)
 end, "", 0)
 
+RegisterAlyxLibCommand("hlvr_give_grabbity_gloves", function (_)
+    if not Player:HasGrabbityGloves() then
+        local equip = SpawnEntityFromTableSynchronous("info_hlvr_equip_player", {
+            grabbitygloves = "1",
+            itemholder = Player:HasItemHolder() and "1" or "0",
+            backpack_enabled = Player:GetBackpack() ~= nil and "1" or "0", -- this is not an accurate check
+        })
+        equip:EntFire("EquipNow")
+        equip:EntFire("Kill", nil, 0.1)
+    end
+end, "Gives the player grabbity gloves", FCVAR_NONE)
+
 ---Hidden convar state that can be retrieved by other scripts
 RegisterAlyxLibConvar("noclip_vr_enabled", "0", "True if noclip_vr is enabled (readonly)", FCVAR_HIDDEN)
 

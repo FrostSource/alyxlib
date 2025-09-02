@@ -804,6 +804,10 @@ end)
 
 DebugMenu:AddSeparator(categoryId, nil, "Equipment")
 
+if IsVREnabled() or IsFakeVREnabled() then
+    DebugMenu:AddButton(categoryId, "givegrabbity", "Give Grabbity Gloves", "hlvr_give_grabbity_gloves")
+end
+
 DebugMenu:AddButton(categoryId, "giveammo", "Give 999 Ammo", function()
     SendToConsole("hlvr_setresources 999 999 999 " .. Player:GetResin())
 end)
