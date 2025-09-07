@@ -762,6 +762,8 @@ end
 function Debug.SimpleVector(vector)
     return "[" .. math.trunc(vector.x, 3) .. ", " .. math.trunc(vector.y, 3) .. ", " .. math.trunc(vector.z, 3) .. "]"
 end
+---@diagnostic disable-next-line: lowercase-global
+vecstr = Debug.SimpleVector
 
 ---
 ---Draw a simple sphere without worrying about all the properties.
