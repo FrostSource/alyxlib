@@ -599,4 +599,25 @@ function CBaseEntity:SetAbsVelocity(velocity)
     self:ApplyAbsVelocityImpulse(impulse)
 end
 
+---
+---Checks whether this entity's axis-aligned bounding box intersects
+---with another entity or an explicit Mins/Maxs bounds table.
+---
+---If `other` is an entity, its bounds are queried with [GetBounds](lua://CBaseEntity.GetBounds).
+---
+---@param other EntityHandle|{ Mins: Vector, Maxs: Vector } # Entity or bounds to test against.
+function CBaseEntity:TestAABBIntersect(other)
+    local selfBounds = self:GetBounds()
+
+    if IsEntity(other) then
+        other = other:GetBounds()
+    end
+
+    return (
+        selfBounds.Mins.x <= other.Maxs.x and selfBounds.Maxs.x >= other.Mins.x and
+        selfBounds.Mins.y <= other.Maxs.y and selfBounds.Maxs.y >= other.Mins.y and
+        selfBounds.Mins.z <= other.Maxs.z and selfBounds.Maxs.z >= other.Mins.z
+    )
+end
+
 return version
