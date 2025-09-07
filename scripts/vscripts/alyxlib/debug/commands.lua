@@ -37,6 +37,26 @@ function RegisterAlyxLibConvar(name, defaultValue, helpText, flags)
     alyxlibCommands[name] = "Default: "..tostring(defaultValue)..", "..helpText
 end
 
+---
+---Registers a new AlyxLib console variable.
+---
+---@param name string # Name of the convar that will be given in the console.
+---@param defaultValue string # Default value of the convar.
+---@param helpText? string # Description of the convar.
+---@param flags? integer # Flags for the convar.
+---@param postUpdate? fun(newVal:string, oldVal:string): any # Update function called after the value has been changed.
+---@param persistent? boolean # Whether the convar should be persistent.
+function RegisterAlyxLibEasyConvar(name, defaultValue, helpText, flags, postUpdate, persistent)
+    helpText = helpText or "[No description]"
+    EasyConvars:RegisterConvar(name, defaultValue, helpText, flags or 0, postUpdate)
+
+    if persistent then
+        EasyConvars:SetPersistent(name, true)
+    end
+
+    alyxlibCommands[name] = "Default: "..tostring(defaultValue)..", "..helpText
+end
+
 Convars:RegisterCommand("alyxlib_commands", function (_, ...)
     local maxNameLen = 0
     for name in pairs(alyxlibCommands) do
