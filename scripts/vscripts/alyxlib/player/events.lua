@@ -639,6 +639,7 @@ ListenToGameEvent("player_drop_resin_in_backpack", listenEventPlayerDropResinInB
 ---@class PlayerEventWeaponSwitch : GameEventWeaponSwitch
 ---@field item EntityHandle|nil # The handle of the weapon being switched to or nil if no weapon.
 ---@field item_class string # Classname of the entity that was switched to.
+---@field hand CPropVRHand  # Hand that the entity was switched to.
 
 ---Track weapon equipped
 ---@param data GameEventWeaponSwitch
@@ -647,21 +648,24 @@ local function listenEventWeaponSwitch(data)
     -- Debug.PrintTable(data)
     -- print("\n")
 
-    local weaponHandle = playerData.SyncEquippedWeaponState(data.item)
+    Player:Delay(function()
+        local weaponHandle, handHandle = playerData.SyncEquippedWeaponState(data.item)
 
-    -- Nil return means sync in paused
-    if not weaponHandle then return end
+        -- Nil return means sync in paused
+        if not weaponHandle then return end
 
-    -- Hand entity isn't returned, so nil it
-    if weaponHandle == Player.LeftHand or weaponHandle == Player.RightHand then
-        weaponHandle = nil
-    end
+        -- Hand entity isn't returned, so nil it
+        if weaponHandle:GetClassname() == "hand_use_controller" then
+            weaponHandle = nil
+        end
 
-    -- Registered callback
-    local newdata = vlua.clone(data)--[[@as PlayerEventWeaponSwitch]]
-    newdata.item = weaponHandle
-    newdata.item_class = data.item
-    eventCallback(data.game_event_name, newdata)
+        -- Registered callback
+        local newdata = vlua.clone(data)--[[@as PlayerEventWeaponSwitch]]
+        newdata.item = weaponHandle
+        newdata.item_class = data.item
+        newdata.hand = handHandle
+        eventCallback(data.game_event_name, newdata)
+    end)
 end
 ListenToGameEvent("weapon_switch", listenEventWeaponSwitch, nil)
 

@@ -58,13 +58,39 @@ local currentHandle = nil
 
 local syncPaused = false
 
+---Standard local weapon offsets from hand when equipped
+local weaponOffsets = {
+    [0] = { -- left
+        hand_use_controller = Vector(0.027, 0.012, -0.124),
+        hlvr_weapon_energygun = Vector(-0.025, 0.048, 2.014),
+        hlvr_weapon_shotgun = Vector(0.402, 0.103, 1.652),
+        hlvr_weapon_rapidfire = Vector(0.392, 0.102, 1.658),
+        hlvr_multitool = Vector(3.079, 0.016, 1.209),
+        -- unsure if offsets will be different for custom models,
+        -- using hlvr_weapon_energygun offset
+        hlvr_weapon_generic_pistol = Vector(-0.025, 0.048, 2.014),
+    },
+    [1] = { -- right
+        hand_use_controller = Vector(0.026, -0.009, -0.125),
+        hlvr_weapon_energygun = Vector(-0.025, -0.042, 2.013),
+        hlvr_weapon_shotgun = Vector(0.402, -0.097, 1.651),
+        hlvr_weapon_rapidfire = Vector(0.392, -0.096, 1.657),
+        hlvr_multitool = Vector(3.079, -0.006, 1.208),
+        -- unsure if offsets will be different for custom models,
+        -- using hlvr_weapon_energygun offset
+        hlvr_weapon_generic_pistol = Vector(-0.025, -0.042, 2.013),
+    },
+}
+
 ---
 ---Sync the equipped weapon state of the player with the given weapon classname.
 ---
 ---If no classname is given, the weapon classname will be determined from the player's criteria.
 ---
 ---@param classname? string # The classname of the weapon to sync.
+---@param handle? EntityHandle # The entity handle of the weapon to sync.
 ---@return EntityHandle? weaponHandle # The entity handle of the weapon that was equipped.
+---@return CPropVRHand? handHandle # The entity handle of the hand that the weapon was equipped to.
 local function SyncEquippedWeaponState(classname, handle)
     if syncPaused then return end
 
@@ -83,54 +109,61 @@ local function SyncEquippedWeaponState(classname, handle)
 
     Player.PreviouslyEquipped = Player.CurrentlyEquipped
 
-    ---@type EntityHandle
+    ---@type CPropVRHand?
+    local handHandle = nil
+
+    ---@type EntityHandle?
     local weaponHandle = nil
 
-    if classname == "hand_use_controller" then
-        Player.CurrentlyEquipped = PLAYER_WEAPON_HAND
-        weaponHandle = Player.PrimaryHand
-        currentHandle = nil
-    else
-        weaponHandle = handle or Entities:FindBestMatching("", classname, Player.PrimaryHand:GetPalmPosition(), 64)
-        -- if weaponHandle then
-        --     print("Setting new weapon for", classname, weaponHandle)
-        --     Debug.Sphere(weaponHandle:GetOrigin(), 2, 10)
-        -- end
-
-        if not IsValidEntity(weaponHandle) then
-            warn("Could not find weapon entity for equipped weapon: " .. classname)
-        end
-
-        currentHandle = weaponHandle
-
-        if classname == "hlvr_weapon_energygun" then
-            Player.CurrentlyEquipped = PLAYER_WEAPON_ENERGYGUN
-            if not IsValidEntity(Player.Items.weapons.energygun) then
-                Player.Items.weapons.energygun = weaponHandle
-            else
-                weaponHandle = Player.Items.weapons.energygun
+    -- Find the weapon and hand
+    if not handle then
+        local bestDistance = math.huge
+        local bestWeapon = nil
+        for h = 0, 1 do
+            local hand = h == 0 and Player.LeftHand or Player.RightHand
+            local offset = weaponOffsets[h][classname] or Vector()
+            for _, wpn in ipairs(Entities:FindAllByClassname(classname)) do
+                local dist = VectorDistance(offset, hand:TransformPointWorldToEntity(wpn:GetOrigin()))
+                if dist < bestDistance then
+                    print('new best weapon', entstr(wpn), dist)
+                    bestDistance = dist
+                    bestWeapon = wpn
+                    handHandle = hand
+                end
             end
+        end
+        handle = bestWeapon
+    end
+
+    weaponHandle = handle
+
+    -- if weaponHandle then
+    --     print("Setting new weapon for hand", entstr(handHandle), classname, entstr(weaponHandle))
+    --     Debug.Sphere(weaponHandle:GetOrigin(), 2, 10)
+    -- end
+
+    if not IsValidEntity(weaponHandle) then
+        warn("Could not find weapon entity for equipped weapon: " .. classname)
+    end
+
+    currentHandle = weaponHandle
+
+    if handHandle == Player.PrimaryHand then
+
+        if classname == "hand_use_controller" then
+            Player.CurrentlyEquipped = PLAYER_WEAPON_HAND
+        elseif classname == "hlvr_weapon_energygun" then
+            Player.CurrentlyEquipped = PLAYER_WEAPON_ENERGYGUN
+            Player.Items.weapons.energygun = weaponHandle
         elseif classname == "hlvr_weapon_rapidfire" then
             Player.CurrentlyEquipped = PLAYER_WEAPON_RAPIDFIRE
-            if not IsValidEntity(Player.Items.weapons.rapidfire) then
-                Player.Items.weapons.rapidfire = weaponHandle
-            else
-                weaponHandle = Player.Items.weapons.rapidfire
-            end
+            Player.Items.weapons.rapidfire = weaponHandle
         elseif classname == "hlvr_weapon_shotgun" then
             Player.CurrentlyEquipped = PLAYER_WEAPON_SHOTGUN
-            if not IsValidEntity(Player.Items.weapons.shotgun) then
-                Player.Items.weapons.shotgun = weaponHandle
-            else
-                weaponHandle = Player.Items.weapons.shotgun
-            end
+            Player.Items.weapons.shotgun = weaponHandle
         elseif classname == "hlvr_multitool" then
             Player.CurrentlyEquipped = PLAYER_WEAPON_MULTITOOL
-            if not IsValidEntity(Player.Items.weapons.multitool) then
-                Player.Items.weapons.multitool = weaponHandle
-            else
-                weaponHandle = Player.Items.weapons.multitool
-            end
+            Player.Items.weapons.multitool = weaponHandle
         elseif classname == "hlvr_weapon_generic_pistol" then
             Player.CurrentlyEquipped = PLAYER_WEAPON_GENERIC_PISTOL
             Player.Items.weapons.generic_pistol = weaponHandle
@@ -140,18 +173,19 @@ local function SyncEquippedWeaponState(classname, handle)
                 table.insert(Player.Items.weapons.genericpistols, weaponHandle)
             end
         end
+
+        Player:UpdateWeaponsExistence()
+
     end
 
-    Player:UpdateWeaponsExistence()
-
     -- This event can fire before the player has a hand
-    if Player.PrimaryHand then
-        Player.PrimaryHand.ItemHeld = weaponHandle
+    if handHandle then
+        handHandle.ItemHeld = weaponHandle
     end
 
     savePlayerData()
 
-    return weaponHandle
+    return weaponHandle, handHandle
 end
 
 ---
