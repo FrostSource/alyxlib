@@ -954,4 +954,18 @@ function Debug.Try(action, ...)
     end
 end
 
+---
+---Converts a table to single line string representation.
+---
+---@param tbl table # The table to convert.
+---@return string # The string representation.
+function Debug.TableStr(tbl)
+    local vals = {}
+    for key, value in pairs(tbl) do
+        table.insert(vals, key.." = "..tostring(value))
+    end
+
+    return "{ "..table.concat(vals, ", ") .. " }"
+end
+
 return Debug.version
