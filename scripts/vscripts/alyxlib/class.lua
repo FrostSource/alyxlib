@@ -611,7 +611,9 @@ function isinstance(ent, class)
     return false
 end
 
----Check if an entity is using the entity class system.
+---
+---Check if an entity is using the AlyxLib class system.
+---
 ---@param ent EntityHandle # Entity to check.
 ---@return boolean # True if `ent` is a class entity, false otherwise.
 function IsClassEntity(ent)

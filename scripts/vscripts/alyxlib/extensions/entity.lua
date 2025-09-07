@@ -533,7 +533,7 @@ end
 ---
 ---@param output string # The name of the output to redirect.
 ---@param func function # The function to redirect to.
----@param entity? EntityHandle # The entity to redirect to, defaults to this entity.
+---@param entity? EntityHandle # The entity to redirect to, defaults to the calling entity.
 function CEntityInstance:RedirectOutputFunc(output, func, entity)
     entity = entity or self
 

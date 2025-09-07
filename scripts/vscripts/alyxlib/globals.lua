@@ -717,10 +717,8 @@ end
 ---@return boolean
 function TraceLineExt(parameters)
     if IsEntity(parameters.ignore) then
-        ---@diagnostic disable-next-line: inject-field
         parameters.ignoreent = {parameters.ignore}
     else
-        ---@diagnostic disable-next-line: inject-field
         parameters.ignoreent = parameters.ignore
         parameters.ignore = nil
     end
@@ -763,7 +761,7 @@ function TraceLineExt(parameters)
 end
 
 ---
----Does a raytrace along a line until it hits or the world or reaches the end of the line.
+---Does a raytrace along a line until it hits the world or reaches the end of the line.
 ---
 ---@param parameters TraceTableLine
 ---@return TraceTableLine
