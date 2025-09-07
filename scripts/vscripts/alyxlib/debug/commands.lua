@@ -385,6 +385,31 @@ RegisterAlyxLibCommand("print_ents", function (_, pattern, ...)
 end, "Prints all entities with class, name or model matching a pattern", 0)
 
 ---
+---Prints an entity by its index.
+---
+RegisterAlyxLibCommand("print_ent_by_index", function(_, index)
+
+    if index == nil then
+        warn("Must supply an index to search for, e.g. prints_ent_by_index 1")
+        return
+    end
+
+    local i = tonumber(index)
+    if i == nil then
+        warn("Index must be a number, e.g. prints_ent_by_index 1")
+        return
+    end
+
+    local ent = EntIndexToHScript(i)
+    if ent == nil then
+        warn("Could not find entity with index '"..index.."'")
+        return
+    end
+
+    print(Debug.EntStr(ent))
+end, "Prints the entity with the given index", 0)
+
+---
 ---Show the position of an entity relative to the player using debug drawing.
 ---
 RegisterAlyxLibCommand("ent_show", function (_, name)
