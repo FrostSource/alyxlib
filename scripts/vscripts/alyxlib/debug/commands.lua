@@ -506,7 +506,7 @@ RegisterAlyxLibCommand("ent_find_by_address", function (_, tblpart, colon, hash)
         Msg("\tParent: " .. (tostring(foundEnt:GetMoveParent() or "[none]")) .."\n")
         Msg("\tModel: " .. foundEnt:GetModelName())
     else
-        Msg("Could not find any entity matching '" .. hash .. "'")
+        Msg("Could not find any entity matching '" .. tostring(hash) .. "'")
     end
 end, "Prints info for an entity by its table address", 0)
 
