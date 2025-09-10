@@ -285,12 +285,13 @@ class Category
      * Adds a new value cycler to this category.
      * @param {string} id String id for this cycle.
      * @param {string} convar Convar to tie this cycle to (currently unsued in JS).
+     * @param {string} title Title for this cycle.
      * @param {SubMenuCycleItem[]} values Text/value pairs for this cycle.
      * @param {string?} selectedValue Starting selected value.
      */
-    AddCycle(id, convar, values, selectedValue)
+    AddCycle(id, convar, title, values, selectedValue)
     {
-        let cycle = new SubMenuCycle(`${this.id}_${id}`, convar, values, (index) => {
+        let cycle = new SubMenuCycle(`${this.id}_${id}`, convar, title, values, (index) => {
             FireOutput("_DebugMenuCallbackCycle", id, index + 1);
         });
         cycle.AddToPanel(this.content);
@@ -558,13 +559,15 @@ class SubMenuCycle
      * 
      * @param {string} id 
      * @param {string} convar 
+     * @param {string} title Text show next to each value
      * @param {SubMenuCycleItem[]} values Maximum of 6 items
      * @param {function} callback 
      * @param {number} selectedIndex
      */
-    constructor(id, convar, values, callback, selectedIndex) {
+    constructor(id, convar, title, values, callback, selectedIndex) {
         this.id = id;
         this.convar = convar;
+        this.title = title;
         this.values = values;//values.slice(0, 6);
         this.callback = callback;
 
@@ -585,8 +588,11 @@ class SubMenuCycle
         const col = CreatePanel("Panel", btnRight, null, "cycle_button_right_col");
         for (let [index,item] of this.values.entries()) {
             /**@type {Label} */
-            const text = CreatePanel("Label", col, "item"+index, "cycle_label");
-            text.text = item.text;
+            const label = CreatePanel("Label", col, "item"+index, "cycle_label");
+            if (this.title && this.title != "")
+                label.text = `${this.title} : ${item.text}`;
+            else
+                label.text = item.text;
         }
         CreatePanel("Label", col, "custom", "cycle_label").text = "Custom";
         const dotRow = CreatePanel("Panel", col, null, "dot_row");
@@ -1084,8 +1090,9 @@ function ParseCommand(command, args)
 
             const id = args[1];
             const convar = args[2];
-            const currentValue = args[3];
-            const rawValues = args.slice(4);
+            const title = args[3];
+            const currentValue = args[4];
+            const rawValues = args.slice(5);
             /**@type {SubMenuCycleItem[]} */
             const values = [];
             for (let i = 0; i < rawValues.length; i+=2) {
@@ -1095,7 +1102,7 @@ function ParseCommand(command, args)
                 });
             }
 
-            category.AddCycle(id, convar, values, currentValue);
+            category.AddCycle(id, convar, title, values, currentValue);
             break;
 
         case "setitemtext": {

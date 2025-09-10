@@ -507,10 +507,11 @@ end
 ---
 ---@param categoryId string # The id of the category to add this cycle to
 ---@param cycleId string # The unique id for this new cycle
----@param values {text:string,value:any}[] # List of text/value pairs for this cycle
+---@param title string|nil # The text to display next to each value
+---@param values {text:string,value:any}[]|string[] # List of text/value pairs for this cycle, or a list of values
 ---@param command string|fun(index:number, item:{text:string,value:any?}, cycle:DebugMenuItem) # Convar name or function callback
 ---@param defaultValue? any|fun():any # Value for this cycle to start with
-function DebugMenu:AddCycle(categoryId, cycleId, values, command, defaultValue)
+function DebugMenu:AddCycle(categoryId, cycleId, title, values, command, defaultValue)
     local category = self:GetCategory(categoryId)
     if not category then
         warn("Cannot add toggle '"..cycleId.."': Category '"..categoryId.."' does not exist!")
@@ -521,8 +522,17 @@ function DebugMenu:AddCycle(categoryId, cycleId, values, command, defaultValue)
         error("Cycle values must be a table with at least 1 value", 2)
     end
 
-    for k,v in ipairs(values) do
-        v.value = tostring(v.value or (k - 1))
+    ---@type {text:string,value:any}
+    local parsedValues = {}
+
+    if type(values[1]) == "string" then
+        for k,v in ipairs(values) do
+            table.insert(parsedValues, {text = v, value = k - 1})
+        end
+    else
+        for k,v in ipairs(values) do
+            table.insert(parsedValues, {text = v.text, value = v.value or (k - 1)})
+        end
     end
 
     local callback
@@ -541,6 +551,10 @@ function DebugMenu:AddCycle(categoryId, cycleId, values, command, defaultValue)
         end
     elseif type(command) == "function" then
         callback = command
+
+        if defaultValue == nil then
+            defaultValue = parsedValues[1].value
+        end
     end
 
     table.insert(category.items, {
@@ -548,9 +562,10 @@ function DebugMenu:AddCycle(categoryId, cycleId, values, command, defaultValue)
         id = cycleId,
         callback = callback,
         type = "cycle",
-        values = values,
+        values = parsedValues,
         default = defaultValue,
-        convar = convar
+        convar = convar,
+        text = title
     })
 end
 
@@ -665,7 +680,7 @@ function DebugMenu:SendCategoryToPanel(category)
                 default = Convars:GetStr(item.convar)
             end
 
-            Panorama:Send(panel, "AddCycle", item.categoryId, item.id, item.convar, default, values)
+            Panorama:Send(panel, "AddCycle", item.categoryId, item.id, item.convar, item.text, default, values)
         else
             warn("Unknown item type '"..item.type.."'")
         end
