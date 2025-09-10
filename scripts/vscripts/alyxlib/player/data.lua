@@ -123,12 +123,13 @@ local function SyncEquippedWeaponState(classname, handle)
             local hand = h == 0 and Player.LeftHand or Player.RightHand
             local offset = weaponOffsets[h][classname] or Vector()
             for _, wpn in ipairs(Entities:FindAllByClassname(classname)) do
-                local dist = VectorDistance(offset, hand:TransformPointWorldToEntity(wpn:GetOrigin()))
-                if dist < bestDistance then
-                    print('new best weapon', entstr(wpn), dist)
-                    bestDistance = dist
-                    bestWeapon = wpn
-                    handHandle = hand
+                if wpn ~= hand.ItemHeld then
+                    local dist = VectorDistance(offset, hand:TransformPointWorldToEntity(wpn:GetOrigin()))
+                    if dist < bestDistance then
+                        bestDistance = dist
+                        bestWeapon = wpn
+                        handHandle = hand
+                    end
                 end
             end
         end
