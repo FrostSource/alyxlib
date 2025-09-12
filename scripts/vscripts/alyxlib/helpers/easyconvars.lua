@@ -373,6 +373,15 @@ function EasyConvars:GetConvarData(name)
 end
 
 ---
+---Checks if an easy convar exists.
+---
+---@param name string # Name of the convar
+---@return boolean # Returns true if the convar exists
+function EasyConvars:Exists(name)
+    return self.registered[name] ~= nil
+end
+
+---
 ---Returns the convar as a string.
 ---
 ---@param name string # Name of the convar
