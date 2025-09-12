@@ -581,6 +581,37 @@ function TableSize(tbl)
 end
 
 ---
+---Collects all values for a specific key from a list of tables.
+---
+---@param tbl table[] # List of tables.
+---@param key any # Key to get values from.
+---@return any[] # List of values found for the key.
+function TablePluck(tbl, key)
+    local out = {}
+    for _, v in ipairs(tbl) do
+        if type(v) == "table" and v[key] ~= nil then
+            table.insert(out, v[key])
+        end
+    end
+    return out
+end
+
+---
+---Returns the index of the first value that matches the predicate.
+---
+---@param list table
+---@param predicate fun(value:any):boolean
+---@return integer
+function TableFindIndex(list, predicate)
+    for i, v in ipairs(list) do
+        if predicate(v) then
+            return i
+        end
+    end
+    return 0
+end
+
+---
 ---Returns a random value from an array.
 ---
 ---@generic T

@@ -286,16 +286,16 @@ class Category
      * @param {string} id String id for this cycle.
      * @param {string} convar Convar to tie this cycle to (currently unsued in JS).
      * @param {string} title Title for this cycle.
-     * @param {SubMenuCycleItem[]} values Text/value pairs for this cycle.
-     * @param {string?} selectedValue Starting selected value.
+     * @param {string[]} values Text values for this cycle.
+     * @param {number?} selectedIndex Starting selected index [0-n].
      */
-    AddCycle(id, convar, title, values, selectedValue)
+    AddCycle(id, convar, title, values, selectedIndex)
     {
         let cycle = new SubMenuCycle(`${this.id}_${id}`, convar, title, values, (index) => {
             FireOutput("_DebugMenuCallbackCycle", id, index + 1);
         });
         cycle.AddToPanel(this.content);
-        cycle.SetSelectedValueNoFire(selectedValue);
+        cycle.SetSelectedIndexNoFire(selectedIndex);
         this.items.push(cycle);
     }
 }
@@ -547,11 +547,11 @@ class SubMenuSlider
     }
 }
 
-/**
- * @typedef {Object} SubMenuCycleItem
- * @property {string} text
- * @property {string?} value
- */
+// /**
+//  * @typedef {Object} SubMenuCycleItem
+//  * @property {string} text
+//  * @property {string?} value
+//  */
 
 class SubMenuCycle
 {
@@ -560,7 +560,7 @@ class SubMenuCycle
      * @param {string} id 
      * @param {string} convar 
      * @param {string} title Text show next to each value
-     * @param {SubMenuCycleItem[]} values Maximum of 6 items
+     * @param {string[]} values Maximum of 6 items
      * @param {function} callback 
      * @param {number} selectedIndex
      */
@@ -568,7 +568,7 @@ class SubMenuCycle
         this.id = id;
         this.convar = convar;
         this.title = title;
-        this.values = values;//values.slice(0, 6);
+        this.values = values;
         this.callback = callback;
 
         /** @type {Panel} */
@@ -590,9 +590,9 @@ class SubMenuCycle
             /**@type {Label} */
             const label = CreatePanel("Label", col, "item"+index, "cycle_label");
             if (this.title && this.title != "")
-                label.text = `${this.title} : ${item.text}`;
+                label.text = `${this.title} : ${item}`;
             else
-                label.text = item.text;
+                label.text = item;
         }
         CreatePanel("Label", col, "custom", "cycle_label").text = "Custom";
         const dotRow = CreatePanel("Panel", col, null, "dot_row");
@@ -626,37 +626,18 @@ class SubMenuCycle
 
     /**
      * Sets the selected option without firing the callback.
-     * @param {number} index The index of the option to select, starting from 0.
+     * @param {number?} index The index of the option to select, starting from 0.
      */
     SetSelectedIndexNoFire(index) {
-        index = (index + this.values.length) % this.values.length;
-
-        for (let i = 0; i < this.values.length; i++) {
-            if (i == index) {
-                this.SetSelectedValueNoFire(this.values[i].value);
-                return;
-            }
-        }
-    }
-
-    /**
-     * Sets the selected option.
-     * @param {number} index The index of the option to select, starting from 0.
-     */
-    SetSelectedIndex(index) {
-        this.SetSelectedIndexNoFire(index);
-        this.callback(this.selectedIndex);
-    }
-
-    SetSelectedValueNoFire(value) {
         let foundValue = false;
-        
-        // Find the matching value index
+
+        if (typeof index === "number" && Number.isFinite(index))
+            index = (index + this.values.length) % this.values.length;
+
         for (let i = 0; i < this.values.length; i++) {
-            const _value = this.values[i].value;
             const item = this.panel.FindChildTraverse("item" + i);
             const dot = this.panel.FindChildTraverse("dot" + ((this.values.length-1) - i));
-            if (_value === value) {
+            if (i == index) {
                 item.visible = true;
                 dot.SetHasClass("cycle_dots_selected", true);
                 foundValue = true;
@@ -673,9 +654,32 @@ class SubMenuCycle
             custom.visible = false;
         } else {
             this.selectedIndex = -1;
-            custom.text = `Custom (${value})`;
+            // custom.text = `Custom (${value})`;
             custom.visible = true;
         }
+    }
+
+    /**
+     * Sets the selected option.
+     * @param {number} index The index of the option to select, starting from 0.
+     */
+    SetSelectedIndex(index) {
+        this.SetSelectedIndexNoFire(index);
+        this.callback(this.selectedIndex);
+    }
+
+    SetSelectedValueNoFire(value) {
+        // Find the matching value index
+        for (let i = 0; i < this.values.length; i++) {
+            const _value = this.values[i];
+            if (_value === value) {
+                this.SetSelectedIndexNoFire(i);
+                return;
+            }
+        }
+
+        // Custom value
+        this.SetSelectedIndexNoFire(undefined);
     }
 
     SetSelectedValue(value) {
@@ -1091,18 +1095,10 @@ function ParseCommand(command, args)
             const id = args[1];
             const convar = args[2];
             const title = args[3];
-            const currentValue = args[4];
+            const currentIndex = parseInt(args[4])-1;
             const rawValues = args.slice(5);
-            /**@type {SubMenuCycleItem[]} */
-            const values = [];
-            for (let i = 0; i < rawValues.length; i+=2) {
-                values.push({
-                    text: rawValues[i],
-                    value: rawValues[i+1]
-                });
-            }
 
-            category.AddCycle(id, convar, title, values, currentValue);
+            category.AddCycle(id, convar, title, rawValues, currentIndex);
             break;
 
         case "setitemtext": {

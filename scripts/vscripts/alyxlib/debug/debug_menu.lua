@@ -665,22 +665,25 @@ function DebugMenu:SendCategoryToPanel(category)
             Panorama:Send(panel, "AddSlider", item.categoryId, item.id, item.text or item.convar, item.convar, item.min, item.max, default, item.isPercentage, item.truncate, item.increment)
 
         elseif item.type == "cycle" then
-            -- Flatten values into an array of text
-            local values = {}
-            local index = 1
-            for i = 1, #item.values do
-                values[index] = item.values[i].text
-                values[index+1] = item.values[i].value or (i - 1)
-                index = index + 2
-            end
 
             local default = resolveDefault(item.default)
+
             -- Use convar value if default isn't set
             if default == nil and item.convar ~= "" then
                 default = Convars:GetStr(item.convar)
             end
 
-            Panorama:Send(panel, "AddCycle", item.categoryId, item.id, item.convar, item.text, default, values)
+            if default ~= nil then
+                -- find the index of the default value
+                local index = TableFindIndex(item.values, function(v) return v.value == default end)
+                if index > 0 then
+                    default = index
+                else
+                    default = nil
+                end
+            end
+
+            Panorama:Send(panel, "AddCycle", item.categoryId, item.id, item.convar, item.text, default, TablePluck(item.values, "text"))
         else
             warn("Unknown item type '"..item.type.."'")
         end
