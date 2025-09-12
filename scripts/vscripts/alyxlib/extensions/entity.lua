@@ -600,24 +600,45 @@ function CBaseEntity:SetAbsVelocity(velocity)
 end
 
 ---
----Checks whether this entity's axis-aligned bounding box intersects
----with another entity or an explicit Mins/Maxs bounds table.
+---Tests if the OBB of this entity intersects with the OBB of another entity.
 ---
----If `other` is an entity, its bounds are queried with [GetBounds](lua://CBaseEntity.GetBounds).
----
----@param other EntityHandle|{ Mins: Vector, Maxs: Vector } # Entity or bounds to test against.
-function CBaseEntity:TestAABBIntersect(other)
-    local selfBounds = self:GetBounds()
-
-    if IsEntity(other) then
-        other = other:GetBounds()
-    end
-
-    return (
-        selfBounds.Mins.x <= other.Maxs.x and selfBounds.Maxs.x >= other.Mins.x and
-        selfBounds.Mins.y <= other.Maxs.y and selfBounds.Maxs.y >= other.Mins.y and
-        selfBounds.Mins.z <= other.Maxs.z and selfBounds.Maxs.z >= other.Mins.z
+---@param other EntityHandle # The other entity.
+---@return boolean # True if the OBB of this entity intersects with the OBB of another entity.
+function CBaseEntity:OBBvsOBB(other)
+    return OBBvsOBB(
+        GetEntityOBBData(self), self:GetOrigin(), self:GetAngles(),
+        GetEntityOBBData(other), other:GetOrigin(), other:GetAngles()
     )
 end
+
+---
+---Tests if the AABB of this entity intersects with the OBB of another entity.
+---
+---The AABB is defined by the entity's bounding mins/maxs and its current origin/angles.
+---
+---@param other EntityHandle # The other entity.
+---@return boolean # True if the AABB of this entity intersects with the OBB of another entity.
+function CBaseEntity:AABBvsOBB(other)
+    local aMin, aMax = GetEntityAABB(self)
+
+    return AABBvsOBB(
+        aMin, aMax,
+        GetEntityOBBData(other), other:GetOrigin(), other:GetAngles()
+    )
+end
+
+---
+---Tests if the AABB of this entity intersects with the AABB of another entity.
+---
+---The AABB is defined by the entity's bounding mins/maxs and its current origin/angles.
+---
+---@param other EntityHandle # The other entity.
+---@return boolean # True if the AABB of this entity intersects with the AABB of another entity.
+function CBaseEntity:AABBvsAABB(other)
+    local aMin, aMax = GetEntityAABB(self)
+    local bMin, bMax = GetEntityAABB(other)
+    return AABBvsAABB(aMin, aMax, bMin, bMax)
+end
+
 
 return version
