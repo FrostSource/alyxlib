@@ -773,8 +773,7 @@ function DebugMenu:StopListeningForMenuActivation()
 end
 
 if Convars:GetInt("developer") > 0 then
-    local listenFunc = ListenToPlayerEvent or ListenToGameEvent
-    listenFunc("vr_player_ready", function()
+    ListenToPlayerEvent("vr_player_ready", function()
         -- Kill existing panel on load to avoid missing logic errors
         local panel = Entities:FindByName(nil, "alyxlib_debug_menu")
         if panel then
@@ -786,6 +785,7 @@ if Convars:GetInt("developer") > 0 then
         end, 0.2)
     end, nil)
 end
+
 
 --[[
     Default AlyxLib tab

@@ -155,7 +155,8 @@ local function SyncEquippedWeaponState(classname, handle)
 
     -- if weaponHandle then
     --     print("Setting new weapon for hand", entstr(handHandle), classname, entstr(weaponHandle))
-    --     Debug.Sphere(weaponHandle:GetOrigin(), 2, 10)
+    --     debugoverlay:Sphere(weaponHandle:GetOrigin(), 2, 255, 255, 255, 255, true, 100)
+    --     debugoverlay:Text(weaponHandle:GetOrigin(), 0, entstr(weaponHandle).." : "..entstr(handHandle), 0, 255, 255, 255, 255, 100)
     -- end
 
     if not IsValidEntity(weaponHandle) then

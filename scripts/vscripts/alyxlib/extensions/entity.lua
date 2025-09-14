@@ -484,7 +484,7 @@ function CBaseEntity:TrackProperty(propertyFunction, onChangeFunction, interval,
 end
 
 ---
---- Untrack a property function which was set to be tracked using `CBaseEntity:TrackProperty`.
+---Untrack a property function which was set to be tracked using `CBaseEntity:TrackProperty`.
 ---
 ---@param propertyFunction fun(handle: EntityHandle): any # Property function to untrack, e.g. GetRenderAlpha.
 function CBaseEntity:UntrackProperty(propertyFunction)
