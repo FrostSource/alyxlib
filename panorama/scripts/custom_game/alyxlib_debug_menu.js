@@ -1170,6 +1170,7 @@ function ScrollHelperSchedule() {
     }
 
     $.DispatchEvent(scrollHelperScheduleEvent, currentlySelectedCategory.panel);
+    $.DispatchEvent(scrollHelperScheduleEvent, currentlySelectedCategory.panel);
     $.Schedule(scrollHelperSpeed, ScrollHelperSchedule);
 }
 
