@@ -83,6 +83,21 @@ local weaponOffsets = {
 }
 
 ---
+---Returns the default weapon offset for the given weapon classname and hand.
+---
+---@param classname string # The classname of the weapon
+---@param hand CPropVRHand|number # The hand to get the offset for
+---@return Vector # The default weapon offset, or `Vector()` if not found
+local function GetDefaultWeaponOffset(classname, hand)
+    hand = hand or Player.PrimaryHand:GetHandID()
+    if IsEntity(hand) then
+        hand = hand:GetHandID()
+    end
+
+    return weaponOffsets[hand][classname] or Vector()
+end
+
+---
 ---Sync the equipped weapon state of the player with the given weapon classname.
 ---
 ---If no classname is given, the weapon classname will be determined from the player's criteria.
@@ -234,5 +249,6 @@ return {
     ResumeWeaponStateSync = ResumeWeaponStateSync,
     WeaponStateSyncPaused = WeaponStateSyncPaused,
     SavePlayerData = savePlayerData,
-    LoadPlayerData = loadPlayerData
+    LoadPlayerData = loadPlayerData,
+    GetDefaultWeaponOffset = GetDefaultWeaponOffset
 }
