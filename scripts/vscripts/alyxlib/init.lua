@@ -95,6 +95,7 @@ else
     alyxlib_require "alyxlib.debug.novr"
 end
 alyxlib_require "alyxlib.debug.debug_menu"
+alyxlib_require "alyxlib.debug.debug_menu_cfg"
 
 -- Common third-party libraries
 
