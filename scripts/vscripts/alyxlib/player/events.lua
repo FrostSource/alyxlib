@@ -648,24 +648,26 @@ local function listenEventWeaponSwitch(data)
     -- Debug.PrintTable(data)
     -- print("\n")
 
-    Player:Delay(function()
-        local weaponHandle, handHandle = playerData.SyncEquippedWeaponState(data.item)
+    if not playerData.WeaponStateSyncPaused() then
+        Player:Delay(function()
+            local weaponHandle, handHandle = playerData.SyncEquippedWeaponState(data.item)
 
-        -- Nil return means sync in paused
-        if not weaponHandle then return end
+            -- Nil return means sync in paused
+            if not weaponHandle then return end
 
-        -- Hand entity isn't returned, so nil it
-        if weaponHandle:GetClassname() == "hand_use_controller" then
-            weaponHandle = nil
-        end
+            -- Hand entity isn't returned, so nil it
+            if weaponHandle:GetClassname() == "hand_use_controller" then
+                weaponHandle = nil
+            end
 
-        -- Registered callback
-        local newdata = vlua.clone(data)--[[@as PlayerEventWeaponSwitch]]
-        newdata.item = weaponHandle
-        newdata.item_class = data.item
-        newdata.hand = handHandle
-        eventCallback(data.game_event_name, newdata)
-    end)
+            -- Registered callback
+            local newdata = vlua.clone(data)--[[@as PlayerEventWeaponSwitch]]
+            newdata.item = weaponHandle
+            newdata.item_class = data.item
+            newdata.hand = handHandle
+            eventCallback(data.game_event_name, newdata)
+        end, 0.0)
+    end
 end
 ListenToGameEvent("weapon_switch", listenEventWeaponSwitch, nil)
 

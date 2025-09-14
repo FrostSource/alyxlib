@@ -219,12 +219,20 @@ local function ResumeWeaponStateSync()
     syncPaused = false
 end
 
+---
+---Check if weapon state synching is paused.
+---
+local function WeaponStateSyncPaused()
+    return syncPaused
+end
+
 return {
     version = version,
     SyncEquippedWeaponState = SyncEquippedWeaponState,
     RestorePreviouslyEquippedWeaponState = RestorePreviouslyEquippedWeaponState,
     PauseWeaponStateSync = PauseWeaponStateSync,
     ResumeWeaponStateSync = ResumeWeaponStateSync,
+    WeaponStateSyncPaused = WeaponStateSyncPaused,
     SavePlayerData = savePlayerData,
     LoadPlayerData = loadPlayerData
 }
