@@ -23,7 +23,7 @@ DebugMenu:AddToggle(categoryId, "fullbright", "Fullbright", "mat_fullbright")
 
 DebugMenu:AddToggle(categoryId, "visibility", "Vis", "vis_enable")
 
-DebugMenu:AddToggle(categoryId, categoryId.."_visfreeze", "Freeze Vis", function(on)
+DebugMenu:AddToggle(categoryId, categoryId.."_visfreeze", "Freeze Vis", nil, function(on)
     if on then
         SendToConsole("vis_debug_show 1")
         Player:Delay(function()

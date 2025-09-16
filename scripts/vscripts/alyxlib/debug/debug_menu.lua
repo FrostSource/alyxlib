@@ -68,6 +68,10 @@ if not IsVREnabled() then
     end, "", FCVAR_HIDDEN)
 end
 
+local function empty(str)
+    return type(str) ~= "string" or str == ""
+end
+
 ---
 ---The scope of the debug menu script.
 ---
@@ -104,7 +108,7 @@ local debugPanelScriptScope = {
         end
 
         -- Update default if user is tracking manually
-        if item.default ~= nil and type(item.default) ~= "function" then
+        if empty(item.convar) or (item.default ~= nil and type(item.default) ~= "function") then
             item.default = on
         end
 
@@ -408,23 +412,20 @@ end
 ---@param categoryId string # The category ID to add the toggle to
 ---@param toggleId string # The unique ID for this toggle
 ---@param text string # The text to display on this toggle
----@param command string|function # The console command or function to run when this toggle is toggled (will run with 1 if it's on, 0 if it's off)
+---@param convar? string # The console variable tied to this toggle
+---@param callback? fun(on:boolean) # Function to run when this toggle is toggled
 ---@param startsOn? boolean|fun():boolean # Whether the toggle is on by default
-function DebugMenu:AddToggle(categoryId, toggleId, text, command, startsOn)
+function DebugMenu:AddToggle(categoryId, toggleId, text, convar, callback, startsOn)
     local category = self:GetCategory(categoryId)
     if not category then
         warn("Cannot add toggle '"..toggleId.."': Category '"..categoryId.."' does not exist!")
         return
     end
 
-    local callback
-    if type(command) == "string" then
-        startsOn = startsOn or Convars:GetBool(command) or false
+    if callback == nil and not empty(convar) then
         callback = function(on)
-            SendToConsole(command .. " " .. (on and 1 or 0))
+            SendToConsole(convar .. " " .. (on and 1 or 0))
         end
-    elseif type(command) == "function" then
-        callback = command
     end
 
     table.insert(category.items, {
@@ -433,7 +434,8 @@ function DebugMenu:AddToggle(categoryId, toggleId, text, command, startsOn)
         text = text,
         callback = callback,
         type = "toggle",
-        default = startsOn or false,
+        default = startsOn,
+        convar = convar
     })
 end
 
@@ -464,35 +466,27 @@ end
 ---@param categoryId string # The ID of the category to add this slider to
 ---@param sliderId string # A unique ID for this slider
 ---@param text string # Display text for the slider
+---@param convar string # The console variable to tie this slider to
+---@param callback? fun(value:number,slider:DebugMenuItem) # Callback function
 ---@param min number # Minimum allowed value
 ---@param max number # Maximum allowed value
 ---@param isPercentage boolean # If true, value will be displayed as a percentage (0-100)
----@param command string|fun(value:number,slider:DebugMenuItem) # Convar name or callback function
 ---@param truncate? number # Number of decimal places (0 = integer, -1 = no truncating)
 ---@param increment? number # Snap increment (0 disables snapping)
 ---@param defaultValue? number|fun():number # Starting value. Set nil to use the convar value whenever the menu opens
-function DebugMenu:AddSlider(categoryId, sliderId, text, min, max, isPercentage, command, truncate, increment, defaultValue)
+function DebugMenu:AddSlider(categoryId, sliderId, text, convar, callback, min, max, isPercentage, truncate, increment, defaultValue)
     local category = self:GetCategory(categoryId)
     if not category then
         warn("Cannot add toggle '"..sliderId.."': Category '"..categoryId.."' does not exist!")
         return
     end
 
-    local callback
-    local convar = ""
-    if type(command) == "string" then
-        if command == "" then
-            error("Command must not be a blank string", 2)
-        end
-        convar = command
-
+    if callback == nil and type(convar) == "string" and convar ~= "" then
         ---@param value number
         ---@param slider DebugMenuItem
         callback = function(value, slider)
             Convars:SetStr(slider.convar, tostring(value))
         end
-    elseif type(command) == "function" then
-        callback = command
     end
 
     table.insert(category.items, {
@@ -519,10 +513,11 @@ end
 ---@param categoryId string # The id of the category to add this cycle to
 ---@param cycleId string # The unique id for this new cycle
 ---@param title string|nil # The text to display next to each value
+---@param convar? string # The console variable tied to this cycle
+---@param callback? fun(index:number, item:{text:string,value:any?}, cycle:DebugMenuItem) # Function callback
 ---@param values {text:string,value:any}[]|string[] # List of text/value pairs for this cycle, or a list of values
----@param command string|fun(index:number, item:{text:string,value:any?}, cycle:DebugMenuItem) # Convar name or function callback
 ---@param defaultValue? any|fun():any # Value for this cycle to start with
-function DebugMenu:AddCycle(categoryId, cycleId, title, values, command, defaultValue)
+function DebugMenu:AddCycle(categoryId, cycleId, title, convar, callback, values, defaultValue)
     local category = self:GetCategory(categoryId)
     if not category then
         warn("Cannot add toggle '"..cycleId.."': Category '"..categoryId.."' does not exist!")
@@ -546,37 +541,24 @@ function DebugMenu:AddCycle(categoryId, cycleId, title, values, command, default
         end
     end
 
-    local callback
-    local convar = ""
-    if type(command) == "string" then
-        if command == "" then
-            error("Command must not be a blank string", 2)
-        end
-        convar = command
-
+    if callback == nil and not empty(convar) then
         ---@param index number
         ---@param item {text:string,value:any?}
         ---@param cycle DebugMenuItem
         callback = function(index, item, cycle)
             Convars:SetStr(cycle.convar, tostring(item.value))
         end
-    elseif type(command) == "function" then
-        callback = command
-
-        if defaultValue == nil then
-            defaultValue = parsedValues[1].value
-        end
     end
 
     table.insert(category.items, {
         categoryId = categoryId,
         id = cycleId,
-        callback = callback,
         type = "cycle",
+        text = title,
+        convar = convar,
+        callback = callback,
         values = parsedValues,
         default = defaultValue,
-        convar = convar,
-        text = title
     })
 end
 
@@ -631,12 +613,24 @@ function DebugMenu:SetCategoryIndex(categoryId, index)
 end
 
 ---Resolves the default value of an element by running any value getter functions.
----@param default any|fun():any # The default value to resolve
+---@param item DebugMenuItem # The item to resolve
+---@param tFunc? `Convars.GetStr`|`Convars.GetInt`|`Convars.GetFloat`|`Convars.GetBool` # The value getter function
+---@param default? any # The default value
 ---@return any # The resolved value
-local function resolveDefault(default)
-    if type(default) == "function" then
-        return default()
+local function resolveDefault(item, tFunc, default)
+    if type(item.default) == "function" then
+        return item.default()
     end
+
+    if item.default ~= nil then
+        return item.default
+    end
+
+    if item.convar and item.convar ~= "" then
+        tFunc = tFunc or Convars.GetStr
+        return tFunc(Convars, item.convar)
+    end
+
     return default
 end
 
@@ -656,11 +650,11 @@ function DebugMenu:SendCategoryToPanel(category)
     Panorama:Send(panel, "AddCategory", category.id, category.name)
 
     for _, item in ipairs(category.items) do
-        if item.type == "toggle" then
-            Panorama:Send(panel, "AddToggle", item.categoryId, item.id, item.text, resolveDefault(item.default))
-
-        elseif item.type == "button" then
+        if item.type == "button" then
             Panorama:Send(panel, "AddButton", item.categoryId, item.id, item.text)
+
+        elseif item.type == "toggle" then
+            Panorama:Send(panel, "AddToggle", item.categoryId, item.id, item.text, resolveDefault(item, Convars.GetBool, false))
 
         elseif item.type == "label" then
             Panorama:Send(panel, "AddLabel", item.categoryId, item.id, item.text)
@@ -669,24 +663,16 @@ function DebugMenu:SendCategoryToPanel(category)
             Panorama:Send(panel, "AddSeparator", item.categoryId, item.id, item.text)
 
         elseif item.type == "slider" then
-            local default = resolveDefault(item.default)
-            if default == nil then
-                default = Convars:GetFloat(item.convar) or item.min
-            end
+            local default = resolveDefault(item, Convars.GetFloat, item.min)
             Panorama:Send(panel, "AddSlider", item.categoryId, item.id, item.text or item.convar, item.convar, item.min, item.max, default, item.isPercentage, item.truncate, item.increment)
 
         elseif item.type == "cycle" then
 
-            local default = resolveDefault(item.default)
-
-            -- Use convar value if default isn't set
-            if default == nil and item.convar ~= "" then
-                default = Convars:GetStr(item.convar)
-            end
+            local default = resolveDefault(item)
 
             if default ~= nil then
                 -- find the index of the default value
-                local index = TableFindIndex(item.values, function(v) return v.value == default end)
+                local index = TableFindIndex(item.values, function(v) return tostring(v.value) == tostring(default) end)
                 if index > 0 then
                     default = index
                 else
@@ -810,19 +796,19 @@ DebugMenu:AddCategory(categoryId, "AlyxLib")
 DebugMenu:AddSeparator(categoryId, nil, "Basic")
 
 if IsVREnabled() then
-    DebugMenu:AddToggle(categoryId, "noclip_vr", "NoClip VR", "noclip_vr", function ()
+    DebugMenu:AddToggle(categoryId, "noclip_vr", "NoClip VR", "noclip_vr", nil, function()
         return Convars:GetBool("noclip_vr_enabled")
     end)
     DebugMenu:AddLabel(categoryId, "noclip_vr_label", "Hold movement trigger to boost")
-    DebugMenu:AddSlider(categoryId, "noclip_vr_speed", "NoClip VR Speed", 0.5, 10, false, "noclip_vr_speed", 2)
-    DebugMenu:AddSlider(categoryId, "noclip_vr_boost_speed", "NoClip VR Boost Speed", 0.5, 10, false, "noclip_vr_boost_speed", 2)
+    DebugMenu:AddSlider(categoryId, "noclip_vr_speed", "NoClip VR Speed", "noclip_vr_speed", nil, 0.5, 10, false, 2)
+    DebugMenu:AddSlider(categoryId, "noclip_vr_boost_speed", "NoClip VR Boost Speed", "noclip_vr_boost_speed", nil, 0.5, 10, false, 2)
 end
 
 DebugMenu:AddToggle(categoryId, "buddha", "Buddha Mode", "buddha")
 
 DebugMenu:AddToggle(categoryId, "lefthanded", "Left Handed", "hlvr_left_hand_primary")
 
-DebugMenu:AddToggle(categoryId, "gameinstructor", "Game Instructor Hints",
+DebugMenu:AddToggle(categoryId, "gameinstructor", "Game Instructor Hints", nil,
 function(on)
     Convars:SetBool("gameinstructor_enable", on)
     Convars:SetBool("sv_gameinstructor_disable", not on)

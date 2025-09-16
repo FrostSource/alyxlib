@@ -1161,6 +1161,7 @@ function ParseCommand(command, args)
                 categories.splice(currentPos, 1);
                 categories.splice(index, 0, category);
             }
+            break;
         }
 
         case "setheight": {
