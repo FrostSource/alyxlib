@@ -91,7 +91,7 @@ local debugPanelScriptScope = {
         end
 
         if item.callback then
-            item.callback()
+            item.callback(item)
         end
     end,
 
@@ -113,7 +113,7 @@ local debugPanelScriptScope = {
         end
 
         if item.callback then
-            item.callback(on)
+            item.callback(on, item)
         end
     end,
 
@@ -380,7 +380,7 @@ end
 ---@param categoryId string # The category ID to add the button to
 ---@param buttonId string # The unique ID for this button
 ---@param text string # The text to display on this button
----@param command string|function # The console command or function to run when this button is pressed
+---@param command string|fun(button:DebugMenuItem) # The console command or function to run when this button is pressed
 function DebugMenu:AddButton(categoryId, buttonId, text, command)
     local category = self:GetCategory(categoryId)
     if not category then
@@ -413,7 +413,7 @@ end
 ---@param toggleId string # The unique ID for this toggle
 ---@param text string # The text to display on this toggle
 ---@param convar? string # The console variable tied to this toggle
----@param callback? fun(on:boolean) # Function to run when this toggle is toggled
+---@param callback? fun(on:boolean,toggle:DebugMenuItem) # Function to run when this toggle is toggled
 ---@param startsOn? boolean|fun():boolean # Whether the toggle is on by default
 function DebugMenu:AddToggle(categoryId, toggleId, text, convar, callback, startsOn)
     local category = self:GetCategory(categoryId)
