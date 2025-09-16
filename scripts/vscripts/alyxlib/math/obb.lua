@@ -36,6 +36,21 @@ end
 ---@field half Vector # The half extents of the OBB in local space.
 
 ---
+---Returns the center and half extents of an OBB in local space.
+---
+---@param mins Vector # The local space minimum corner.
+---@param maxs Vector # The local space maximum corner.
+---@return OBBData # The OBB data.
+function GetBoundingOBBData(mins, maxs)
+    local center = (mins + maxs) * 0.5
+    local half = (maxs - mins) * 0.5
+    return {
+        center = center,
+        half = half
+    }
+end
+
+---
 ---Returns the center and half extents of an entity's OBB in local space.
 ---
 ---@param entity EntityHandle # The entity.
@@ -43,12 +58,7 @@ end
 function GetEntityOBBData(entity)
     local mins = entity:GetBoundingMins()
     local maxs = entity:GetBoundingMaxs()
-    local center = (mins + maxs) * 0.5
-    local half = (maxs - mins) * 0.5
-    return {
-        center = center,
-        half = half
-    }
+    return GetBoundingOBBData(mins, maxs)
 end
 
 ---
