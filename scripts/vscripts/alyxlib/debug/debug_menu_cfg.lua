@@ -15,10 +15,17 @@ RegisterAlyxLibCommand("debug_menu_add_category", function (_, name)
 end, "Adds a new category to the debug menu")
 
 RegisterAlyxLibCommand("debug_menu_add_button", function (_, text, command)
+    if currentUserCategory == nil or currentUserCategory == "" then
+        return warn("debug_menu_add_button: No category defined with debug_menu_add_category")
+    end
     DebugMenu:AddButton(currentUserCategory, DoUniqueString("button"), text or "Button", command or "echo Button pressed")
 end, "Adds a new button to the current category")
 
 RegisterAlyxLibCommand("debug_menu_add_toggle", function (_, text, commandOff, commandOn, default)
+    if currentUserCategory == nil or currentUserCategory == "" then
+        return warn("debug_menu_add_toggle: No category defined with debug_menu_add_category")
+    end
+
     if default == nil then
         if commandOn ~= nil and vlua.find({"off","on","0","1"}, string.lower(commandOn)) then
             default = string.lower(commandOn)
@@ -58,6 +65,9 @@ RegisterAlyxLibCommand("debug_menu_add_toggle", function (_, text, commandOff, c
 end, "Adds a new toggle to the current category")
 
 RegisterAlyxLibCommand("debug_menu_add_slider", function (_, text, command, min, max, ...)
+    if currentUserCategory == nil or currentUserCategory == "" then
+        return warn("debug_menu_add_slider: No category defined with debug_menu_add_category")
+    end
 
     local isPercentage = false
     local truncate = nil
@@ -86,6 +96,10 @@ RegisterAlyxLibCommand("debug_menu_add_slider", function (_, text, command, min,
 end, "Adds a new slider to the current category")
 
 RegisterAlyxLibCommand("debug_menu_add_cycle", function (_, title, ...)
+    if currentUserCategory == nil or currentUserCategory == "" then
+        return warn("debug_menu_add_cycle: No category defined with debug_menu_add_category")
+    end
+
     local rawValues = {...}
     local parsedValues = {}
 
@@ -129,6 +143,10 @@ RegisterAlyxLibCommand("debug_menu_add_cycle_cmd", function(_, ...)
 end, "Defines a command for a cycle to be added with debug_menu_add_cycle_map")
 
 RegisterAlyxLibCommand("debug_menu_add_cycle_map", function(_, title, ...)
+    if currentUserCategory == nil or currentUserCategory == "" then
+        return warn("debug_menu_add_cycle_map: No category defined with debug_menu_add_category")
+    end
+
     if #cycleMapCmds == 0 then
         return warn("debug_menu_add_cycle_map: No commands defined with debug_menu_add_cycle_cmd")
     end
@@ -198,10 +216,18 @@ RegisterAlyxLibCommand("debug_menu_add_cycle_map", function(_, title, ...)
 end, "Adds a new cycle to the current category using previously defined commands")
 
 RegisterAlyxLibCommand("debug_menu_add_label", function (_, text)
+    if currentUserCategory == nil or currentUserCategory == "" then
+        return warn("debug_menu_add_label: No category defined with debug_menu_add_category")
+    end
+
     DebugMenu:AddLabel(currentUserCategory, DoUniqueString("label"), text)
 end, "Adds a new label to the current category")
 
 RegisterAlyxLibCommand("debug_menu_add_separator", function (_, text)
+    if currentUserCategory == nil or currentUserCategory == "" then
+        return warn("debug_menu_add_separator: No category defined with debug_menu_add_category")
+    end
+
     DebugMenu:AddSeparator(currentUserCategory, nil, text)
 end, "Adds a new separator to the current category")
 
