@@ -6,7 +6,15 @@
     background-color: gradient( radial, 50% 50%, 0% 0%, 100% 100%, from( #553c18 ), color-stop( 0.97, #000000 ), to( #000000 ) );
     box-shadow: inset #995e0011 2px 2px 4px 4px;
     opacity: .9;
+    height: 100%;
 }
+.vr_affordance_container{
+    height: 100%;
+}
+#layout_root{
+    height: 100%;
+}
+
 #background_panel .row .col_body
 {
     /*overflow: scroll;*/

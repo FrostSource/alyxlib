@@ -31,9 +31,15 @@ end
 ---@param defaultValue string # Default value of the convar.
 ---@param helpText? string # Description of the convar.
 ---@param flags? integer # Flags for the convar.
-function RegisterAlyxLibConvar(name, defaultValue, helpText, flags)
+---@param callback? fun(newVal:string, oldVal:string): any # Update function called after the value has been changed.
+function RegisterAlyxLibConvar(name, defaultValue, helpText, flags, callback)
     helpText = helpText or "[No description]"
-    Convars:RegisterConvar(name, defaultValue, helpText, flags or 0)
+    flags = flags or 0
+    if callback then
+        EasyConvars:RegisterConvar(name, defaultValue, helpText, flags, callback)
+    else
+        Convars:RegisterConvar(name, defaultValue, helpText, flags)
+    end
     alyxlibCommands[name] = "Default: "..tostring(defaultValue)..", "..helpText
 end
 

@@ -11,6 +11,13 @@ end, "Forces the debug menu to show")
 
 RegisterAlyxLibConvar("alyxlib_debug_menu_hand", "1", "Hand to attach the debug menu to, 0 = Secondary : 1 = Primary")
 
+RegisterAlyxLibConvar("alyxlib_debug_menu_height", "12", "Height of the debug menu, min=7 : max=30", 0, function(newVal, oldVal)
+    if DebugMenu:IsOpen() then
+        DebugMenu:CloseMenu()
+        DebugMenu:ShowMenu()
+    end
+end)
+
 ---
 ---The debug menu allows for easier VR testing by offering a customizable in-game menu.
 ---
@@ -188,7 +195,7 @@ function DebugMenu:ShowMenu()
         targetname = "alyxlib_debug_menu",
         dialog_layout_name = "file://{resources}/layout/custom_game/alyxlib_debug_menu.xml",
         width = 16,--24,
-        height = 12,--16
+        height = Convars:GetInt("alyxlib_debug_menu_height"),--12,--16
         panel_dpi = 64,
         ignore_input = 0,
         lit = 0,
@@ -241,6 +248,10 @@ function DebugMenu:ShowMenu()
     self.panel:Delay(function()
         debugMenuOpen = true
     end, 0.2)
+
+    local panelHeight = Clamp(Convars:GetInt("alyxlib_debug_menu_height"), 7, 30)
+    local cssHeight = (64 * panelHeight) - 111
+    Panorama:Send(self.panel, "SetHeight", cssHeight)
 
     self:SendCategoriesToPanel()
 end

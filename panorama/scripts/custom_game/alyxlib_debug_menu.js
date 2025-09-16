@@ -989,6 +989,15 @@ function ClickHoveredButton()
 }
 
 /**
+ * Sets the height of the menu container.
+ * @param {number} height 
+ */
+function SetContainerHeight(height)
+{
+    $('#CategoriesContainer').style.minHeight = `${height}px`;
+}
+
+/**
  * Parses the incoming Lua command.
  * @param {string} command 
  * @param {string[]} args 
@@ -1152,6 +1161,12 @@ function ParseCommand(command, args)
                 categories.splice(currentPos, 1);
                 categories.splice(index, 0, category);
             }
+        }
+
+        case "setheight": {
+            const height = parseInt(args[0]);
+            SetContainerHeight(height);
+            break;
         }
     }
 }
