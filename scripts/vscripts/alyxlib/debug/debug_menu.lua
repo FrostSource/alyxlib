@@ -467,14 +467,14 @@ end
 ---@param sliderId string # A unique ID for this slider
 ---@param text string # Display text for the slider
 ---@param convar string # The console variable to tie this slider to
----@param callback? fun(value:number,slider:DebugMenuItem) # Callback function
 ---@param min number # Minimum allowed value
 ---@param max number # Maximum allowed value
 ---@param isPercentage boolean # If true, value will be displayed as a percentage (0-100)
 ---@param truncate? number # Number of decimal places (0 = integer, -1 = no truncating)
 ---@param increment? number # Snap increment (0 disables snapping)
+---@param callback? fun(value:number,slider:DebugMenuItem) # Callback function
 ---@param defaultValue? number|fun():number # Starting value. Set nil to use the convar value whenever the menu opens
-function DebugMenu:AddSlider(categoryId, sliderId, text, convar, callback, min, max, isPercentage, truncate, increment, defaultValue)
+function DebugMenu:AddSlider(categoryId, sliderId, text, convar, min, max, isPercentage, truncate, increment, callback, defaultValue)
     local category = self:GetCategory(categoryId)
     if not category then
         warn("Cannot add toggle '"..sliderId.."': Category '"..categoryId.."' does not exist!")
@@ -514,10 +514,10 @@ end
 ---@param cycleId string # The unique id for this new cycle
 ---@param title string|nil # The text to display next to each value
 ---@param convar? string # The console variable tied to this cycle
----@param callback? fun(index:number, item:{text:string,value:any?}, cycle:DebugMenuItem) # Function callback
 ---@param values {text:string,value:any}[]|string[] # List of text/value pairs for this cycle, or a list of values
+---@param callback? fun(index:number, item:{text:string,value:any?}, cycle:DebugMenuItem) # Function callback
 ---@param defaultValue? any|fun():any # Value for this cycle to start with
-function DebugMenu:AddCycle(categoryId, cycleId, title, convar, callback, values, defaultValue)
+function DebugMenu:AddCycle(categoryId, cycleId, title, convar, values, callback, defaultValue)
     local category = self:GetCategory(categoryId)
     if not category then
         warn("Cannot add toggle '"..cycleId.."': Category '"..categoryId.."' does not exist!")
@@ -800,8 +800,8 @@ if IsVREnabled() then
         return Convars:GetBool("noclip_vr_enabled")
     end)
     DebugMenu:AddLabel(categoryId, "noclip_vr_label", "Hold movement trigger to boost")
-    DebugMenu:AddSlider(categoryId, "noclip_vr_speed", "NoClip VR Speed", "noclip_vr_speed", nil, 0.5, 10, false, 2)
-    DebugMenu:AddSlider(categoryId, "noclip_vr_boost_speed", "NoClip VR Boost Speed", "noclip_vr_boost_speed", nil, 0.5, 10, false, 2)
+    DebugMenu:AddSlider(categoryId, "noclip_vr_speed", "NoClip VR Speed", "noclip_vr_speed", 0.5, 10, false, 2)
+    DebugMenu:AddSlider(categoryId, "noclip_vr_boost_speed", "NoClip VR Boost Speed", "noclip_vr_boost_speed", 0.5, 10, false, 2)
 end
 
 DebugMenu:AddToggle(categoryId, "buddha", "Buddha Mode", "buddha")

@@ -92,7 +92,7 @@ RegisterAlyxLibCommand("debug_menu_add_slider", function (_, text, command, min,
     assert(type(truncate) == "nil" or type(truncate) == "number", "debug_menu_add_slider: truncate must be a number")
     assert(type(truncate) == "nil" or type(increment) == "number", "debug_menu_add_slider: increment must be a number")
 
-    DebugMenu:AddSlider(currentUserCategory, DoUniqueString("slider"), text or "Slider", command, nil, min or 0, max or 1, isPercentage or false, truncate, increment, default)
+    DebugMenu:AddSlider(currentUserCategory, DoUniqueString("slider"), text or "Slider", command, min or 0, max or 1, isPercentage or false, truncate, increment, nil, default)
 end, "Adds a new slider to the current category")
 
 RegisterAlyxLibCommand("debug_menu_add_cycle", function (_, title, ...)
@@ -128,9 +128,9 @@ RegisterAlyxLibCommand("debug_menu_add_cycle", function (_, title, ...)
         default = parsedValues[default].value
     end
 
-    DebugMenu:AddCycle(currentUserCategory, DoUniqueString("cycle"), title or "Cycle", nil, function (index, item, cycle)
+    DebugMenu:AddCycle(currentUserCategory, DoUniqueString("cycle"), title or "Cycle", nil, parsedValues, function (index, item, cycle)
         SendToConsole(item.value)
-    end, parsedValues, default)
+    end, default)
 end, "Adds a new cycle to the current category")
 
 ---@type string[]
@@ -206,11 +206,11 @@ RegisterAlyxLibCommand("debug_menu_add_cycle_map", function(_, title, ...)
     end
 
     if #_cycleMapCmds == 1 then
-        DebugMenu:AddCycle(currentUserCategory, DoUniqueString("cycle"), title or "Cycle", _cycleMapCmds[1], nil, parsedValues, default)
+        DebugMenu:AddCycle(currentUserCategory, DoUniqueString("cycle"), title or "Cycle", _cycleMapCmds[1], parsedValues, nil, default)
     else
-        DebugMenu:AddCycle(currentUserCategory, DoUniqueString("cycle"), title or "Cycle", nil, function (index, item, cycle)
+        DebugMenu:AddCycle(currentUserCategory, DoUniqueString("cycle"), title or "Cycle", nil, parsedValues, function (index, item, cycle)
             SendToConsole(item.value)
-        end, parsedValues, default)
+        end, default)
     end
 
 end, "Adds a new cycle to the current category using previously defined commands")
