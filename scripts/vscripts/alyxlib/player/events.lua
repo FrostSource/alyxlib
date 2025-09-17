@@ -40,10 +40,14 @@ local playerActivated = false
 ---@param context? table # Optional: The context to pass to the function as `self`. If omitted the context will not passed to the callback.
 ---@return integer eventID # ID used to unregister
 function ListenToPlayerEvent(event, callback, context)
+    assert(registered_event_callbacks[event], "Unknown player event "..event)
+
     if playerActivated and (event == "novr_player" or event == "player_activate" or event == "vr_player_ready") then
         warn("Player has already spawned so this event won't fire at "..Debug.GetSourceLine(3))
     end
+
     devprint2("Listening to player event", event, callback)
+
     registered_event_callbacks[event][registered_event_index] = { callback = callback, context = context}
     registered_event_index = registered_event_index + 1
     return registered_event_index - 1
