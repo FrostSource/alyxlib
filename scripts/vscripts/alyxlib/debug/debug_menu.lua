@@ -764,9 +764,8 @@ function DebugMenu:StartListeningForMenuActivation()
             timeSinceLastButtonPress = math.huge
         end
 
-        local hand = Convars:GetBool("alyxlib_debug_menu_hand") and Player.SecondaryHand or Player.PrimaryHand
-
-        if Player:IsDigitalActionOnForHand(hand.Literal, DIGITAL_INPUT_TOGGLE_MENU) then
+        -- Menu button is always on secondary hand (seems to be)
+        if Player:IsDigitalActionOnForHand(Player.SecondaryHand.Literal, DIGITAL_INPUT_TOGGLE_MENU) then
             if not buttonPressed then
                 buttonPressed = true
                 timeSinceLastButtonPress = Time()
