@@ -21,7 +21,7 @@
                 </Panel>
 
                 <Panel id="background_panel" class="bg">
-                    <Panel class="header">
+                    <Panel id="TitleBar" class="header" onactivate="StartPanelDrag()">
                         <Label class="header" text="Debug Menu" />
                     </Panel>
                     <Panel class="empty_row" />

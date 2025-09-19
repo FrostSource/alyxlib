@@ -9,7 +9,14 @@ RegisterAlyxLibCommand("debug_menu_show", function (name, ...)
     DebugMenu:ShowMenu()
 end, "Forces the debug menu to show")
 
-RegisterAlyxLibConvar("debug_menu_hand", "0", "Hand to attach the debug menu to, 0 = Secondary : 1 = Primary")
+RegisterAlyxLibConvar("debug_menu_hand", "1", "Hand to attach the debug menu to, 0 = Secondary : 1 = Primary")
+
+RegisterAlyxLibConvar("debug_menu_offset_x", "4", "X offset of the debug menu", 0)
+RegisterAlyxLibConvar("debug_menu_offset_y", "-9", "Y offset of the debug menu", 0)
+RegisterAlyxLibConvar("debug_menu_offset_z", "0", "Z offset of the debug menu", 0)
+RegisterAlyxLibConvar("debug_menu_offset_pitch", "0", "Pitch offset of the debug menu", 0)
+RegisterAlyxLibConvar("debug_menu_offset_yaw", "180", "Yaw offset of the debug menu", 0)
+RegisterAlyxLibConvar("debug_menu_offset_roll", "0", "Roll offset of the debug menu", 0)
 
 RegisterAlyxLibConvar("debug_menu_height", "14", "Height of the debug menu, min=7 : max=30", 0, function(newVal, oldVal)
     if DebugMenu:IsOpen() then
@@ -79,6 +86,87 @@ end
 
 local function empty(str)
     return type(str) ~= "string" or str == ""
+end
+
+---@param dragHand CPropVRHand
+local function startDraggingMenu(dragHand)
+
+    local panel = DebugMenu.panel
+    local dragent = dragHand
+
+    local relpos = dragent:TransformPointWorldToEntity(panel:GetOrigin())
+
+    local panelOrigin = panel:GetOrigin()
+    local relForwardRef = dragent:TransformPointWorldToEntity(panelOrigin + panel:GetForwardVector() * 10)
+    local relUpRef = dragent:TransformPointWorldToEntity(panelOrigin + panel:GetUpVector() * 10)
+
+    panel:SetParent(GetWorld(), nil)
+
+    Player:QuickThink(function()
+        if not IsValidEntity(dragHand) or
+           not IsValidEntity(panel) then
+            return nil
+        end
+
+        if not Player:IsDigitalActionOnForHand(dragHand.Literal, DIGITAL_INPUT_MENU_INTERACT) then
+            local hand = Convars:GetBool("debug_menu_hand") and Player.PrimaryHand or Player.SecondaryHand
+            panel:SetParent(hand, "constraint1")
+
+            local localOrigin = panel:GetLocalOrigin()
+            local localAngles = panel:GetLocalAngles()
+
+            if hand == Player.LeftHand then
+                localAngles.y = localAngles.y - 180
+                localOrigin.y = -localOrigin.y
+            end
+
+            Convars:SetFloat("debug_menu_offset_x", localOrigin.x)
+            Convars:SetFloat("debug_menu_offset_y", localOrigin.y)
+            Convars:SetFloat("debug_menu_offset_z", localOrigin.z)
+            Convars:SetFloat("debug_menu_offset_pitch", localAngles.x)
+            Convars:SetFloat("debug_menu_offset_yaw", localAngles.y)
+            Convars:SetFloat("debug_menu_offset_roll", localAngles.z)
+
+            Msg("\n")
+            Msg("Debug menu offsets updated:\n")
+            Msg("\ndebug_menu_offset_x " .. math.trunc(Convars:GetFloat("debug_menu_offset_x"), 2))
+            Msg("\ndebug_menu_offset_y " .. math.trunc(Convars:GetFloat("debug_menu_offset_y"), 2))
+            Msg("\ndebug_menu_offset_z " .. math.trunc(Convars:GetFloat("debug_menu_offset_z"), 2))
+            Msg("\ndebug_menu_offset_pitch " .. math.trunc(Convars:GetFloat("debug_menu_offset_pitch"), 2))
+            Msg("\ndebug_menu_offset_yaw " .. math.trunc(Convars:GetFloat("debug_menu_offset_yaw"), 2))
+            Msg("\ndebug_menu_offset_roll " .. math.trunc(Convars:GetFloat("debug_menu_offset_roll"), 2))
+            Msg("\n\n")
+
+            DebugMenu:UpdateMenuAttachment()
+
+            return nil
+        end
+
+        local newOrigin = dragent:TransformPointEntityToWorld(relpos)
+
+        local newForwardRef = dragent:TransformPointEntityToWorld(relForwardRef)
+        local newUpRef = dragent:TransformPointEntityToWorld(relUpRef)
+
+        local newForward = (newForwardRef - newOrigin):Normalized()
+        local newUp = (newUpRef - newOrigin):Normalized()
+        local angles = VectorToAngles(newForward)
+
+        -- Calculate roll manually
+        local expectedRight = newForward:Cross(Vector(0, 0, 1)):Normalized()
+        if expectedRight:Length() < 0.1 then
+            expectedRight = Vector(1, 0, 0)
+        end
+        local expectedUp = expectedRight:Cross(newForward):Normalized()
+
+        local roll = math.atan2(newUp:Dot(expectedRight), newUp:Dot(expectedUp))
+        angles.z = Rad2Deg(roll)
+
+        panel:SetOrigin(newOrigin)
+        panel:SetQAngle(angles)
+
+        return 0
+    end)
+
 end
 
 ---
@@ -178,6 +266,10 @@ local debugPanelScriptScope = {
         if DebugMenu:IsOpen() then
             DebugMenu:Refresh()
         end
+    end,
+
+    _DebugMenuDrag = function()
+        startDraggingMenu(Convars:GetInt("debug_menu_hand") == 1 and Player.SecondaryHand or Player.PrimaryHand)
     end
 }
 
@@ -188,14 +280,12 @@ function DebugMenu:UpdateMenuAttachment()
     local hand = Convars:GetBool("debug_menu_hand") and Player.PrimaryHand or Player.SecondaryHand
     if hand == Player.RightHand then
         self.panel:SetParent(hand, "constraint1")
-        self.panel:ResetLocal()
-        self.panel:SetLocalAngles(0, 180, 0)
-        self.panel:SetLocalOrigin(Vector(4, -9, 0))
+        self.panel:SetLocalAngles(Convars:GetFloat("debug_menu_offset_pitch"), Convars:GetFloat("debug_menu_offset_yaw"), Convars:GetFloat("debug_menu_offset_roll"))
+        self.panel:SetLocalOrigin(Vector(Convars:GetFloat("debug_menu_offset_x"), Convars:GetFloat("debug_menu_offset_y"), Convars:GetFloat("debug_menu_offset_z")))
     else
         self.panel:SetParent(hand, "constraint1")
-        self.panel:ResetLocal()
-        self.panel:SetLocalAngles(0, 0, 0)
-        self.panel:SetLocalOrigin(Vector(4, 9, 0))
+        self.panel:SetLocalAngles(Convars:GetFloat("debug_menu_offset_pitch"), Convars:GetFloat("debug_menu_offset_yaw")-180, Convars:GetFloat("debug_menu_offset_roll"))
+        self.panel:SetLocalOrigin(Vector(Convars:GetFloat("debug_menu_offset_x"), -Convars:GetFloat("debug_menu_offset_y"), Convars:GetFloat("debug_menu_offset_z")))
     end
 end
 
@@ -227,6 +317,8 @@ function DebugMenu:ShowMenu()
         a = RotateOrientation(a, QAngle(0,-90,90))
         self.panel:SetQAngle(a)
         self.panel:SetOrigin(eyePos + dir * 16)
+        -- Panel must be parented for moving during drag to work
+        self.panel:SetParent(GetWorld(), nil)
 
         SendToConsole("bind r _debug_menu_test_button_press")
     else
@@ -272,9 +364,7 @@ function DebugMenu:ShowMenu()
 
     Panorama:InitPanel(self.panel, "alyxlib_debug_menu")
 
-    self.panel:Delay(function()
-        debugMenuOpen = true
-    end, 0.2)
+    debugMenuOpen = true
 
     local panelHeight = Clamp(Convars:GetInt("debug_menu_height"), 7, 30)
     local cssHeight = (64 * panelHeight) - 111

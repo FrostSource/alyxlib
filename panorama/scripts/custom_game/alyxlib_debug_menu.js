@@ -43,13 +43,17 @@ let currentlySelectedCategory = null;
  */
 let currentlyActiveButton = null;
 
-function TurnButtonIntoDebugMenuButton(button, callback)
+function TurnButtonIntoDebugMenuButton(button, callback, onmouseover, onmouseout)
 {
     if (button == null) return;
 
-    button.SetPanelEvent("onmouseover", () => currentlyActiveButton = button);
+    button.SetPanelEvent("onmouseover", () => {
+        currentlyActiveButton = button
+        if (onmouseover !== undefined) onmouseover();
+    });
     button.SetPanelEvent("onmouseout", () => {
         if (currentlyActiveButton == button) currentlyActiveButton = null;
+        if (onmouseout !== undefined) onmouseout();
     });
 
     if (callback !== null && callback !== undefined)
@@ -922,6 +926,11 @@ function CloseMenu()
     FireOutput("_CloseMenu");
 }
 
+function StartPanelDrag()
+{
+    FireOutput("_DebugMenuDrag");
+}
+
 /**
  * Gets the position of the left or right 'affordance' circle for the VR finger interacting with the menu.
  * @returns {{x:number,y:number}?}
@@ -1228,24 +1237,25 @@ function ScrollHelperClick() {
 {
     // Modify preset layout buttons to work with controller trigger
     TurnButtonIntoDebugMenuButton($("#CloseMenuButton"));
+    TurnButtonIntoDebugMenuButton($("#TitleBar"));
     TurnButtonIntoDebugMenuButton($("#CycleCategoryLeftButton"));
     TurnButtonIntoDebugMenuButton($("#CycleCategoryRightButton"));
-    TurnButtonIntoDebugMenuButton($("#ScrollHelperDown"));
-    TurnButtonIntoDebugMenuButton($("#ScrollHelperUp"));
-
-    // Tells Lua that the menu has been reloaded so it can repopulate the menu
-    // This helps with hot reloading panel changes
-    $.Schedule(0.1, () => FireOutput("_DebugMenuReloaded"));
-
     // Scroll helpers for sub-menus
     // Valve kindly didn't allow us to raytrace click panels like the main menu
     // so this is a work around for scrolling
-    $('#ScrollHelperDown').SetPanelEvent("onmouseover", () => StartScrollHelper("ScrollDown"));
-    $('#ScrollHelperDown').SetPanelEvent("onmouseout", () => StopScrollHelper());
-    $('#ScrollHelperDown').SetPanelEvent("onactivate", ScrollHelperClick);
-    $('#ScrollHelperUp').SetPanelEvent("onmouseover", () => StartScrollHelper("ScrollUp"));
-    $('#ScrollHelperUp').SetPanelEvent("onmouseout", () => StopScrollHelper());
-    $('#ScrollHelperUp').SetPanelEvent("onactivate", ScrollHelperClick);
+    TurnButtonIntoDebugMenuButton($("#ScrollHelperDown"), ScrollHelperClick, () => StartScrollHelper("ScrollDown"), () => StopScrollHelper());
+    TurnButtonIntoDebugMenuButton($("#ScrollHelperUp"), ScrollHelperClick, () => StartScrollHelper("ScrollUp"), () => StopScrollHelper());
+
+    // Tells Lua that the menu has been reloaded so it can repopulate the menu
+    // This helps with hot reloading panel changes
+    if ($.GetContextPanel().initialized) {
+        $.Msg("Refreshing debug menu due to hot reload");
+        $.Schedule(0.1, () => FireOutput("_DebugMenuReloaded"));
+    }
+
+    // Set so the panel doesn't refresh when it's first created
+    // Only when modified and recompiled
+    $.GetContextPanel().initialized = true;
 
     $.Schedule(1.0, () => panelReady = true);
 
