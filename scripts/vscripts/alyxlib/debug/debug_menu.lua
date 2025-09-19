@@ -5,18 +5,27 @@
     The debug menu allows for easier VR testing by offering a customizable in-game menu.
 ]]
 
-RegisterAlyxLibCommand("alyxlib_debug_menu_show", function (name, ...)
+RegisterAlyxLibCommand("debug_menu_show", function (name, ...)
     DebugMenu:ShowMenu()
 end, "Forces the debug menu to show")
 
-RegisterAlyxLibConvar("alyxlib_debug_menu_hand", "1", "Hand to attach the debug menu to, 0 = Secondary : 1 = Primary")
+RegisterAlyxLibConvar("debug_menu_hand", "0", "Hand to attach the debug menu to, 0 = Secondary : 1 = Primary")
 
-RegisterAlyxLibConvar("alyxlib_debug_menu_height", "12", "Height of the debug menu, min=7 : max=30", 0, function(newVal, oldVal)
+RegisterAlyxLibConvar("debug_menu_height", "14", "Height of the debug menu, min=7 : max=30", 0, function(newVal, oldVal)
     if DebugMenu:IsOpen() then
         DebugMenu:CloseMenu()
         DebugMenu:ShowMenu()
     end
 end)
+
+RegisterAlyxLibConvar("debug_menu_floating", function()
+    -- Float menu for inside-out tracking
+    if Player:GetVRControllerType() == 3 then
+        return true
+    end
+
+    return false
+end, "Menu will float in world instead of attached to hand")
 
 ---
 ---The debug menu allows for easier VR testing by offering a customizable in-game menu.
@@ -176,7 +185,7 @@ local debugPanelScriptScope = {
 ---Updates the physical menu by attaching it to the correct hand.
 ---
 function DebugMenu:UpdateMenuAttachment()
-    local hand = Convars:GetBool("alyxlib_debug_menu_hand") and Player.PrimaryHand or Player.SecondaryHand
+    local hand = Convars:GetBool("debug_menu_hand") and Player.PrimaryHand or Player.SecondaryHand
     if hand == Player.RightHand then
         self.panel:SetParent(hand, "constraint1")
         self.panel:ResetLocal()
@@ -198,8 +207,8 @@ function DebugMenu:ShowMenu()
     self.panel = SpawnEntityFromTableSynchronous("point_clientui_world_panel", {
         targetname = "alyxlib_debug_menu",
         dialog_layout_name = "file://{resources}/layout/custom_game/alyxlib_debug_menu.xml",
-        width = 16,--24,
-        height = Convars:GetInt("alyxlib_debug_menu_height"),--12,--16
+        width = 16,
+        height = Convars:GetInt("debug_menu_height"),
         panel_dpi = 64,
         ignore_input = 0,
         lit = 0,
@@ -221,22 +230,36 @@ function DebugMenu:ShowMenu()
 
         SendToConsole("bind r _debug_menu_test_button_press")
     else
-        self:UpdateMenuAttachment()
+        local handType = -1
+        if Convars:GetBool("debug_menu_floating") then
+            local localPlayer = Entities:GetLocalPlayer()
+            local eyePos = localPlayer:EyePosition()
+            local dir = localPlayer:EyeAngles():Forward()
+            local a = VectorToAngles(dir)
+            a = RotateOrientation(a, QAngle(0,-90,90))
+            self.panel:SetQAngle(a)
+            self.panel:SetOrigin(eyePos + dir * 16)
+            self.panel:SetParent(GetWorld(), nil)
+        else
+            self:UpdateMenuAttachment()
+
+            handType = Convars:GetInt("debug_menu_hand") == 1 and InputHandSecondary or InputHandPrimary
+
+            handChangedListener = ListenToPlayerEvent("primary_hand_changed", function()
+                self:UpdateMenuAttachment()
+            end)
+        end
 
         -- Cough handpose gets in the way for close menus
         Player:SetCoughHandEnabled(false)
 
         -- Handle distant button presses
         Input:ListenToButton("press",
-            Convars:GetInt("alyxlib_debug_menu_hand") == 1 and InputHandSecondary or InputHandPrimary,
+            handType,
             DIGITAL_INPUT_MENU_INTERACT, 1,
-            function (params)
+            function (context, params)
                 self:ClickHoveredButton()
             end, self)
-
-        handChangedListener = ListenToPlayerEvent("primary_hand_changed", function()
-            self:UpdateMenuAttachment()
-        end)
 
     end
 
@@ -253,7 +276,7 @@ function DebugMenu:ShowMenu()
         debugMenuOpen = true
     end, 0.2)
 
-    local panelHeight = Clamp(Convars:GetInt("alyxlib_debug_menu_height"), 7, 30)
+    local panelHeight = Clamp(Convars:GetInt("debug_menu_height"), 7, 30)
     local cssHeight = (64 * panelHeight) - 111
     Panorama:Send(self.panel, "SetHeight", cssHeight)
 
