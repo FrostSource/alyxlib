@@ -34,6 +34,8 @@ RegisterAlyxLibConvar("debug_menu_floating", function()
     return false
 end, "Menu will float in world instead of attached to hand")
 
+RegisterAlyxLibConvar("debug_menu_lock", "0", "Prevents the debug menu from being repositioned by the player", 0)
+
 ---
 ---The debug menu allows for easier VR testing by offering a customizable in-game menu.
 ---
@@ -269,7 +271,9 @@ local debugPanelScriptScope = {
     end,
 
     _DebugMenuDrag = function()
-        startDraggingMenu(Convars:GetInt("debug_menu_hand") == 1 and Player.SecondaryHand or Player.PrimaryHand)
+        if not Convars:GetBool("debug_menu_lock") then
+            startDraggingMenu(Convars:GetInt("debug_menu_hand") == 1 and Player.SecondaryHand or Player.PrimaryHand)
+        end
     end
 }
 
