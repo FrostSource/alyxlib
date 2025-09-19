@@ -7,7 +7,10 @@
 
 local version = "v1.0.0"
 
-require "alyxlib.debug.debug_menu"
+-- Simple require can cause loop with debug_menu.lua
+if package.loaded["alyxlib.debug.debug_menu"] == nil then
+    require "alyxlib.debug.debug_menu"
+end
 
 local categoryId = "alyxlib_extras"
 

@@ -36,6 +36,8 @@ end, "Menu will float in world instead of attached to hand")
 
 RegisterAlyxLibConvar("debug_menu_lock", "0", "Prevents the debug menu from being repositioned by the player", 0)
 
+RegisterAlyxLibConvar("debug_menu_extras", "0", "Enable the extras tab by default", 0)
+
 ---
 ---The debug menu allows for easier VR testing by offering a customizable in-game menu.
 ---
@@ -972,18 +974,22 @@ DebugMenu:AddButton(categoryId, "demo_recording", "Start Recording Demo", functi
     end
 end)
 
-DebugMenu:AddSeparator(categoryId)
+if Convars:GetBool("debug_menu_extras") then
+    require "alyxlib.debug.debug_menu_extras"
+else
+    DebugMenu:AddSeparator(categoryId)
 
-DebugMenu:AddButton(categoryId, "enableextras", "Enable Extras Tab...", function()
-    if package.loaded["alyxlib.debug.debug_menu_extras"] == nil then
-        require "alyxlib.debug.debug_menu_extras"
-        -- Update the panel immediately
-        local id = "alyxlib_extras"
-        DebugMenu:SendCategoryToPanel(DebugMenu:GetCategory(id))
-        DebugMenu:SetCategoryIndex(id, 2)
-        ---@TODO Allow disabling extras tab
-        DebugMenu:SetItemText(categoryId, "enableextras", "Extras Tab Enabled!")
-    end
-end)
+    DebugMenu:AddButton(categoryId, "enableextras", "Enable Extras Tab...", function()
+        if package.loaded["alyxlib.debug.debug_menu_extras"] == nil then
+            require "alyxlib.debug.debug_menu_extras"
+            -- Update the panel immediately
+            local id = "alyxlib_extras"
+            DebugMenu:SendCategoryToPanel(DebugMenu:GetCategory(id))
+            DebugMenu:SetCategoryIndex(id, 2)
+            ---@TODO Allow disabling extras tab
+            DebugMenu:SetItemText(categoryId, "enableextras", "Extras Tab Enabled!")
+        end
+    end)
+end
 
 return DebugMenu.version
