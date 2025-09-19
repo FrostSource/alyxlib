@@ -81,6 +81,10 @@ DebugMenu.categories = {}
 local debugMenuOpen = false
 local handChangedListener = nil
 
+---The last hand that clicked a button.
+---@type CPropVRHand?
+local lastClickHand = nil
+
 ---Command to test trace button presses
 if not IsVREnabled() then
     Convars:RegisterCommand("_debug_menu_test_button_press", function()
@@ -113,6 +117,10 @@ local function startDraggingMenu(dragHand)
         end
 
         if not Player:IsDigitalActionOnForHand(dragHand.Literal, DIGITAL_INPUT_MENU_INTERACT) then
+            if Convars:GetBool("debug_menu_floating") then
+                return nil
+            end
+
             local hand = Convars:GetBool("debug_menu_hand") and Player.PrimaryHand or Player.SecondaryHand
             panel:SetParent(hand, "constraint1")
 
@@ -273,8 +281,8 @@ local debugPanelScriptScope = {
     end,
 
     _DebugMenuDrag = function()
-        if not Convars:GetBool("debug_menu_lock") then
-            startDraggingMenu(Convars:GetInt("debug_menu_hand") == 1 and Player.SecondaryHand or Player.PrimaryHand)
+        if not Convars:GetBool("debug_menu_lock") and lastClickHand then
+            startDraggingMenu(lastClickHand)
         end
     end
 }
@@ -356,6 +364,7 @@ function DebugMenu:ShowMenu()
             handType,
             DIGITAL_INPUT_MENU_INTERACT, 1,
             function (context, params)
+                lastClickHand = params.hand
                 self:ClickHoveredButton()
             end, self)
 
