@@ -302,9 +302,7 @@ function DebugMenu:CloseMenu()
 
         Player:SetCoughHandEnabled(true)
 
-        if Player.HMDAvatar then
-            self:StartListeningForMenuActivation()
-        else
+        if not Player.HMDAvatar or IsFakeVREnabled() then
             SendToConsole("unbind r")
         end
     end
@@ -772,10 +770,12 @@ function DebugMenu:StartListeningForMenuActivation()
                 buttonPresses = buttonPresses + 1
 
                 if buttonPresses >= buttonPressesToActivate then
-                    self:ShowMenu()
                     buttonPresses = 0
-                    -- Stop think
-                    return nil
+                    if self:IsOpen() then
+                        self:CloseMenu()
+                    else
+                        self:ShowMenu()
+                    end
                 end
             end
         else
