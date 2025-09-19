@@ -28,14 +28,14 @@ end
 ---Registers a new AlyxLib console variable.
 ---
 ---@param name string # Name of the convar that will be given in the console.
----@param defaultValue string # Default value of the convar.
+---@param defaultValue string|function # Default value of the convar or initializer function.
 ---@param helpText? string # Description of the convar.
 ---@param flags? integer # Flags for the convar.
 ---@param callback? fun(newVal:string, oldVal:string): any # Update function called after the value has been changed.
 function RegisterAlyxLibConvar(name, defaultValue, helpText, flags, callback)
     helpText = helpText or "[No description]"
     flags = flags or 0
-    if callback then
+    if callback or type(defaultValue) == "function" then
         EasyConvars:RegisterConvar(name, defaultValue, helpText, flags, callback)
     else
         Convars:RegisterConvar(name, defaultValue, helpText, flags)
