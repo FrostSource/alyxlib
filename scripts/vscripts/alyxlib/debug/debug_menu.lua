@@ -291,15 +291,28 @@ local debugPanelScriptScope = {
 ---Updates the physical menu by attaching it to the correct hand.
 ---
 function DebugMenu:UpdateMenuAttachment()
-    local hand = Convars:GetBool("debug_menu_hand") and Player.PrimaryHand or Player.SecondaryHand
-    if hand == Player.RightHand then
-        self.panel:SetParent(hand, "constraint1")
-        self.panel:SetLocalAngles(Convars:GetFloat("debug_menu_offset_pitch"), Convars:GetFloat("debug_menu_offset_yaw"), Convars:GetFloat("debug_menu_offset_roll"))
-        self.panel:SetLocalOrigin(Vector(Convars:GetFloat("debug_menu_offset_x"), Convars:GetFloat("debug_menu_offset_y"), Convars:GetFloat("debug_menu_offset_z")))
+    if Convars:GetBool("debug_menu_floating") or not Player.HMDAvatar or IsFakeVREnabled() then
+        local player = Entities:GetLocalPlayer()
+        local eyePos = player:EyePosition()
+        local fDir = player:EyeAngles():Forward()
+        local fAng = VectorToAngles(fDir)
+        fAng = RotateOrientation(fAng, QAngle(0, -90, 90))
+        self.panel:SetQAngle(fAng)
+        self.panel:SetOrigin(eyePos + fDir * 16)
+
+        -- Panel must be parented for moving during drag to work
+        self.panel:SetParent(GetWorld(), nil)
     else
-        self.panel:SetParent(hand, "constraint1")
-        self.panel:SetLocalAngles(Convars:GetFloat("debug_menu_offset_pitch"), Convars:GetFloat("debug_menu_offset_yaw")-180, Convars:GetFloat("debug_menu_offset_roll"))
-        self.panel:SetLocalOrigin(Vector(Convars:GetFloat("debug_menu_offset_x"), -Convars:GetFloat("debug_menu_offset_y"), Convars:GetFloat("debug_menu_offset_z")))
+        local hand = Convars:GetBool("debug_menu_hand") and Player.PrimaryHand or Player.SecondaryHand
+        if hand == Player.RightHand then
+            self.panel:SetParent(hand, "constraint1")
+            self.panel:SetLocalAngles(Convars:GetFloat("debug_menu_offset_pitch"), Convars:GetFloat("debug_menu_offset_yaw"), Convars:GetFloat("debug_menu_offset_roll"))
+            self.panel:SetLocalOrigin(Vector(Convars:GetFloat("debug_menu_offset_x"), Convars:GetFloat("debug_menu_offset_y"), Convars:GetFloat("debug_menu_offset_z")))
+        else
+            self.panel:SetParent(hand, "constraint1")
+            self.panel:SetLocalAngles(Convars:GetFloat("debug_menu_offset_pitch"), Convars:GetFloat("debug_menu_offset_yaw")-180, Convars:GetFloat("debug_menu_offset_roll"))
+            self.panel:SetLocalOrigin(Vector(Convars:GetFloat("debug_menu_offset_x"), -Convars:GetFloat("debug_menu_offset_y"), Convars:GetFloat("debug_menu_offset_z")))
+        end
     end
 end
 
@@ -323,32 +336,13 @@ function DebugMenu:ShowMenu()
         horizontal_align = "1",
     })
 
-    if not Player.HMDAvatar or IsFakeVREnabled() then
-        local localPlayer = Entities:GetLocalPlayer()
-        local eyePos = localPlayer:EyePosition()
-        local dir = localPlayer:EyeAngles():Forward()
-        local a = VectorToAngles(dir)
-        a = RotateOrientation(a, QAngle(0,-90,90))
-        self.panel:SetQAngle(a)
-        self.panel:SetOrigin(eyePos + dir * 16)
-        -- Panel must be parented for moving during drag to work
-        self.panel:SetParent(GetWorld(), nil)
+    self:UpdateMenuAttachment()
 
+    if not Player.HMDAvatar or IsFakeVREnabled() then
         SendToConsole("bind r _debug_menu_test_button_press")
     else
         local handType = -1
-        if Convars:GetBool("debug_menu_floating") then
-            local localPlayer = Entities:GetLocalPlayer()
-            local eyePos = localPlayer:EyePosition()
-            local dir = localPlayer:EyeAngles():Forward()
-            local a = VectorToAngles(dir)
-            a = RotateOrientation(a, QAngle(0,-90,90))
-            self.panel:SetQAngle(a)
-            self.panel:SetOrigin(eyePos + dir * 16)
-            self.panel:SetParent(GetWorld(), nil)
-        else
-            self:UpdateMenuAttachment()
-
+        if not Convars:GetBool("debug_menu_floating") then
             handType = Convars:GetInt("debug_menu_hand") == 1 and InputHandSecondary or InputHandPrimary
 
             handChangedListener = ListenToPlayerEvent("primary_hand_changed", function()
