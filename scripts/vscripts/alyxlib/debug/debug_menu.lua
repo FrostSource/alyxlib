@@ -70,6 +70,7 @@ DebugMenu.version = "v1.0.0"
 ---@field values {text:string,value:any}[] # Text/value pairs for this cycler.
 ---@field truncate number # The number of decimal places to truncate the slider value to (-1 for no truncating).
 ---@field increment number  # The increment value to snap the slider value to (0 for no snapping).
+---@field condition? string|fun():boolean # The condition that must be met for this item to be visible.
 
 ---The panel entity.
 ---@type CPointClientUIWorldPanel
@@ -430,12 +431,15 @@ end
 ---Get a debug menu item by id.
 ---
 ---@param id string # The item ID
+---@param categoryId? string # Optionally specify a category to look in. If not specified, will look in all categories
 ---@return DebugMenuItem? # The item if it exists
-function DebugMenu:GetItem(id)
+function DebugMenu:GetItem(id, categoryId)
     for _, category in ipairs(self.categories) do
-        for _, item in ipairs(category.items) do
-            if item.id == id then
-                return item
+        if not categoryId or category.id == categoryId then
+            for _, item in ipairs(category.items) do
+                if item.id == id then
+                    return item
+                end
             end
         end
     end
@@ -770,39 +774,51 @@ function DebugMenu:SendCategoryToPanel(category)
     Panorama:Send(panel, "AddCategory", category.id, category.name)
 
     for _, item in ipairs(category.items) do
-        if item.type == "button" then
-            Panorama:Send(panel, "AddButton", item.categoryId, item.id, item.text)
 
-        elseif item.type == "toggle" then
-            Panorama:Send(panel, "AddToggle", item.categoryId, item.id, item.text, resolveDefault(item, Convars.GetBool, false))
-
-        elseif item.type == "label" then
-            Panorama:Send(panel, "AddLabel", item.categoryId, item.id, item.text)
-
-        elseif item.type == "separator" then
-            Panorama:Send(panel, "AddSeparator", item.categoryId, item.id, item.text)
-
-        elseif item.type == "slider" then
-            local default = resolveDefault(item, Convars.GetFloat, item.min)
-            Panorama:Send(panel, "AddSlider", item.categoryId, item.id, item.text or item.convar, item.convar, item.min, item.max, default, item.isPercentage, item.truncate, item.increment)
-
-        elseif item.type == "cycle" then
-
-            local default = resolveDefault(item)
-
-            if default ~= nil then
-                -- find the index of the default value
-                local index = TableFindIndex(item.values, function(v) return tostring(v.value) == tostring(default) end)
-                if index > 0 then
-                    default = index
-                else
-                    default = nil
-                end
+        local conditionMet = true
+        if item.condition then
+            if type(item.condition) == "string" then
+                conditionMet = Convars:GetBool(item.condition)
+            elseif type(item.condition) == "function" then
+                conditionMet = item.condition()
             end
+        end
 
-            Panorama:Send(panel, "AddCycle", item.categoryId, item.id, item.convar, item.text, default, TablePluck(item.values, "text"))
-        else
-            warn("Unknown item type '"..item.type.."'")
+        if conditionMet then
+            if item.type == "button" then
+                Panorama:Send(panel, "AddButton", item.categoryId, item.id, item.text)
+
+            elseif item.type == "toggle" then
+                Panorama:Send(panel, "AddToggle", item.categoryId, item.id, item.text, resolveDefault(item, Convars.GetBool, false))
+
+            elseif item.type == "label" then
+                Panorama:Send(panel, "AddLabel", item.categoryId, item.id, item.text)
+
+            elseif item.type == "separator" then
+                Panorama:Send(panel, "AddSeparator", item.categoryId, item.id, item.text)
+
+            elseif item.type == "slider" then
+                local default = resolveDefault(item, Convars.GetFloat, item.min)
+                Panorama:Send(panel, "AddSlider", item.categoryId, item.id, item.text or item.convar, item.convar, item.min, item.max, default, item.isPercentage, item.truncate, item.increment)
+
+            elseif item.type == "cycle" then
+
+                local default = resolveDefault(item)
+
+                if default ~= nil then
+                    -- find the index of the default value
+                    local index = TableFindIndex(item.values, function(v) return tostring(v.value) == tostring(default) end)
+                    if index > 0 then
+                        default = index
+                    else
+                        default = nil
+                    end
+                end
+
+                Panorama:Send(panel, "AddCycle", item.categoryId, item.id, item.convar, item.text, default, TablePluck(item.values, "text"))
+            else
+                warn("Unknown debug menu item type '"..item.type.."'")
+            end
         end
     end
 end
@@ -841,6 +857,33 @@ function DebugMenu:Refresh()
         self:ClearMenu()
         self:SendCategoriesToPanel()
     end
+end
+
+---
+---Sets the visibility condition for an item.
+---
+---If the condition is not met when the menu opens, the item will not appear in the menu.
+---
+---@param categoryId string # The category ID
+---@param itemId string # The item ID
+---@param condition string|fun():boolean|nil # Convar name, function, or `nil` to remove the condition
+---@overload fun(self: DebugMenu, item: DebugMenuItem, condition: string|fun():boolean|nil)
+function DebugMenu:SetItemVisibilityCondition(categoryId, itemId, condition)
+    ---@type DebugMenuItem
+    local item
+    if type(categoryId) == "table" then
+        item = categoryId
+        condition = itemId
+    else
+        item = self:GetItem(itemId, categoryId)
+    end
+
+    if not item then
+        warn("Cannot set item visibility condition '"..itemId.."': Item does not exist!")
+        return
+    end
+
+    item.condition = condition
 end
 
 ---
