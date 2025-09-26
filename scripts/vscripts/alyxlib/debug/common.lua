@@ -970,4 +970,18 @@ function Debug.TableStr(tbl)
     return "{ "..table.concat(vals, ", ") .. " }"
 end
 
+---
+---Spawns an entity synchronously.
+---
+---@param classname string # The classname of the entity
+---@param spawnkeys? table|string # The spawnkeys table or targetname
+---@return EntityHandle
+---@diagnostic disable-next-line: lowercase-global
+function entspawn(classname, spawnkeys)
+    if type(spawnkeys) == "string" then
+        spawnkeys = { targetname = spawnkeys }
+    end
+    return SpawnEntityFromTableSynchronous(classname, spawnkeys or {})
+end
+
 return Debug.version
