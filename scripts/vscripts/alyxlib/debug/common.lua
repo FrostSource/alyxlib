@@ -55,6 +55,8 @@ function Debug.FindEntityByPattern(pattern, exact)
 
     return ent
 end
+---@diagnostic disable-next-line: lowercase-global
+entfind = Debug.FindEntityByPattern
 
 ---
 ---Finds all entities whose name, class or model match `pattern`.
