@@ -31,11 +31,12 @@ Your addon is linked to AlyxLib via symbolic links, ensuring that every addon us
 
 * Full VScript code completion using [Lua Language Server](https://luals.github.io/)
 * Save/Load most data types easily to any entity.
-* Custom class implementation for entities, including inheritence and automatic variable saving.
+* Custom class implementation for entities, including inheritance and automatic variable saving.
 * Player interaction simplification and tracking of items.
 * Panorama panel interaction, allowing sending and receiving data with Lua.
 * Easy controller input tracking with function callbacks.
 * Lots of useful debugging functions and console commands.
+* A fully customizable in-game debug menu.
 
 See the extensive wiki for full function reference and code examples.
 
