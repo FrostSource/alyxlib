@@ -12,6 +12,7 @@ local currentUserCategory = ""
 RegisterAlyxLibCommand("debug_menu_add_category", function (_, name)
     currentUserCategory = DoUniqueString("category")
     DebugMenu:AddCategory(currentUserCategory, name or "New Category")
+    DebugMenu:Refresh()
 end, "Adds a new category to the debug menu")
 
 RegisterAlyxLibCommand("debug_menu_add_button", function (_, text, command)
@@ -19,6 +20,7 @@ RegisterAlyxLibCommand("debug_menu_add_button", function (_, text, command)
         return warn("debug_menu_add_button: No category defined with debug_menu_add_category")
     end
     DebugMenu:AddButton(currentUserCategory, DoUniqueString("button"), text or "Button", command or "echo Button pressed")
+    DebugMenu:Refresh()
 end, "Adds a new button to the current category")
 
 RegisterAlyxLibCommand("debug_menu_add_toggle", function (_, text, commandOff, commandOn, default)
@@ -62,6 +64,7 @@ RegisterAlyxLibCommand("debug_menu_add_toggle", function (_, text, commandOff, c
     end
 
     DebugMenu:AddToggle(currentUserCategory, DoUniqueString("toggle"), text or "Toggle", convar, callback, default)
+    DebugMenu:Refresh()
 end, "Adds a new toggle to the current category")
 
 RegisterAlyxLibCommand("debug_menu_add_slider", function (_, text, command, min, max, ...)
@@ -93,6 +96,7 @@ RegisterAlyxLibCommand("debug_menu_add_slider", function (_, text, command, min,
     assert(type(truncate) == "nil" or type(increment) == "number", "debug_menu_add_slider: increment must be a number")
 
     DebugMenu:AddSlider(currentUserCategory, DoUniqueString("slider"), text or "Slider", command, min or 0, max or 1, isPercentage or false, truncate, increment, nil, default)
+    DebugMenu:Refresh()
 end, "Adds a new slider to the current category")
 
 RegisterAlyxLibCommand("debug_menu_add_cycle", function (_, title, ...)
@@ -131,6 +135,7 @@ RegisterAlyxLibCommand("debug_menu_add_cycle", function (_, title, ...)
     DebugMenu:AddCycle(currentUserCategory, DoUniqueString("cycle"), title or "Cycle", nil, parsedValues, function (index, item, cycle)
         SendToConsole(item.value)
     end, default)
+    DebugMenu:Refresh()
 end, "Adds a new cycle to the current category")
 
 ---@type string[]
@@ -213,6 +218,7 @@ RegisterAlyxLibCommand("debug_menu_add_cycle_map", function(_, title, ...)
         end, default)
     end
 
+    DebugMenu:Refresh()
 end, "Adds a new cycle to the current category using previously defined commands")
 
 RegisterAlyxLibCommand("debug_menu_add_label", function (_, text)
@@ -221,6 +227,7 @@ RegisterAlyxLibCommand("debug_menu_add_label", function (_, text)
     end
 
     DebugMenu:AddLabel(currentUserCategory, DoUniqueString("label"), text)
+    DebugMenu:Refresh()
 end, "Adds a new label to the current category")
 
 RegisterAlyxLibCommand("debug_menu_add_separator", function (_, text)
@@ -229,6 +236,7 @@ RegisterAlyxLibCommand("debug_menu_add_separator", function (_, text)
     end
 
     DebugMenu:AddSeparator(currentUserCategory, nil, text)
+    DebugMenu:Refresh()
 end, "Adds a new separator to the current category")
 
 ---Execute the debug_menu.cfg file

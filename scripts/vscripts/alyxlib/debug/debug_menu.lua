@@ -837,7 +837,7 @@ end
 ---Forces the debug menu panel to refresh by removing and re-adding all categories and items.
 ---
 function DebugMenu:Refresh()
-    if self.panel then
+    if self:IsOpen() then
         self:ClearMenu()
         self:SendCategoriesToPanel()
     end

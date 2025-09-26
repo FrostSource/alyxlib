@@ -828,6 +828,7 @@ function SetCategoryVisible(id)
             // category.AddClass("Visible");
             category.SetVisible(true);
             currentlySelectedCategory = category;
+            $.GetContextPanel().currentlySelectedCategory = category.id;
         }
         else
         {
@@ -894,8 +895,14 @@ function CreateCategory(id, name)
 
     categories.push(category);
 
-    if (currentlySelectedCategory == null)
-        SetCategoryVisible(category.id);
+    // Restore selected tab on refresh
+    if ($.GetContextPanel().currentlySelectedCategory) {
+        if ($.GetContextPanel().currentlySelectedCategory == category.id) {
+            SetCategoryVisible(category.id);
+        }
+    } else if (currentlySelectedCategory == null) {
+        SetCategoryVisible(category.id)
+    }
     
     UpdateCategoryBarVisibility();
 
