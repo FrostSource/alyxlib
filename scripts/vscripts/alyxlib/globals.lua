@@ -151,6 +151,15 @@ function GetEnabledAddons()
 end
 
 ---
+---Checks if the addon with the given `workshopID` is enabled.
+---
+---@param workshopID string # The workshop ID of the addon
+---@return boolean # `true` if the addon is enabled, `false` otherwise
+function IsAddonEnabled(workshopID)
+    return vlua.find(GetEnabledAddons(), workshopID)
+end
+
+---
 ---Get if the given `handle` value is an entity, regardless of if it's still alive.
 ---
 ---A common usage is replacing the often used entity check:
