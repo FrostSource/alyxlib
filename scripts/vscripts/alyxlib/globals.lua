@@ -1117,4 +1117,24 @@ function SetPhysVelocity(entity, velocity)
     entity:SetAbsVelocity(velocity)
 end
 
+---
+---Returns one of two values based on a percentage chance.
+---
+---If the random roll succeeds, returns `onTrue` (default: true).  
+---If it fails, returns `onFalse` (default: false).
+---
+---@param chance number # The percentage chance of success (0-100).
+---@param onTrue? any # Value to return if the chance succeeds (default: true).
+---@param onFalse? any # Value to return if the chance fails (default: false).
+---@return boolean|any
+function RandomChance(chance, onTrue, onFalse)
+    if onTrue == nil then onTrue = true end
+    if onFalse == nil then onFalse = false end
+    if RandomFloat(0, 100) <= chance then
+        return onTrue
+    else
+        return onFalse
+    end
+end
+
 return _version
