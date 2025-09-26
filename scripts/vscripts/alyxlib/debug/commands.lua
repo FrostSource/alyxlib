@@ -639,4 +639,7 @@ local symbols = {"and","break","do","else","elseif","end","false","for","functio
 
 -- end
 
+---Hidden convar state that can be retrieved by other scripts
+Convars:RegisterConvar("noclip_vr_enabled", "0", "True if noclip_vr is enabled (readonly)", FCVAR_HIDDEN)
+
 return version

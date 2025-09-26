@@ -114,9 +114,6 @@ RegisterAlyxLibCommand("hlvr_give_grabbity_gloves", function (_)
     end
 end, "Gives the player grabbity gloves", FCVAR_NONE)
 
----Hidden convar state that can be retrieved by other scripts
-RegisterAlyxLibConvar("noclip_vr_enabled", "0", "True if noclip_vr is enabled (readonly)", FCVAR_HIDDEN)
-
 ---Tracks initial button press to prevent repeated logic execution while held
 local quickTurnFlag = false
 
