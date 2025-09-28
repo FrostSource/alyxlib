@@ -97,17 +97,61 @@ local function empty(str)
     return type(str) ~= "string" or str == ""
 end
 
+-- Hoping these two functions find a way to be generalized later
+
+-- Convert position and orientation to entity's local coordinate system
+local function TransformToLocal(entity, position, angles)
+    local localPos = entity:TransformPointWorldToEntity(position)
+
+    -- Convert angles to local orientation using reference points
+    local origin = position
+    local forwardPoint = origin + angles:Forward() * 10
+    local upPoint = origin + angles:Up() * 10
+
+    local localForward = entity:TransformPointWorldToEntity(forwardPoint)
+    local localUp = entity:TransformPointWorldToEntity(upPoint)
+
+    return {
+        position = localPos,
+        forwardRef = localForward,
+        upRef = localUp,
+    }
+end
+
+-- Convert from entity's local coordinate system back to world coordinates
+local function TransformToWorld(entity, localTransform)
+    local worldPos = entity:TransformPointEntityToWorld(localTransform.position)
+
+    -- Reconstruct world orientation from reference points
+    local worldForwardRef = entity:TransformPointEntityToWorld(localTransform.forwardRef)
+    local worldUpRef = entity:TransformPointEntityToWorld(localTransform.upRef)
+
+    local worldForward = (worldForwardRef - worldPos):Normalized()
+    local worldUp = (worldUpRef - worldPos):Normalized()
+
+    -- Convert direction vectors back to angles
+    local angles = VectorToAngles(worldForward)
+
+    -- Calculate roll from up vector
+    local expectedRight = worldForward:Cross(Vector(0, 0, 1)):Normalized()
+    if expectedRight:Length() < 0.1 then
+        expectedRight = Vector(1, 0, 0)
+    end
+    local expectedUp = expectedRight:Cross(worldForward):Normalized()
+
+    local roll = math.atan2(worldUp:Dot(expectedRight), worldUp:Dot(expectedUp))
+    angles.z = Rad2Deg(roll)
+
+    return worldPos, angles
+end
+
 ---@param dragHand CPropVRHand
 local function startDraggingMenu(dragHand)
 
     local panel = DebugMenu.panel
     local dragent = dragHand
 
-    local relpos = dragent:TransformPointWorldToEntity(panel:GetOrigin())
-
-    local panelOrigin = panel:GetOrigin()
-    local relForwardRef = dragent:TransformPointWorldToEntity(panelOrigin + panel:GetForwardVector() * 10)
-    local relUpRef = dragent:TransformPointWorldToEntity(panelOrigin + panel:GetUpVector() * 10)
+    local relativeTransform = TransformToLocal(dragHand, panel:GetOrigin(), panel:GetAngles())
 
     panel:SetParent(GetWorld(), nil)
 
@@ -155,24 +199,7 @@ local function startDraggingMenu(dragHand)
             return nil
         end
 
-        local newOrigin = dragent:TransformPointEntityToWorld(relpos)
-
-        local newForwardRef = dragent:TransformPointEntityToWorld(relForwardRef)
-        local newUpRef = dragent:TransformPointEntityToWorld(relUpRef)
-
-        local newForward = (newForwardRef - newOrigin):Normalized()
-        local newUp = (newUpRef - newOrigin):Normalized()
-        local angles = VectorToAngles(newForward)
-
-        -- Calculate roll manually
-        local expectedRight = newForward:Cross(Vector(0, 0, 1)):Normalized()
-        if expectedRight:Length() < 0.1 then
-            expectedRight = Vector(1, 0, 0)
-        end
-        local expectedUp = expectedRight:Cross(newForward):Normalized()
-
-        local roll = math.atan2(newUp:Dot(expectedRight), newUp:Dot(expectedUp))
-        angles.z = Rad2Deg(roll)
+        local newOrigin, angles = TransformToWorld(dragHand, relativeTransform)
 
         panel:SetOrigin(newOrigin)
         panel:SetQAngle(angles)
@@ -288,6 +315,34 @@ local debugPanelScriptScope = {
     end
 }
 
+---Moves the panel with player's anchor parent so it doesn't get left behind on trains.
+---Parenting causes stutters so it must be calculated manually.
+---@param panel EntityHandle
+local function updatePanelWithAnchorParent(panel)
+    ---@type EntityHandle?
+    local currentAnchorParent = nil
+    local anchorRelativeTransform = nil
+
+    panel:SetContextThink("AnchorParentUpdate", function()
+        local parent = Player.HMDAnchor:GetMoveParent()
+        if parent ~= currentAnchorParent then
+            currentAnchorParent = Player.HMDAnchor:GetMoveParent()
+            if currentAnchorParent then
+                anchorRelativeTransform = TransformToLocal(currentAnchorParent, panel:GetOrigin(), panel:GetAngles())
+            end
+        end
+
+        if currentAnchorParent and anchorRelativeTransform then
+            local newPos, newAng = TransformToWorld(currentAnchorParent, anchorRelativeTransform)
+            panel:SetOrigin(newPos)
+            panel:SetQAngle(newAng)
+            return 0
+        end
+
+        return 0.5
+    end, 0)
+end
+
 ---
 ---Updates the physical menu by attaching it to the correct hand.
 ---
@@ -303,6 +358,8 @@ function DebugMenu:UpdateMenuAttachment()
 
         -- Panel must be parented for moving during drag to work
         self.panel:SetParent(GetWorld(), nil)
+
+        updatePanelWithAnchorParent(self.panel)
     else
         local hand = Convars:GetBool("debug_menu_hand") and Player.PrimaryHand or Player.SecondaryHand
         if hand == Player.RightHand then
@@ -330,11 +387,14 @@ function DebugMenu:ShowMenu()
         panel_dpi = 64,
         ignore_input = 0,
         lit = 0,
-        interact_distance = 12,
+        interact_distance = 64,
 
         vertical_align = "1",
         -- orientation = "0",
         horizontal_align = "1",
+
+        -- For some reason moving menus slow down css transitions
+	    panel_class_name = Convars:GetBool("debug_menu_floating") and "InstantOpen" or ""
     })
 
     self:UpdateMenuAttachment()

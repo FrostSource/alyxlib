@@ -400,3 +400,10 @@ Label.custom_label
 .slider_value {
     text-overflow: shrink;
 }
+
+.InstantOpen .game_menu_root
+{
+    transition-property: none;
+    transition-duration: 0s;
+    transition-timing-function: ease-in;
+}
