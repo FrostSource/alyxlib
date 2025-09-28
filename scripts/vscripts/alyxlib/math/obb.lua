@@ -177,6 +177,49 @@ function AABBvsOBB(aabbMin, aabbMax, obbData, obbOrigin, obbAngles)
 end
 
 ---
+---Tests if a point is inside an AABB.
+---
+---@param aMin Vector # The minimum corner of the AABB.
+---@param aMax Vector # The maximum corner of the AABB.
+---@param point Vector # The point to test.
+---@return boolean
+function PointInAABB(aMin, aMax, point)
+    return point.x >= aMin.x and point.x <= aMax.x and
+           point.y >= aMin.y and point.y <= aMax.y and
+           point.z >= aMin.z and point.z <= aMax.z
+end
+
+---
+---Tests if a point is inside an OBB.
+---
+---@param obbData OBBData # The OBB data (center, half extents in local space).
+---@param origin Vector # The world space origin of the OBB.
+---@param angles QAngle # The world space orientation of the OBB.
+---@param point Vector # The point to test.
+---@return boolean
+function PointInOBB(obbData, origin, angles, point)
+    local f, r, u = angles:Forward(), angles:Left(), angles:Up()
+
+    -- world position of the OBB’s local center
+    local center = origin
+                 + f * obbData.center.x
+                 + r * obbData.center.y
+                 + u * obbData.center.z
+
+    -- vector from OBB center to point
+    local d = point - center
+
+    -- project onto each local axis and compare to half extents
+    local projF = d:Dot(f)
+    local projR = d:Dot(r)
+    local projU = d:Dot(u)
+
+    return math.abs(projF) <= obbData.half.x and
+           math.abs(projR) <= obbData.half.y and
+           math.abs(projU) <= obbData.half.z
+end
+
+---
 ---Draws an OBB in the world.
 ---
 ---@param obbData OBBData # The data of the OBB.
