@@ -124,7 +124,7 @@ function profiler:GetMedian()
         return 0
     end
 
-    local sortedValues = {unpack(self.measurements)}
+    local sortedValues = vlua.clone(self.measurements)
     table.sort(sortedValues)
     local count = #sortedValues
     if count % 2 == 1 then
