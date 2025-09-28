@@ -11,6 +11,9 @@
 
 local version = "v1.0.0"
 
+local _abs = math.abs
+local insert = table.insert
+
 ---
 ---Projects an OBB onto an axis.
 ---
@@ -22,9 +25,9 @@ local version = "v1.0.0"
 local function projectOBB(centerLocal, half, origin, angles, axis)
     local f, r, u = angles:Forward(), angles:Left(), angles:Up()
     local centerWorld = origin + f*centerLocal.x + r*centerLocal.y + u*centerLocal.z
-    local radius = half.x*math.abs(f:Dot(axis)) +
-                   half.y*math.abs(r:Dot(axis)) +
-                   half.z*math.abs(u:Dot(axis))
+    local radius = half.x*_abs(f:Dot(axis)) +
+                   half.y*_abs(r:Dot(axis)) +
+                   half.z*_abs(u:Dot(axis))
     return centerWorld:Dot(axis) - radius, centerWorld:Dot(axis) + radius
 end
 
@@ -81,17 +84,17 @@ function GetEntityAABB(entity)
                  + u * data.center.z
 
     -- half extents projected onto world axes
-    local hx = math.abs(f.x) * data.half.x +
-               math.abs(r.x) * data.half.y +
-               math.abs(u.x) * data.half.z
+    local hx = _abs(f.x) * data.half.x +
+               _abs(r.x) * data.half.y +
+               _abs(u.x) * data.half.z
 
-    local hy = math.abs(f.y) * data.half.x +
-               math.abs(r.y) * data.half.y +
-               math.abs(u.y) * data.half.z
+    local hy = _abs(f.y) * data.half.x +
+               _abs(r.y) * data.half.y +
+               _abs(u.y) * data.half.z
 
-    local hz = math.abs(f.z) * data.half.x +
-               math.abs(r.z) * data.half.y +
-               math.abs(u.z) * data.half.z
+    local hz = _abs(f.z) * data.half.x +
+               _abs(r.z) * data.half.y +
+               _abs(u.z) * data.half.z
 
     local halfWorld = Vector(hx, hy, hz)
 
@@ -132,7 +135,7 @@ function OBBvsOBB(obbDataA, originA, anglesA, obbDataB, originB, anglesB)
         for _,b in ipairs({fB, rB, uB}) do
             local cross = a:Cross(b)
             if cross:Length() > 0.0001 then
-                table.insert(axes, cross:Normalized())
+                insert(axes, cross:Normalized())
             end
         end
     end
