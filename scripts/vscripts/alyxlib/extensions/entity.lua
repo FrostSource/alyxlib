@@ -494,7 +494,7 @@ end
 ---
 ---Quickly start a think function on the entity with a random name and no delay.
 ---
----@param func fun(...):number? # The think function.
+---@param func fun():number? # The think function.
 ---@param delay? number # Delay before starting the think.
 ---@return string # The name of the think for stopping later if desired.
 function CBaseEntity:QuickThink(func, delay)
