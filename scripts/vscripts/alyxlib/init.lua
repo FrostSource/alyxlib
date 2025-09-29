@@ -61,6 +61,7 @@ alyxlib_require "alyxlib.extensions.npc"
 alyxlib_require "alyxlib.extensions.template"
 alyxlib_require "alyxlib.math.common"
 alyxlib_require "alyxlib.math.weighted_random"
+alyxlib_require "alyxlib.math.obb"
 alyxlib_require "alyxlib.data.queue"
 alyxlib_require "alyxlib.data.stack"
 alyxlib_require "alyxlib.data.inventory"
@@ -88,12 +89,13 @@ alyxlib_require "alyxlib.panorama.core"
 alyxlib_require "alyxlib.debug.common"
 alyxlib_require "alyxlib.debug.commands"
 alyxlib_require "alyxlib.debug.controller"
-if IsVREnabled() then
+if IsVREnabled() or IsFakeVREnabled() then
     alyxlib_require "alyxlib.debug.vr"
 else
     alyxlib_require "alyxlib.debug.novr"
 end
 alyxlib_require "alyxlib.debug.debug_menu"
+alyxlib_require "alyxlib.debug.debug_menu_cfg"
 
 -- Common third-party libraries
 

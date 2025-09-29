@@ -31,11 +31,12 @@ Your addon is linked to AlyxLib via symbolic links, ensuring that every addon us
 
 * Full VScript code completion using [Lua Language Server](https://luals.github.io/)
 * Save/Load most data types easily to any entity.
-* Custom class implementation for entities, including inheritence and automatic variable saving.
+* Custom class implementation for entities, including inheritance and automatic variable saving.
 * Player interaction simplification and tracking of items.
 * Panorama panel interaction, allowing sending and receiving data with Lua.
 * Easy controller input tracking with function callbacks.
 * Lots of useful debugging functions and console commands.
+* A fully customizable in-game debug menu.
 
 See the extensive wiki for full function reference and code examples.
 
@@ -74,4 +75,5 @@ You can also join us on our <img src="https://github.com/user-attachments/assets
 <a title="Partial Clip Storage" href="https://steamcommunity.com/sharedfiles/filedetails/?id=3329684800"><img src="https://images.steamusercontent.com/ugc/2397692528303495590/700AD9E3DD1C2984BCD4F2D588ACDD8BE2EB6EAD/" width="23%"></img></a>
 <a title="Alyx Wears Glasses" href="https://steamcommunity.com/sharedfiles/filedetails/?id=2703180455"><img src="https://images.steamusercontent.com/ugc/2397692528303482230/73852A6226202BAA79D1D7E3C88083D71F356D87/" width="23%"></img></a>
 <a title="Combine Shoot and Scoot" href="https://steamcommunity.com/sharedfiles/filedetails/?id=3426415080"><img src="https://images.steamusercontent.com/ugc/6295179234055719/14236C86CACFA0CCEF2A506B1EC6C07E980819CC/" width="23%"></img></a>
+<a title="Removable Health Vials" href="https://steamcommunity.com/sharedfiles/filedetails/?id=3527754624"><img src="https://images.steamusercontent.com/ugc/17381853478388583576/123BD1E044FCBA6D52324E594F845AFBB623F6E2/" width="23%"></img></a>
 </p>

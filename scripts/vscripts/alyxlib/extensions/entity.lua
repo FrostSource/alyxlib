@@ -484,7 +484,7 @@ function CBaseEntity:TrackProperty(propertyFunction, onChangeFunction, interval,
 end
 
 ---
---- Untrack a property function which was set to be tracked using `CBaseEntity:TrackProperty`.
+---Untrack a property function which was set to be tracked using `CBaseEntity:TrackProperty`.
 ---
 ---@param propertyFunction fun(handle: EntityHandle): any # Property function to untrack, e.g. GetRenderAlpha.
 function CBaseEntity:UntrackProperty(propertyFunction)
@@ -494,7 +494,7 @@ end
 ---
 ---Quickly start a think function on the entity with a random name and no delay.
 ---
----@param func fun(...):number? # The think function.
+---@param func fun():number? # The think function.
 ---@param delay? number # Delay before starting the think.
 ---@return string # The name of the think for stopping later if desired.
 function CBaseEntity:QuickThink(func, delay)
@@ -533,7 +533,7 @@ end
 ---
 ---@param output string # The name of the output to redirect.
 ---@param func function # The function to redirect to.
----@param entity? EntityHandle # The entity to redirect to, defaults to this entity.
+---@param entity? EntityHandle # The entity to redirect to, defaults to the calling entity.
 function CEntityInstance:RedirectOutputFunc(output, func, entity)
     entity = entity or self
 
@@ -586,5 +586,59 @@ end
 function CBaseEntity:ClearParent()
     self:SetParent(nil, nil)
 end
+
+---
+---Sets the absolute world velocity of the entity.
+---
+---@param velocity Vector The target velocity in units/second.
+function CBaseEntity:SetAbsVelocity(velocity)
+    local currentVelocity = GetPhysVelocity(self)
+
+    local impulse = velocity - currentVelocity
+
+    self:ApplyAbsVelocityImpulse(impulse)
+end
+
+---
+---Tests if the OBB of this entity intersects with the OBB of another entity.
+---
+---@param other EntityHandle # The other entity.
+---@return boolean # True if the OBB of this entity intersects with the OBB of another entity.
+function CBaseEntity:OBBvsOBB(other)
+    return OBBvsOBB(
+        GetEntityOBBData(self), self:GetOrigin(), self:GetAngles(),
+        GetEntityOBBData(other), other:GetOrigin(), other:GetAngles()
+    )
+end
+
+---
+---Tests if the AABB of this entity intersects with the OBB of another entity.
+---
+---The AABB is defined by the entity's bounding mins/maxs and its current origin/angles.
+---
+---@param other EntityHandle # The other entity.
+---@return boolean # True if the AABB of this entity intersects with the OBB of another entity.
+function CBaseEntity:AABBvsOBB(other)
+    local aMin, aMax = GetEntityAABB(self)
+
+    return AABBvsOBB(
+        aMin, aMax,
+        GetEntityOBBData(other), other:GetOrigin(), other:GetAngles()
+    )
+end
+
+---
+---Tests if the AABB of this entity intersects with the AABB of another entity.
+---
+---The AABB is defined by the entity's bounding mins/maxs and its current origin/angles.
+---
+---@param other EntityHandle # The other entity.
+---@return boolean # True if the AABB of this entity intersects with the AABB of another entity.
+function CBaseEntity:AABBvsAABB(other)
+    local aMin, aMax = GetEntityAABB(self)
+    local bMin, bMax = GetEntityAABB(other)
+    return AABBvsAABB(aMin, aMax, bMin, bMax)
+end
+
 
 return version

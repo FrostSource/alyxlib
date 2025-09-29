@@ -15,7 +15,7 @@ local version = "v1.8.0"
 
 ---
 ---Finds the entity in a given list that is closest to a specified position.
----Uses 0`CalcClosestPointOnEntityOBB` to determine the nearest point on each entity's bounding box.
+---Uses `CalcClosestPointOnEntityOBB` to determine the nearest point on each entity's bounding box.
 ---
 --- @param ents EntityHandle[] # A list of entities to check
 --- @param pos Vector # The position to compare distances against

@@ -6,7 +6,15 @@
     background-color: gradient( radial, 50% 50%, 0% 0%, 100% 100%, from( #553c18 ), color-stop( 0.97, #000000 ), to( #000000 ) );
     box-shadow: inset #995e0011 2px 2px 4px 4px;
     opacity: .9;
+    height: 100%;
 }
+.vr_affordance_container{
+    height: 100%;
+}
+#layout_root{
+    height: 100%;
+}
+
 #background_panel .row .col_body
 {
     /*overflow: scroll;*/
@@ -114,25 +122,30 @@ Button.custom_button_with_subtitle.error_msg:not(.disabled) Label.button_label.s
 }
 .CycleCategoryLeft
 {
-    flow-children: left;
-    horizontal-align: left;
+    flow-children: none;
     overflow: clip clip;
-    /* background-color: red; */
     width: 10%;
+}
+.CycleCategoryLeft Label
+{
+    font-size: 22px;
+    text-align: left;
+    transform: translateX(5px);
+    width: 50%;
 }
 .CycleCategoryRight
 {
-    flow-children: left;
-    horizontal-align: right;
+    flow-children: none;
     overflow: clip clip;
-    /* background-color: blue; */
     width: 10%;
 }
-/* .cycle_image
+.CycleCategoryRight Label
 {
-    horizontal-align: left;
-    margin: 0px 40px 10px 10px;
-} */
+    font-size: 22px;
+    text-align: right;
+    transform: translateX(-58px);
+    width: 50%;
+}
 
 .CategoryBar
 {
@@ -386,4 +399,11 @@ Label.custom_label
 /* Make slider value fit even with many decimal places */
 .slider_value {
     text-overflow: shrink;
+}
+
+.InstantOpen .game_menu_root
+{
+    transition-property: none;
+    transition-duration: 0s;
+    transition-timing-function: ease-in;
 }

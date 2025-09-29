@@ -102,30 +102,43 @@ Convars:RegisterCommand("add_hand_attachment", function (_, classname, handName)
     hand:AddHandAttachment(ent)
 end, "", 0)
 
----Hidden convar state that can be retrieved by other scripts
-RegisterAlyxLibConvar("noclip_vr_enabled", "0", "True if noclip_vr is enabled (readonly)", FCVAR_HIDDEN)
+RegisterAlyxLibCommand("hlvr_give_grabbity_gloves", function (_)
+    if not Player:HasGrabbityGloves() then
+        local equip = SpawnEntityFromTableSynchronous("info_hlvr_equip_player", {
+            grabbitygloves = "1",
+            itemholder = Player:HasItemHolder() and "1" or "0",
+            backpack_enabled = Player:GetBackpack() ~= nil and "1" or "0", -- this is not an accurate check
+        })
+        equip:EntFire("EquipNow")
+        equip:EntFire("Kill", nil, 0.1)
+    end
+end, "Gives the player grabbity gloves", FCVAR_NONE)
 
 ---Tracks initial button press to prevent repeated logic execution while held
 local quickTurnFlag = false
 
+---Used to track user's movement type so it can be reset
+local movetype = Convars:GetInt('hlvr_movetype_default')
+
 local function noclipVRThink()
     -- Check offhand first because it's most common, then check primary hand movement
     local moveVector = Player:GetAnalogActionPositionForHand(Player.SecondaryHand.Literal, ANALOG_INPUT_TELEPORT_TURN)
+    local hand = Player.SecondaryHand
     if #moveVector == 0 then
         moveVector = Player:GetAnalogActionPositionForHand(Player.PrimaryHand.Literal, ANALOG_INPUT_TELEPORT_TURN)
+        hand = Player.PrimaryHand
     end
 
     if moveVector:Length() > 0 then
-        local moveType = Player:GetMoveType()
         local dir
 
-        if moveType == PlayerMoveType.ContinuousHand then
-            dir = (Player.SecondaryHand:GetAngles():Left() * moveVector.x) + (Player.SecondaryHand:GetAngles():Forward() * moveVector.y)
+        if movetype == PlayerMoveType.ContinuousHand then
+            dir = (hand:GetAngles():Left() * moveVector.x) + (hand:GetAngles():Forward() * moveVector.y)
         else
             dir = (Player:EyeAngles():Left() * moveVector.x) + (Player:EyeAngles():Forward() * moveVector.y)
         end
 
-        local velocity = dir * (Player:IsDigitalActionOnForHand(Player.SecondaryHand.Literal, 3) and Convars:GetFloat("noclip_vr_boost_speed") or Convars:GetFloat("noclip_vr_speed"))
+        local velocity = dir * (Player:IsDigitalActionOnForHand(hand.Literal, 3) and Convars:GetFloat("noclip_vr_boost_speed") or Convars:GetFloat("noclip_vr_speed"))
 
         Player.HMDAnchor:SetOrigin(Player.HMDAnchor:GetOrigin() + velocity)
     end
@@ -162,9 +175,6 @@ end
 
 RegisterAlyxLibConvar("noclip_vr_speed", "2", "Speed of the VR noclip movement", 0)
 RegisterAlyxLibConvar("noclip_vr_boost_speed", "5", "Speed of the VR noclip movement when holding trigger", 0)
-
----Used to track user's movement type so it can be reset
-local movetype = Convars:GetInt('hlvr_movetype_default')
 
 RegisterAlyxLibCommand("noclip_vr", function (_, on)
     local noclipVREnabled

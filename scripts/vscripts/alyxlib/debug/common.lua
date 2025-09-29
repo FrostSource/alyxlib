@@ -22,8 +22,12 @@ Debug.version = "v2.2.0"
 ---
 ---@param pattern string # The search pattern to look for.
 ---@param exact boolean? # If true the pattern must match exactly, otherwise wildcards will be used.
----@return EntityHandle
+---@return EntityHandle? # The found entity, or nil if not found.
 function Debug.FindEntityByPattern(pattern, exact)
+
+    if pattern == nil then
+        return nil
+    end
 
     if Debug.IsEntityHandleString(pattern) then
         return Debug.FindEntityByHandleString(pattern)
@@ -51,6 +55,8 @@ function Debug.FindEntityByPattern(pattern, exact)
 
     return ent
 end
+---@diagnostic disable-next-line: lowercase-global
+entfind = Debug.FindEntityByPattern
 
 ---
 ---Finds all entities whose name, class or model match `pattern`.
@@ -758,6 +764,8 @@ end
 function Debug.SimpleVector(vector)
     return "[" .. math.trunc(vector.x, 3) .. ", " .. math.trunc(vector.y, 3) .. ", " .. math.trunc(vector.z, 3) .. "]"
 end
+---@diagnostic disable-next-line: lowercase-global
+vecstr = Debug.SimpleVector
 
 ---
 ---Draw a simple sphere without worrying about all the properties.
@@ -896,8 +904,9 @@ end
 ---Gets whether the string is in the format of an entity handle.
 ---
 ---@param handleString string # The handle string
----@return string # The hash part or nil if not an entity handle
+---@return string? # The hash part or nil if not an entity handle
 function Debug.IsEntityHandleString(handleString)
+    if handleString == nil then return nil end
     local mtc = handleString:match("^(table:?%s*)")
     if mtc then
         handleString = handleString:sub(#mtc+1)
@@ -945,6 +954,34 @@ function Debug.Try(action, ...)
     if not success then
         warn(result)
     end
+end
+
+---
+---Converts a table to single line string representation.
+---
+---@param tbl table # The table to convert.
+---@return string # The string representation.
+function Debug.TableStr(tbl)
+    local vals = {}
+    for key, value in pairs(tbl) do
+        table.insert(vals, key.." = "..tostring(value))
+    end
+
+    return "{ "..table.concat(vals, ", ") .. " }"
+end
+
+---
+---Spawns an entity synchronously.
+---
+---@param classname string # The classname of the entity
+---@param spawnkeys? table|string # The spawnkeys table or targetname
+---@return EntityHandle
+---@diagnostic disable-next-line: lowercase-global
+function entspawn(classname, spawnkeys)
+    if type(spawnkeys) == "string" then
+        spawnkeys = { targetname = spawnkeys }
+    end
+    return SpawnEntityFromTableSynchronous(classname, spawnkeys or {})
 end
 
 return Debug.version

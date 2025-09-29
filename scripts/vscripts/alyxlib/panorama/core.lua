@@ -40,6 +40,22 @@ function Panorama:InitPanel(panelEntity, customId)
     DoEntFireByInstanceHandle(panelEntity, "AddCSSClass", id, 0, nil, nil)
 end
 
+---Flattens a nested ordered table into a single list.
+---@param tbl table # The table to flatten
+---@param out? table # Optional table to flatten into
+---@return table # The flattened table or `out`
+local function flattenOrderedTable(tbl, out)
+    out = out or {}
+    for _, value in ipairs(tbl) do
+        if type(value) == "table" then
+            flattenOrderedTable(value, out)
+        else
+            table.insert(out, value)
+        end
+    end
+    return out
+end
+
 ---
 ---Send data to a panorama panel.
 ---
@@ -54,28 +70,31 @@ function Panorama:Send(panelEntity, ...)
     end
 
     local dataString = id .. "|"
-    local data = {...}
-    local i = 1
+    local n = select("#", ...)
 
     local flattenedData = {}
 
-    -- Flatten nested tables into data
-    for _, value in ipairs(data) do
-        if type(value) == "table" then
-            data = vlua.extend(flattenedData, value)
+    -- Flatten nested tables and convert to strings
+    for i = 1, n do
+        local value = select(i, ...)
+        if value == nil then
+            table.insert(flattenedData, "")
+        elseif type(value) == "table" then
+            flattenOrderedTable(value, flattenedData)
         else
-            table.insert(flattenedData, value)
+            table.insert(flattenedData, tostring(value))
         end
     end
     local dataLength = #flattenedData
 
     -- Put all values into a single pipe separated string
-    for index, value in ipairs(data) do
+    for index, value in ipairs(flattenedData) do
         dataString = dataString .. tostring(value)
         if index < dataLength then dataString = dataString .. "|" end
     end
 
     dataString = FilterText(dataString)
+
     -- print("Sending to pano:", dataString)
     SendToConsole("@panorama_dispatch_event AddStyleToEachChild('"..dataString.."')")
 end

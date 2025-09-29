@@ -12,3 +12,7 @@ scripts/vscripts/game/gameinit.lua
 .vscode/vlua_snippets.code-snippets
 panorama/scripts/custom_game/panorama_lua.js
 panorama/scripts/custom_game/panoramadoc.js
+
+panorama/layout/custom_game/alyxlib_debug_menu.xml
+panorama/scripts/custom_game/alyxlib_debug_menu.js
+panorama/styles/custom_game/alyxlib_debug_menu.css

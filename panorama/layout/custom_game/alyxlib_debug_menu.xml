@@ -21,7 +21,7 @@
                 </Panel>
 
                 <Panel id="background_panel" class="bg">
-                    <Panel class="header">
+                    <Panel id="TitleBar" class="header" onactivate="StartPanelDrag()">
                         <Label class="header" text="Debug Menu" />
                     </Panel>
                     <Panel class="empty_row" />
@@ -38,6 +38,7 @@
                             <Panel id="CategoryCycler" class="cycle_item custom_cycle">
                                 <Button id="CycleCategoryLeftButton" class="CycleCategoryLeft" onactivate="CycleCategories(-1)">
                                     <Panel class="cycle_image cycle_image_left"/>
+                                    <Label id="CycleCategoryLeftButtonLabel" text="" />
                                 </Button>
 
                                 <!-- Category buttons are kept here -->
@@ -46,6 +47,7 @@
                                 <!-- Cycle right -->
                                 <Button id="CycleCategoryRightButton" class="CycleCategoryRight" onactivate="CycleCategories(1)">
                                     <Panel class="cycle_image cycle_image_right"/>
+                                    <Label id="CycleCategoryRightButtonLabel" text="" />
                                 </Button>
                             </Panel>
                             

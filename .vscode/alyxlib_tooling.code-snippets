@@ -47,7 +47,6 @@
 		"scope": "lua",
 		"prefix": ["snippet", "tool", "footer initialized"],
 		"body": [
-			"print(\"${1:name}.lua \".. ${2:version} ..\" initialized...\")",
 			"",
 			"return ${2:version}",
 		],

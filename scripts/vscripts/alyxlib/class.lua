@@ -457,6 +457,8 @@ end
 ---@param value? any # Value to save. If not provided the value will be retrieved from the field with the same `name`.
 ---@luadoc-ignore
 function EntityClass:Save(name, value)
+    if not IsValidEntity(self) then return end
+
     if name then
         Storage.Save(self, name, value~=nil and value or self[name])
     end
@@ -477,7 +479,12 @@ end
 ---@luadoc-ignore
 function EntityClass:ResumeThink()
     if not self:IsNull() then
-        self:SetContextThink("__EntityThink", function() return self:Think() end, 0)
+        self:SetContextThink("__EntityThink", function()
+            -- Handle dead entity and user PauseThink used without returning nil
+            if not IsValidEntity(self) or not self.IsThinking then return nil end
+
+            return self:Think()
+        end, 0)
         self.IsThinking = true
     end
 end
@@ -604,7 +611,9 @@ function isinstance(ent, class)
     return false
 end
 
----Check if an entity is using the entity class system.
+---
+---Check if an entity is using the AlyxLib class system.
+---
 ---@param ent EntityHandle # Entity to check.
 ---@return boolean # True if `ent` is a class entity, false otherwise.
 function IsClassEntity(ent)

@@ -143,6 +143,9 @@ CBasePlayer.Items = {
         ---The hlvr_multitool
         ---@type EntityHandle
         multitool = nil,
+        ---The current hlvr_weapon_generic_pistol equipped
+        ---@type EntityHandle
+        generic_pistol = nil,
         ---List of generic pistols the player has
         ---@type EntityHandle[]
         genericpistols = {},
@@ -354,7 +357,6 @@ function CBasePlayer:AddResources(pistol_ammo, rapidfire_ammo, shotgun_ammo, res
         nil,
         self.Items.ammo.rapidfire + rapidfire_ammo,
         self.Items.ammo.shotgun + shotgun_ammo,
-        nil,nil,nil,
         self.Items.resin + resin
     )
 end
@@ -377,7 +379,6 @@ function CBasePlayer:SetResources(pistol_ammo, rapidfire_ammo, shotgun_ammo, res
         nil,
         rapidfire_ammo or self.Items.ammo.rapidfire,
         shotgun_ammo or self.Items.ammo.shotgun,
-        nil,nil,nil,
         resin or self.Items.resin
     )
 end
@@ -389,27 +390,18 @@ end
 ---@param generic_pistol_ammo? integer
 ---@param rapidfire_ammo? integer
 ---@param shotgun_ammo? integer
----@param frag_grenades? integer
----@param xen_grenades? integer
----@param healthpens? integer
 ---@param resin? integer
 function CBasePlayer:SetItems(
     energygun_ammo,
     generic_pistol_ammo,
     rapidfire_ammo,
     shotgun_ammo,
-    frag_grenades,
-    xen_grenades,
-    healthpens,
     resin
 )
     self.Items.ammo.energygun = energygun_ammo or self.Items.ammo.energygun
     self.Items.ammo.generic_pistol = generic_pistol_ammo or self.Items.ammo.generic_pistol
     self.Items.ammo.rapidfire = rapidfire_ammo or self.Items.ammo.rapidfire
     self.Items.ammo.shotgun = shotgun_ammo or self.Items.ammo.shotgun
-    self.Items.grenades.frag = frag_grenades or self.Items.grenades.frag
-    self.Items.grenades.xen = xen_grenades or self.Items.grenades.xen
-    self.Items.healthpen = healthpens or self.Items.healthpen
     self.Items.resin = resin or self.Items.resin
 
     ---@TODO: Consider moving save function above this
@@ -610,15 +602,20 @@ end
 ---@return EntityHandle|nil
 function CBasePlayer:GetWeapon()
     if self.CurrentlyEquipped == PLAYER_WEAPON_ENERGYGUN then
-        return Entities:FindByClassnameNearest("hlvr_weapon_energygun", self.PrimaryHand:GetPalmPosition(), 128)--[[@as EntityHandle]]
+        return self.Items.weapons.energygun
+            or Entities:FindByClassnameNearest("hlvr_weapon_energygun", self.PrimaryHand:GetPalmPosition(), 128)--[[@as EntityHandle]]
     elseif self.CurrentlyEquipped == PLAYER_WEAPON_RAPIDFIRE then
-        return Entities:FindByClassnameNearest("hlvr_weapon_rapidfire", self.PrimaryHand:GetPalmPosition(), 128)--[[@as EntityHandle]]
+        return self.Items.weapons.rapidfire
+            or Entities:FindByClassnameNearest("hlvr_weapon_rapidfire", self.PrimaryHand:GetPalmPosition(), 128)--[[@as EntityHandle]]
     elseif self.CurrentlyEquipped == PLAYER_WEAPON_SHOTGUN then
-        return Entities:FindByClassnameNearest("hlvr_weapon_shotgun", self.PrimaryHand:GetPalmPosition(), 128)--[[@as EntityHandle]]
+        return self.Items.weapons.shotgun
+            or Entities:FindByClassnameNearest("hlvr_weapon_shotgun", self.PrimaryHand:GetPalmPosition(), 128)--[[@as EntityHandle]]
     elseif self.CurrentlyEquipped == PLAYER_WEAPON_GENERIC_PISTOL then
-        return Entities:FindByClassnameNearest("hlvr_weapon_generic_pistol", self.PrimaryHand:GetPalmPosition(), 128)--[[@as EntityHandle]]
+        return self.Items.weapons.generic_pistol
+            or Entities:FindByClassnameNearest("hlvr_weapon_generic_pistol", self.PrimaryHand:GetPalmPosition(), 128)--[[@as EntityHandle]]
     elseif self.CurrentlyEquipped == PLAYER_WEAPON_MULTITOOL then
-        return Entities:FindByClassnameNearest("hlvr_multitool", self.PrimaryHand:GetPalmPosition(), 128)--[[@as EntityHandle]]
+        return self.Items.weapons.multitool
+            or Entities:FindByClassnameNearest("hlvr_multitool", self.PrimaryHand:GetPalmPosition(), 128)--[[@as EntityHandle]]
     else
         return nil
     end
