@@ -400,7 +400,7 @@ end
 function Input:StopListening(id)
     for _id, tbl in pairs(buttonCallbacks) do
         if _id == id then
-            tbl[_id] = nil
+            buttonCallbacks[_id] = nil
             return
         end
     end
