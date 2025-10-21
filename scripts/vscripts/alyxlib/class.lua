@@ -591,6 +591,8 @@ end
 ---@return boolean # True if `ent` inherits `class`, false otherwise.
 ---@diagnostic disable-next-line:lowercase-global
 function isinstance(ent, class)
+    if not IsEntity(ent, true) then return false end
+
     local inherits = rawget(ent, "__inherits")
     if inherits then
         for _, inherit in ipairs(inherits) do
