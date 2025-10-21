@@ -10,7 +10,7 @@
 			"if thisEntity then",
 			"\t-- Inherit this script if attached to entity",
 			"\t-- Will also load the script at the same time if needed",
-			"\tinherit(GetScriptFile())",
+			"\tinherit(\"${1:EntityName}\")",
 			"\treturn",
 			"end",
 			"",
