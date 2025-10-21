@@ -438,6 +438,7 @@ end
 ---@field OnBreak fun(self: EntityClass, inflictor: EntityHandle) # Called when a breakable entity is broken.
 ---@field OnTakeDamage fun(self: EntityClass, damageTable: OnTakeDamageTable) # Called when entity takes damage.
 ---@field Precache fun(self: EntityClass, context: CScriptPrecacheContext) # Called before Spawn for precaching.
+---@field Think function # Entity think function.
 EntityClass = entity("EntityClass")
 
 ---Assign a new value to entity's field `name`.
@@ -469,16 +470,16 @@ function EntityClass:Save(name, value)
     end
 end
 
----Main entity think function which auto resumes on game load.
----@luadoc-ignore
-function EntityClass:Think()
-    Warning("Trying to think on entity class with no think defined ["..self.__name.."]\n")
-end
+-- ---Main entity think function which auto resumes on game load.
+-- ---@luadoc-ignore
+-- function EntityClass:Think()
+--     Warning("Trying to think on entity class with no think defined ["..self.__name.."]\n")
+-- end
 
 ---Resume the entity think function.
 ---@luadoc-ignore
 function EntityClass:ResumeThink()
-    if not self:IsNull() then
+    if not self:IsNull() and type(self.Think) == "function" then
         self:SetContextThink("__EntityThink", function()
             -- Handle dead entity and user PauseThink used without returning nil
             if not IsValidEntity(self) or not self.IsThinking then return nil end
