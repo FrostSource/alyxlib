@@ -669,7 +669,7 @@ function CBasePlayer:GetRapidfireUpgrades(weapon)
         if child:GetClassname() == "reflex_sights" then
             table.insert(upgrades, "rapidfire_upgrade_reflex_sight")
         elseif child:GetName() == "rapidfire_laser_sight" then
-            table.insert(upgrades, "rapidfire_upgrade_laser_right")
+            table.insert(upgrades, "rapidfire_upgrade_laser_sight")
         elseif child:GetName() == "rapidfire_extended_magazine" then
             table.insert(upgrades, "rapidfire_upgrade_extended_magazine")
         end
