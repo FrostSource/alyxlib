@@ -670,7 +670,7 @@ local function listenEventWeaponSwitch(data)
             newdata.item_class = data.item
             newdata.hand = handHandle
             eventCallback(data.game_event_name, newdata)
-        end, 0.0)
+        end, 0.01) -- smallest delay for hand_use_controller
     end
 end
 ListenToGameEvent("weapon_switch", listenEventWeaponSwitch, nil)
