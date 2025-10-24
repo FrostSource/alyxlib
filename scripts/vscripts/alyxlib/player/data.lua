@@ -142,7 +142,9 @@ local function SyncEquippedWeaponState(classname, handle)
         for h = 0, 1 do
             local hand = h == 0 and Player.LeftHand or Player.RightHand
             local offset = weaponOffsets[h][classname] or Vector()
-            print("Looking for", classname, "in hand", hand:GetName(), "currentlyEquipped", handEquipClass[hand:GetHandID()])
+
+            -- print("Looking for", classname, "in hand", hand:GetName(), "currentlyEquipped", handEquipClass[hand:GetHandID()])
+
             -- If switching to hand_use_controller, it must not be the current equipped class
             if classname ~= "hand_use_controller" or handEquipClass[hand:GetHandID()] ~= classname then
                 for _, wpn in ipairs(Entities:FindAllByClassname(classname)) do
