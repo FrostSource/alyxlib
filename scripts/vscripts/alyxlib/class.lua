@@ -110,7 +110,7 @@ local function _inherit(base, self, fenv)
                 break
             end
         end
-        Warning("Trying to inherit an already inherited class ( "..class_name.." -> ["..tostring(self)..","..self:GetClassname()..","..self:GetName().."] )\n")
+        warn("Trying to inherit an already inherited class ( "..class_name.." -> ["..tostring(self)..","..self:GetClassname()..","..self:GetName().."] )")
         return
     end
 
