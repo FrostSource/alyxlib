@@ -508,14 +508,14 @@ end
 
 ---Define a function for listening to a game event.
 ---@param gameEvent GameEventsAll
----@param func fun(self: EntityClass, params):any
+---@param func fun(self: EntityClass, event):any
 function EntityClass:GameEvent(gameEvent, func)
     self.__game_events[gameEvent] = func
 end
 
 ---Define a function for listening to a player event.
 ---@param playerEvent PLAYER_EVENTS_ALL
----@param func fun(self, params):any
+---@param func fun(self, event):any
 function EntityClass:PlayerEvent(playerEvent, func)
     self.__player_events[playerEvent] = func
 end
