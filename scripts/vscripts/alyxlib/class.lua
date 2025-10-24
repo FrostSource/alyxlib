@@ -624,4 +624,41 @@ function IsClassEntity(ent)
     return type(name) == "string" and EntityClassNameMap[name] ~= nil
 end
 
+---
+---Binds a class to an already spawned entity so it remains attached between game loads.
+---
+---@param entity EntityHandle # Entity to bind to.
+---@param script string|table # Script, class, or class name to bind.
+---@param activateType any
+local function doClassBind(entity, script, activateType)
+    local scope = entity:GetOrCreatePrivateScriptScope()
+    print("inheriting", scope, script)
+    inherit(script, scope)
+    if activateType and type(scope.Activate) == "function" then
+        scope.Activate(activateType)
+    end
+end
+
+---
+---Binds a class to an already spawned entity so it remains attached between game loads.
+---
+---@param entity EntityHandle # Entity to bind to.
+---@param script string # Script, class, or class name to bind.
+function BindClass(entity, script)
+    doClassBind(entity, script, 0)
+    entity:SetContext("BoundEntityClassScript", script, 0)
+end
+
+---@param event PlayerEventPlayerActivate
+ListenToPlayerEvent("player_activate", function(event)
+    local ent = Entities:First()
+    while ent do
+        local script = ent:GetContext("BoundEntityClassScript")
+        if type(script) == "string" then
+            doClassBind(ent, script)
+        end
+        ent = Entities:Next(ent)
+    end
+end)
+
 return version
