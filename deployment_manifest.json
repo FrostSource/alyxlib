@@ -113,6 +113,34 @@
       }
     ],
 
+    "upload_removal": [
+      {
+        "type": "delete",
+        "description": "Delete compiled panorama_lua.js",
+        "source": "{AddonGame}/panorama/scripts/custom_game/panorama_lua.vjs_c"
+      },
+      {
+        "type": "delete",
+        "description": "Delete compiled panoramadoc.js",
+        "source": "{AddonGame}/panorama/scripts/custom_game/panoramadoc.vjs_c"
+      },
+      {
+        "type": "delete",
+        "description": "Delete compiled alyxlib_debug_menu.xml",
+        "source": "{AddonGame}/panorama/layout/custom_game/alyxlib_debug_menu.vxml_c"
+      },
+      {
+        "type": "delete",
+        "description": "Delete compiled alyxlib_debug_menu.js",
+        "source": "{AddonGame}/panorama/scripts/custom_game/alyxlib_debug_menu.vjs_c"
+      },
+      {
+        "type": "delete",
+        "description": "Delete compiled alyxlib_debug_menu.css",
+        "source": "{AddonGame}/panorama/styles/custom_game/alyxlib_debug_menu.vcss_c"
+      }
+    ],
+
     "sounds": [
       {
         "type": "copy",
