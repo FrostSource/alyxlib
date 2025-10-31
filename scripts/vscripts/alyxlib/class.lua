@@ -133,7 +133,7 @@ local function _inherit(base, self, fenv)
     }
     -- Used to automatically save values
     meta.__newindex = function(table, key, value)
-        if not key:startswith("__") and type(value) ~= "function" then
+        if not key:startswith("_") and type(value) ~= "function" then
             meta.__values[key] = value
             self:Save(key, value)
         else
@@ -464,7 +464,7 @@ function EntityClass:Save(name, value)
         Storage.Save(self, name, value~=nil and value or self[name])
     end
     for key, val in pairs(self) do
-        if not key:startswith("__") and type(val) ~= "function" then
+        if not key:startswith("_") and type(val) ~= "function" then
             Storage.Save(self, key, val)
         end
     end
