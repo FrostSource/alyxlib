@@ -187,7 +187,7 @@ function Debug.PrintEntityList(list, properties)
     lenHandle = lenHandle + 1
     local formatStr   = "%-"..lenIndex.."s %-"..lenHandle.."s"
     for propertyIndex, propertyTable in ipairs(propertyMetaData) do
-        formatStr = formatStr .. " | %-"..propertyTable.max.."s"
+        formatStr = formatStr .. " | %-"..math.min(propertyTable.max, 99).."s"
     end
     formatStr = formatStr .. " | %-"..lenParent.."s"
 
@@ -591,7 +591,7 @@ end
 ---        val2 = RandomFloat(0, 1),
 ---        val3 = RandomFloat(0, 1)
 ---    })
----    ->
+---    
 ---    1^ []        
 ---     | []    []  
 ---     | [] [] []  
@@ -759,7 +759,7 @@ end
 ---
 ---Returns a simplified vector string with decimal places truncated.
 ---
----@param vector Vector
+---@param vector Vector|QAngle|table
 ---@return string
 function Debug.SimpleVector(vector)
     return "[" .. math.trunc(vector.x, 3) .. ", " .. math.trunc(vector.y, 3) .. ", " .. math.trunc(vector.z, 3) .. "]"

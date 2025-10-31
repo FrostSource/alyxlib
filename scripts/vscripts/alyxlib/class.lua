@@ -110,7 +110,7 @@ local function _inherit(base, self, fenv)
                 break
             end
         end
-        Warning("Trying to inherit an already inherited class ( "..class_name.." -> ["..tostring(self)..","..self:GetClassname()..","..self:GetName().."] )\n")
+        warn("Trying to inherit an already inherited class ( "..class_name.." -> ["..tostring(self)..","..self:GetClassname()..","..self:GetName().."] )")
         return
     end
 
@@ -133,7 +133,7 @@ local function _inherit(base, self, fenv)
     }
     -- Used to automatically save values
     meta.__newindex = function(table, key, value)
-        if not key:startswith("__") and type(value) ~= "function" then
+        if not key:startswith("_") and type(value) ~= "function" then
             meta.__values[key] = value
             self:Save(key, value)
         else
@@ -438,6 +438,7 @@ end
 ---@field OnBreak fun(self: EntityClass, inflictor: EntityHandle) # Called when a breakable entity is broken.
 ---@field OnTakeDamage fun(self: EntityClass, damageTable: OnTakeDamageTable) # Called when entity takes damage.
 ---@field Precache fun(self: EntityClass, context: CScriptPrecacheContext) # Called before Spawn for precaching.
+---@field Think function # Entity think function.
 EntityClass = entity("EntityClass")
 
 ---Assign a new value to entity's field `name`.
@@ -461,24 +462,26 @@ function EntityClass:Save(name, value)
 
     if name then
         Storage.Save(self, name, value~=nil and value or self[name])
+        return
     end
+
     for key, val in pairs(self) do
-        if not key:startswith("__") and type(val) ~= "function" then
+        if not key:startswith("_") and type(val) ~= "function" then
             Storage.Save(self, key, val)
         end
     end
 end
 
----Main entity think function which auto resumes on game load.
----@luadoc-ignore
-function EntityClass:Think()
-    Warning("Trying to think on entity class with no think defined ["..self.__name.."]\n")
-end
+-- ---Main entity think function which auto resumes on game load.
+-- ---@luadoc-ignore
+-- function EntityClass:Think()
+--     Warning("Trying to think on entity class with no think defined ["..self.__name.."]\n")
+-- end
 
 ---Resume the entity think function.
 ---@luadoc-ignore
 function EntityClass:ResumeThink()
-    if not self:IsNull() then
+    if not self:IsNull() and type(self.Think) == "function" then
         self:SetContextThink("__EntityThink", function()
             -- Handle dead entity and user PauseThink used without returning nil
             if not IsValidEntity(self) or not self.IsThinking then return nil end
@@ -507,14 +510,14 @@ end
 
 ---Define a function for listening to a game event.
 ---@param gameEvent GameEventsAll
----@param func fun(self: EntityClass, params):any
+---@param func fun(self: EntityClass, event):any
 function EntityClass:GameEvent(gameEvent, func)
     self.__game_events[gameEvent] = func
 end
 
 ---Define a function for listening to a player event.
 ---@param playerEvent PLAYER_EVENTS_ALL
----@param func fun(self, params):any
+---@param func fun(self, event):any
 function EntityClass:PlayerEvent(playerEvent, func)
     self.__player_events[playerEvent] = func
 end
@@ -590,6 +593,8 @@ end
 ---@return boolean # True if `ent` inherits `class`, false otherwise.
 ---@diagnostic disable-next-line:lowercase-global
 function isinstance(ent, class)
+    if not IsEntity(ent, true) then return false end
+
     local inherits = rawget(ent, "__inherits")
     if inherits then
         for _, inherit in ipairs(inherits) do
@@ -620,5 +625,42 @@ function IsClassEntity(ent)
     local name = rawget(ent, "__name")
     return type(name) == "string" and EntityClassNameMap[name] ~= nil
 end
+
+---
+---Binds a class to an already spawned entity so it remains attached between game loads.
+---
+---@param entity EntityHandle # Entity to bind to.
+---@param script string|table # Script, class, or class name to bind.
+---@param activateType any
+local function doClassBind(entity, script, activateType)
+    local scope = entity:GetOrCreatePrivateScriptScope()
+    print("inheriting", scope, script)
+    inherit(script, scope)
+    if activateType and type(scope.Activate) == "function" then
+        scope.Activate(activateType)
+    end
+end
+
+---
+---Binds a class to an already spawned entity so it remains attached between game loads.
+---
+---@param entity EntityHandle # Entity to bind to.
+---@param script string # Script, class, or class name to bind.
+function BindClass(entity, script)
+    doClassBind(entity, script, 0)
+    entity:SetContext("BoundEntityClassScript", script, 0)
+end
+
+---@param event PlayerEventPlayerActivate
+ListenToPlayerEvent("player_activate", function(event)
+    local ent = Entities:First()
+    while ent do
+        local script = ent:GetContext("BoundEntityClassScript")
+        if type(script) == "string" then
+            doClassBind(ent, script)
+        end
+        ent = Entities:Next(ent)
+    end
+end)
 
 return version

@@ -56,29 +56,34 @@ local currentlyEquipped = nil
 local previousHandle = nil
 local currentHandle = nil
 
+-- These might need to be moved to CPropVRHand.CurrentlyEquipped
+-- if general use is desired, but offhand equip is rare
+---@type {[0]:string, [1]:string}
+local handEquipClass = {}
+
 local syncPaused = false
 
 ---Standard local weapon offsets from hand when equipped
 local weaponOffsets = {
     [0] = { -- left
-        hand_use_controller = Vector(0.027, 0.012, -0.124),
-        hlvr_weapon_energygun = Vector(-0.025, 0.048, 2.014),
-        hlvr_weapon_shotgun = Vector(0.402, 0.103, 1.652),
-        hlvr_weapon_rapidfire = Vector(0.392, 0.102, 1.658),
-        hlvr_multitool = Vector(3.079, 0.016, 1.209),
+        hand_use_controller = Vector(-4.8, 0.576, -0.262),
+        hlvr_weapon_energygun = Vector(-3.359, 0.667, 1.314),
+        hlvr_weapon_shotgun = Vector(-3.297, 0.641, 0.753),
+        hlvr_weapon_rapidfire = Vector(-3.3, 0.643, 0.767),
+        hlvr_multitool = Vector(-1.695, 0.099, -1.369),
         -- unsure if offsets will be different for custom models,
         -- using hlvr_weapon_energygun offset
-        hlvr_weapon_generic_pistol = Vector(-0.025, 0.048, 2.014),
+        hlvr_weapon_generic_pistol = Vector(-3.359, 0.667, 1.314),
     },
     [1] = { -- right
-        hand_use_controller = Vector(0.026, -0.009, -0.125),
-        hlvr_weapon_energygun = Vector(-0.025, -0.042, 2.013),
-        hlvr_weapon_shotgun = Vector(0.402, -0.097, 1.651),
-        hlvr_weapon_rapidfire = Vector(0.392, -0.096, 1.657),
-        hlvr_multitool = Vector(3.079, -0.006, 1.208),
+        hand_use_controller = Vector(-4.798, -0.674, -0.3),
+        hlvr_weapon_energygun = Vector(-3.399, -0.769, 1.244),
+        hlvr_weapon_shotgun = Vector(-3.289, -0.731, 0.711),
+        hlvr_weapon_rapidfire = Vector(-3.293, -0.731, 0.722),
+        hlvr_multitool = Vector(-1.692, -0.299, -1.442),
         -- unsure if offsets will be different for custom models,
         -- using hlvr_weapon_energygun offset
-        hlvr_weapon_generic_pistol = Vector(-0.025, -0.042, 2.013),
+        hlvr_weapon_generic_pistol = Vector(-3.399, -0.769, 1.244),
     },
 }
 
@@ -137,13 +142,23 @@ local function SyncEquippedWeaponState(classname, handle)
         for h = 0, 1 do
             local hand = h == 0 and Player.LeftHand or Player.RightHand
             local offset = weaponOffsets[h][classname] or Vector()
-            for _, wpn in ipairs(Entities:FindAllByClassname(classname)) do
-                if wpn ~= hand.ItemHeld then
-                    local dist = VectorDistance(offset, hand:TransformPointWorldToEntity(wpn:GetOrigin()))
-                    if dist < bestDistance then
-                        bestDistance = dist
-                        bestWeapon = wpn
-                        handHandle = hand
+
+            -- print("Looking for", classname, "in hand", hand:GetName(), "currentlyEquipped", handEquipClass[hand:GetHandID()])
+
+            -- If switching to hand_use_controller, it must not be the current equipped class
+            if classname ~= "hand_use_controller" or handEquipClass[hand:GetHandID()] ~= classname then
+                for _, wpn in ipairs(Entities:FindAllByClassname(classname)) do
+                    -- Weapon must not be held
+                    if wpn ~= hand.ItemHeld then
+                        local dist = VectorDistance(offset, hand:TransformPointWorldToEntity(wpn:GetOrigin()))
+                        -- debugoverlay:Sphere(wpn:GetOrigin(), 1, 0, 255, 0, 255, false, 5)
+                        -- debugoverlay:Text(wpn:GetOrigin()+Vector(0,0,1), 0, tostring(dist), 0, 0, 255, 0, 255, 5)
+                        -- print(dist, ":", hand:GetName(), entstr(wpn), wpn:GetModelName(), "Owner:", entstr(wpn:GetOwner()))
+                        if dist < bestDistance then
+                            bestDistance = dist
+                            bestWeapon = wpn
+                            handHandle = hand
+                        end
                     end
                 end
             end
@@ -153,15 +168,16 @@ local function SyncEquippedWeaponState(classname, handle)
 
     weaponHandle = handle
 
-    -- if weaponHandle then
-    --     print("Setting new weapon for hand", entstr(handHandle), classname, entstr(weaponHandle))
-    --     debugoverlay:Sphere(weaponHandle:GetOrigin(), 2, 255, 255, 255, 255, true, 100)
-    --     debugoverlay:Text(weaponHandle:GetOrigin(), 0, entstr(weaponHandle).." : "..entstr(handHandle), 0, 255, 255, 255, 255, 100)
-    -- end
-
     if not IsValidEntity(weaponHandle) then
         warn("Could not find weapon entity for equipped weapon: " .. classname)
+        return weaponHandle, handHandle
     end
+
+    -- if weaponHandle then
+    --     print("Setting new weapon for hand", entstr(handHandle), classname, entstr(weaponHandle), "Owner:", entstr(weaponHandle:GetOwner()))
+    --     debugoverlay:Sphere(weaponHandle:GetOrigin(), 2, 255, 255, 255, 255, true, 5)
+    --     debugoverlay:Text(weaponHandle:GetOrigin(), 0, entstr(weaponHandle).." : "..entstr(handHandle), 0, 255, 255, 255, 255, 5)
+    -- end
 
     currentHandle = weaponHandle
 
@@ -197,7 +213,13 @@ local function SyncEquippedWeaponState(classname, handle)
 
     -- This event can fire before the player has a hand
     if handHandle then
-        handHandle.ItemHeld = weaponHandle
+        if classname == "hand_use_controller" then
+            handHandle.ItemHeld = nil
+        else
+            handHandle.ItemHeld = weaponHandle
+        end
+
+        handEquipClass[handHandle:GetHandID()] = classname
     end
 
     savePlayerData()

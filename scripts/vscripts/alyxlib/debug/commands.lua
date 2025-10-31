@@ -449,7 +449,8 @@ RegisterAlyxLibCommand("sphere", function (_, x, y, z, r)
     z = tonumber(z) or 0
     r = tonumber(r) or 16
 
-    DebugDrawSphere(Vector(x, y, z), Vector(255, 255, 255), 255, r, false, 10)
+    DebugDrawSphere(Vector(x, y, z), Vector(255, 255, 255), 255, r, false, 15)
+    DebugDrawSphere(Vector(x, y, z), Vector(255, 255, 255), 255, r, true, 10)
 
 end, "Draws a debug sphere at 3D position with a radius", 0)
 

@@ -61,7 +61,6 @@ _G.AlyxLibGlobalPrecacheList = {}
 ---@param path string # The asset path to precache (or the classname if type is entity).
 ---@param spawnkeys table? # The spawnkeys table if type is entity.
 function GlobalPrecache(type, path, spawnkeys)
-    print("Adding global precache:", type, path)
     table.insert(AlyxLibGlobalPrecacheList, {
         type = type,
         path = path,
@@ -89,7 +88,7 @@ end
 ---
 ---If you are precaching *after* the player has spawned, call this function after preceding [GlobalPrecache](lua://GlobalPrecache) calls.
 ---
----@param callback function # The function to call when the precaching is complete.
+---@param callback? function # The function to call when the precaching is complete.
 function GlobalPrecacheFlush(callback)
     precacheAsync(function()
         AlyxLibGlobalPrecacheList = {}

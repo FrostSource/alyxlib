@@ -610,14 +610,14 @@ end
 ---
 ---@param list table
 ---@param predicate fun(value:any):boolean
----@return integer
-function TableFindIndex(list, predicate)
-    for i, v in ipairs(list) do
+---@return any
+function TableFindKey(list, predicate)
+    for i, v in pairs(list) do
         if predicate(v) then
             return i
         end
     end
-    return 0
+    return nil
 end
 
 ---

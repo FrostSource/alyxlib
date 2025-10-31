@@ -867,7 +867,7 @@ function DebugMenu:SendCategoryToPanel(category)
 
                 if default ~= nil then
                     -- find the index of the default value
-                    local index = TableFindIndex(item.values, function(v) return tostring(v.value) == tostring(default) end)
+                    local index = TableFindKey(item.values, function(v) return tostring(v.value) == tostring(default) end)
                     if index > 0 then
                         default = index
                     else
