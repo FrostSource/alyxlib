@@ -462,7 +462,9 @@ function EntityClass:Save(name, value)
 
     if name then
         Storage.Save(self, name, value~=nil and value or self[name])
+        return
     end
+
     for key, val in pairs(self) do
         if not key:startswith("_") and type(val) ~= "function" then
             Storage.Save(self, key, val)
