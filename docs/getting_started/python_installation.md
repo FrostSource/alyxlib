@@ -53,7 +53,7 @@ Wait for the script to complete its process. You can now continue developing you
 
 ## Manual installation
 
-Without Python you will have to manually create the symlinks yourself to each desired AlyxLib file/folder. I recommend using [Link Shell Extension](schinagl.priv.at/nt/hardlinkshellext/linkshellextension.html) which adds linking operations directly to your Windows right-click context menu, making links much easier to create.
+Without Python you will have to manually create the symlinks yourself to each desired AlyxLib file/folder. I recommend using [Link Shell Extension](https://schinagl.priv.at/nt/hardlinkshellext/linkshellextension.html) which adds linking operations directly to your Windows right-click context menu, making links much easier to create.
 
 For a full setup the following files/folder should be linked to your addon *content* folder in their respective locations:
 

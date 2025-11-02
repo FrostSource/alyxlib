@@ -81,7 +81,6 @@ To quickly create a new addon, use `File -> New Addon...` and choose a name for 
 
 ??? example "Image"
     ![image](../assets/aids/installer/installer-new_addon.png)
-    ![image](../assets/aids/installer/installer-new_addon_name.png)
 
 ### Selecting an existing addon
 
@@ -143,12 +142,12 @@ After uploading, click `Install` again to restore the AlyxLib files in your addo
 You can remove AlyxLib options from your addon by unticking the options you want to remove and then clicking the *down arrow* next to the `Remove For Upload` button, followed by `Remove Unticked Items`.
 
 ??? example "Image"
-    ![image](../assets/aids/installer/installer-remove_options_unticked.png.png)
+    ![image](../assets/aids/installer/installer-remove_options_unticked.png)
 
 In the same menu you can also completely remove AlyxLib from your addon by clicking `Remove All AlyxLib Files`.
 
 ??? example "Image"
-    ![image](../assets/aids/installer/installer-remove_options_all.png.png)
+    ![image](../assets/aids/installer/installer-remove_options_all.png)
 
 This will remove any AlyxLib related files that have not been modified in your addon. Any files that do not match the contents of a fresh install will not be deleted, including soundevent files and script files.
 

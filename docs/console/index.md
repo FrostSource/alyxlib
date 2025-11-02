@@ -1,7 +1,7 @@
 # Console
 
 !!! tip ""
-    If you're a player looking for help with AlyxLib commands, check out the [AlyxLib Commands](console/alyxlib.md) page.
+    If you're a player looking for help with AlyxLib commands, check out the [AlyxLib Commands](alyxlib.md) page.
 
 AlyxLib comes with custom console commands which can help with debugging during development. They can be used whether you are in Tools Mode or not.
 

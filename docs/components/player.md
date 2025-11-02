@@ -278,4 +278,4 @@ end)
 
 ## Reference
 
-View the full reference [here](../reference/player/player.md).
+View the full reference [here](../reference/player/core.md).

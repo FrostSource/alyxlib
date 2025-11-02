@@ -3,7 +3,7 @@ Debugging and testing mods in Half-Life Alyx can be challenging and often requir
 
 The [debug menu](debug_menu.md) is also a very useful tool for debugging in VR.
 
-Many debug functions have dedicated console commands so be sure to check the [console](console.md) page.
+Many debug functions have dedicated console commands so be sure to check the [console](../console/index.md) section.
 
 ## Common functions
 
@@ -119,7 +119,8 @@ thisEntity:SetThink("ProfileThink", ProfileThink, 0)
 
 [Common Debugging](../reference/debug/common.md).
 
-[VR Debugging](../reference/debug/vr.md).
+<!-- Currently no vr functions -->
+<!-- [VR Debugging](../reference/debug/vr.md). -->
 
 [NoVR Debugging](../reference/debug/novr.md).
 

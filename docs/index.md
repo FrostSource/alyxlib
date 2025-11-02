@@ -26,7 +26,7 @@ Your addon is linked to AlyxLib via symbolic links, ensuring that every addon us
 * Lots of useful debugging functions and console commands. [:octicons-link-external-16:](components/debugging.md)
 * A fully customizable in-game debug menu. [:octicons-link-external-16:](components/debug_menu.md)
 
-See the [Components](components) section for a more detailed overview.
+See the [Components](components/alyxlib.md) section for a more detailed overview.
 
 !!! tip "Code completion"
     AlyxLib uses the [HLA-VScript](https://github.com/FrostSource/HLA-VScript) definition files to provide full VScript code completion. It can be installed using the [Lua Language Server addon manager](https://luals.github.io/wiki/addons/#addon-manager)
@@ -34,7 +34,7 @@ See the [Components](components) section for a more detailed overview.
 ## 🚀Quick setup guide
 
 !!! note ""
-    For in-depth setup, see the [Installation](getting_started/installation.md) guide.
+    For in-depth setup, see the [Installation](getting_started/app_installation.md) guide.
 
 1. Download or clone the [AlyxLib GitHub repository](https://github.com/FrostSource/alyxlib) to your hlvr_addons content folder
 
