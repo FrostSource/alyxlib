@@ -337,8 +337,6 @@ CBasePlayer:GrabActivator(data)
 - **`data`**  
   `IOParams`  
 
-!!! exposed "[Exposed](PUT LINK HERE) To Hammer as `GrabActivator`"
-
 ### GetMoveType
 
 Get VR movement type.

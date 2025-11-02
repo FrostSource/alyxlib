@@ -40,7 +40,7 @@ GlobalPrecacheFlush(callback)
 
 **Parameters**
 
-- **`callback`**  
+- **`callback`** *(optional)*  
   `function`  
   The function to call when the precaching is complete.
 

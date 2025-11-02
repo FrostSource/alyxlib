@@ -610,12 +610,12 @@ TablePluck(tbl, key)
 - **`any[]`**
 List of values found for the key.
 
-### TableFindIndex
+### TableFindKey
 
 Returns the index of the first value that matches the predicate.
 
 ```lua
-TableFindIndex(list, predicate)
+TableFindKey(list, predicate)
 ```
 
 **Parameters**
@@ -626,7 +626,7 @@ TableFindIndex(list, predicate)
   `function`  
 
 **Returns**
-- **`integer`**
+- **`any`**
 
 ### ArrayRandom
 

@@ -394,7 +394,7 @@ Debug:SimpleVector(vector)
 **Parameters**
 
 - **`vector`**  
-  `Vector`  
+  `Vector`, `QAngle`, `table`  
 
 **Returns**
 - **`string`**

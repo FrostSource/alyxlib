@@ -50,8 +50,6 @@ EntityClass:Save(name, value)
 
 ### Think
 
-Main entity think function which auto resumes on game load.
-
 ```lua
 EntityClass:Think()
 ```
@@ -300,6 +298,7 @@ The top-level entity class that provides base functionality.
 | OnBreak | `function` | Called when a breakable entity is broken. |
 | OnTakeDamage | `function` | Called when entity takes damage. |
 | Precache | `function` | Called before Spawn for precaching. |
+| Think | `function` | Entity think function. |
 
 ## Aliases
 
