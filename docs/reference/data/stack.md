@@ -97,7 +97,7 @@ Stack:MoveToTop(value)
 
 **Returns**
 - **`boolean`**
-  True if value was found and moved.
+True if value was found and moved.
 
 ### MoveToBottom
 
@@ -116,7 +116,7 @@ Stack:MoveToBottom(value)
 
 **Returns**
 - **`boolean`**
-  True if value was found and moved.
+True if value was found and moved.
 
 ### Contains
 
@@ -162,11 +162,15 @@ Stack:pairs()
 ```
 
 **Returns**
-- **`fun(table:`**
-  any[], i: integer):integer, any
-- **`any[]`**
-- **`number`**
-  i
+
+- **`function`**  
+    
+
+- **`any[]`**  
+    
+
+- **`number`**  
+   *`i`*  
 
 ## Functions
 
@@ -177,11 +181,14 @@ First value is at the top.
 
 E.g.
 
-`local stack = Stack(`
-"Top",
-"Middle",
-"Bottom"
-)
+??? example
+    ```lua
+    local stack = Stack(
+        "Top",
+        "Middle",
+        "Bottom"
+    )
+    ```
 
 ```lua
 Stack(...)

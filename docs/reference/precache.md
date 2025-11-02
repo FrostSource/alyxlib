@@ -8,6 +8,8 @@
 
 Add an asset to be precached when the player spawns.
 
+If you are precaching *after* the player has spawned, then you must also call [GlobalPrecacheFlush](lua://GlobalPrecacheFlush).
+
 ```lua
 GlobalPrecache(type, path, spawnkeys)
 ```
@@ -23,6 +25,24 @@ GlobalPrecache(type, path, spawnkeys)
 - **`spawnkeys`**  
   `table?`  
   The spawnkeys table if type is entity.
+
+### GlobalPrecacheFlush
+
+Flushes the global precache list and precaches the assets.
+
+This is an asynchronous process; the assets will not be immediately available after calling this function.
+
+If you are precaching *after* the player has spawned, call this function after preceding [GlobalPrecache](lua://GlobalPrecache) calls.
+
+```lua
+GlobalPrecacheFlush(callback)
+```
+
+**Parameters**
+
+- **`callback`**  
+  `function`  
+  The function to call when the precaching is complete.
 
 ### _PrecacheGlobalItems
 

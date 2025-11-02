@@ -6,7 +6,7 @@
 
 | Name | Value |
 | -------------------- | ----- |
-| `Util` | `{}` |
+| `Util` | `table` |
 
 ## Methods
 
@@ -47,7 +47,7 @@ Util:FindKeyFromValue(tbl, value)
 
 **Returns**
 - **`unknown|nil`**
-  The key in `tbl` or nil if no `value` was found.
+The key in `tbl` or nil if no `value` was found.
 
 ### TableSize
 

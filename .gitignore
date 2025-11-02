@@ -14,3 +14,4 @@ __test*
 .cache/
 check_lua_versions.sh
 serve_mobile.bat
+site/

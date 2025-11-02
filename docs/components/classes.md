@@ -1,14 +1,12 @@
-# Entity Classes
-
 Entity classes are a core component of AlyxLib, which simplifies the process of creating and managing entities with shared behavior. Entity classes allow you to define a set of properties and functions that can be shared across multiple entities, making it easier to create complex behaviors and interactions between entities.
 
 Overview of features:
 
-- Automatic state saving
+- Automatic variable saving/loading
 - Multiple inheritance
-- 
+- Easy hooks for outputs and events
 
-## Basic Declaration
+## Basic declaration
 
 An entity class is declared using the `entity()` function.
 
@@ -33,13 +31,16 @@ inherit("MyClass", entity)
     The recommended approach is to attach the script directly to the entity.  
     Persistent inheritance support is planned for a future update.
 
-### Basic Template
+### Basic template
+
+!!! tip
+    If you've installed the VSCode snippets file for AlyxLib, you can use the `Class Script` snippet to create a basic class template.
 
 ```lua
 if thisEntity then
     -- Inherit this script if it's directly attached to an entity
     -- Will also load the script at the same time if needed
-    inherit(GetScriptFile())
+    inherit(GetScriptFile()) -- (1)!
     return
 end
 
@@ -64,6 +65,11 @@ end
 ---The script returns the class table so it can be inherited directly.
 return base
 ```
+
+1. It's now recommended to use the class explicitly, e.g.
+    ```lua
+    inherit("ClassName")
+    ```
 
 !!! example ""
     For a full list of built-in EntityClass methods see the [class reference](../reference/class.md#methods)
@@ -97,7 +103,7 @@ function base:MultiplyHealth(n)
 end
 ```
 
-1. Remember to use `self` in the method to reference the entity rather than the class.
+1. Remember to use `self` in the method to reference the entity rather than the class. `thisEntity` does not exist in class scripts.
 
 Methods can be called via Hammer I/O simply using the `CallScriptFunction` input. The activator and caller will be passed into the first parameter as a table.
 
@@ -132,8 +138,10 @@ Properties should be declared in the class definition.
 local base = entity("Animal")
 
 ---Declare a class property.
-base.legs = 4
+base.legs = 4 -- (1)!
 ```
+
+1. Note the use of `base` here to declare it directly on the class.
 
 When getting/setting the property value, `self` should be used to make sure the instance value is accessed instead of the initial base class.
 
@@ -155,7 +163,7 @@ base.__allNearbyEntities = {}
 
 ## Inheritance
 
-Inheritance is a key concept in object-oriented programming. It allows you to create classes which "inherit" the behavior of a parent class. This is useful for creating a hierarchy of related classes which share common methods and properties.
+Inheritance is a key concept in object-oriented programming which Entity Classes attempt to replicate in Lua. It allows you to create classes which "inherit" the behavior of one or more parent classes. This is useful for creating a hierarchy of related classes which share common methods and properties.
 
 === ":paw_prints: Animal"
 
@@ -183,7 +191,7 @@ Inheritance is a key concept in object-oriented programming. It allows you to cr
     ```
 
     1. Animal already inherits `EntityClass`, so by inheriting `Animal` we also inherit `EntityClass` and get correct code completion.
-    2. The inheritance parameter can be the string name, a direct class table reference, or the path to the class script as long as it returns the class table reference.
+    2. The inheritance parameter can be the string name, a direct class table reference, or the path to the class script as long as the script returns the class table reference.
 
 === ":cat: Cat"
 
@@ -208,12 +216,13 @@ Multiple inheritance lets you create entities that combine behaviors from differ
     CombatReady = base -- (1)!
 
     base.damage = 10
+    base.damageAttachment = "weapon"
 
     ---@param enemy EntityHandle
     function base:Attack(enemy)
         local dmg = CreateDamageInfo(self, self,
             self:GetForwardVector() * self.damage,
-            self:GetAttachmentNameOrigin("mouth"),
+            self:GetAttachmentNameOrigin(self.damageAttachment),
             self.damage,
             DMG_SLASH
         )
@@ -231,6 +240,9 @@ Multiple inheritance lets you create entities that combine behaviors from differ
     ```lua
     ---@class AttackDog : Dog, CombatReady
     local base = entity("AttackDog", "Dog", "CombatReady")
+
+    base.damage = 20
+    base.damageAttachment = "mouth"
 
     ---Override method to speak while calling base attack method
     function base:Attack(enemy)
@@ -361,7 +373,7 @@ Game/Player events and entity outputs can be defined in a class using the built-
     end, nil)
     ```
 
-    1. `GetAllDisplays()` would be a global function returning all existing `ResinDisplay` entities.
+    1. `GetAllDisplays()` would be a global function you create, returning all existing `ResinDisplay` entities.
 
 ## Hooks
 
@@ -403,11 +415,15 @@ function base:OnReady(readyType)
 end
 ```
 
-## Real Examples
+## Real examples
 
 This is a list of links to entity classes being used in released addons.
 
-- Resin Watch (Item Tracker) https://github.com/FrostSource/resin_watch/blob/main/scripts/vscripts/resin_watch/classes/watch.lua
-- Removable Health Vials https://github.com/FrostSource/removable_health_vials/blob/main/scripts/vscripts/removable_health_vials/health_station.lua
-- Alyx Wears Glasses https://github.com/FrostSource/alyx_optometry/blob/main/scripts/vscripts/alyx_optometry/classes/glasses.lua
-- PortalsInHLA https://github.com/FrostSource/PortalsInHLA/tree/overhaul/scripts/vscripts/portal/classes
+- Resin Watch (Item Tracker) <https://github.com/FrostSource/resin_watch/blob/main/scripts/vscripts/resin_watch/classes/watch.lua>
+- Removable Health Vials <https://github.com/FrostSource/removable_health_vials/blob/main/scripts/vscripts/removable_health_vials/health_station.lua>
+- Alyx Wears Glasses <https://github.com/FrostSource/alyx_optometry/blob/main/scripts/vscripts/alyx_optometry/classes/glasses.lua>
+- PortalsInHLA <https://github.com/FrostSource/PortalsInHLA/tree/overhaul/scripts/vscripts/portal/classes>
+
+## Reference
+
+View the full reference [here](../reference/class.md).

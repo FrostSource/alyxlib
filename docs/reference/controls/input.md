@@ -21,7 +21,7 @@ Input.version = value
 ```
 
 **Default value**
-  `"v4.0.1"`
+  `"v4.0.2"`
 
 ### AutoStart
 
@@ -132,7 +132,7 @@ Input:ListenToButton(kind, hand, button, presses, callback, context)
   `integer`, `nil`  
   Number of times the button must be pressed in quick succession. E.g. 2 for double click. Only applicable for `kind` press.
 - **`callback`**  
-  `fun(params:InputPressCallback|InputReleaseCallback)`, `fun(context:T,params:InputPressCallback|InputReleaseCallback)`  
+  `function`, `function`  
   The function that will be called when conditions are met.
 - **`context`** *(optional)*  
   `T`  
@@ -161,7 +161,7 @@ Input:ListenToAnalog(kind, hand, analogAction, analogValue, callback, context)
   `AnalogValueType`  
   The value(s) to listen for.
 - **`callback`**  
-  `fun(params:InputAnalogCallback)`  
+  `function`  
   The function that will be called when conditions are met.
 - **`context`** *(optional)*  
   `any`  
@@ -189,7 +189,7 @@ Input:ModifyAnalogCallback(id, analogAction, analogValue)
 
 **Returns**
 - **`boolean`**
-  True if the ID was found, false otherwise.
+True if the ID was found, false otherwise.
 
 ### StopListening
 
@@ -216,7 +216,7 @@ Input:StopListeningCallbackContext(callback, context)
 **Parameters**
 
 - **`callback`**  
-  `fun(params:InputAnalogCallback)`  
+  `function`  
   The callback function that's listening.
 - **`context`** *(optional)*  
   `any`  
@@ -235,6 +235,28 @@ Input:StopListeningByContext(context)
 - **`context`**  
   `any`  
   The number returned by ListenToButton.
+
+### Start
+
+Starts the input system.
+
+```lua
+Input:Start(on)
+```
+
+**Parameters**
+
+- **`on`**  
+  `EntityHandle?`  
+  Optional entity to do the tracking on. This is the player by default.
+
+### Stop
+
+Stops the input system.
+
+```lua
+Input:Stop()
+```
 
 ## Types
 
@@ -304,10 +326,10 @@ Input:StopListeningByContext(context)
 
 | Value | Description |
 | ----- | ----------- |
-| `INPUT_HAND_LEFT` |  |
-| `INPUT_HAND_RIGHT` |  |
-| `INPUT_HAND_PRIMARY` |  |
-| `INPUT_HAND_SECONDARY` |  |
+| `InputHandLeft` |  |
+| `InputHandRight` |  |
+| `InputHandPrimary` |  |
+| `InputHandSecondary` |  |
 | `0` | Left Hand. |
 | `1` | Right Hand. |
 | `2` | Primary Hand. |

@@ -85,7 +85,7 @@ NoVR:BindKey(key, callback, name)
 - **`key`**  
   `KeyboardKey`  
 - **`callback`**  
-  `fun()`, `string`  
+  `function`, `string`  
   Callback function or command string
 - **`name`** *(optional)*  
   `string`  
@@ -103,5 +103,5 @@ NoVR:BindKey(key, callback, name)
 | parameter? | `string` | Optional parameter for input. |
 | output? | `string|string[]` |  |
 | title? | `string` | Text to show in-game. |
-| position? | `Vector|string|fun(ent:EntityHandle):Vector` | Offset, attachment name, function that returns world position. |
+| position? | `Vector|string|function` | Offset, attachment name, function that returns world position. |
 | weight? | `number` | Weight for this class to assign importance next to others. |

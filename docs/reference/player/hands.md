@@ -97,6 +97,17 @@ CPropVRHand:GetPalmPosition()
 **Returns**
 - **`Vector`**
 
+### GetHandUseController
+
+Gets the 'hand_use_controller' entity associated with this hand.
+
+```lua
+CPropVRHand:GetHandUseController()
+```
+
+**Returns**
+- **`EntityHandle`**
+
 ### Drop
 
 Forces the player to drop this entity if held.

@@ -40,7 +40,7 @@ CBasePlayer.Hands = value
 ```
 
 **Default value**
-  `{}`
+  `table`
 
 ### LeftHand
 
@@ -148,7 +148,7 @@ CBasePlayer.Items = value
 ```
 
 **Default value**
-  `{`
+  `table`
 
 ### ItemHeld
 
@@ -441,7 +441,7 @@ This is purely for scripting and does not modify the actual items the player has
 Use `Player:AddResources` to modify in-game items.
 
 ```lua
-CBasePlayer:SetItems(energygun_ammo, generic_pistol_ammo, rapidfire_ammo, shotgun_ammo, frag_grenades, xen_grenades, healthpens, resin)
+CBasePlayer:SetItems(energygun_ammo, generic_pistol_ammo, rapidfire_ammo, shotgun_ammo, resin)
 ```
 
 **Parameters**
@@ -453,12 +453,6 @@ CBasePlayer:SetItems(energygun_ammo, generic_pistol_ammo, rapidfire_ammo, shotgu
 - **`rapidfire_ammo`** *(optional)*  
   `integer`  
 - **`shotgun_ammo`** *(optional)*  
-  `integer`  
-- **`frag_grenades`** *(optional)*  
-  `integer`  
-- **`xen_grenades`** *(optional)*  
-  `integer`  
-- **`healthpens`** *(optional)*  
   `integer`  
 - **`resin`** *(optional)*  
   `integer`  
@@ -595,7 +589,7 @@ CBasePlayer:GetCurrentWeaponReserves()
 
 **Returns**
 - **`number`**
-  The amount of ammo, or 0 if no weapon equipped
+The amount of ammo, or 0 if no weapon equipped
 
 ### HasItemHolder
 
@@ -641,10 +635,14 @@ CBasePlayer:GetFlashlightPointedAt(maxDistance)
   Max tracing distance, default is 2048.
 
 **Returns**
-- **`EntityHandle|nil`**
-  The entity that was hit, or nil.
-- **`Vector|nil`**
-  The position the trace hit, regardless of entity found.
+
+- **`EntityHandle|nil`**  
+    
+The entity that was hit, or nil.
+
+- **`Vector|nil`**  
+    
+The position the trace hit, regardless of entity found.
 
 ### GetResin
 
@@ -786,7 +784,7 @@ CBasePlayer:UpdateWeapons(removes, set)
 
 **Returns**
 - **`EntityHandle?`**
-  The handle of the newly set weapon if given and found.
+The handle of the newly set weapon if given and found.
 
 ### RemoveWeapons
 
@@ -818,7 +816,7 @@ CBasePlayer:SetWeapon(weapon)
 
 **Returns**
 - **`EntityHandle?`**
-  The handle of the newly set weapon if found.
+The handle of the newly set weapon if found.
 
 ### UpdateWeaponsExistence
 
@@ -916,6 +914,20 @@ CBasePlayer:SetAnchorOriginAroundPlayer(pos)
 
 - **`pos`**  
   `Vector`  
+
+### SetCoughHandEnabled
+
+Sets the enabled state of the cough handpose attached to the HMD avatar.
+
+```lua
+CBasePlayer:SetCoughHandEnabled(enabled)
+```
+
+**Parameters**
+
+- **`enabled`**  
+  `boolean`  
+  True if the cough handpose should be enabled
 
 ## Aliases
 

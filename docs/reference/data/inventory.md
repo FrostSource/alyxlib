@@ -22,7 +22,7 @@ Inventory:Add(key, value)
 
 **Returns**
 - **`number`**
-  The value of the key after adding.
+The value of the key after adding.
 
 ### Remove
 
@@ -42,7 +42,7 @@ Inventory:Remove(key, value)
 
 **Returns**
 - **`number`**
-  The value of the key after removal.
+The value of the key after removal.
 
 ### Get
 
@@ -69,10 +69,14 @@ Inventory:Highest()
 ```
 
 **Returns**
-- **`any`**
-  The key with the highest value.
-- **`integer`**
-  The value associated with the key.
+
+- **`any`**  
+    
+The key with the highest value.
+
+- **`integer`**  
+    
+The value associated with the key.
 
 ### Lowest
 
@@ -83,10 +87,14 @@ Inventory:Lowest()
 ```
 
 **Returns**
-- **`any`**
-  The key with the lowest value.
-- **`integer`**
-  The value associated with the key.
+
+- **`any`**  
+    
+The key with the lowest value.
+
+- **`integer`**  
+    
+The value associated with the key.
 
 ### Contains
 
@@ -113,10 +121,14 @@ Inventory:Length()
 ```
 
 **Returns**
-- **`integer`**
-  key_sum # Total number of keys in the inventory.
-- **`integer`**
-  value_sum # Total number of values assigned to all keys.
+
+- **`integer`**  
+   *`key_sum`*  
+Total number of keys in the inventory.
+
+- **`integer`**  
+   *`value_sum`*  
+Total number of values assigned to all keys.
 
 ### IsEmpty
 
@@ -138,9 +150,12 @@ Inventory:pairs()
 ```
 
 **Returns**
-- **`fun(table:`**
-  any[], i: integer):integer, any
-- **`table<any,integer>`**
+
+- **`function`**  
+    
+
+- **`table<any,integer>`**  
+    
 
 ## Functions
 

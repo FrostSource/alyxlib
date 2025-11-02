@@ -35,7 +35,7 @@ WeightedRandom:TotalWeight()
 
 **Returns**
 - **`number`**
-  The sum of all weights.
+The sum of all weights.
 
 ### Random
 
@@ -46,8 +46,8 @@ WeightedRandom:Random()
 ```
 
 **Returns**
-- **`WeightedRandomItem`**
-  The chosen table.
+- **`WeightedRandomItem|table`**
+The chosen table.
 
 ## Functions
 
@@ -57,13 +57,16 @@ Create a new WeightedRandom object with given weights.
 
 E.g.
 
-`local wr = WeightedRandom({`
-{ weight = 1, name = "Common" },
-{ weight = 0.75, name = "Semi-common" },
-{ weight = 0.5, name = "Uncommon" },
-{ weight = 0.25, name = "Rare" },
-{ weight = 0.1, name = "Extremely rare" },
-})
+??? example
+    ```lua
+    local wr = WeightedRandom({
+        { weight = 1, name = "Common" },
+        { weight = 0.75, name = "Semi-common" },
+        { weight = 0.5, name = "Uncommon" },
+        { weight = 0.25, name = "Rare" },
+        { weight = 0.1, name = "Extremely rare" },
+    })
+    ```
 
 Params:
 
@@ -79,7 +82,7 @@ WeightedRandom(weights)
 
 **Returns**
 - **`WeightedRandom`**
-  WeightedRandom object.
+WeightedRandom object.
 
 ## Types
 

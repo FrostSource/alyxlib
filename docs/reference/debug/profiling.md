@@ -24,7 +24,7 @@ Profiler:Profile(func)
 
 **Returns**
 - **`any`**
-  Returns the result of `func`
+Returns the result of `func`
 
 ### GetMean
 

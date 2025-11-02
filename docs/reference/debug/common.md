@@ -11,7 +11,7 @@ Debug.version = value
 ```
 
 **Default value**
-  `"v2.1.0"`
+  `"v2.2.0"`
 
 ## Methods
 
@@ -35,7 +35,8 @@ Debug:FindEntityByPattern(pattern, exact)
   If true the pattern must match exactly, otherwise wildcards will be used.
 
 **Returns**
-- **`EntityHandle`**
+- **`EntityHandle?`**
+The found entity, or nil if not found.
 
 ### FindAllEntitiesByPattern
 
@@ -64,7 +65,10 @@ Debug:FindAllEntitiesByPattern(pattern, exact)
 Prints a formated indexed list of entities with custom property information.
 Also links children with their parents by displaying the index alongside the parent for easy look-up.
 
-`Debug.PrintEntityList(ents, {"getclassname", "getname", "getname"})`
+??? example
+    ```lua
+    Debug.PrintEntityList(ents, {"getclassname", "getname", "getname"})
+    ```
 
 If no properties are supplied the default properties are used: GetClassname, GetName, GetModelName
 If an empty property table is supplied only the base values are shown: Index, Handle, Parent
@@ -79,7 +83,7 @@ Debug:PrintEntityList(list, properties)
 - **`list`**  
   `EntityHandle[]`  
   List of entities to print.
-- **`properties`**  
+- **`properties`** *(optional)*  
   `string[]`  
   List of property patterns to search for.
 
@@ -200,6 +204,8 @@ Debug:PrintTableShallow(tbl)
 
 ### PrintList
 
+Prints an ordered table as a numbered list in the console.
+
 ```lua
 Debug:PrintList(tbl, prefix)
 ```
@@ -207,7 +213,25 @@ Debug:PrintList(tbl, prefix)
 **Parameters**
 
 - **`tbl`**  
-- **`prefix`**  
+  `table`  
+  Table to print.
+- **`prefix`** *(optional)*  
+  `string`  
+  Optional prefix for each line.
+
+### PrintSimpleTable
+
+Prints all the values in a table, one value per line, without any numbering or padding.
+
+```lua
+Debug:PrintSimpleTable(tbl)
+```
+
+**Parameters**
+
+- **`tbl`**  
+  `table`  
+  Table to print.
 
 ### PrintValue
 
@@ -241,7 +265,7 @@ Debug:ShowEntity(ent, duration)
 
 **Returns**
 - **`EntityHandle[]|EntityHandle?`**
-  Entities found, or the entity given
+Entities found, or the entity given
 
 ### PrintEntityCriteria
 
@@ -287,7 +311,7 @@ Debug:GetClassname(ent)
 
 **Returns**
 - **`string`**
-  The class name of the entity or "none" if not found.
+The class name of the entity or "none" if not found.
 
 ### PrintMetaClasses
 
@@ -301,25 +325,31 @@ Prints a visual ASCII graph showing the distribution of values between a min/max
 
 E.g.
 
-`Debug.PrintGraph(6, 0, 1, {`
-val1 = RandomFloat(0, 1),
-val2 = RandomFloat(0, 1),
-val3 = RandomFloat(0, 1)
-})
-->
-1^ []
-| []    []
-| [] [] []
-| [] [] []
-| [] [] []
-0 ---------->
-v  v  v
-a  a  a
-l  l  l
-3  1  2
-val3 = 0.96067351102829
-val1 = 0.5374761223793
-val2 = 0.7315416932106
+??? example
+    ```lua
+    Debug.PrintGraph(6, 0, 1, {
+        val1 = RandomFloat(0, 1),
+        val2 = RandomFloat(0, 1),
+        val3 = RandomFloat(0, 1)
+    })
+    ```
+
+??? example
+    ```lua
+    1^ []
+     | []    []
+     | [] [] []
+     | [] [] []
+     | [] [] []
+    0 ---------->
+       v  v  v
+       a  a  a
+       l  l  l
+       3  1  2
+    val3 = 0.96067351102829
+    val1 = 0.5374761223793
+    val2 = 0.7315416932106
+    ```
 
 ```lua
 Debug:PrintGraph(height, min_val, max_val, name_value_pairs)
@@ -457,11 +487,14 @@ Finds an entity by its handle as a string.
 
 Certain parts of the string can be omitted and the following are all valid:
 
-`Debug.FindEntityByHandleString("table", ":", "0x0012b03")`
-Debug.FindEntityByHandleString("table:", "0x0012b03")
-Debug.FindEntityByHandleString("table: 0x0012b03")
-Debug.FindEntityByHandleString("table", "0x0012b03")
-Debug.FindEntityByHandleString("0x0012b03")
+??? example
+    ```lua
+    Debug.FindEntityByHandleString("table", ":", "0x0012b03")
+    Debug.FindEntityByHandleString("table:", "0x0012b03")
+    Debug.FindEntityByHandleString("table: 0x0012b03")
+    Debug.FindEntityByHandleString("table", "0x0012b03")
+    Debug.FindEntityByHandleString("0x0012b03")
+    ```
 
 Please note that omitting the colon is not allowed in a single string, i.e. "table 0x0012b03" will not work.
 
@@ -499,8 +532,8 @@ Debug:IsEntityHandleString(handleString)
   The handle string
 
 **Returns**
-- **`string`**
-  The hash part or nil if not an entity handle
+- **`string?`**
+The hash part or nil if not an entity handle
 
 ### ToOrdinalString
 
@@ -518,3 +551,76 @@ Debug:ToOrdinalString(n)
 
 **Returns**
 - **`string`**
+
+### GetSourceLine
+
+Get the script name and line number of a function or traceback level.
+
+```lua
+Debug:GetSourceLine(f)
+```
+
+**Parameters**
+
+- **`f`**  
+  `integer`, `function`  
+  Level or function
+
+**Returns**
+- **`string`**
+
+### Try
+
+Safely calls a function while handling any errors.
+
+If an error occurs, a warning will be printed to the console.
+
+```lua
+Debug:Try(action)
+```
+
+**Parameters**
+
+- **`action`**  
+  `function`  
+  The function to call
+
+### TableStr
+
+Converts a table to single line string representation.
+
+```lua
+Debug:TableStr(tbl)
+```
+
+**Parameters**
+
+- **`tbl`**  
+  `table`  
+  The table to convert.
+
+**Returns**
+- **`string`**
+The string representation.
+
+## Functions
+
+### entspawn
+
+Spawns an entity synchronously.
+
+```lua
+entspawn(classname, spawnkeys)
+```
+
+**Parameters**
+
+- **`classname`**  
+  `string`  
+  The classname of the entity
+- **`spawnkeys`** *(optional)*  
+  `table`, `string`  
+  The spawnkeys table or targetname
+
+**Returns**
+- **`EntityHandle`**

@@ -47,7 +47,7 @@ Gesture.Gestures = value
 ```
 
 **Default value**
-  `{}`
+  `table`
 
 ### CurrentGesture
 
@@ -56,7 +56,7 @@ Gesture.CurrentGesture = value
 ```
 
 **Default value**
-  `{`
+  `table`
 
 ### PreviousGesture
 
@@ -65,7 +65,7 @@ Gesture.PreviousGesture = value
 ```
 
 **Default value**
-  `{`
+  `table`
 
 ### DicrepancyTolerance
 
@@ -141,10 +141,13 @@ Gets the current gesture name of a given hand.
 
 E.g.
 
-`local g = Gesture:GetGesture(Player.PrimaryHand)`
-if g.name == "ThumbsUp" then
-do_something()
-end
+??? example
+    ```lua
+    local g = Gesture:GetGesture(Player.PrimaryHand)
+    if g.name == "ThumbsUp" then
+        do_something()
+    end
+    ```
 
 ```lua
 Gesture:GetGesture(hand)

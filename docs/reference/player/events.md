@@ -25,8 +25,8 @@ ListenToPlayerEvent(event, callback, context)
   Optional: The context to pass to the function as `self`. If omitted the context will not passed to the callback.
 
 **Returns**
-- **`integer`**
-  eventID # ID used to unregister
+- **`integer`** *`eventID`*
+ID used to unregister
 
 ### StopListeningToPlayerEvent
 
@@ -63,7 +63,7 @@ ListenToEntityPickup(entity, callback, context)
 
 **Returns**
 - **`integer`**
-  ID used to unregister
+ID used to unregister
 
 ### StopListeningToEntityPickup
 
@@ -179,6 +179,12 @@ The player event that fires after the player spawned and activated.
 ### PlayerEventWeaponSwitch
 
 > **Inherits from:** `GameEventWeaponSwitch`
+
+| Field | Type | Description |
+| ---- | ---- | ----------- |
+| item | `EntityHandle|nil` | The handle of the weapon being switched to or nil if no weapon. |
+| item_class | `string` | Classname of the entity that was switched to. |
+| hand | `CPropVRHand` | Hand that the entity was switched to. |
 
 ## Aliases
 

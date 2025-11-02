@@ -63,7 +63,7 @@ Storage:Join(...)
 
 **Returns**
 - **`string`**
-  Joined string.
+Joined string.
 
 ### SaveType
 
@@ -108,7 +108,7 @@ Storage:SaveString(handle, name, value)
 
 **Returns**
 - **`boolean`**
-  If the save was successful.
+If the save was successful.
 
 ### SaveNumber
 
@@ -132,7 +132,7 @@ Storage:SaveNumber(handle, name, value)
 
 **Returns**
 - **`boolean`**
-  If the save was successful.
+If the save was successful.
 
 ### SaveBoolean
 
@@ -156,7 +156,7 @@ Storage:SaveBoolean(handle, name, bool)
 
 **Returns**
 - **`boolean`**
-  If the save was successful.
+If the save was successful.
 
 ### SaveVector
 
@@ -180,7 +180,7 @@ Storage:SaveVector(handle, name, vector)
 
 **Returns**
 - **`boolean`**
-  If the save was successful.
+If the save was successful.
 
 ### SaveQAngle
 
@@ -204,7 +204,7 @@ Storage:SaveQAngle(handle, name, qangle)
 
 **Returns**
 - **`boolean`**
-  If the save was successful.
+If the save was successful.
 
 ### SaveTableCustom
 
@@ -237,7 +237,7 @@ Storage:SaveTableCustom(handle, name, tbl, T, save_meta)
 
 **Returns**
 - **`boolean`**
-  If the save was successful.
+If the save was successful.
 
 ### SaveTable
 
@@ -265,7 +265,7 @@ Storage:SaveTable(handle, name, tbl)
 
 **Returns**
 - **`boolean`**
-  If the save was successful.
+If the save was successful.
 
 ### SaveEntity
 
@@ -292,7 +292,7 @@ Storage:SaveEntity(handle, name, entity)
 
 **Returns**
 - **`boolean`**
-  If the save was successful.
+If the save was successful.
 
 ### Save
 
@@ -319,7 +319,7 @@ Storage:Save(handle, name, value)
 
 **Returns**
 - **`boolean`**
-  If the save was successful.
+If the save was successful.
 
 ### LoadString
 
@@ -343,7 +343,7 @@ Storage:LoadString(handle, name, default)
 
 **Returns**
 - **`string|T`**
-  Saved string or `default`.
+Saved string or `default`.
 
 ### LoadNumber
 
@@ -367,7 +367,7 @@ Storage:LoadNumber(handle, name, default)
 
 **Returns**
 - **`number|T`**
-  Saved number or `default`.
+Saved number or `default`.
 
 ### LoadBoolean
 
@@ -391,7 +391,7 @@ Storage:LoadBoolean(handle, name, default)
 
 **Returns**
 - **`boolean|T`**
-  Saved boolean or `default`.
+Saved boolean or `default`.
 
 ### LoadVector
 
@@ -415,7 +415,7 @@ Storage:LoadVector(handle, name, default)
 
 **Returns**
 - **`Vector|T`**
-  Saved Vector or `default`.
+Saved Vector or `default`.
 
 ### LoadQAngle
 
@@ -439,7 +439,7 @@ Storage:LoadQAngle(handle, name, default)
 
 **Returns**
 - **`QAngle|T`**
-  Saved QAngle or `default`.
+Saved QAngle or `default`.
 
 ### LoadTableCustom
 
@@ -469,7 +469,7 @@ Storage:LoadTableCustom(handle, name, T, default)
 
 **Returns**
 - **`table|T`**
-  Saved table or `default`.
+Saved table or `default`.
 
 ### LoadTable
 
@@ -493,7 +493,7 @@ Storage:LoadTable(handle, name, default)
 
 **Returns**
 - **`table|T`**
-  Saved table or `default`.
+Saved table or `default`.
 
 ### LoadEntity
 
@@ -517,7 +517,7 @@ Storage:LoadEntity(handle, name, default)
 
 **Returns**
 - **`EntityHandle|T`**
-  Saved entity or `default`.
+Saved entity or `default`.
 
 ### Load
 
@@ -541,7 +541,7 @@ Storage:Load(handle, name, default)
 
 **Returns**
 - **`any`**
-  Saved value or `default`.
+Saved value or `default`.
 
 ### LoadAll
 
@@ -562,4 +562,4 @@ Storage:LoadAll(handle, direct)
 
 **Returns**
 - **`table`**
-  Table of loaded values (or `handle` if `direct` is true).
+Table of loaded values (or `handle` if `direct` is true).

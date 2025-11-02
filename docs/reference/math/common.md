@@ -20,7 +20,7 @@ math:sign(x)
 
 **Returns**
 - **`1|0|-1`**
-  Returns 1 if the number is positive, -1 if the number is negative, or 0 if the number is zero.
+Returns 1 if the number is positive, -1 if the number is negative, or 0 if the number is zero.
 
 ### trunc
 
@@ -41,7 +41,7 @@ math:trunc(number, places)
 
 **Returns**
 - **`number`**
-  The input number truncated to the specified decimal places.
+The input number truncated to the specified decimal places.
 
 ### round
 
@@ -62,7 +62,7 @@ math:round(number, decimals)
 
 **Returns**
 - **`number`**
-  The input number rounded to the specified decimal places or nearest whole number.
+The input number rounded to the specified decimal places or nearest whole number.
 
 ### isclose
 
@@ -74,15 +74,19 @@ Checks if two numbers are close to each other within a specified tolerance.
 1. **Relative Tolerance (`rel_tol`)**:
 ```lua
 local result1 = math.isclose(1000, 1020, 0.02)
--- Expected Output: true
--- Explanation: The difference (20) is within 2% of the larger number (1020), which allows a maximum difference of 20.4.
+
+    -- Expected Output: true
+
+    -- Explanation: The difference (20) is within 2% of the larger number (1020), which allows a maximum difference of 20.4.
 ```
 
 2. **Absolute Tolerance (`abs_tol`)**:
 ```lua
 local result2 = math.isclose(1000, 1015, nil, 15)
--- Expected Output: true
--- Explanation: The difference (15) is within the fixed absolute tolerance of 15.
+
+    -- Expected Output: true
+
+    -- Explanation: The difference (15) is within the fixed absolute tolerance of 15.
 ```
 
 ```lua
@@ -106,7 +110,7 @@ math:isclose(a, b, rel_tol, abs_tol)
 
 **Returns**
 - **`boolean`**
-  Returns `true` if the numbers are considered close based on the specified tolerances; otherwise, returns `false`.
+Returns `true` if the numbers are considered close based on the specified tolerances; otherwise, returns `false`.
 
 ### has_frac
 
@@ -124,7 +128,7 @@ math:has_frac(number)
 
 **Returns**
 - **`boolean`**
-  True if the number has a fractional part, false otherwise.
+True if the number has a fractional part, false otherwise.
 
 ### get_frac
 
@@ -142,4 +146,4 @@ math:get_frac(number)
 
 **Returns**
 - **`number`**
-  The fractional part of the number.
+The fractional part of the number.

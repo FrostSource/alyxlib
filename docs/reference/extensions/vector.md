@@ -14,7 +14,7 @@ Vector:Perpendicular()
 
 **Returns**
 - **`Vector`**
-  The perpendicular vector.
+The perpendicular vector.
 
 ### IsParallelTo
 
@@ -32,7 +32,7 @@ Vector:IsParallelTo(vector)
 
 **Returns**
 - **`boolean`**
-  True if the vectors are parallel, false otherwise.
+True if the vectors are parallel, false otherwise.
 
 ### Slerp
 
@@ -53,16 +53,19 @@ Vector:Slerp(target, t)
 
 **Returns**
 - **`Vector`**
-  The resulting vector after spherical linear interpolation.
+The resulting vector after spherical linear interpolation.
 
 ### LocalTranslate
 
 Translates a vector within a local coordinate system.
 This function computes a new vector by applying an offset relative to the local axes defined by the forward, right, and up direction vectors.
 
-- `offset.x`: Translation along the forward vector.
-- `offset.y`: Translation along the right vector.
-- `offset.z`: Translation along the up vector.
+
+                    - `offset.x`: Translation along the forward vector.
+
+                    - `offset.y`: Translation along the right vector.
+
+                    - `offset.z`: Translation along the up vector.
 
 ```lua
 Vector:LocalTranslate(offset, forward, right, up)
@@ -85,7 +88,7 @@ Vector:LocalTranslate(offset, forward, right, up)
 
 **Returns**
 - **`Vector`**
-  A new vector representing the translated position.
+A new vector representing the translated position.
 
 ### AngleDiff
 
@@ -103,7 +106,7 @@ Vector:AngleDiff(vector)
 
 **Returns**
 - **`number`**
-  Angle difference in degrees.
+Angle difference in degrees.
 
 ### SignedAngleDiff
 
@@ -124,7 +127,7 @@ Vector:SignedAngleDiff(vector, axis)
 
 **Returns**
 - **`number`**
-  The signed angle difference in degrees.
+The signed angle difference in degrees.
 
 ### Unpack
 
@@ -135,12 +138,18 @@ Vector:Unpack()
 ```
 
 **Returns**
-- **`number`**
-  x component
-- **`number`**
-  y component
-- **`number`**
-  z component
+
+- **`number`**  
+    
+x component
+
+- **`number`**  
+    
+y component
+
+- **`number`**  
+    
+z component
 
 ### LengthSquared
 
@@ -173,7 +182,7 @@ Vector:IsSimilarTo(vector, tolerance)
 
 **Returns**
 - **`boolean`**
-  Returns `true` if the vectors are similar within the tolerance, otherwise `false`.
+Returns `true` if the vectors are similar within the tolerance, otherwise `false`.
 
 ### Clone
 
@@ -185,4 +194,4 @@ Vector:Clone()
 
 **Returns**
 - **`Vector`**
-  A new vector with the same components as the original.
+A new vector with the same components as the original.

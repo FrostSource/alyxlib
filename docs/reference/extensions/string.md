@@ -119,7 +119,7 @@ string:trimleft(s, char)
 
 **Returns**
 - **`string`**
-  The trimmed string.
+The trimmed string.
 
 ### trimright
 
@@ -139,7 +139,7 @@ string:trimright(s, char)
 
 **Returns**
 - **`string`**
-  The trimmed string.
+The trimmed string.
 
 ### capitalize
 
@@ -164,4 +164,4 @@ string:capitalize(s, onlyFirstLetter)
 
 **Returns**
 - **`string`**
-  The capitalized string.
+The capitalized string.

@@ -2,8 +2,12 @@ site_name: AlyxLib
 site_url: https://github.com/FrostSource/alyxlib
 site_dir: site # Change on release
 
+repo_url: https://github.com/FrostSource/alyxlib
+repo_name: FrostSource/alyxlib
+
 theme:
   logo: assets/alyxlib_logo-white.svg
+  favicon: assets/alyxlib_logo-white.svg
   
   name: material
   
@@ -41,24 +45,39 @@ theme:
     - content.code.copy
     - content.code.annotate
     - navigation.top
+    - navigation.sections
 
 nav:
   - Home: index.md
-  - Getting Started: getting_started/index.md
+  - Getting Started:
+    - App Installation: getting_started/app_installation.md
+    - Python Installation: getting_started/python_installation.md
+    - Manual Installation: getting_started/manual_installation.md
+    - Developing: getting_started/developing.md
+    - Uploading to the workshop: getting_started/uploading_to_workshop.md
   - Components:
-    - components/index.md
+    # - components/index.md
     - AlyxLib: components/alyxlib.md
     - Player: components/player.md
     - Debug Menu: components/debug_menu.md
     - Entity Classes: components/classes.md
     - Input: components/input.md
+    - Storage: components/storage.md
     - Panorama: components/panorama.md
     - Global Precache: components/global_precache.md
-    - Debugging: components/debug.md
+    - Debugging: components/debugging.md
+    # - Hammer Exposed: components/exposed.md
     - Entity Mods:
+      - components/entity_mods/index.md
       - trigger_look_arbitrary: components/entity_mods/trigger_look_arbitrary.md
-      - another_test: components/entity_mods/another_test.md
-  - Console: console/index.md
+  - Console:
+    - console/index.md
+    - AlyxLib Commands: console/alyxlib.md
+    - Common Commands: console/common.md
+    - VR Commands: console/vr.md
+    - NoVR Commands: console/novr.md
+    - Debug Menu: console/debug_menu.md
+  - Addons: addons.md
   - Reference:
     - Class: reference/class.md
     - Globals: reference/globals.md
@@ -74,7 +93,9 @@ nav:
       - Queue: reference/data/queue.md
       - Stack: reference/data/stack.md
     - Debug:
+      - Commands: reference/debug/commands.md
       - Common: reference/debug/common.md
+      - Debug Menu: reference/debug/debug_menu.md
       - NoVR: reference/debug/novr.md
       - Profiling: reference/debug/profiling.md
     - Extensions:
@@ -89,11 +110,13 @@ nav:
       - EasyConvars: reference/helpers/easyconvars.md
     - Math:
       - Common: reference/math/common.md
+      - OBB: reference/math/obb.md
       - Weighted Random: reference/math/weighted_random.md
     - Panorama:
       - Core: reference/panorama/core.md
     - Player:
       - Core: reference/player/core.md
+      - Data: reference/player/data.md
       - Events: reference/player/events.md
       - Hands: reference/player/hands.md
       - Wrist Attachments: reference/player/wrist_attachments.md

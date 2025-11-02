@@ -6,7 +6,7 @@
 
 | Name | Value |
 | -------------------- | ----- |
-| `WristAttachments` | `{}` |
+| `WristAttachments` | `table` |
 
 ## Methods
 
@@ -94,7 +94,7 @@ WristAttachments:GetEntityAttachment(entity)
 
 **Returns**
 - **`WristAttachmentData?`**
-  The attachment data for the entity, if it is attached.
+The attachment data for the entity, if it is attached.
 
 ### IsEntityAttached
 
@@ -112,7 +112,7 @@ WristAttachments:IsEntityAttached(entity)
 
 **Returns**
 - **`boolean`**
-  True if attached, false otherwise.
+True if attached, false otherwise.
 
 ### Update
 

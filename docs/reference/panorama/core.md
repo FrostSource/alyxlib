@@ -6,7 +6,7 @@
 
 | Name | Value |
 | -------------------- | ----- |
-| `Panorama` | `{}` |
+| `Panorama` | `table` |
 
 ## Methods
 
@@ -60,7 +60,7 @@ Panorama:ToJSON(value)
 
 **Returns**
 - **`string`**
-  The JSON string
+The JSON string
 
 ### GetId
 

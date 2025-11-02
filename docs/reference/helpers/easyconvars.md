@@ -10,6 +10,26 @@
 | `EASYCONVARS_COMMAND` | `"command"` |
 | `EASYCONVARS_TOGGLE` | `"toggle"` |
 
+## Properties
+
+### version
+
+```lua
+EasyConvars.version = value
+```
+
+**Default value**
+  `"v2.0.0"`
+
+### registered
+
+```lua
+EasyConvars.registered = value
+```
+
+**Default value**
+  `table`
+
 ## Methods
 
 ### Register
@@ -17,12 +37,15 @@
 Creates a convar of any type.
 
 For simple creation use one of the following:
-- [EasyConvars:RegisterConvar](lua://EasyConvars.RegisterConvar)
-- [EasyConvars:RegisterToggle](lua://EasyConvars.RegisterToggle)
-- [EasyConvars:RegisterCommand](lua://EasyConvars.RegisterCommand)
+
+ - [EasyConvars:RegisterConvar](lua://EasyConvars.RegisterConvar)
+
+ - [EasyConvars:RegisterToggle](lua://EasyConvars.RegisterToggle)
+
+ - [EasyConvars:RegisterCommand](lua://EasyConvars.RegisterCommand)
 
 ```lua
-EasyConvars:Register(ctype, name, defaultValue, onUpdate, helpText, flags, displayFunc)
+EasyConvars:Register(ctype, name, defaultValue, onUpdate, helpText, flags)
 ```
 
 **Parameters**
@@ -34,20 +57,21 @@ EasyConvars:Register(ctype, name, defaultValue, onUpdate, helpText, flags, displ
   `string`  
   Name of the convar
 - **`defaultValue`**  
-  `any`, `fun():any`  
+  `any`, `function`  
   Will be converted to a string. If given a function, the value will be determined on player spawn.
 - **`onUpdate`** *(optional)*  
-  `(fun(val:string,`  
-  ...):any?)|(fun(newVal:string, oldVal:string):any) # Optional callback function.
+  `(function`  
+  Optional callback function.
 - **`helpText`** *(optional)*  
   `string`  
   Description of the convar
 - **`flags`** *(optional)*  
   `CVarFlags`, `integer`  
   Flag for the convar
-- **`displayFunc`** *(optional)*  
-  `fun(reg:`  
-  EasyConvarsRegisteredData) # The function called when the convar is called without any parameters. By default it just prints the value.
+
+**Returns**
+- **`EasyConvarsRegisteredData`**
+The new registered cvar data
 
 ### Warn
 
@@ -111,7 +135,7 @@ EasyConvars:Load(name)
 
 **Returns**
 - **`boolean`**
-  Returns true if the convar was loaded successfully.
+Returns true if the convar was loaded successfully.
 
 ### SetPersistent
 
@@ -137,7 +161,7 @@ EasyConvars:SetPersistent(name, persistent)
 Registers a new convar.
 
 ```lua
-EasyConvars:RegisterConvar(name, defaultValue, helpText, flags, postUpdate, displayFunc)
+EasyConvars:RegisterConvar(name, defaultValue, helpText, flags, postUpdate)
 ```
 
 **Parameters**
@@ -146,20 +170,17 @@ EasyConvars:RegisterConvar(name, defaultValue, helpText, flags, postUpdate, disp
   `string`  
   Name of the convar
 - **`defaultValue`** *(optional)*  
-  `"0"`, `any`, `fun():any`  
+  `"0"`, `any`, `function`  
   Default value of the convar, or an initializer function
 - **`helpText`** *(optional)*  
   `string`  
   Description of the convar
 - **`flags`** *(optional)*  
-  `nil`, `CVarFlags`, `integer`  
+  `CVarFlags`, `integer`  
   Flags for the convar
 - **`postUpdate`** *(optional)*  
-  `fun(newVal:string,`  
-  oldVal:string): any # Update function called after the value has been changed
-- **`displayFunc`** *(optional)*  
-  `fun(reg:`  
-  EasyConvarsRegisteredData) # Optional custom display function
+  `function`  
+  Update function called after the value has been changed
 
 ### RegisterCommand
 
@@ -175,8 +196,8 @@ EasyConvars:RegisterCommand(name, callback, helpText, flags)
   `string`  
   Name of the command
 - **`callback`**  
-  `fun(val:string,`  
-  ...):any? # Callback function
+  `function`  
+  Callback function
 - **`helpText`** *(optional)*  
   `string`  
   Description of the command
@@ -188,6 +209,8 @@ EasyConvars:RegisterCommand(name, callback, helpText, flags)
 
 Registers a new toggle convar.
 
+This is a command that has an on/off state like `god` or `notarget`.
+
 ```lua
 EasyConvars:RegisterToggle(name, defaultValue, helpText, flags, postUpdate, displayFunc)
 ```
@@ -198,7 +221,7 @@ EasyConvars:RegisterToggle(name, defaultValue, helpText, flags, postUpdate, disp
   `string`  
   Name of the convar
 - **`defaultValue`** *(optional)*  
-  `"0"`, `any`, `fun():any`  
+  `"0"`, `any`, `function`  
   Default value of the convar
 - **`helpText`** *(optional)*  
   `string`  
@@ -207,11 +230,47 @@ EasyConvars:RegisterToggle(name, defaultValue, helpText, flags, postUpdate, disp
   `nil`, `CVarFlags`, `integer`  
   Flags for the convar
 - **`postUpdate`** *(optional)*  
-  `fun(newVal:string,`  
-  oldVal:string): any # Update function called after the value has been changed
+  `function`  
+  Update function called after the value has been changed
 - **`displayFunc`** *(optional)*  
-  `fun(reg:`  
-  EasyConvarsRegisteredData) # Optional custom display function
+  `function`  
+  Optional custom display function
+
+### GetConvarData
+
+Gets the [EasyConvarsRegisteredData](lua://EasyConvarsRegisteredData) table for a given cvar name.
+
+```lua
+EasyConvars:GetConvarData(name)
+```
+
+**Parameters**
+
+- **`name`**  
+  `string`  
+  The name of the registered EasyConvar to get the data for
+
+**Returns**
+- **`EasyConvarsRegisteredData?`**
+The data associated with `name`
+
+### Exists
+
+Checks if an easy convar exists.
+
+```lua
+EasyConvars:Exists(name)
+```
+
+**Parameters**
+
+- **`name`**  
+  `string`  
+  Name of the convar
+
+**Returns**
+- **`boolean`**
+Returns true if the convar exists
 
 ### GetStr
 
@@ -229,7 +288,7 @@ EasyConvars:GetStr(name)
 
 **Returns**
 - **`string?`**
-  The value of the convar as a string or nil if convar does not exist
+The value of the convar as a string or nil if convar does not exist
 
 ### GetBool
 
@@ -247,7 +306,7 @@ EasyConvars:GetBool(name)
 
 **Returns**
 - **`boolean?`**
-  The value of the convar as a boolean or nil if convar does not exist
+The value of the convar as a boolean or nil if convar does not exist
 
 ### GetFloat
 
@@ -265,7 +324,7 @@ EasyConvars:GetFloat(name)
 
 **Returns**
 - **`number?`**
-  The value of the convar as a number or nil if convar does not exist
+The value of the convar as a number or nil if convar does not exist
 
 ### GetInt
 
@@ -283,7 +342,7 @@ EasyConvars:GetInt(name)
 
 **Returns**
 - **`integer?`**
-  The value of the convar as a truncated number or nil if convar does not exist
+The value of the convar as a truncated number or nil if convar does not exist
 
 ### SetStr
 
@@ -443,11 +502,12 @@ Data of a registered convar.
 | name | `string` | Name of the convar |
 | desc? | `string` | Description of the convar/command. Is displayed below the current value when called without a parameter. |
 | value | `string` | Raw value of the convar. |
-| callback? | `fun(val:string,` | ...):any? # Optional callback function whenever the convar is changed. |
-| initializer? | `fun():any` | Optional initializer function which will set the default value on player spawn. |
+| prevValue | `string` | Previous raw value of the convar. |
+| callback? | `function` | Optional callback function whenever the convar is changed. |
+| initializer? | `function` | Optional initializer function which will set the default value on player spawn. |
 | persistent | `boolean` | If the value is saved to player on change. |
 | wasChangedByUser | `boolean` | Whether the value was changed by the user. |
-| displayFunc? | `fun(val:any)` | The function called when the convar is called without any parameters. By default it just prints the value. |
+| displayFunc? | `function` | The function called when the convar is called without any parameters. By default it just prints the value. |
 | defaultValue? | `string` | The default value of the convar given by the registration. Not the value set in cfg or launch options. |
 
 ## Aliases

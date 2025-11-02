@@ -20,21 +20,21 @@ Animation:CreateAnimation(entity, getter, setter, targetValue, curveFunc)
   `EntityHandle`  
   Entity to animate
 - **`getter`**  
-  `fun(self:EntityHandle):T`  
+  `function`  
   Function to get the current value
 - **`setter`**  
-  `fun(self:EntityHandle,vec:T)`  
+  `function`  
   Function to set the new value
 - **`targetValue`**  
   `T`  
   Value to animate to
 - **`curveFunc`**  
-  `fun(startValue:T,endValue:T,time:number):T`  
+  `function`  
   Animation curve
 
 **Returns**
-- **`fun(time:number):boolean`**
-  New animation function
+- **`function`**
+New animation function
 
 ### Animate
 
@@ -50,16 +50,16 @@ Animation:Animate(entity, getter, setter, targetValue, curveFunc, time, finishCa
   `EntityHandle`  
   Entity to animate
 - **`getter`**  
-  `fun(self:EntityHandle):T`  
+  `function`  
   Function to get the current value
 - **`setter`**  
-  `fun(self:EntityHandle,vec:T)`  
+  `function`  
   Function to set the new value
 - **`targetValue`**  
   `T`  
   Value to animate to
 - **`curveFunc`**  
-  `Animation.Curves`, `fun(startValue:T,endValue:T,time:number):T`  
+  `Animation.Curves`, `function`  
   Animation curve
 - **`time`**  
   `number`  
@@ -79,16 +79,16 @@ CBaseEntity:Animate(getter, setter, targetValue, curveFunc, time, finishCallback
 **Parameters**
 
 - **`getter`**  
-  `fun(self:EntityHandle):T`  
+  `function`  
   Function to get the current value
 - **`setter`**  
-  `fun(self:EntityHandle,vec:T)`  
+  `function`  
   Function to set the new value
 - **`targetValue`**  
   `T`  
   Value to animate to
 - **`curveFunc`**  
-  `Animation.Curves`, `fun(startValue:T,endValue:T,time:number):T`  
+  `Animation.Curves`, `function`  
   Animation curve
 - **`time`**  
   `number`  

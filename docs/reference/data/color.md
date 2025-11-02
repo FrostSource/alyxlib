@@ -15,7 +15,7 @@ Color:ToHexString()
 
 **Returns**
 - **`string`**
-  The hexadecimal representation of this `Color`.
+The hexadecimal representation of this `Color`.
 
 ### ToVector
 
@@ -27,7 +27,7 @@ Color:ToVector()
 
 **Returns**
 - **`Vector`**
-  The color vector.
+The color vector.
 
 ### ToDecimalVector
 
@@ -39,7 +39,7 @@ Color:ToDecimalVector()
 
 **Returns**
 - **`Vector`**
-  The color vector.
+The color vector.
 
 ### SetRGB
 
@@ -75,12 +75,18 @@ Color:GetHSL()
 ```
 
 **Returns**
-- **`number`**
-  h # Hue color value in range [0-360]
-- **`number`**
-  s # Saturation color value in range [0-100]
-- **`number`**
-  l # Lightness color value in range [0-100]
+
+- **`number`**  
+   *`h`*  
+Hue color value in range [0-360]
+
+- **`number`**  
+   *`s`*  
+Saturation color value in range [0-100]
+
+- **`number`**  
+   *`l`*  
+Lightness color value in range [0-100]
 
 ### SetHSL
 

@@ -32,7 +32,7 @@ CAI_BaseNPC:StartSchedule(state, type, interruptability, reacquire, goal)
 
 **Returns**
 - **`EntityHandle`**
-  The schedule entity.
+The schedule entity.
 
 ### StopSchedule
 
@@ -76,7 +76,7 @@ CAI_BaseNPC:HasEnemyTarget()
 
 **Returns**
 - **`boolean`**
-  True if the NPC has an enemy target.
+True if the NPC has an enemy target.
 
 ### EstimateEnemyTarget
 
@@ -96,7 +96,7 @@ CAI_BaseNPC:EstimateEnemyTarget(distanceTolerance)
 
 **Returns**
 - **`EntityHandle?`**
-  Estimated enemy target.
+Estimated enemy target.
 
 ### SetRelationship
 

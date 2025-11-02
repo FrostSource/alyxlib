@@ -10,8 +10,10 @@ Finds the best matching entity based on a given unique name (if provided),
 classname, position, and search radius.
 
 If a name is provided, it attempts to find an exact match by name first.
-- If only one entity with that name exists, it is returned immediately.
-- If multiple entities share the name, the one closest to the given position is chosen.
+
+ - If only one entity with that name exists, it is returned immediately.
+
+ - If multiple entities share the name, the one closest to the given position is chosen.
 
 If no name is provided, the function falls back to finding the nearest entity of the given classname.
 
@@ -36,7 +38,7 @@ Entities:FindBestMatching(name, class, position, radius)
 
 **Returns**
 - **`EntityHandle`**
-  The best-matching entity found, or nil if none found
+The best-matching entity found, or nil if none found
 
 ### All
 
@@ -78,10 +80,14 @@ Entities:FindInPrefab(entity, name)
   `string`  
 
 **Returns**
-- **`EntityHandle?`**
-  The found entity, nil if not found.
-- **`string`**
-  Prefab part of the name.
+
+- **`EntityHandle?`**  
+    
+The found entity, nil if not found.
+
+- **`string`**  
+    
+Prefab part of the name.
 
 ### FindInPrefab
 
@@ -99,9 +105,13 @@ CEntityInstance:FindInPrefab(name)
   `string`  
 
 **Returns**
-- **`EntityHandle?`**
-- **`string`**
-  Prefab part of the name.
+
+- **`EntityHandle?`**  
+    
+
+- **`string`**  
+    
+Prefab part of the name.
 
 ### FindAllInCone
 
@@ -131,7 +141,7 @@ Entities:FindAllInCone(origin, direction, maxDistance, maxAngle, checkEntityBoun
 
 **Returns**
 - **`EntityHandle[]`**
-  List of entities found within the cone.
+List of entities found within the cone.
 
 ### FindAllInBounds
 
@@ -155,7 +165,7 @@ Entities:FindAllInBounds(mins, maxs, checkEntityBounds)
 
 **Returns**
 - **`EntityHandle[]`**
-  List of entities found.
+List of entities found.
 
 ### FindAllInBox
 
@@ -179,7 +189,7 @@ Entities:FindAllInBox(width, length, height)
 
 **Returns**
 - **`EntityHandle[]`**
-  List of entities found.
+List of entities found.
 
 ### FindAllInCube
 
@@ -200,7 +210,7 @@ Entities:FindAllInCube(origin, size)
 
 **Returns**
 - **`EntityHandle[]`**
-  List of entities found.
+List of entities found.
 
 ### FindNearest
 
@@ -221,7 +231,7 @@ Entities:FindNearest(origin, maxRadius)
 
 **Returns**
 - **`EntityHandle?`**
-  The nearest entity found, or nil if none found.
+The nearest entity found, or nil if none found.
 
 ### FindAllByClassnameList
 
@@ -296,17 +306,20 @@ Returns an iterator to loop over all NPC entities in the map using a `for` loop.
 
 E.g.
 
-`for npc in Entities:IterateAllNPCs() do`
-print(npc:GetClassname())
-end
+??? example
+    ```lua
+    for npc in Entities:IterateAllNPCs() do
+        print(npc:GetClassname())
+    end
+    ```
 
 ```lua
 Entities:IterateAllNPCs()
 ```
 
 **Returns**
-- **`fun():CAI_BaseNPC?`**
-  Iterator
+- **`function`**
+Iterator
 
 ### FindAllByModelWithin
 

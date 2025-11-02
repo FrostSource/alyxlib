@@ -6,7 +6,7 @@
 
 | Name | Value |
 | -------------------- | ----- |
-| `AlyxLibAddons` | `{}` |
+| `AlyxLibAddons` | `table` |
 
 ## Functions
 
@@ -41,15 +41,17 @@ RegisterAlyxLibAddon(name, version, workshopID, shortName, minAlyxLibVersion, ma
 
 **Returns**
 - **`integer`**
-  The index of the addon for use in other AlyxLib functions
+The index of the addon for use in other AlyxLib functions
 
 ### RegisterAlyxLibDiagnostic
 
 Registers a diagnostic function for an addon to help users describe issues back to the developer.
 
 The diagnostic function should return two values:
-- `true` if the addon is working as expected, `false` otherwise
-- An array of strings or a string containing diagnostic messages
+
+  - `true` if the addon is working as expected, `false` otherwise
+
+  - An array of strings or a string containing diagnostic messages
 
 Common AlyxLib and game information will be printed alongside the diagnostic messages for users to copy.
 
@@ -63,7 +65,7 @@ RegisterAlyxLibDiagnostic(addonIndex, func)
   `integer`  
   The index of the addon for use in other AlyxLib functions
 - **`func`**  
-  `fun():boolean,(string|string[])?`  
+  `function`  
   Diagnostic function to check if the addon is working, and any diagnostic messages
 
 ### CompareVersions
@@ -74,9 +76,12 @@ It compares the versions based on their `major`, `minor`, and `patch` components
 If a version is incomplete, the missing components are assumed to be 0.
 
 
-- `-1` if `v1` is older than `v2`.
-- `1` if `v1` is newer than `v2`.
-- `0` if both versions are equal.
+
+  - `-1` if `v1` is older than `v2`.
+
+  - `1` if `v1` is newer than `v2`.
+
+  - `0` if both versions are equal.
 
 ```lua
 CompareVersions(v1, v2)
@@ -125,17 +130,41 @@ GetEnabledAddons()
 **Returns**
 - **`string[]`**
 
+### IsAddonEnabled
+
+Checks if the addon with the given `workshopID` is enabled.
+
+```lua
+IsAddonEnabled(workshopID)
+```
+
+**Parameters**
+
+- **`workshopID`**  
+  `string`  
+  The workshop ID of the addon
+
+**Returns**
+- **`boolean`**
+`true` if the addon is enabled, `false` otherwise
+
 ### IsEntity
 
 Get if the given `handle` value is an entity, regardless of if it's still alive.
 
 A common usage is replacing the often used entity check:
 
-`if entity ~= nil and IsValidEntity(entity) then`
+??? example
+    ```lua
+    if entity ~= nil and IsValidEntity(entity) then
+    ```
 
 With:
 
-`if IsEntity(entity, true) then`
+??? example
+    ```lua
+    if IsEntity(entity, true) then
+    ```
 
 ```lua
 IsEntity(handle, checkValidity)
@@ -223,8 +252,7 @@ ifrequire(modname, callback)
 - **`modname`**  
   `string`  
 - **`callback`**  
-  `fun(mod_result:`  
-  unknown)?
+  `function?`  
 
 **Returns**
 - **`unknown`**
@@ -387,12 +415,16 @@ Makes a function easier to call from Hammer through I/O.
 
 E.g.
 
-`local function TriggerRelay(io)`
-DoEntFire("my_relay", "Trigger", "", 0, io.activator, io.caller)
-end
-Expose(TriggerRelay)
--- Or with alternate name
-Expose(TriggerRelay, "RelayInput")
+??? example
+    ```lua
+    local function TriggerRelay(io)
+        DoEntFire("my_relay", "Trigger", "", 0, io.activator, io.caller)
+    end
+    Expose(TriggerRelay)
+
+    -- Or with alternate name
+    Expose(TriggerRelay, "RelayInput")
+    ```
 
 ```lua
 Expose(func, name, scope)
@@ -498,10 +530,14 @@ TableRandom(tbl)
   Table to get a random pair from.
 
 **Returns**
-- **`any`**
-  key # Random key selected.
-- **`any`**
-  value # Value linked to the random key.
+
+- **`any`**  
+   *`key`*  
+Random key selected.
+
+- **`any`**  
+   *`value`*  
+Value linked to the random key.
 
 ### TableKeys
 
@@ -551,7 +587,46 @@ TableSize(tbl)
 
 **Returns**
 - **`number`**
-  The size of the table.
+The size of the table.
+
+### TablePluck
+
+Collects all values for a specific key from a list of tables.
+
+```lua
+TablePluck(tbl, key)
+```
+
+**Parameters**
+
+- **`tbl`**  
+  `table[]`  
+  List of tables.
+- **`key`**  
+  `any`  
+  Key to get values from.
+
+**Returns**
+- **`any[]`**
+List of values found for the key.
+
+### TableFindIndex
+
+Returns the index of the first value that matches the predicate.
+
+```lua
+TableFindIndex(list, predicate)
+```
+
+**Parameters**
+
+- **`list`**  
+  `table`  
+- **`predicate`**  
+  `function`  
+
+**Returns**
+- **`integer`**
 
 ### ArrayRandom
 
@@ -574,10 +649,14 @@ ArrayRandom(array, min, max)
   Optional maximum bound.
 
 **Returns**
-- **`T`**
-  one # The random value.
-- **`integer`**
-  two # The random index.
+
+- **`T`**  
+   *`one`*  
+The random value.
+
+- **`integer`**  
+   *`two`*  
+The random index.
 
 ### ArrayShuffle
 
@@ -613,7 +692,7 @@ ArrayRemove(array, pos)
 
 **Returns**
 - **`T`**
-  The same array passed in.
+The same array passed in.
 
 ### ArrayRemoveVal
 
@@ -636,7 +715,7 @@ ArrayRemoveVal(array, value)
 
 **Returns**
 - **`T`**
-  The same array passed in
+The same array passed in
 
 ### ArrayAppend
 
@@ -659,7 +738,7 @@ ArrayAppend(array1, array2)
 
 **Returns**
 - **`T1[]|T2[]`**
-  The new appended array.
+The new appended array.
 
 ### ArrayAppends
 
@@ -679,7 +758,7 @@ ArrayAppends(array)
 
 **Returns**
 - **`T[]`**
-  The new appended array.
+The new appended array.
 
 ### TraceLineExt
 
@@ -701,7 +780,7 @@ TraceLineExt(parameters)
 
 ### TraceLineWorld
 
-Does a raytrace along a line until it hits or the world or reaches the end of the line.
+Does a raytrace along a line until it hits the world or reaches the end of the line.
 
 ```lua
 TraceLineWorld(parameters)
@@ -832,7 +911,7 @@ truthy(value)
 
 **Returns**
 - **`boolean`**
-  Returns true if the value is truthy, false otherwise.
+Returns true if the value is truthy, false otherwise.
 
 ### SearchEntity
 
@@ -852,10 +931,14 @@ SearchEntity(entity, searchPattern)
   `string`  
 
 **Returns**
-- **`string?`**
-  key # The full name of the first key matching `searchPattern`.
-- **`any?`**
-  value # The value of the key found.
+
+- **`string?`**  
+   *`key`*  
+The full name of the first key matching `searchPattern`.
+
+- **`any?`**  
+   *`value`*  
+The value of the key found.
 
 ### LerpAngle
 
@@ -879,7 +962,7 @@ LerpAngle(t, angle_start, angle_end)
 
 **Returns**
 - **`number`**
-  The interpolated angle.
+The interpolated angle.
 
 ### CalcClosestPointOnEntityOBBAdjusted
 
@@ -911,7 +994,7 @@ DefaultTable(tbl, default)
 
 **Returns**
 - **`T`**
-  The table with the default value assigned.
+The table with the default value assigned.
 
 ### Wrap
 
@@ -935,7 +1018,7 @@ Wrap(value, min, max)
 
 **Returns**
 - **`number`**
-  The wrapped value within the specified range.
+The wrapped value within the specified range.
 
 ### CreateToggleBehavior
 
@@ -943,19 +1026,25 @@ This function creates a toggle behavior function that switches between two provi
 
 Example:
 
-`local alphaToggle = CreateToggleBehavior(`
-function(name)
-print(name .. "Alpha went below 50%")
-end,
-function(name)
-print(name .. "Alpha went above 50%")
-end
-)
+??? example
+    ```lua
+    local alphaToggle = CreateToggleBehavior(
+        function(name)
+            print(name .. "Alpha went below 50%")
+        end,
+        function(name)
+            print(name .. "Alpha went above 50%")
+        end
+    )
+    ```
 
-`thisEntity:SetThink("thinker", function()`
-alphaToggle(thisEntity:GetRenderAlpha() < 128, thisEntity:GetName())
-return 0
-end, 0)
+??? example
+    ```lua
+    thisEntity:SetThink("thinker", function()
+        alphaToggle(thisEntity:GetRenderAlpha() < 128, thisEntity:GetName())
+        return 0
+    end, 0)
+    ```
 
 ```lua
 CreateToggleBehavior(on, off)
@@ -964,15 +1053,15 @@ CreateToggleBehavior(on, off)
 **Parameters**
 
 - **`on`** *(optional)*  
-  `fun(...):`  
-  any # Function called when the condition is true.
+  `function`  
+  Function called when the condition is true.
 - **`off`** *(optional)*  
-  `fun(...):`  
-  any # Function called when the condition is false.
+  `function`  
+  Function called when the condition is false.
 
 **Returns**
-- **`fun(condition:`**
-  boolean, ...): any # The created toggle function.
+- **`function`**
+The created toggle function.
 
 ### CalcClosestCornerOnEntityAABB
 
@@ -989,6 +1078,46 @@ CalcClosestCornerOnEntityAABB(entity, position)
 - **`position`**  
   `Vector`  
 
+### SetPhysVelocity
+
+Sets the absolute world velocity of an entity.
+
+```lua
+SetPhysVelocity(velocity)
+```
+
+**Parameters**
+
+- **`velocity`**  
+  `Vector`  
+  The target velocity in units/second.
+
+### RandomChance
+
+Returns one of two values based on a percentage chance.
+
+If the random roll succeeds, returns `onTrue` (default: true).
+If it fails, returns `onFalse` (default: false).
+
+```lua
+RandomChance(chance, onTrue, onFalse)
+```
+
+**Parameters**
+
+- **`chance`**  
+  `number`  
+  The percentage chance of success (0-100).
+- **`onTrue`** *(optional)*  
+  `any`  
+  Value to return if the chance succeeds (default: true).
+- **`onFalse`** *(optional)*  
+  `any`  
+  Value to return if the chance fails (default: false).
+
+**Returns**
+- **`boolean|any`**
+
 ## Types
 
 ### AlyxLibAddon
@@ -1003,7 +1132,7 @@ A registered AlyxLib addon.
 | minAlyxLibVersion | `string` | Minimum AlyxLib version that this addon works with |
 | maxAlyxLibVersion | `string` | Maximum AlyxLib version that this addon works with |
 | workshopID? | `string` | The ID of the addon on the Steam workshop |
-| diagnosticFunction? | `fun():boolean,(string|string[])` | Diagnostic function to check if the addon is working, and any diagnostic messages |
+| diagnosticFunction? | `function` | Diagnostic function to check if the addon is working, and any diagnostic messages |
 
 ### TraceTableLineExt
 

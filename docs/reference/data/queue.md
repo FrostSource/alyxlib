@@ -97,7 +97,7 @@ Queue:MoveToBack(value)
 
 **Returns**
 - **`boolean`**
-  True if value was found and moved.
+True if value was found and moved.
 
 ### MoveToFront
 
@@ -116,7 +116,7 @@ Queue:MoveToFront(value)
 
 **Returns**
 - **`boolean`**
-  True if value was found and moved.
+True if value was found and moved.
 
 ### Contains
 
@@ -162,11 +162,15 @@ Queue:pairs()
 ```
 
 **Returns**
-- **`fun(table:`**
-  any[], i: integer):integer, any
-- **`any[]`**
-- **`number`**
-  i
+
+- **`function`**  
+    
+
+- **`any[]`**  
+    
+
+- **`number`**  
+   *`i`*  
 
 ## Functions
 
@@ -177,11 +181,14 @@ Last value is at the front of the queue.
 
 E.g.
 
-`local queue = Queue(`
-"Back",
-"Middle",
-"Front"
-)
+??? example
+    ```lua
+    local queue = Queue(
+        "Back",
+        "Middle",
+        "Front"
+    )
+    ```
 
 ```lua
 Queue(...)

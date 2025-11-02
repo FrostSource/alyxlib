@@ -31,6 +31,7 @@ class Parameter:
 
 @dataclass
 class Return:
+    name: str
     type_: str
     types: List[str] = field(default_factory=list)
     description: str = ""
@@ -169,6 +170,84 @@ def apply_replacements(content: str, replacements: list[dict[str, str]]) -> str:
             content = content.replace(to_replace, with_replacement)
     return content
 
+def replace_fun_with_function(line: str) -> str:
+    """
+    Replaces all instances of EmmyLua fun definitions with "function".
+    Only replaces outer fun instances when nested, preserving return names and comments.
+    
+    Args:
+        line: A string containing EmmyLua annotation
+        
+    Returns:
+        The line with fun definitions replaced by "function"
+    """
+    
+    def find_matching_paren(s, start):
+        """Find the matching closing parenthesis for an opening one."""
+        count = 1
+        i = start + 1
+        while i < len(s) and count > 0:
+            if s[i] == '(':
+                count += 1
+            elif s[i] == ')':
+                count -= 1
+            i += 1
+        return i - 1 if count == 0 else -1
+    
+    result = line
+    
+    while True:
+        match = re.search(r'fun\(', result)
+        if not match:
+            break
+        
+        match_start = match.start()
+        paren_start = match.end() - 1
+        
+        # Find the matching closing parenthesis
+        paren_end = find_matching_paren(result, paren_start)
+        
+        if paren_end == -1:
+            break
+        
+        # Now find where the fun definition ends
+        pos = paren_end + 1
+        
+        # Skip the return type if it exists (starts with :)
+        if pos < len(result) and result[pos:pos+1] == ':':
+            pos += 1
+            # Skip spaces after colon
+            while pos < len(result) and result[pos] == ' ':
+                pos += 1
+            
+            # Read until we hit a space before a return name, a #, or end of line
+            while pos < len(result):
+                char = result[pos]
+                
+                # If we hit a space, check what comes after
+                if char == ' ':
+                    # Look ahead to see if it's followed by a return name or comment
+                    lookahead = pos + 1
+                    while lookahead < len(result) and result[lookahead] == ' ':
+                        lookahead += 1
+                    
+                    # If next char is #, newline, or a lowercase letter (return name), stop
+                    if lookahead >= len(result) or result[lookahead] in ('#', '\n'):
+                        break
+                    # Check if it looks like a return name (lowercase or underscore start)
+                    if lookahead < len(result) and (result[lookahead].islower() or result[lookahead] == '_'):
+                        # Check if previous char suggests end of type
+                        prev = result[pos - 1]
+                        if prev not in ('|', ','):
+                            break
+                    
+                pos += 1
+        
+        # Replace from match_start to pos with "function"
+        result = result[:match_start] + "function" + result[pos:]
+    
+    return result
+
 class LuaDocParser:
     def __init__(self, config_manager: Optional[ConfigManager] = None):
         self.config = config_manager or ConfigManager()
@@ -269,6 +348,8 @@ class LuaDocParser:
             match = re.search(pattern, content)
             if match:
                 value = match.group(1).strip()
+                if value.startswith('{'):
+                    return 'table'
                 # Clean up the value
                 if value.endswith(','):
                     value = value[:-1].strip()
@@ -349,9 +430,13 @@ class LuaDocParser:
         returns = []
         exposed_name: str = ''
         is_deprecated: bool = False
+        inside_example_code = False
+        example_code_indent = 0
         
         for line in comment_lines:
             if line.startswith('@param'):
+                if 'fun(' in line:
+                    line = replace_fun_with_function(line)
                 match = re.match(r'@param\s+(\w+)(\?)?\s+(\S+)(?:\s+(.+))?', line)
                 if match:
                     param_name, is_optional, param_type, param_desc = match.groups()
@@ -372,10 +457,13 @@ class LuaDocParser:
                         last_param.types.extend(split_type_string(param_type))
                     
             elif line.startswith('@return'):
-                match = re.match(r'@return\s+(\S+)(?:\s+(.+))?', line)
+                if 'fun(' in line:
+                    line = replace_fun_with_function(line)
+                match = re.match(r'@return\s+(\S+)(?:\s+(\w+))?(?:\s+(.+))?', line)
                 if match:
-                    return_type, return_desc = match.groups()
+                    return_type, return_name, return_desc = match.groups()
                     returns.append(Return(
+                        name=return_name,
                         type_=return_type,
                         types=split_type_string(return_type),
                         description=clean_comment(return_desc or '')
@@ -387,9 +475,21 @@ class LuaDocParser:
             elif line.startswith('@deprecated'):
                 is_deprecated = True
             elif not line.startswith('@'):
-                if description_lines and description_lines[-1].strip() == '' and self._looks_like_example_code(line):
-                    description_lines.append(f"`{line.strip()}`")
+                if line.lstrip().startswith('-'):
+                    # Probably a list item
+                    description_lines.append('')
+                    description_lines.append(line)
+                elif description_lines and (description_lines[-1].strip() == '' or inside_example_code) and self._looks_like_example_code(line):
+                    if not inside_example_code:
+                        inside_example_code = True
+                        description_lines.append('??? example')
+                        description_lines.append('    ```lua')
+                        example_code_indent = len(line) - len(line.lstrip())
+                    description_lines.append(f"    {line[example_code_indent:]}")
                 else:
+                    if inside_example_code:
+                        inside_example_code = False
+                        description_lines.append('    ```')
                     description_lines.append(line.strip())
         
         # If no parameters documented but function has parameters, extract from signature
@@ -446,6 +546,8 @@ class LuaDocParser:
                     inherits = inherit_str.split(',')
                 pass
             elif line_content.startswith('@field'):
+                if 'fun(' in line_content:
+                    line_content = replace_fun_with_function(line_content)
                 match = re.match(r'@field\s+(\w+)(\?)?\s+(\S+)(?:\s+(.+))?', line_content)
                 if match:
                     field_name, is_optional, field_type, field_desc = match.groups()
@@ -720,14 +822,23 @@ class MarkdownGenerator:
         if method.returns:
             sections.append("**Returns**")
             for ret in method.returns:
-                sections.append(f"- **`{ret.type_}`**")
+                name_str = f" *`{ret.name}`*" if ret.name else ""
+                # appear as list if more than one
+                if len(method.returns) > 1:
+                    sections.append("")
+                    sections.append(f"- **`{ret.type_}`**  ")
+                    sections.append(f"  {name_str}  ")
+                else:
+                    sections.append(f"- **`{ret.type_}`**{name_str}")
                 if ret.description:
-                    sections.append(f"  {ret.description}")
+                    sections.append(f"{ret.description}")
             sections.append("")
         
-        if method.exposed_name:
-            sections.append(f"!!! exposed \"[Exposed](PUT LINK HERE) To Hammer as `{method.exposed_name}`\"")
-            sections.append("")
+        # Exposing is pointless because callscriptfunction is case-insensitive
+        # no reason to display
+        # if method.exposed_name:
+        #     sections.append(f"!!! exposed \"[Exposed](PUT LINK HERE) To Hammer as `{method.exposed_name}`\"")
+        #     sections.append("")
         
         return sections
 
@@ -792,9 +903,9 @@ controls/input:
 
 def main():
     parser = argparse.ArgumentParser(description='Generate Markdown API documentation from Lua files')
-    parser.add_argument('input_dir', help='Input directory containing Lua files')
-    parser.add_argument('output_dir', help='Output directory for markdown files')
-    parser.add_argument('--config', '-c', help='Configuration file (JSON or YAML) specifying what to document')
+    parser.add_argument('--input_dir', help='Input directory containing Lua files', default='scripts/vscripts/alyxlib/')
+    parser.add_argument('--output_dir', help='Output directory for markdown files', default='docs/reference/')
+    parser.add_argument('--config', '-c', help='Configuration file (JSON or YAML) specifying what to document', default='reference_config.yaml')
     parser.add_argument('--create-config', help='Create an example configuration file')
     parser.add_argument('--config-format', choices=['json', 'yaml'], default='yaml',
                        help='Format for created config file')

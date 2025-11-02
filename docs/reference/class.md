@@ -6,7 +6,7 @@
 
 | Name | Value |
 | -------------------- | ----- |
-| `EntityClassNameMap` | `{}` |
+| `EntityClassNameMap` | `table` |
 | `READY_NORMAL` | `0` |
 | `READY_GAME_LOAD` | `2` |
 | `READY_TRANSITION` | `3` |
@@ -85,7 +85,7 @@ EntityClass:Output(output, func)
 - **`output`**  
   `string`  
 - **`func`**  
-  `fun(...):any`  
+  `function`  
 
 ### GameEvent
 
@@ -100,8 +100,7 @@ EntityClass:GameEvent(gameEvent, func)
 - **`gameEvent`**  
   `GameEventsAll`  
 - **`func`**  
-  `fun(self:`  
-  EntityClass, params):any
+  `function`  
 
 ### PlayerEvent
 
@@ -116,8 +115,7 @@ EntityClass:PlayerEvent(playerEvent, func)
 - **`playerEvent`**  
   `PLAYER_EVENTS_ALL`  
 - **`func`**  
-  `fun(self,`  
-  params):any
+  `function`  
 
 ## Functions
 
@@ -139,10 +137,14 @@ inherit(script, entity)
   Optional entity which will inherit the script. If not used, the entity running the code will inherit.
 
 **Returns**
-- **`T`**
-  Base class, the newly created class.
-- **`T`**
-  Self instance, the entity inheriting `base`.
+
+- **`T`**  
+    
+Base class, the newly created class.
+
+- **`T`**  
+    
+Self instance, the entity inheriting `base`.
 
 ### entity
 
@@ -165,14 +167,22 @@ entity(name)
   Internal class name
 
 **Returns**
-- **`any`**
-  Base class, the newly created class.
-- **`T`**
-  Self instance, the entity inheriting `base`.
-- **`table`**
-  Super class, the first inheritance of `base`.
-- **`table`**
-  Private table
+
+- **`any`**  
+    
+Base class, the newly created class.
+
+- **`T`**  
+    
+Self instance, the entity inheriting `base`.
+
+- **`table`**  
+    
+Super class, the first inheritance of `base`.
+
+- **`table`**  
+    
+Private table
 
 ### printinherits
 
@@ -205,7 +215,7 @@ getvalvemeta(ent)
 
 **Returns**
 - **`table?`**
-  Metatable originally assigned to `ent`.
+Metatable originally assigned to `ent`.
 
 ### getinherits
 
@@ -224,7 +234,7 @@ getinherits(class)
 
 **Returns**
 - **`EntityClass[]`**
-  List of class tables.
+List of class tables.
 
 ### isinstance
 
@@ -245,11 +255,11 @@ isinstance(ent, class)
 
 **Returns**
 - **`boolean`**
-  True if `ent` inherits `class`, false otherwise.
+True if `ent` inherits `class`, false otherwise.
 
 ### IsClassEntity
 
-Check if an entity is using the entity class system.
+Check if an entity is using the AlyxLib class system.
 
 ```lua
 IsClassEntity(ent)
@@ -263,7 +273,7 @@ IsClassEntity(ent)
 
 **Returns**
 - **`boolean`**
-  True if `ent` is a class entity, false otherwise.
+True if `ent` is a class entity, false otherwise.
 
 ## Types
 
@@ -280,16 +290,16 @@ The top-level entity class that provides base functionality.
 | __outputs | `table<string,` | function> # Map of output names to functions that will be connected on spawn. |
 | __game_events | `table<string,` | function> # Map of game events to functions that will be listened to on spawn. |
 | __player_events | `table<string,` | function> # Map of player events to functions that will be listened to on spawn. |
-| __rawget | `fun(self:` | EntityClass, key: string): any # Custom rawget function to get a value from meta.__values without checking inherits. |
+| __rawget | `function` | Custom rawget function to get a value from meta.__values without checking inherits. |
 | Initiated | `boolean` | If the class entity has been activated. |
 | IsThinking | `boolean` | If the entity is currently thinking with `Think` function. |
-| OnActivate | `fun(self:` | EntityClass, activateType: ActivationType) # Called automatically on `Activate` if defined. |
-| OnReady | `fun(self:` | EntityClass, readyType: OnReadyType) # Called automatically after `Activate`, if defined, when EasyConvars and Player are initialized. |
-| OnSpawn | `fun(self:` | EntityClass, spawnkeys: CScriptKeyValues) # Called automatically on `Spawn` if defined. |
-| UpdateOnRemove | `fun(self:` | EntityClass) # Called before the entity is killed. |
-| OnBreak | `fun(self:` | EntityClass, inflictor: EntityHandle) # Called when a breakable entity is broken. |
-| OnTakeDamage | `fun(self:` | EntityClass, damageTable: OnTakeDamageTable) # Called when entity takes damage. |
-| Precache | `fun(self:` | EntityClass, context: CScriptPrecacheContext) # Called before Spawn for precaching. |
+| OnActivate | `function` | Called automatically on `Activate` if defined. |
+| OnReady | `function` | Called automatically after `Activate`, if defined, when EasyConvars and Player are initialized. |
+| OnSpawn | `function` | Called automatically on `Spawn` if defined. |
+| UpdateOnRemove | `function` | Called before the entity is killed. |
+| OnBreak | `function` | Called when a breakable entity is broken. |
+| OnTakeDamage | `function` | Called when entity takes damage. |
+| Precache | `function` | Called before Spawn for precaching. |
 
 ## Aliases
 

@@ -46,6 +46,8 @@ controls/input:
     - Input:StopListening
     - Input:StopListeningCallbackContext
     - Input:StopListeningByContext
+    - Input:Start
+    - Input:Stop
   fields:
     - Input.version
     - Input.AutoStart
@@ -147,6 +149,12 @@ data/stack:
   functions:
     - Stack
 
+debug/commands:
+  functions:
+    - RegisterAlyxLibCommand
+    - RegisterAlyxLibConvar
+    - RegisterAlyxLibEasyConvar
+
 debug/common:
   fields:
     - Debug.version
@@ -161,6 +169,7 @@ debug/common:
     - Debug.PrintTable
     - Debug.PrintTableShallow
     - Debug.PrintList
+    - Debug.PrintSimpleTable
     - Debug.PrintValue
     - Debug.ShowEntity
     - Debug.PrintEntityCriteria
@@ -177,6 +186,47 @@ debug/common:
     - Debug.FindEntityByHandleString
     - Debug.IsEntityHandleString
     - Debug.ToOrdinalString
+    - Debug.GetSourceLine
+    - Debug.Try
+    - Debug.TableStr
+  functions:
+    - entfind
+    - vecstr
+    - entstr
+    - entspawn
+
+debug/debug_menu:
+  fields:
+    - DebugMenu.version
+    - DebugMenu.panel
+    - DebugMenu.categories
+  types:
+    - DebugMenuCategory
+    - DebugMenuItem
+  methods:
+    - DebugMenu:UpdateMenuAttachment
+    - DebugMenu:ShowMenu
+    - DebugMenu:CloseMenu
+    - DebugMenu:IsOpen
+    - DebugMenu:ClickHoveredButton
+    - DebugMenu:GetItem
+    - DebugMenu:GetCategory
+    - DebugMenu:AddCategory
+    - DebugMenu:AddSeparator
+    - DebugMenu:AddButton
+    - DebugMenu:AddToggle
+    - DebugMenu:AddLabel
+    - DebugMenu:AddSlider
+    - DebugMenu:AddCycle
+    - DebugMenu:SetItemText
+    - DebugMenu:SetCategoryIndex
+    - DebugMenu:SendCategoryToPanel
+    - DebugMenu:SendCategoriesToPanel
+    - DebugMenu:ClearMenu
+    - DebugMenu:Refresh
+    - DebugMenu:SetItemVisibilityCondition
+    - DebugMenu:StartListeningForMenuActivation
+    - DebugMenu:StopListeningForMenuActivation
 
 debug/novr:
   fields:
@@ -230,11 +280,14 @@ extensions/entities:
 extensions/entity:
   methods:
     - CBaseEntity:GetChildrenMemSafe
+    - CBaseEntity:IterateChildren
+    - CBaseEntity:IterateChildrenBreadthFirst
     - CBaseEntity:GetTopChildren
     - CBaseEntity:EntFire
     - CBaseEntity:GetFirstChildWithClassname
     - CBaseEntity:GetFirstChildWithName
     - CBaseEntity:SetQAngle
+    - CBaseEntity:SetLocalQAngle
     - CBaseEntity:SetAngle
     - CBaseEntity:ResetLocal
     - CBaseEntity:GetSize
@@ -250,18 +303,24 @@ extensions/entity:
     - CBaseEntity:DoNotDrop
     - CBaseEntity:GetCriteria
     - CBaseEntity:GetOwnedEntities
-    - CBaseEntity:SetRenderAlphaAll
+    - CBaseModelEntity:SetRenderAlphaAll
     - CBaseEntity:SetCenter
-    - CBaseEntity:SetOriginByAttachment
+    - CBaseAnimating:SetOriginByAttachment
     - CBaseEntity:TrackProperty
     - CBaseEntity:UntrackProperty
     - CBaseEntity:QuickThink
     - CBaseEntity:SetRenderingEnabled
     - CBaseEntity:SetCastShadow
-    - CBaseEntity:RedirectOutput
+    - CBaseEntity:RedirectOutputFunc
     - CBaseEntity:DistanceFromEyes
-    - CBaseEntity:GetAttachmentNameOrigin
-    - CBaseEntity:GetAttachmentNameAngles
+    - CBaseAnimating:GetAttachmentNameOrigin
+    - CBaseAnimating:GetAttachmentNameAngles
+    - CBaseAnimating:GetAttachmentNameForward
+    - CBaseEntity:ClearParent
+    - CBaseEntity:SetAbsVelocity
+    - CBaseEntity:OBBvsOBB
+    - CBaseEntity:AABBvsOBB
+    - CBaseEntity:AABBvsAABB
 
 extensions/npc:
   methods:
@@ -319,6 +378,9 @@ helpers/animation:
     - CBaseEntity:Animate
 
 helpers/easyconvars:
+  fields:
+    - EasyConvars.version
+    - EasyConvars.registered
   methods:
     - EasyConvars:Register
     - EasyConvars:Warn
@@ -329,6 +391,8 @@ helpers/easyconvars:
     - EasyConvars:RegisterConvar
     - EasyConvars:RegisterCommand
     - EasyConvars:RegisterToggle
+    - EasyConvars:GetConvarData
+    - EasyConvars:Exists
     - EasyConvars:GetStr
     - EasyConvars:GetBool
     - EasyConvars:GetFloat
@@ -359,6 +423,20 @@ math/common:
     - math.isclose
     - math.has_frac
     - math.get_frac
+
+math/obb:
+  functions:
+    - GetBoundingOBBData
+    - GetEntityOBBData
+    - GetEntityAABB
+    - AABBvsAABB
+    - OBBvsOBB
+    - AABBvsOBB
+    - PointInAABB
+    - PointInOBB
+    - DebugDrawOBB
+    - DebugDrawEntityOBB
+    - DebugDrawEntityAABB
 
 math/weighted_random:
   replacements:
@@ -460,6 +538,7 @@ player/core:
     - CBasePlayer:SetAnchorForwardAroundPlayer
     - CBasePlayer:SetAnchorAnglesAroundPlayer
     - CBasePlayer:SetAnchorOriginAroundPlayer
+    - CBasePlayer:SetCoughHandEnabled
   globals:
     - PLAYER_WEAPON_HAND
     - PLAYER_WEAPON_ENERGYGUN
@@ -474,6 +553,17 @@ player/core:
     - PlayerWeaponUpgrades
   enums: # Not supported yet
     - PlayerMoveType
+
+player/data:
+  functions:
+    - SyncEquippedWeaponState
+    - RestorePreviouslyEquippedWeaponState
+    - PauseWeaponStateSync
+    - ResumeWeaponStateSync
+    - WeaponStateSyncPaused
+    - SavePlayerData
+    - LoadPlayerData
+    - GetDefaultWeaponOffset
 
 player/events:
   aliases:
@@ -506,6 +596,7 @@ player/hands:
     - CPropVRHand:GetGrabbityGlove
     - CPropVRHand:IsButtonPressed
     - CPropVRHand:GetPalmPosition
+    - CPropVRHand:GetHandUseController
     - CBaseEntity:Drop
     - CBaseEntity:Grab
 
@@ -581,6 +672,7 @@ globals:
     - CompareVersions
     - GetScriptFile
     - GetEnabledAddons
+    - IsAddonEnabled
     - IsEntity
     - AddOutput
     - module_exists
@@ -606,6 +698,8 @@ globals:
     - TableKeys
     - TableValues
     - TableSize
+    - TablePluck
+    - TableFindIndex
     - ArrayRandom
     - ArrayShuffle
     - ArrayRemove
@@ -628,6 +722,8 @@ globals:
     - Wrap
     - CreateToggleBehavior
     - CalcClosestCornerOnEntityAABB
+    - SetPhysVelocity
+    - RandomChance
 
 precache:
   types:
@@ -636,6 +732,7 @@ precache:
     - AlyxLibGlobalPrecacheType
   functions:
     - GlobalPrecache
+    - GlobalPrecacheFlush
     - _PrecacheGlobalItems
 
 storage:
