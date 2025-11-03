@@ -5,22 +5,9 @@
     Precaching can only be done with an entity attached script, so this script collects a list of assets to be automatically
     precached when the player spawns, allowing you to precache assets from your global scripts.
 
-    If not using `vscripts/alyxlib/core.lua`, load this file at game start using the following line:
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
     
-    ```lua
     require "alyxlib.precache"
-    ```
-
-    ======================================== Usage ========================================
-    
-    Add assets to be precached in the following way:
-
-    ```lua
-    GlobalPrecache("model", "models/weapons/vr_alyxgun/vr_alyxgun_clip.vmdl")
-    GlobalPrecache("entity", "prop_dynamic", {
-        model = "models/weapons/vr_alyxgun/vr_alyxgun_clip.vmdl"
-    })
-    ```
 ]]
 if thisEntity then
     ---@param context CScriptPrecacheContext
@@ -44,10 +31,13 @@ require "alyxlib.player.core"
 ---| "model"
 ---| "entity"
 
+---
+---A global asset to be precached when the player spawns.
+---
 ---@class AlyxLibGlobalPrecacheItem
----@field type AlyxLibGlobalPrecacheType # The type of asset to precache.
----@field path string # The asset path to precache (or the classname if type is entity).
----@field spawnkeys table? # The spawnkeys table if type is entity.
+---@field type AlyxLibGlobalPrecacheType # The type of asset to precache
+---@field path string # The asset path to precache (or the classname if type is entity)
+---@field spawnkeys table? # The spawnkeys table if type is entity
 
 ---@type AlyxLibGlobalPrecacheItem[]
 _G.AlyxLibGlobalPrecacheList = {}
@@ -57,9 +47,9 @@ _G.AlyxLibGlobalPrecacheList = {}
 ---
 ---If you are precaching *after* the player has spawned, then you must also call [GlobalPrecacheFlush](lua://GlobalPrecacheFlush).
 ---
----@param type AlyxLibGlobalPrecacheType # The type of asset to precache.
----@param path string # The asset path to precache (or the classname if type is entity).
----@param spawnkeys table? # The spawnkeys table if type is entity.
+---@param type AlyxLibGlobalPrecacheType # The type of asset to precache
+---@param path string # The asset path to precache (or the classname if type is entity)
+---@param spawnkeys table? # The spawnkeys table if type is entity
 function GlobalPrecache(type, path, spawnkeys)
     table.insert(AlyxLibGlobalPrecacheList, {
         type = type,
@@ -69,7 +59,7 @@ function GlobalPrecache(type, path, spawnkeys)
 end
 
 ---Starts the precache process.
----@param callback? function # The function to call when the precaching is complete.
+---@param callback? function # The function to call when the precaching is complete
 local function precacheAsync(callback)
     SpawnEntityFromTableAsynchronous("logic_script", {
         vscripts = "alyxlib/precache",
@@ -88,7 +78,7 @@ end
 ---
 ---If you are precaching *after* the player has spawned, call this function after preceding [GlobalPrecache](lua://GlobalPrecache) calls.
 ---
----@param callback? function # The function to call when the precaching is complete.
+---@param callback? function # The function to call when the precaching is complete
 function GlobalPrecacheFlush(callback)
     precacheAsync(function()
         AlyxLibGlobalPrecacheList = {}
@@ -102,6 +92,7 @@ end
 ---Internal function used to start the precache process.
 ---
 ---**This should only be called manually if you know what you're doing!**
+---
 ---@param context CScriptPrecacheContext
 function _PrecacheGlobalItems(context)
     if #AlyxLibGlobalPrecacheList > 0 then

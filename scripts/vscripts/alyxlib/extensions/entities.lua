@@ -4,7 +4,7 @@
 
     Extensions for the `Entities` class.
 
-    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
     
     require "alyxlib.extensions.entities"
 ]]
@@ -14,7 +14,7 @@ local version = "v1.8.0"
 
 
 ---
----Finds the entity in a given list that is closest to a specified position.
+---Finds the entity in a given list that is closest to a specified position.  
 ---Uses `CalcClosestPointOnEntityOBB` to determine the nearest point on each entity's bounding box.
 ---
 --- @param ents EntityHandle[] # A list of entities to check
@@ -49,7 +49,7 @@ end
 ---
 ---If no name is provided, the function falls back to finding the nearest entity of the given classname.  
 ---
----@param name string # The unique name of the entity (if available, "" if not)
+---@param name string|"" # The unique name of the entity (if available, "" if not)
 ---@param class string # The classname of the entity (fallback if name isn't available)
 ---@param position Vector # The position to search around
 ---@param radius? number # The max search radius (default: 128)
@@ -76,7 +76,7 @@ end
 ---
 ---Gets an array of every entity that currently exists.
 ---
----@return EntityHandle[]
+---@return EntityHandle[] # List of all entities
 function Entities:All()
     local ents = {}
     local e = Entities:First()
@@ -90,21 +90,21 @@ end
 ---
 ---Gets a random entity in the map.
 ---
----@return EntityHandle
+---@return EntityHandle # A random entity
 function Entities:Random()
     local all = Entities:All()
     return all[RandomInt(1, #all)]
 end
 
 ---
----Find an entity within the same prefab as another entity.
+---Finds a named entity within the same name-fixed-up prefab as another entity.
 ---
----Will have issues in nested prefabs.
+---Might have issues in nested prefabs.
 ---
----@param entity EntityHandle
----@param name string
----@return EntityHandle? # The found entity, nil if not found.
----@return string # Prefab part of the name.
+---@param entity EntityHandle # A known entity in the prefab
+---@param name string # The name to search for
+---@return EntityHandle? # The found entity, or `nil` if not found
+---@return string # Prefab part of the name
 function Entities:FindInPrefab(entity, name)
     local myname = entity:GetName()
     for _,ent in ipairs(Entities:FindAllByName('*' .. name)) do
@@ -117,26 +117,26 @@ function Entities:FindInPrefab(entity, name)
 end
 
 ---
----Find an entity within the same prefab as this entity.
+---Finds a named entity within the same name-fixed-up prefab as this entity.
 ---
----Will have issues in nested prefabs.
+---Might have issues in nested prefabs.
 ---
----@param name string
----@return EntityHandle?
----@return string # Prefab part of the name.
+---@param name string # The name to search for
+---@return EntityHandle? # The found entity, or `nil` if not found
+---@return string # Prefab part of the name
 function CEntityInstance:FindInPrefab(name)
     return Entities:FindInPrefab(self, name)
 end
 
 ---
----Find all entities with a cone.
+---Finds all entities with a cone.
 ---
----@param origin Vector # Origin of the cone in worldspace.
----@param direction Vector # Normalized direction vector.
----@param maxDistance number # Max distance the cone will extend towards `direction`.
----@param maxAngle number # Field-of-view in degrees that the cone can see, [0-180].
----@param checkEntityBounds boolean # If true the entity bounding box will be tested as well as the origin.
----@return EntityHandle[] # List of entities found within the cone.
+---@param origin Vector # Origin of the cone in worldspace
+---@param direction Vector # Normalized direction vector
+---@param maxDistance number # Max distance the cone will extend towards `direction`
+---@param maxAngle number # Field-of-view in degrees that the cone can see, [0-180]
+---@param checkEntityBounds boolean # If true the entity bounding box will be tested as well as the origin
+---@return EntityHandle[] # List of entities found within the cone
 function Entities:FindAllInCone(origin, direction, maxDistance, maxAngle, checkEntityBounds)
     local cosMaxAngle = math.cos(math.rad(maxAngle))
     local entitiesInSphere = Entities:FindAllInSphere(origin, maxDistance)
@@ -168,12 +168,12 @@ function Entities:FindAllInCone(origin, direction, maxDistance, maxAngle, checkE
 end
 
 ---
----Find all entities within `mins` and `maxs` bounding box.
+---Finds all entities within `mins` and `maxs` bounding box.
 ---
----@param mins Vector # Mins vector in world-space.
----@param maxs Vector # Maxs vector in world-space.
----@param checkEntityBounds? boolean # If true the entity bounding boxes will be used for the check instead of the origin.
----@return EntityHandle[] # List of entities found.
+---@param mins Vector # Mins vector in world-space
+---@param maxs Vector # Maxs vector in world-space
+---@param checkEntityBounds? boolean # `true` if the bounding boxes should be used for the check instead of their origin
+---@return EntityHandle[] # List of entities found
 function Entities:FindAllInBounds(mins, maxs, checkEntityBounds)
     local center = (mins + maxs) / 2
     local maxRadius = (maxs - center):Length()
@@ -194,12 +194,12 @@ function Entities:FindAllInBounds(mins, maxs, checkEntityBounds)
 end
 
 ---
----Find all entities within an `origin` centered box.
+---Finds all entities within an `origin` centered box.
 ---
----@param width number # Size of the box on the X axis.
----@param length number # Size of the box on the Y axis.
----@param height number # Size of the box on the Z axis.
----@return EntityHandle[] # List of entities found.
+---@param width number # Size of the box on the X axis
+---@param length number # Size of the box on the Y axis
+---@param height number # Size of the box on the Z axis
+---@return EntityHandle[] # List of entities found
 function Entities:FindAllInBox(origin, width, length, height)
     return Entities:FindAllInBounds(
         Vector(origin - width, origin - length, origin - height),
@@ -208,21 +208,21 @@ function Entities:FindAllInBox(origin, width, length, height)
 end
 
 ---
----Find all entities within an `origin` centered cube of a given `size.`
+---Finds all entities within an `origin` centered cube of a given `size.`
 ---
----@param origin Vector # World space cube position.
----@param size number # Size of the cube in all directions.
----@return EntityHandle[] # List of entities found.
+---@param origin Vector # World space cube position
+---@param size number # Size of the cube in all directions
+---@return EntityHandle[] # List of entities found
 function Entities:FindAllInCube(origin, size)
     return Entities:FindAllInBox(origin, size, size, size)
 end
 
 ---
----Find the nearest entity to a world position.
+---Finds the nearest entity to a world position.
 ---
----@param origin Vector # Position to check from.
----@param maxRadius number # Maximum radius to check from `origin`.
----@return EntityHandle? # The nearest entity found, or nil if none found.
+---@param origin Vector # Position to check from
+---@param maxRadius number # Maximum radius to check from `origin`
+---@return EntityHandle? # The nearest entity found, or nil if none found
 function Entities:FindNearest(origin, maxRadius)
     local nearestEnt = nil
     local nearestDistanceSq = math.huge
@@ -242,8 +242,8 @@ end
 ---
 ---Finds all entities in the map from a list of classnames.
 ---
----@param classes string[]
----@return EntityHandle[]
+---@param classes string[] # List of classnames
+---@return EntityHandle[] # List of entities
 function Entities:FindAllByClassnameList(classes)
     local ents = {}
     for _, class in ipairs(classes) do
@@ -255,10 +255,10 @@ end
 ---
 ---Finds all entities within a radius from a list of classnames.
 ---
----@param classes string[]
----@param origin Vector
----@param maxRadius number
----@return EntityHandle[]
+---@param classes string[] # List of classnames
+---@param origin Vector # Position to check from
+---@param maxRadius number # Maximum radius to check from `origin`
+---@return EntityHandle[] # List of entities
 function Entities:FindAllByClassnameListWithin(classes, origin, maxRadius)
     local ents = {}
     for _, class in ipairs(classes) do
@@ -270,10 +270,10 @@ end
 ---
 ---Find the entity from a list of possible classnames which is closest to a world position.
 ---
----@param classes string[]
----@param origin Vector
----@param maxRadius number
----@return EntityHandle?
+---@param classes string[] # List of classnames
+---@param origin Vector # Position to check from
+---@param maxRadius number # Maximum radius to check from `origin`
+---@return EntityHandle? # The nearest entity found, or `nil` if none found
 function Entities:FindByClassnameListNearest(classes, origin, maxRadius)
     local nearestEnt = nil
     local nearestDistanceSq = math.huge
@@ -295,7 +295,7 @@ end
 ---
 ---Finds all NPCs within the map.
 ---
----@return CAI_BaseNPC[]
+---@return CAI_BaseNPC[] # List of NPC entities
 function Entities:FindAllNPCs()
     local npcs = {}
     local ent = Entities:First()
@@ -332,12 +332,12 @@ function Entities:IterateAllNPCs()
 end
 
 ---
----Find all entities by model name within a radius.
+---Finds all entities by model name within a radius.
 ---
----@param modelName string
----@param origin Vector
----@param maxRadius number
----@return EntityHandle[]
+---@param modelName string # Model name
+---@param origin Vector # Position to check from
+---@param maxRadius number # Maximum radius to check from `origin`
+---@return EntityHandle[] # List of entities
 function Entities:FindAllByModelWithin(modelName, origin, maxRadius)
     local ents = {}
     local currentEnt = Entities:FindByModelWithin(nil, modelName, origin, maxRadius)
@@ -349,12 +349,12 @@ function Entities:FindAllByModelWithin(modelName, origin, maxRadius)
 end
 
 ---
----Find the entity by model name nearest to a point.
+---Finds the entity by model name nearest to a point.
 ---
----@param modelName string
----@param origin Vector
----@param maxRadius number
----@return EntityHandle?
+---@param modelName string # Model name
+---@param origin Vector # Position to check from
+---@param maxRadius number # Maximum radius to check from `origin`
+---@return EntityHandle? # The nearest entity found, or `nil` if none found
 function Entities:FindByModelNearest(modelName, origin, maxRadius)
     local closestEnt = nil
     local closestDist = math.huge
@@ -371,12 +371,12 @@ function Entities:FindByModelNearest(modelName, origin, maxRadius)
 end
 
 ---
----Find the first entity whose model name contains `namePattern`.
+---Finds the first entity whose model name contains `namePattern`.
 ---
 ---This works by searching every entity in the map and may incur a performance hit in large maps if used often.
 ---
----@param namePattern string
----@return EntityHandle?
+---@param namePattern string # Pattern to search for
+---@return EntityHandle? # The found entity, or `nil` if not found
 function Entities:FindByModelPattern(namePattern)
     local ent = Entities:First()
     while ent ~= nil do
@@ -388,12 +388,12 @@ function Entities:FindByModelPattern(namePattern)
 end
 
 ---
----Find all entities whose model name contains `namePattern`.
+---Finds all entities whose model name contains `namePattern`.
 ---
 ---This works by searching every entity in the map and may incur a performance hit in large maps if used often.
 ---
----@param namePattern string
----@return EntityHandle[]
+---@param namePattern string # Pattern to search for
+---@return EntityHandle[] # List of entities
 function Entities:FindAllByModelPattern(namePattern)
     local ents = {}
     local ent = Entities:First()

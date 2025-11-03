@@ -4,7 +4,7 @@
 
     Adds console commands to help debugging VR specific features.
 
-    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
     
     require "alyxlib.debug.vr"
 ]]

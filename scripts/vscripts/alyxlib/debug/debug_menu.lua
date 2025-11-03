@@ -3,6 +3,10 @@
     https://github.com/FrostSource/alyxlib
 
     The debug menu allows for easier VR testing by offering a customizable in-game menu.
+
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
+    
+    require "alyxlib.debug.debug_menu"
 ]]
 
 RegisterAlyxLibCommand("debug_menu_show", function (name, ...)
@@ -49,33 +53,38 @@ DebugMenu.version = "v1.0.0"
 ---A category of items in the debug menu.
 ---
 ---@class DebugMenuCategory
----@field id string # The unique ID for this category.
----@field name string # The display name for this category.
----@field items DebugMenuItem[] # The items in this category.
+---@field id string # The unique ID for this category
+---@field name string # The display name for this category
+---@field items DebugMenuItem[] # The items in this category
 
 ---
 ---An item in the debug menu.
 ---
 ---@class DebugMenuItem
----@field categoryId string # The ID of the category this item is in.
----@field id string # The unique ID for this item.
----@field text string # The text to display for this item (if applicable).
----@field callback function # The function to call when this item is clicked.
+---@field categoryId string # The ID of the category this item is in
+---@field id string # The unique ID for this item
+---@field text string # The text to display for this item (if applicable)
+---@field callback function # The function to call when this item is clicked
 ---@field type "button"|"toggle"|"separator"|"slider"|"cycle" # Type of menu element this item is.
----@field default any|function # The default value sent to the menu. If this is a function the return value will be used.
----@field min number # Minimum value of this slider.
----@field max number # Maxmimum value of this slider.
----@field isPercentage boolean # If true, this slider displays its value as a percentage of min/max.
----@field convar string # The console variable associated with this element. 
----@field values {text:string,value:any}[] # Text/value pairs for this cycler.
----@field truncate number # The number of decimal places to truncate the slider value to (-1 for no truncating).
----@field increment number  # The increment value to snap the slider value to (0 for no snapping).
----@field condition? string|fun():boolean # The condition that must be met for this item to be visible.
+---@field default any|function # The default value sent to the menu. If this is a function the return value will be used
+---@field min number # Minimum value of this slider
+---@field max number # Maxmimum value of this slider
+---@field isPercentage boolean # If true, this slider displays its value as a percentage of min/max
+---@field convar string # The console variable associated with this element
+---@field values {text:string,value:any}[] # Text/value pairs for this cycler
+---@field truncate number # The number of decimal places to truncate the slider value to (-1 for no truncating)
+---@field increment number  # The increment value to snap the slider value to (0 for no snapping)
+---@field condition? string|fun():boolean # The condition that must be met for this item to be visible
 
+---
 ---The panel entity.
+---
 ---@type CPointClientUIWorldPanel
 DebugMenu.panel = nil
 
+---
+---The categories in the debug menu.
+---
 ---@type DebugMenuCategory[]
 DebugMenu.categories = {}
 
@@ -488,7 +497,7 @@ function DebugMenu:ClickHoveredButton()
 end
 
 ---
----Get a debug menu item by id.
+---Gets a debug menu item by id.
 ---
 ---@param id string # The item ID
 ---@param categoryId? string # Optionally specify a category to look in. If not specified, will look in all categories
@@ -506,7 +515,7 @@ function DebugMenu:GetItem(id, categoryId)
 end
 
 ---
----Get a debug menu category by id.
+---Gets a debug menu category by id.
 ---
 ---@param id string # The category ID
 ---@return DebugMenuCategory? # The category if it exists
@@ -520,7 +529,7 @@ function DebugMenu:GetCategory(id)
 end
 
 ---
----Add a category to the debug menu.
+---Adds a category to the debug menu.
 ---
 ---@param id string # The unique ID for this category
 ---@param name string # The display name for this category
@@ -538,7 +547,7 @@ function DebugMenu:AddCategory(id, name)
 end
 
 ---
----Add a separator line to a category.
+---Adds a separator line to a category.
 ---
 ---@param categoryId string # The category ID to add the separator to
 ---@param separatorId? string # Optional ID for the separator if you want to modify it later
@@ -559,7 +568,7 @@ function DebugMenu:AddSeparator(categoryId, separatorId, text)
 end
 
 ---
----Add a button to a category.
+---Adds a button to a category.
 ---
 ---@param categoryId string # The category ID to add the button to
 ---@param buttonId string # The unique ID for this button
@@ -591,7 +600,7 @@ function DebugMenu:AddButton(categoryId, buttonId, text, command)
 end
 
 ---
----Add a toggle to a category.
+---Adds a toggle to a category.
 ---
 ---@param categoryId string # The category ID to add the toggle to
 ---@param toggleId string # The unique ID for this toggle
@@ -624,7 +633,7 @@ function DebugMenu:AddToggle(categoryId, toggleId, text, convar, callback, start
 end
 
 ---
----Add a center aligned label to a category.
+---Adds a center aligned label to a category.
 ---
 ---@param categoryId string # The category ID to add the label to
 ---@param labelId string # The unique ID for this label
@@ -645,7 +654,7 @@ function DebugMenu:AddLabel(categoryId, labelId, text)
 end
 
 ---
----Add value slider to a category.
+---Adds value slider to a category.
 ---
 ---@param categoryId string # The ID of the category to add this slider to
 ---@param sliderId string # A unique ID for this slider
@@ -690,7 +699,7 @@ function DebugMenu:AddSlider(categoryId, sliderId, text, convar, min, max, isPer
 end
 
 ---
----Add a value cycler to a category.
+---Adds a value cycler to a category.
 ---
 ---Cyclers allow users to choose from a set of values.
 ---
@@ -747,7 +756,7 @@ function DebugMenu:AddCycle(categoryId, cycleId, title, convar, values, callback
 end
 
 ---
----Set the text of an item.
+---Sets the text of an item.
 ---
 ---Only works on the following types:
 --- - button
@@ -772,13 +781,13 @@ function DebugMenu:SetItemText(categoryId, itemId, text)
 end
 
 ---
----Sets the index of a category in the debug menu.
+---Sets the index of a category in the debug menu.  
 ---Categories are ordered by their index, starting from 1.
 ---
 ---This is an advanced function and should be used with caution.
 ---
----@param categoryId string # Id of the category to change.
----@param index number # New index for the category.
+---@param categoryId string # Id of the category to change
+---@param index number # New index for the category
 function DebugMenu:SetCategoryIndex(categoryId, index)
     local category, currentIndex = self:GetCategory(categoryId)
     if not category then

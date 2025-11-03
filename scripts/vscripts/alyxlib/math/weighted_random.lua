@@ -4,7 +4,7 @@
 
     Weighted random allows you to assign chances to tables keys.
 
-    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
     
     require "alyxlib.math.weighted_random"
 ]]
@@ -68,13 +68,13 @@ if pcall(require, "alyxlib.storage") then
     CBaseEntity.SaveWeightedRandom = Storage.SaveWeightedRandom
 
     ---
-    ---Load a WeightedRandom.
+    ---Loads a WeightedRandom.
     ---
     ---@generic T
-    ---@param handle EntityHandle # Entity to load from.
-    ---@param name string # Name the WeightedRandom was saved as.
-    ---@param default? T # Optional default value.
-    ---@return WeightedRandom|T
+    ---@param handle EntityHandle # Entity to load from
+    ---@param name string # Name the WeightedRandom was saved as
+    ---@param default? T # Optional default value
+    ---@return WeightedRandom|T # The loaded WeightedRandom
     ---@luadoc-ignore
     Storage.LoadWeightedRandom = function(handle, name, default)
         local wr = WR.__load(handle, name)
@@ -87,23 +87,23 @@ if pcall(require, "alyxlib.storage") then
 end
 
 ---
----Add a table value with an associated weight.
+---Adds a table value with an associated weight.
 ---
 ---If `tbl` already has a weight key then `weight` parameter can be omitted.
 ---
----**Note:** The table `tbl` is not cloned, the given reference is used.
+---**Note:** The table `tbl` is not cloned, the given reference is inserted into the list.
 ---
----@param tbl table # Table of values that will be returned.
----@param weight? number # Weight for this table.
+---@param tbl table # Table of values that will be returned
+---@param weight? number # Weight for this table
 function WR:Add(tbl, weight)
     if weight ~= nil then tbl.weight = weight end
     self.ItemPool[#self.ItemPool+1] = tbl
 end
 
 ---
----Get the sum of all weights in the WeightedRandom.
+---Gets the sum of all weights in the WeightedRandom.
 ---
----@return number # The sum of all weights.
+---@return number # The sum of all weights
 function WR:TotalWeight()
     local weight_sum = 0
     for _,item in ipairs(self.ItemPool) do
@@ -115,9 +115,9 @@ function WR:TotalWeight()
 end
 
 ---
----Pick a random table from the list of weighted tables.
+---Picks a random table from the list of weighted tables.
 ---
----@return WeightedRandomItem|table # The chosen table.
+---@return WeightedRandomItem|table # The randomly selected table
 function WR:Random()
     local weight_sum = self:TotalWeight()
     local weight_remaining
@@ -139,7 +139,7 @@ function WR:Random()
 end
 
 ---
----Create a new WeightedRandom object with given weights.
+---Creates a new WeightedRandom instance with given weights.
 ---
 ---E.g.
 ---
@@ -151,10 +151,8 @@ end
 ---        { weight = 0.1, name = "Extremely rare" },
 ---    })
 ---
----Params:
----
----@param weights WeightedRandomItem[] # List of weighted tables.
----@return WeightedRandom # WeightedRandom object.
+---@param weights WeightedRandomItem[] # List of weighted tables
+---@return WeightedRandom # The new WeightedRandom instance
 function WeightedRandom(weights)
     return setmetatable({ItemPool = weights or {}}, WR)
 end

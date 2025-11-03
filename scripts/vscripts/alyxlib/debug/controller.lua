@@ -4,10 +4,11 @@
 
     Allows quick debugging of VR controllers.
 
-    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
     
     require "alyxlib.debug.controller"
 ]]
+
 -- Used for button descriptions
 require "alyxlib.controls.input"
 

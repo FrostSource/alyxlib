@@ -2,7 +2,11 @@
     v2.2.0
     https://github.com/FrostSource/alyxlib
 
+    Player event management and callbacks.
+
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
     
+    require "alyxlib.player.events"
 ]]
 
 local version = "v2.2.0"
@@ -34,10 +38,12 @@ local playerActivated = false
 
 ---@alias PLAYER_EVENTS_ALL "novr_player"|"player_activate"|"vr_player_ready"|"item_pickup"|"item_released"|"primary_hand_changed"|"player_drop_ammo_in_backpack"|"player_retrieved_backpack_clip"|"player_stored_item_in_itemholder"|"player_removed_item_from_itemholder"|"player_drop_resin_in_backpack"|"weapon_switch"
 
----Register a callback function with for a player event.
+---
+---Registers a callback function with a player event.
+---
 ---@param event PLAYER_EVENTS_ALL # Name of the event
 ---@param callback function # The function that will be called when the event is fired
----@param context? table # Optional: The context to pass to the function as `self`. If omitted the context will not passed to the callback.
+---@param context? table # The context to pass to first argument of `callback` - if omitted, the context will not passed to the callback
 ---@return integer eventID # ID used to unregister
 function ListenToPlayerEvent(event, callback, context)
     assert(registered_event_callbacks[event], "Unknown player event "..event)
@@ -53,8 +59,10 @@ function ListenToPlayerEvent(event, callback, context)
     return registered_event_index - 1
 end
 
----Unregisters a callback with a name.
----@param eventID integer
+---
+---Unregisters a player event callback.
+---
+---@param eventID integer # ID returned from [ListenToPlayerEvent](lua://ListenToPlayerEvent)
 function StopListeningToPlayerEvent(eventID)
     for _, event in pairs(registered_event_callbacks) do
         event[eventID] = nil
@@ -68,11 +76,11 @@ local entityPickupEvents = {}
 local entityPickupIndex = 1
 
 ---
----Listen to the pickup of a specific entity.
+---Listens to the pickup of a specific entity.
 ---
 ---@param entity EntityHandle # The entity to listen for
 ---@param callback function # The function that will be called when the entity is picked up
----@param context? any # Optional context passed into the callback as the first value
+---@param context? any # Context passed into the callback as the first value
 ---@return integer # ID used to unregister
 function ListenToEntityPickup(entity, callback, context)
     entityPickupEvents[entityPickupIndex] = {
@@ -85,7 +93,7 @@ function ListenToEntityPickup(entity, callback, context)
 end
 
 ---
----Stop listening to an entity pickup
+---Stops listening to an entity pickup.
 ---
 ---@param eventID integer # ID returned from [ListenToEntityPickup](lua://ListenToEntityPickup)
 function StopListeningToEntityPickup(eventID)
@@ -124,8 +132,8 @@ local function eventCallback(eventName, newdata)
 end
 
 ---@class PlayerEventPlayerActivate : GameEventBase
----@field player CBasePlayer # The entity handle of the player.
----@field type "spawn"|"load"|"transition" # Type of player activate.
+---@field player CBasePlayer # The entity handle of the player
+---@field type "spawn"|"load"|"transition" # Type of player activate
 
 ---@class PlayerEventVRPlayerReady : PlayerEventPlayerActivate
 ---@field hmd_avatar CPropHMDAvatar # The hmd avatar entity handle.
@@ -240,10 +248,10 @@ ListenToGameEvent("physgun_pickup", function (params)
 end, nil)
 
 ---@class PlayerEventItemPickup : GameEventItemPickup
----@field item EntityHandle # The entity handle of the item that was picked up.
----@field item_class string # Classname of the entity that was picked up.
----@field hand CPropVRHand # The entity handle of the hand that picked up the item.
----@field otherhand CPropVRHand # The entity handle of the opposite hand.
+---@field item EntityHandle # The entity handle of the item that was picked up
+---@field item_class string # Classname of the entity that was picked up
+---@field hand CPropVRHand # The entity handle of the hand that picked up the item
+---@field otherhand CPropVRHand # The entity handle of the opposite hand
 
 ---Tracking player held items.
 ---@param data GameEventItemPickup
@@ -316,12 +324,11 @@ end
 ListenToGameEvent("item_pickup", listenEventItemPickup, nil)
 
 ---@class PlayerEventItemReleased : GameEventItemReleased
----@field item EntityHandle # The entity handle of the item that was dropped.
----@field item_class string # Classname of the entity that was dropped.
----@field hand CPropVRHand # The entity handle of the hand that dropped the item.
----@field otherhand CPropVRHand # The entity handle of the opposite hand.
+---@field item EntityHandle # The entity handle of the item that was dropped
+---@field item_class string # Classname of the entity that was dropped
+---@field hand CPropVRHand # The entity handle of the hand that dropped the item
+---@field otherhand CPropVRHand # The entity handle of the opposite hand
 
--- ---@type "item_hlvr_crafting_currency_small"|"item_hlvr_crafting_currency_large"|nil
 ---@type EntityHandle|nil
 local last_resin_dropped
 
@@ -385,9 +392,10 @@ end
 ListenToGameEvent("primary_hand_changed", listenEventPrimaryHandChanged, nil)
 
 -- Inherit from base instead of event to remove 'ammoType'
+
 ---@class PlayerEventPlayerDropAmmoInBackpack : GameEventBase
----@field ammotype "Pistol"|"SMG1"|"Buckshot"|"AlyxGun" # Type of ammo that was stored.
----@field ammo_amount 0|1|2|3|4 # Amount of ammo stored for the given type (1 clip, 2 shells).
+---@field ammotype "Pistol"|"SMG1"|"Buckshot"|"AlyxGun" # Type of ammo that was stored
+---@field ammo_amount integer # Amount of ammo stored for the given type, e.g. 1 clip, 2 shells
 
 ---Ammo tracking
 ---@param data GameEventPlayerDropAmmoInBackpack
@@ -463,8 +471,8 @@ ListenToGameEvent("player_drop_ammo_in_backpack", listenEventPlayerDropAmmoInBac
 -- Inherit from base instead of event to remove 'ammoType'
 
 ---@class PlayerEventPlayerRetrievedBackpackClip : GameEventBase
----@field ammotype "Pistol"|"SMG1"|"Buckshot"|"AlyxGun" # Type of ammo that was retrieved.
----@field ammo_amount integer # Amount of ammo retrieved for the given type (1 clip, 2 shells).
+---@field ammotype "Pistol"|"SMG1"|"Buckshot"|"AlyxGun" # Type of ammo that was retrieved
+---@field ammo_amount integer # Amount of ammo retrieved for the given type, e.g. 1 clip, 2 shells
 
 ---Ammo tracking
 ---@param data GameEventPlayerRetrievedBackpackClip
@@ -521,9 +529,9 @@ end
 ListenToGameEvent("player_retrieved_backpack_clip", listenEventPlayerRetrievedBackpackClip, nil)
 
 ---@class PlayerEventPlayerStoredItemInItemholder : GameEventPlayerStoredItemInItemholder
----@field item EntityHandle # The entity handle of the item that stored.
----@field item_class string # Classname of the entity that was stored.
----@field hand CPropVRHand  # Hand that the entity was stored in.
+---@field item EntityHandle # The entity handle of the item that stored
+---@field item_class string # Classname of the entity that was stored
+---@field hand CPropVRHand  # Hand that the entity was stored in
 
 ---Wrist tracking
 ---@param data GameEventPlayerStoredItemInItemholder
@@ -563,9 +571,9 @@ end
 ListenToGameEvent("player_stored_item_in_itemholder", listenEventPlayerStoredItemInItemholder, nil)
 
 ---@class PlayerEventPlayerRemovedItemFromItemholder : GameEventPlayerRemovedItemFromItemholder
----@field item EntityHandle # The entity handle of the item that removed.
----@field item_class string # Classname of the entity that was removed.
----@field hand CPropVRHand  # Hand that the entity was removed form.
+---@field item EntityHandle # The entity handle of the item that removed
+---@field item_class string # Classname of the entity that was removed
+---@field hand CPropVRHand  # Hand that the entity was removed form
 
 ---Tracking wrist items
 ---@param data GameEventPlayerRemovedItemFromItemholder
@@ -612,7 +620,7 @@ ListenToGameEvent("player_removed_item_from_itemholder", listenEventPlayerRemove
 -- No known way to track resin being taken out reliably.
 
 ---@class PlayerEventPlayerDropResinInBackpack : GameEventPlayerDropResinInBackpack
----@field resin_ent EntityHandle? # The resin entity being dropped into the backpack.
+---@field resin_ent EntityHandle? # The resin entity being dropped into the backpack
 
 ---Track resin
 ---@param data GameEventPlayerDropResinInBackpack
@@ -641,9 +649,9 @@ end
 ListenToGameEvent("player_drop_resin_in_backpack", listenEventPlayerDropResinInBackpack, nil)
 
 ---@class PlayerEventWeaponSwitch : GameEventWeaponSwitch
----@field item EntityHandle|nil # The handle of the weapon being switched to or nil if no weapon.
----@field item_class string # Classname of the entity that was switched to.
----@field hand CPropVRHand  # Hand that the entity was switched to.
+---@field item EntityHandle|nil # The handle of the weapon being switched to or nil if no weapon
+---@field item_class string # Classname of the entity that was switched to
+---@field hand CPropVRHand  # Hand that the entity was switched to
 
 ---Track weapon equipped
 ---@param data GameEventWeaponSwitch

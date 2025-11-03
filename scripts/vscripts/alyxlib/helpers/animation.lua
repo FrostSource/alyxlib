@@ -4,7 +4,7 @@
 
     Provides functionality for animating getter/setter entity methods using curves.
 
-    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
     
     require "alyxlib.helpers.animation"
 ]]
@@ -37,6 +37,9 @@ local localBounceIn = function(a, b, t)
     return a + (b - a) * (1 - localBounceOut(0, 1, 1 - t))
 end
 
+---
+---Curves for animating entity properties and values.
+---
 ---@enum Animation.Curves
 Animation.Curves = {
     linear = function(a, b, t)

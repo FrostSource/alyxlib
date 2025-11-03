@@ -4,7 +4,7 @@
 
     Simplifies the tracking of digital action presses/releases and analog values.
     
-    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
 
     require "alyxlib.controls.input"
 ]]
@@ -19,7 +19,7 @@ Input.version = "v4.0.2"
 
 ---
 ---If the input system should start automatically on player spawn.
----Set this to false soon after require to stop it.
+---This is `true` by default.
 ---
 Input.AutoStart = true
 
@@ -47,37 +47,46 @@ Input.ReleasedTolerance = 0.5
 ---@type number
 Input.MultiplePressInterval = 0.35
 
----@class InputCallbackTable
----@field presses integer
----@field func function
----@field context any # Value passed into first argument of callback.
----@field handkind InputHandKind # Left, right, primary, secondary.
----@field actualhandid 0|1 # This needs to be updated whenver hands change.
----@field button DigitalInputAction # The button for this event.
----@field kind "press"|"release"
----@field press_time number
----@field prev_press_time number
----@field release_time number
----@field multiple_press_count number
+---
+---Internal data structure for button callbacks.
+---
+---@class InputActionDataTable
+---@field presses integer # Number of times this button needs to be pressed
+---@field func function # The callback function
+---@field context any # Value passed into first argument of callback
+---@field handkind InputHandKind # The kind of hand that used the button
+---@field actualhandid 0|1 # Actual hand ID that used the button
+---@field button DigitalInputAction # The button used for this event
+---@field kind "press"|"release" # Whether the button was pressed or released
+---@field press_time number # Server time the button was pressed
+---@field prev_press_time number # Last server time the button was pressed
+---@field release_time number # Server time the button was released
+---@field multiple_press_count number # Number of times this button was pressed 
 
----@class AnalogCallbackTable
----@field analog AnalogInputAction
----@field value { x: number?, y: number? }
----@field checkGreaterThan boolean
----@field func function
----@field context any # Value passed into first argument of callback.
----@field handkind InputHandKind # Left, right, primary, secondary.
----@field actualhandid 0|1 # This needs to be updated whenver hands change.
+---
+---Internal data structure for analog callbacks.
+---
+---@class InputAnalogDataTable
+---@field analog AnalogInputAction # The analog action for this event
+---@field value { x: number?, y: number? } # The required analog value for this event
+---@field checkGreaterThan boolean # If checking for greater than `value` or less than
+---@field func function # The callback function
+---@field context any # Value passed into first argument of callback
+---@field handkind InputHandKind # The kind of hand that moved the analog
+---@field actualhandid 0|1 # Actual hand ID that moved the analog
 ---@field literalhandtype 0|1 # The literal value of the hand which is usually the opposite of Id
 
----@type table<integer, InputCallbackTable>
+---Table of all button callbacks.
+---@type table<integer, InputActionDataTable>
 local buttonCallbacks = {}
 
----@type table<integer, AnalogCallbackTable>
+---Table of all analog callbacks.
+---@type table<integer, InputAnalogDataTable>
 local analogCallbacks = {}
 
+---Counter for button and analog callbacks.
+---@type integer
 local callbackId = 0
-
 
 local currentPrimaryHandId = 1
 local currentSecondaryHandId = 0
@@ -223,8 +232,8 @@ local ControllerTypeDescriptions = DefaultTable(
 ---Get the description of a given button.
 ---Useful for debugging or hint display.
 ---
----@param button DigitalInputAction
----@return string
+---@param button DigitalInputAction # The button to get the description of
+---@return string # The description string
 function Input:GetButtonDescription(button)
     return DigitalDescriptions[button]
 end
@@ -233,8 +242,8 @@ end
 ---Get the description of a given analog action.
 ---Useful for debugging or hint display.
 ---
----@param analog DigitalInputAction
----@return string
+---@param analog DigitalInputAction # The analog action to get the description of
+---@return string # The description string
 function Input:GetAnalogDescription(analog)
     return AnalogDescriptions[analog]
 end
@@ -242,8 +251,8 @@ end
 ---
 ---Get the description of a given controller type.
 ---
----@param controllerType ControllerType
----@return string
+---@param controllerType ControllerType # The controller type
+---@return string # The description string
 function Input:GetControllerTypeDescription(controllerType)
     return ControllerTypeDescriptions[controllerType]
 end
@@ -251,8 +260,8 @@ end
 ---
 ---Get the name of a hand.
 ---
----@param hand CPropVRHand|0|1
----@param use_operant boolean? # If true, will return primary/secondary instead of left/right
+---@param hand CPropVRHand|0|1 # The hand entity or ID
+---@param use_operant boolean? # If true, name will use primary/secondary instead of right/left
 function Input:GetHandName(hand, use_operant)
     if type(hand) ~= "number" then
         hand = hand:GetHandID()
@@ -271,18 +280,18 @@ end
 --#endregion General requests
 
 ---
----Register a callback for a specific button press/release.
+---Listens to a specific digital input press/release.
 ---
 ---@generic T
----@param kind string # The kind of button interaction.
----| '"press"' # Button is pressed.
----| '"release"' # Button is released.
----@param hand CPropVRHand|`InputHandBoth`|InputHandKind # The type of hand to listen on, or the hand itself.
+---@param kind string # The kind of button interaction
+---| '"press"' # Button is pressed
+---| '"release"' # Button is released
+---@param hand CPropVRHand|`InputHandBoth`|InputHandKind # The type of hand to listen on, or the hand itself
 ---| -1 # Both hands
----@param button NamedDigitalInputAction|DigitalInputAction # The button to check.
----@param presses integer|nil # Number of times the button must be pressed in quick succession. E.g. 2 for double click. Only applicable for `kind` press.
----@param callback fun(params:InputPressCallback|InputReleaseCallback)|fun(context:T,params:InputPressCallback|InputReleaseCallback) # The function that will be called when conditions are met.
----@param context? T # Optional context passed into the callback as the first value. Is also used when unregistering.
+---@param button NamedDigitalInputAction|DigitalInputAction # The button to listen to
+---@param presses integer|nil # Number of times the button must be pressed in quick succession. E.g. 2 for double click. Only applicable for `kind` press
+---@param callback fun(params:InputPressCallback|InputReleaseCallback)|fun(context:T,params:InputPressCallback|InputReleaseCallback) # The function that will be called when the button is pressed
+---@param context? T # Optional context passed into the callback as the first value
 function Input:ListenToButton(kind, hand, button, presses, callback, context)
 
     if type(hand) ~= "number" then
@@ -342,14 +351,14 @@ local function getCorrectAnalogValue(analogValue)
 end
 
 ---
----Listen to a specific analog value reaching a certain value.
+---Listens to a specific analog value reaching a certain value.
 ---
----@param kind "up"|"down" # `up` means listen for the value moving above `analogValue`, `down` means listen for it moving below.
----@param hand CPropVRHand|InputHandKind # The hand entity or kind of hand to listen to.
----@param analogAction AnalogInputAction # The specific analog action to listen for.
----@param analogValue AnalogValueType # The value(s) to listen for.
----@param callback fun(params:InputAnalogCallback) # The function that will be called when conditions are met.
----@param context? any # Optional context passed into the callback as the first value. Is also used when unregistering.
+---@param kind "up"|"down" # `up` means listen for the value moving above `analogValue`, `down` means listen for it moving below
+---@param hand CPropVRHand|InputHandKind # The hand entity or kind of hand to listen on
+---@param analogAction AnalogInputAction # The specific analog action to listen for
+---@param analogValue AnalogValueType # The value(s) to listen for
+---@param callback fun(params:InputAnalogCallback) # The function that will be called when conditions are met
+---@param context? any # Optional context passed into the callback as the first value
 function Input:ListenToAnalog(kind, hand, analogAction, analogValue, callback, context)
     local handid = convertHandKindToHandId(hand)
 
@@ -373,10 +382,10 @@ end
 ---
 ---Changes some data which was defined in `ListenToAnalog` for a specific ID.
 ---
----@param id integer # The ID of the analog event you want to modify.
----@param analogAction? AnalogInputAction # The new action to listen for, or nil to leave unchanged.
----@param analogValue AnalogValueType # The new value to listen for, or nil to leave unchanged.
----@return boolean # True if the ID was found, false otherwise.
+---@param id integer # The ID of the analog event you want to modify
+---@param analogAction? AnalogInputAction # The new action to listen for, or `nil` to leave unchanged
+---@param analogValue AnalogValueType # The new value to listen for, or `nil` to leave unchanged
+---@return boolean # True if the ID was found, false otherwise
 function Input:ModifyAnalogCallback(id, analogAction, analogValue)
     for _id, analogCallbackData in pairs(analogCallbacks) do
         if _id == id then
@@ -396,7 +405,9 @@ end
 ---
 ---Unregisters a listener with a specific ID.
 ---
----@param id number # The number returned by ListenToButton.
+---@see Input.ListenToButton
+---@see Input.ListenToAnalog
+---@param id number # The ID of the listener
 function Input:StopListening(id)
     for _id, tbl in pairs(buttonCallbacks) do
         if _id == id then
@@ -416,8 +427,8 @@ end
 ---
 ---Unregisters any listeners with a specific callback/context pair.
 ---
----@param callback fun(params:InputAnalogCallback) # The callback function that's listening.
----@param context? any # The context that was given.
+---@param callback fun(params:InputAnalogCallback) # The callback function
+---@param context? any # The context that was given
 function Input:StopListeningCallbackContext(callback, context)
     for _id, tbl in pairs(buttonCallbacks) do
         if tbl.func == callback and tbl.context == context then
@@ -437,7 +448,7 @@ end
 ---
 ---Unregisters any listeners which have a specific context.
 ---
----@param context any # The number returned by ListenToButton.
+---@param context any # The context that was given
 function Input:StopListeningByContext(context)
     for _id, tbl in pairs(buttonCallbacks) do
         if tbl.context == context then
@@ -452,24 +463,32 @@ function Input:StopListeningByContext(context)
     end
 end
 
-
+---
+---A callback for when a button is pressed.
+---
 ---@class InputPressCallback
----@field kind "press" # The kind of event.
----@field press_time number # The server time at which the button was pressed.
----@field hand CPropVRHand # EntityHandle for the hand that pressed the button.
----@field button DigitalInputAction # The ID of the button that was pressed.
+---@field kind "press" # The kind of event
+---@field press_time number # The server time at which the button was pressed
+---@field hand CPropVRHand # EntityHandle for the hand that pressed the button
+---@field button DigitalInputAction # The ID of the button that was pressed
 
+---
+---A callback for when a button is released.
+---
 ---@class InputReleaseCallback
----@field kind "release" # The kind of event.
----@field release_time number # The server time at which the button was released.
----@field hand CPropVRHand # EntityHandle for the hand that released the button.
----@field button DigitalInputAction # The ID of the button that was pressed.
----@field held_time number # Seconds the button was held for prior to being released.
+---@field kind "release" # The kind of event
+---@field release_time number # The server time at which the button was released
+---@field hand CPropVRHand # EntityHandle for the hand that released the button
+---@field button DigitalInputAction # The ID of the button that was pressed
+---@field held_time number # Seconds the button was held for prior to being released
 
+---
+---A callback for when an analog action is moved.
+---
 ---@class InputAnalogCallback
----@field value Vector # The vector value of the analog action at the time of detection.
----@field hand CPropVRHand # EntityHandle for the hand that moved the analog action.
----@field analog AnalogInputAction # The ID of the analog action that was moved.
+---@field value Vector # The vector value of the analog action at the time of detection
+---@field hand CPropVRHand # EntityHandle for the hand that moved the analog action
+---@field analog AnalogInputAction # The ID of the analog action that was moved
 
 ---@alias INPUT_CALLBACK InputPressCallback|InputReleaseCallback
 
@@ -598,7 +617,7 @@ local tracking_ent = nil
 ---
 ---Starts the input system.
 ---
----@param on EntityHandle? # Optional entity to do the tracking on. This is the player by default.
+---@param on EntityHandle? # Optional entity to do the tracking on. This is the player by default
 function Input:Start(on)
     if on == nil then on = Entities:GetLocalPlayer() end
     tracking_ent = on

@@ -4,9 +4,9 @@
 
     Haptic sequences allow for more complex vibrations than the one-shot pulses that the base API provides.
 
-    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
     
-    require "alyxlib.input.haptics"
+    require "alyxlib.controls.haptics"
 
     This script was adapted from PeterSHollander's haptics.lua
     https://github.com/PeterSHollander/glorious_gloves/blob/master/scripts/vscripts/device/haptics.lua
@@ -15,6 +15,9 @@
 local MIN_PULSE_WIDTH = 1
 local MAX_PULSE_WIDTH = 30
 
+---
+---Haptic sequence.
+---
 ---@class HapticSequence
 local HapticSequenceClass = {
     ---@type string
@@ -28,6 +31,10 @@ local HapticSequenceClass = {
     pulseWidth_us = 0,
 }
 HapticSequenceClass.__index = HapticSequenceClass
+
+---
+---Current version of the haptics system.
+---
 HapticSequenceClass.version = "v1.0.2"
 
 ---

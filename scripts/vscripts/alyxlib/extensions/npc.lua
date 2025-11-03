@@ -5,7 +5,7 @@
     Extension for NPC entities.
     Some functions are specific to only one entity class such as `npc_combine_s`, check the individual function descriptions.
 
-    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
     
     require "alyxlib.extensions.npc"
 ]]
@@ -17,7 +17,7 @@ require "alyxlib.extensions.entities"
 local version = "v1.2.0"
 
 ---
----Schedule enum table for use with CAI_BaseNPC:StartSchedule().
+---Schedule enum table for use with [CAI_BaseNPC:StartSchedule](lua://CAI_BaseNPC.StartSchedule).
 ---
 Schedule = {
     ---@enum ScheduleType
@@ -48,14 +48,14 @@ Schedule = {
 }
 
 ---
----Create and start a new schedule for this NPC.
+---Creates and starts a new schedule for this NPC.
 ---
----@param state ScheduleState # The NPC state that should be set.
----@param type ScheduleType # The type of schedule to perform.
----@param interruptability ScheduleInterruptability # What should interrupt the NPC from the schedule.
----@param reacquire boolean # If the NPC should reacquire the schedule after being interrupted.
----@param goal EntityHandle|Vector # Worldspace position or entity goal (entity origin will be used).
----@return EntityHandle # The schedule entity.
+---@param state ScheduleState # The NPC state that should be set
+---@param type ScheduleType # The type of schedule to perform
+---@param interruptability ScheduleInterruptability # What should interrupt the NPC from the schedule
+---@param reacquire boolean # If the NPC should reacquire the schedule after being interrupted
+---@param goal EntityHandle|Vector # Worldspace position or entity goal (entity origin will be used)
+---@return EntityHandle # The new `aiscripted_schedule`
 function CAI_BaseNPC:StartSchedule(state, type, interruptability, reacquire, goal)
 
     local goalName
@@ -89,8 +89,8 @@ end
 ---
 ---Stops the given schedule for this NPC.
 ---
----@param schedule EntityHandle # The previously created schedule.
----@param dontKill? boolean # If true the schedule will not be killed at the same time.
+---@param schedule EntityHandle # The previously created schedule
+---@param dontKill? boolean # If true the schedule will not be killed at the same time
 function CAI_BaseNPC:StopSchedule(schedule, dontKill)
     if IsEntity(schedule, true) then
         schedule:EntFire("StopSchedule")
@@ -100,30 +100,32 @@ function CAI_BaseNPC:StopSchedule(schedule, dontKill)
     end
 end
 
----Set state of the NPC.
----@param state ScheduleState
+---
+---Sets the state of the NPC by creating a new schedule.
+---
+---@param state ScheduleState # The NPC state that should be set
 function CAI_BaseNPC:SetState(state)
     local schedule = self:StartSchedule(state, 0, 0, false, self)
 end
 
 ---
----Get if this NPC has an enemy target.
+---Gets if this NPC has an enemy target.
 ---
 ---This function only works with entities that have `enemy` or `distancetoenemy` criteria.
 ---
----@return boolean # True if the NPC has an enemy target.
+---@return boolean # True if the NPC has an enemy target
 function CAI_BaseNPC:HasEnemyTarget()
     local criteria = self:GetCriteria()
     return criteria.enemy ~= nil or criteria.distancetoenemy ~= 16384
 end
 
 ---
----Estimate the enemy that this NPC is fighting using its criteria values.
+---Estimates the enemy that this NPC is fighting using its criteria values
 ---
----This function only works with entities that have `enemy` criteria; "npc_combine_s", "npc_zombine", "npc_zombie_blind".
+---This function only works with entities that have `enemy` criteria, e.g. "npc_combine_s", "npc_zombine", "npc_zombie_blind".
 ---
----@param distanceTolerance? number # Discrepancy allowed when comparing distance to enemy. Default 1
----@return EntityHandle? # Estimated enemy target.
+---@param distanceTolerance? number # Discrepancy allowed when comparing distance to enemy; default is `1`
+---@return EntityHandle? # Estimated enemy target
 function CAI_BaseNPC:EstimateEnemyTarget(distanceTolerance)
     distanceTolerance = distanceTolerance or 1
     local criteria = self:GetCriteria()
@@ -142,16 +144,21 @@ function CAI_BaseNPC:EstimateEnemyTarget(distanceTolerance)
     return nil
 end
 
+---
+---Relationship disposition types.
+---
 ---@alias RelationshipDisposition
 ---| "D_HT" # Hate
 ---| "D_FR" # Fear
 ---| "D_LI" # Like
 ---| "D_NU" # Neutral
 
----Set the relationship of this NPC with a targetname or classname.
+---
+---Sets the relationship of this NPC with another entity.
+---
 ---@param target string|EntityHandle # Targetname, classname or entity.
 ---@param disposition RelationshipDisposition # Type of relationship with `target`.
----@param priority? number # How much the Subject(s) should Like/Hate/Fear the Target(s). Higher priority = stronger feeling. Default is 0.
+---@param priority? number # How much the Subject(s) should Like/Hate/Fear the Target(s). Higher priority = stronger feeling; default is 0.
 function CAI_BaseNPC:SetRelationship(target, disposition, priority)
     if IsEntity(target) then
         target = target--[[@as EntityHandle]]:GetName()
@@ -179,11 +186,11 @@ local livingClasses = {
 }
 
 ---
----Get if this NPC is a creature, e.g. combine, headcrab, player
+---Checks if this NPC is a creature, e.g. combine, headcrab, player
 ---
 ---Will return false for all other class types, such as npc_turret and npc_manhack.
 ---
----@return boolean
+---@return boolean # True if this NPC is a creature
 function CAI_BaseNPC:IsCreature()
     return vlua.find(livingClasses, self:GetClassname()) ~= nil
 end
@@ -195,9 +202,9 @@ local combineClasses = {
 }
 
 ---
----Get if this NPC is a combine creature.
+---Checks if this NPC is a Combine creature.
 ---
----@return boolean
+---@return boolean # True if this NPC is Combine
 function CAI_BaseNPC:IsCombine()
     return vlua.find(combineClasses, self:GetClassname()) ~= nil
 end
@@ -215,17 +222,17 @@ local xenClasses = {
 }
 
 ---
----Get if this NPC is a Xen creature.
+---Checks if this NPC is a Xen creature.
 ---
----@return boolean
+---@return boolean # True if this NPC is Xen
 function CAI_BaseNPC:IsXen()
     return vlua.find(xenClasses, self:GetClassname()) ~= nil
 end
 
 ---
----Get all members of the same squad as this NPC, including this NPC.
+---Gets all members of the same squad as this NPC, including this NPC.
 ---
----@return CAI_BaseNPC[]
+---@return CAI_BaseNPC[] # List of NPC members
 function CAI_BaseNPC:GetSquadMembers()
     local squad = self:GetSquad()
     local members = {}

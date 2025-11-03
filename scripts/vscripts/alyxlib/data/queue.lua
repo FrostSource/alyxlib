@@ -4,13 +4,16 @@
 
     A queue is a data structure where items are added at one end and removed from the other, so the first item added is the first one taken out.
 
-    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
     
     require "alyxlib.data.queue"
 ]]
 
 local version = "v1.5.1"
 
+---
+---Queue data structure.
+---
 ---@class Queue
 local QueueClass =
 {
@@ -27,10 +30,10 @@ if pcall(require, "alyxlib.storage") then
     ---
     ---Helper function for saving the `queue`.
     ---
-    ---@param handle EntityHandle # The entity to save on.
-    ---@param name string # The name to save as.
-    ---@param queue Queue # The stack to save.
-    ---@return boolean # If the save was successful.
+    ---@param handle EntityHandle # The entity to save on
+    ---@param name string # The name to save as
+    ---@param queue Queue # The stack to save
+    ---@return boolean # If the save was successful
     ---@luadoc-ignore
     function QueueClass.__save(handle, name, queue)
         return Storage.SaveTableCustom(handle, name, queue, "Queue")
@@ -41,9 +44,9 @@ if pcall(require, "alyxlib.storage") then
     ---
     ---Helper function for loading the `stack`.
     ---
-    ---@param handle EntityHandle # Entity to load from.
-    ---@param name string # Name to load.
-    ---@return Queue|nil
+    ---@param handle EntityHandle # Entity to load from
+    ---@param name string # Name to load
+    ---@return Queue|nil # The loaded stack
     ---@luadoc-ignore
     function QueueClass.__load(handle, name)
         local queue = Storage.LoadTableCustom(handle, name, "Queue")
@@ -55,13 +58,13 @@ if pcall(require, "alyxlib.storage") then
     CBaseEntity.SaveQueue = Storage.SaveQueue
 
     ---
-    ---Load a Queue.
+    ---Loads a Queue.
     ---
     ---@generic T
-    ---@param handle EntityHandle # Entity to load from.
-    ---@param name string # Name the Queue was saved as.
-    ---@param default? T # Optional default value.
-    ---@return Queue|T
+    ---@param handle EntityHandle # Entity to load from
+    ---@param name string # Name the Queue was saved as
+    ---@param default? T # Optional default value
+    ---@return Queue|T # The loaded Queue
     ---@luadoc-ignore
     Storage.LoadQueue = function(handle, name, default)
         local queue = QueueClass.__load(handle, name)
@@ -73,22 +76,23 @@ if pcall(require, "alyxlib.storage") then
     CBaseEntity.LoadQueue = Storage.LoadQueue
 end
 
-
-
 ---
----Add values to the queue in the order they appear.
+---Adds values to the queue in the order they are provided.
 ---
----@param ... any
+---@param ... any # Any number of values
 function QueueClass:Enqueue(...)
-    local args = {...}
-    for i = #args, 1, -1 do
-        table.insert(self.items, 1, args[i])
+    for i = select("#", ...), 1, -1 do
+        table.insert(self.items, 1, select(i, ...))
     end
 end
 
----Get a number of values in reverse order of the queue.
----@param count? number # Default is 1
----@return ...
+---
+---Removes and returns one or more items from the front of the queue.
+---
+---If `count` is omitted, a single item will is dequeued.
+---
+---@param count? number # Number of items to dequeue
+---@return ... # The dequeued items in the original insertion order
 function QueueClass:Dequeue(count)
     count = min(count or 1, #self.items)
     local tbl = {}
@@ -99,10 +103,10 @@ function QueueClass:Dequeue(count)
 end
 
 ---
----Peek at a number of items at the front of the queue without removing them.
+---Peeks at a number of items at the front of the queue without removing them.
 ---
----@param count? number # Default is 1
----@return ...
+---@param count? number # Number of items to peek at
+---@return ... # The peeked items
 function QueueClass:Front(count)
     count = min(count or 1, #self.items)
     local tbl = {}
@@ -113,10 +117,10 @@ function QueueClass:Front(count)
 end
 
 ---
----Peek at a number of items at the back of the queue without removing them.
+---Peeks at a number of items at the back of the queue without removing them.
 ---
----@param count? number # Default is 1
----@return ...
+---@param count? number # Number of items to peek at
+---@return ... # The peeked items
 function QueueClass:Back(count)
     count = min(count or 1, #self.items)
     local tbl = {}
@@ -127,9 +131,9 @@ function QueueClass:Back(count)
 end
 
 ---
----Remove a value from the queue regardless of its position.
+---Removes a value from the queue regardless of its position.
 ---
----@param value any
+---@param value any # The value to remove
 function QueueClass:Remove(value)
     for index, val in ipairs(self.items) do
         if value == val then
@@ -140,11 +144,12 @@ function QueueClass:Remove(value)
 end
 
 ---
----Move an existing value to the front of the queue.
----Only the first occurance will be moved.
+---Moves an existing value to the back of the queue.
 ---
----@param value any # The value to move.
----@return boolean # True if value was found and moved.
+---Only the furthest back occurance will be moved.
+---
+---@param value any # The value to move
+---@return boolean # True if value was found and moved
 function QueueClass:MoveToBack(value)
     for index, val in ipairs(self.items) do
         if value == val then
@@ -157,11 +162,12 @@ function QueueClass:MoveToBack(value)
 end
 
 ---
----Move an existing value to the bottom of the stack.
----Only the first occurance will be moved.
+---Moves an existing value to the front of the queue.
 ---
----@param value any # The value to move.
----@return boolean # True if value was found and moved.
+---Only the furthest back occurance will be moved.
+---
+---@param value any # The value to move
+---@return boolean # True if value was found and moved
 function QueueClass:MoveToFront(value)
     for index, val in ipairs(self.items) do
         if value == val then
@@ -174,25 +180,26 @@ function QueueClass:MoveToFront(value)
 end
 
 ---
----Get if this queue contains a value.
+---Gets if this queue contains a value.
 ---
----@param value any
----@return boolean
+---@param value any # The value to search for
+---@return boolean # True if the value is in the queue
 function QueueClass:Contains(value)
     return vlua.find(self.items, value) ~= nil
 end
 
 ---
----Return the number of items in the queue.
+---Returns the number of items in the queue.
 ---
----@return integer
+---@return integer # The number of items
 function QueueClass:Length()
     return #self.items
 end
 
 ---
----Get if the stack is empty.
+---Gets if the stack is empty.
 ---
+---@return boolean # True if the stack is empty
 function QueueClass:IsEmpty()
     return #self.items == 0
 end
@@ -213,7 +220,8 @@ end
 
 
 ---
----Create a new `Queue` object.
+---Create a new [Queue](lua://Queue) instance.
+---
 ---Last value is at the front of the queue.
 ---
 ---E.g.
@@ -224,8 +232,8 @@ end
 ---        "Front"
 ---    )
 ---
----@param ... any
----@return Queue
+---@param ... any # Starting values
+---@return Queue # The new queue
 function Queue(...)
     return setmetatable({
         items = {...}

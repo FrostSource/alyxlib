@@ -9,7 +9,7 @@
 
     Duplicates are detected by checking for increments in the "ex*d_" fix-up name pattern the extensions give.
 
-    **This file is not loaded by default, load it with the following line:
+    **This file is not loaded by default, load it with the following line:**
 
     require("alyxlib.utils.extension_duplicate_fix")
 ]]

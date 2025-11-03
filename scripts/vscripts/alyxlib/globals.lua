@@ -4,11 +4,9 @@
 
     Provides common global functions used throughout extravaganza libraries.
 
-    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
     
-    ```lua
     require "alyxlib.globals"
-    ```
 ]]
 
 -- These are expected by globals
@@ -31,7 +29,7 @@ local _version = "v2.7.0"
 ---
 ---List of registered addons using AlyxLib.
 ---
----Requires the developer to use the `RegisterAlyxLibAddon` function in their addon.
+---Requires the developer to use the [RegisterAlyxLibAddon](lua://RegisterAlyxLibAddon) function in their addon.
 ---
 ---@type AlyxLibAddon[]
 AlyxLibAddons = {}
@@ -42,7 +40,7 @@ AlyxLibAddons = {}
 ---@param name string # Full display name of the addon, e.g. "My New Addon"
 ---@param version string # SemVer version string of the addon, e.g. "v1.2.3"
 ---@param workshopID? string # The ID of the addon on the Steam workshop
----@param shortName? string # Short unique name of the addon without spaces, e.g. "myaddon". Defaults to `name` without spaces and converted to lowercase\
+---@param shortName? string # Short unique name of the addon without spaces, e.g. "myaddon". Defaults to `name` without spaces and converted to lowercase
 ---@param minAlyxLibVersion? string # Minimum AlyxLib version that this addon works with, defaults to "v1.0.0"
 ---@param maxAlyxLibVersion? string # Maximum AlyxLib version that this addon works with, defaults to `ALYXLIB_VERSION`
 ---@return integer # The index of the addon for use in other AlyxLib functions
@@ -88,8 +86,8 @@ end
 ---It compares the versions based on their `major`, `minor`, and `patch` components.
 ---If a version is incomplete, the missing components are assumed to be 0.
 ---
----@param v1 string # The first version string to compare. May include leading "v" and whitespace, and may have missing `minor` or `patch` components.
----@param v2 string # The second version string to compare. Similar format and rules to `v1`.
+---@param v1 string # The first version string to compare. May include leading "v" and whitespace, and may have missing `minor` or `patch` components
+---@param v2 string # The second version string to compare. Similar format and rules to `v1`
 ---
 ---@return -1|0|1 #
 ---  - `-1` if `v1` is older than `v2`.
@@ -116,11 +114,11 @@ end
 
 
 ---
----Get the file name of the current script without folders or extension. E.g. `util.util`
+---Gets the file name of the current script without folders or extension. E.g. `util.util`
 ---
----@param sep?  string # Separator character, default is '.'
----@param level? (integer|function)? # Function level, [View documents](command:extension.lua.doc?["en-us/51/manual.html/pdf-debug.getinfo"])
----@return string
+---@param sep?  string # Separator character (default: `.`)
+---@param level? integer|function # Function level, [View documents](command:extension.lua.doc?["en-us/51/manual.html/pdf-debug.getinfo"])
+---@return string # File name
 function GetScriptFile(sep, level)
     sep = sep or "."
     local sys_sep = package.config:sub(1,1)
@@ -137,9 +135,9 @@ function GetScriptFile(sep, level)
 end
 
 ---
----Get the list of enabled addons from the `default_enabled_addons_list` Convar.
+---Gets the list of enabled addons from the `default_enabled_addons_list` convar.
 ---
----@return string[]
+---@return string[] # List of enabled addons
 function GetEnabledAddons()
     local addons = {}
     ---@type string
@@ -160,7 +158,7 @@ function IsAddonEnabled(workshopID)
 end
 
 ---
----Get if the given `handle` value is an entity, regardless of if it's still alive.
+---Checks if the given `handle` value is an entity, regardless of if it's still alive.
 ---
 ---A common usage is replacing the often used entity check:
 ---
@@ -170,34 +168,34 @@ end
 ---
 ---    if IsEntity(entity, true) then
 ---
----@param handle EntityHandle|any
----@param checkValidity? boolean # Optionally check validity with IsValidEntity.
+---@param value EntityHandle|any # The value to check
+---@param checkValidity? boolean # Optionally check validity with [IsValidEntity](lua://IsValidEntity)
 ---@return boolean
-function IsEntity(handle, checkValidity)
-    return (type(handle) == "table" and handle.__self and type(handle.__self) == "userdata") and (not checkValidity or IsValidEntity(handle))
+function IsEntity(value, checkValidity)
+    return (type(value) == "table" and value.__self and type(value.__self) == "userdata") and (not checkValidity or IsValidEntity(value))
 end
 
 ---
----Add an output to a given entity `handle`.
+---Adds an output to a given `entity`.
 ---
----@param handle     EntityHandle|string # The entity to add the `output` to.
----@param output     string # The output name to add.
----@param target     EntityHandle|string # The entity the output should target, either handle or targetname.
----@param input      string # The input name on `target`.
----@param parameter? string # The parameter override for `input`.
----@param delay?     number # Delay for the output in seconds.
----@param activator? EntityHandle # Activator for the output.
----@param caller?    EntityHandle # Caller for the output.
----@param fireOnce?  boolean # If the output should only fire once.
-function AddOutput(handle, output, target, input, parameter, delay, activator, caller, fireOnce)
+---@param entity     EntityHandle|string # The entity to add the `output` to
+---@param output     string # The output name to add
+---@param target     EntityHandle|string # The entity the output should target, either handle or targetname
+---@param input      string # The input name on `target`
+---@param parameter? string # The parameter override for `input` (default: `""`)
+---@param delay?     number # Delay for the output in seconds (default: `0`)
+---@param activator? EntityHandle # Activator for the output (default: `nil`)
+---@param caller?    EntityHandle # Caller for the output (default: `nil`)
+---@param fireOnce?  boolean # If the output should only fire once (default: `false`)
+function AddOutput(entity, output, target, input, parameter, delay, activator, caller, fireOnce)
     if IsEntity(target) then target = target:GetName() end
     parameter = parameter or ""
     delay = delay or 0
     local output_str = output..">"..target..">"..input..">"..parameter..">"..delay..">"..(fireOnce and 1 or -1)
-    if type(handle) == "string" then
-        DoEntFire(handle, "AddOutput", output_str, 0, activator or nil, caller or nil)
+    if type(entity) == "string" then
+        DoEntFire(entity, "AddOutput", output_str, 0, activator or nil, caller or nil)
     else
-        DoEntFireByInstanceHandle(handle, "AddOutput", output_str, 0, activator or nil, caller or nil)
+        DoEntFireByInstanceHandle(entity, "AddOutput", output_str, 0, activator or nil, caller or nil)
     end
 end
 CBaseEntity.AddOutput = AddOutput
@@ -205,8 +203,8 @@ CBaseEntity.AddOutput = AddOutput
 ---
 ---Checks if the module/script exists.
 ---
----@param name? string
----@return boolean
+---@param name? string # Name of the module
+---@return boolean # `true` if the module exists, `false` otherwise
 ---@diagnostic disable-next-line: lowercase-global
 function module_exists(name)
     if name == nil then return false end
@@ -230,9 +228,9 @@ end
 ---
 ---If the module fails to load then the callback is not executed and no error is thrown, but a warning is displayed in the console.
 ---
----@param modname string
----@param callback fun(mod_result: unknown)?
----@return unknown
+---@param modname string # Name of the module/script
+---@param callback fun(mod_result: unknown)? # Callback function
+---@return unknown|nil # The value returned by the module, or `nil` if the module fails to load
 ---@diagnostic disable-next-line: lowercase-global
 function ifrequire(modname, callback)
     ---@TODO: Consider using module_exists
@@ -253,27 +251,27 @@ function ifrequire(modname, callback)
 end
 
 ---
----Execute a script file. Included in the current scope by default.
+---Executes a script file. Included in the current scope by default.
 ---
----@param scriptFileName string
----@param scope?         ScriptScope
----@return boolean
+---@param scriptFileName string # Name of the script
+---@param scope? ScriptScope # Scope to include the script in
+---@return boolean # `true` if the script was successfully included, `false` otherwise
 function IncludeScript(scriptFileName, scope)
     return DoIncludeScript(scriptFileName, scope or getfenv(2))
 end
 
 ---
----Gets if the game was started in VR mode.
+---Checks if the game was started in VR mode.
 ---
----@return boolean
+---@return boolean # `true` if the game was started in VR mode, `false` otherwise
 function IsVREnabled()
     return GlobalSys:CommandLineCheck('-vr')
 end
 
 ---
----Gets if the game was started with `+vr_enable_fake_vr 1`.
+---Checks if the game was started with `+vr_enable_fake_vr 1`.
 ---
----@return boolean
+---@return boolean # `true` if the game was started in fake VR mode, `false` otherwise
 function IsFakeVREnabled()
     return GlobalSys:CommandLineInt("+vr_enable_fake_vr", 0) == 1
 end
@@ -281,7 +279,7 @@ end
 ---
 ---Prints all arguments with spaces between instead of tabs.
 ---
----@param ... any
+---@param ... any # Any number of arguments
 ---@diagnostic disable-next-line: lowercase-global
 function prints(...)
     local args = {...}
@@ -301,7 +299,7 @@ end
 ---
 ---Prints all arguments on a new line instead of tabs.
 ---
----@param ... any
+---@param ... any # Any number of arguments
 ---@diagnostic disable-next-line: lowercase-global
 function printn(...)
     local args = {...}
@@ -313,7 +311,7 @@ end
 ---
 ---Prints all arguments if convar "developer" is greater than 0.
 ---
----@param ... any
+---@param ... any # Any number of arguments
 ---@diagnostic disable-next-line: lowercase-global
 function devprint(...)
     if Convars:GetInt("developer") > 0 then
@@ -324,7 +322,7 @@ end
 ---
 ---Prints all arguments on a new line instead of tabs if convar "developer" is greater than 0.
 ---
----@param ... any
+---@param ... any # Any number of arguments
 ---@diagnostic disable-next-line: lowercase-global
 function devprints(...)
     if Convars:GetInt("developer") > 0 then
@@ -335,7 +333,7 @@ end
 ---
 ---Prints all arguments with spaces between instead of tabs if convar "developer" is greater than 0.
 ---
----@param ... any
+---@param ... any # Any number of arguments
 ---@diagnostic disable-next-line: lowercase-global
 function devprintn(...)
     if Convars:GetInt("developer") > 0 then
@@ -346,7 +344,7 @@ end
 ---
 ---Prints all arguments if convar "developer" is greater than 1.
 ---
----@param ... any
+---@param ... any # Any number of arguments
 ---@diagnostic disable-next-line: lowercase-global
 function devprint2(...)
     if Convars:GetInt("developer") > 1 then
@@ -357,7 +355,7 @@ end
 ---
 ---Prints all arguments on a new line instead of tabs if convar "developer" is greater than 1.
 ---
----@param ... any
+---@param ... any # Any number of arguments
 ---@diagnostic disable-next-line: lowercase-global
 function devprints2(...)
     if Convars:GetInt("developer") > 1 then
@@ -368,7 +366,7 @@ end
 ---
 ---Prints all arguments with spaces between instead of tabs if convar "developer" is greater than 1.
 ---
----@param ... any
+---@param ... any # Any number of arguments
 ---@diagnostic disable-next-line: lowercase-global
 function devprintn2(...)
     if Convars:GetInt("developer") > 1 then
@@ -379,7 +377,7 @@ end
 ---
 ---Prints a warning in the console, along with a vscript print if inside tools mode.
 ---
----@param ... any
+---@param ... any # Any number of arguments
 function warn(...)
     local str = table.concat({...}, " ")
     Warning(str .. "\n")
@@ -392,7 +390,7 @@ end
 ---Prints a warning in the console, along with a vscript print if inside tools mode.
 ---But only if convar "developer" is greater than 0.
 ---
----@param ... any
+---@param ... any # Any number of arguments
 ---@diagnostic disable-next-line: lowercase-global
 function devwarn(...)
     if Convars:GetInt("developer") > 0 then
@@ -418,9 +416,9 @@ end
 ---    -- Or with alternate name
 ---    Expose(TriggerRelay, "RelayInput")
 ---
----@param func function # The function to expose.
----@param name? string # Optionally the name of the function for faster processing.
----@param scope? table # Optionally the explicit scope to put the exposed function in.
+---@param func function # The function to expose
+---@param name? string # Optionally the name of the function for faster processing
+---@param scope? table # Optionally the explicit scope to put the exposed function in
 function Expose(func, name, scope)
     local fenv = getfenv(func)
     -- if name is empty then find the name
@@ -456,10 +454,10 @@ local base_vector = Vector()
 local vector_meta = getmetatable(base_vector)
 
 ---
----Get if a value is a `Vector`
+---Checks if a value is a [Vector](lua://Vector).
 ---
----@param value any
----@return boolean
+---@param value any # Value to check
+---@return boolean # `true` if the value is a [Vector](lua://Vector), `false` otherwise
 function IsVector(value)
     return getmetatable(value) == vector_meta
 end
@@ -468,10 +466,10 @@ local base_qangle = QAngle()
 local qangle_meta = getmetatable(base_qangle)
 
 ---
----Get if a value is a `QAngle`
+---Checks if a value is a [QAngle](lua://QAngle).
 ---
----@param value any
----@return boolean
+---@param value any # Value to check
+---@return boolean # `true` if the value is a [QAngle](lua://QAngle), `false` otherwise
 function IsQAngle(value)
     return getmetatable(value) == qangle_meta
 end
@@ -484,8 +482,8 @@ end
 ---`Vector`,
 ---`QAngle`
 ---
----@param tbl table
----@return table
+---@param tbl table # Table to copy
+---@return table # A copy of `tbl`
 function DeepCopyTable(tbl)
     -- print("Deep copy inside", tbl)
     local t = {}
@@ -511,11 +509,12 @@ end
 ---
 ---Searches for `value` in `tbl` and sets the associated key to `nil`, returning the key if found.
 ---
----If your table is an array you should use `ArrayRemove` instead.
+---If your table is an array you should use [ArrayRemove](lua://ArrayRemove) instead.
 ---
----@param tbl table
----@param value any
----@return any
+---@see ArrayRemove
+---@param tbl table # Table to search
+---@param value any # Value to search for
+---@return any # The key of `value` if found, `nil` otherwise
 function TableRemove(tbl, value)
     local k = vlua.find(tbl, value)
     if k then
@@ -528,9 +527,9 @@ end
 ---
 ---Returns a random key/value pair from a unordered table.
 ---
----@param tbl table # Table to get a random pair from.
----@return any key # Random key selected.
----@return any value # Value linked to the random key.
+---@param tbl table # Table to get a random pair from
+---@return any key # Random key selected
+---@return any value # Value linked to the random key
 function TableRandom(tbl)
     local count = 0
     local selectedKey
@@ -548,11 +547,11 @@ function TableRandom(tbl)
 end
 
 ---
----Returns all the keys of a table as a new ordered array.
+---Returns all keys of a table as a new ordered array.
 ---
 ---@generic K
----@param tbl table<K,any>
----@return K[]
+---@param tbl table<K,any> # Table to get keys from
+---@return K[] # List of keys
 function TableKeys(tbl)
     local array = {}
     for key, _ in pairs(tbl) do
@@ -562,11 +561,11 @@ function TableKeys(tbl)
 end
 
 ---
----Returns all the value of a table as a new ordered array.
+---Returns all values in a table as a new ordered array.
 ---
 ---@generic V
----@param tbl table<any,V>
----@return V[]
+---@param tbl table<any,V> # Table to get values from
+---@return V[] # List of values
 function TableValues(tbl)
     local array = {}
     for _, value in pairs(tbl) do
@@ -578,12 +577,12 @@ end
 ---
 ---Returns the size of a table by counting all keys.
 ---
----@param tbl table # The table to count.
----@return number # The size of the table.
+---@param tbl table # The table to count
+---@return number # The size of the table
 function TableSize(tbl)
     if tbl == nil then return 0 end
     local size = 0
-    for _, l in pairs(tbl) do
+    for _, _ in pairs(tbl) do
         size = size + 1
     end
     return size
@@ -592,9 +591,9 @@ end
 ---
 ---Collects all values for a specific key from a list of tables.
 ---
----@param tbl table[] # List of tables.
----@param key any # Key to get values from.
----@return any[] # List of values found for the key.
+---@param tbl table[] # List of tables
+---@param key any # Key to get values from
+---@return any[] # List of values found for `key`
 function TablePluck(tbl, key)
     local out = {}
     for _, v in ipairs(tbl) do
@@ -608,9 +607,9 @@ end
 ---
 ---Returns the index of the first value that matches the predicate.
 ---
----@param list table
----@param predicate fun(value:any):boolean
----@return any
+---@param list table # List to search
+---@param predicate fun(value:any):boolean # Predicate function
+---@return any # Index of the first value that matches the predicate
 function TableFindKey(list, predicate)
     for i, v in pairs(list) do
         if predicate(v) then
@@ -624,11 +623,11 @@ end
 ---Returns a random value from an array.
 ---
 ---@generic T
----@param array T[] # Array to get a value from.
----@param min? integer # Optional minimum bound.
----@param max? integer # Optional maximum bound.
----@return T one # The random value.
----@return integer two # The random index.
+---@param array T[] # Array to get a value from
+---@param min? integer # Optional minimum bound
+---@param max? integer # Optional maximum bound
+---@return T one # The random value
+---@return integer two # The random index
 function ArrayRandom(array, min, max)
     local i = RandomInt(min or 1, max or #array)
     return array[i], i
@@ -639,7 +638,7 @@ end
 ---
 ---@source https://stackoverflow.com/a/68486276
 ---
----@param array any[]
+---@param array any[] # Array to shuffle
 function ArrayShuffle(array)
     for i = #array, 2, -1 do
         local j = RandomInt(1, i)
@@ -653,9 +652,9 @@ end
 ---This is exponentially faster than `table.remove` for large arrays.
 ---
 ---@generic T
----@param array T # The array to remove from.
----@param pos integer # Position to remove at.
----@return T # The same array passed in.
+---@param array T # The array to remove from
+---@param pos integer # Position to remove at
+---@return T # The same array passed in
 function ArrayRemove(array, pos)
     local j, n = 1, #array
 
@@ -711,8 +710,8 @@ end
 ---@generic T1
 ---@generic T2
 ---@param array1 T1[] # Base array
----@param array2 T2[] # Array which will be appended onto the base array.
----@return T1[]|T2[] # The new appended array.
+---@param array2 T2[] # Array which will be appended onto the base array
+---@return T1[]|T2[] # The new appended array
 function ArrayAppend(array1, array2)
     array1 = vlua.clone(array1)
     for _, v in ipairs(array2) do
@@ -728,8 +727,8 @@ end
 ---
 ---@generic T
 ---@param array T[] # Base array
----@param ... T[] # Any arrays to add.
----@return T[] # The new appended array.
+---@param ... T[] # Any arrays to add
+---@return T[] # The new appended array
 function ArrayAppends(array, ...)
     array = vlua.clone(array)
     for _, tbl in ipairs({...}) do
@@ -741,20 +740,20 @@ function ArrayAppends(array, ...)
 end
 
 ---@class TraceTableLineExt : TraceTableLine
----@field ignore (EntityHandle|EntityHandle[])? # Entity or array of entities to ignore.
----@field ignoreclass (string|string[])? # Class or array of classes to ignore.
----@field ignorename (string|string[])? # Name or array of names to ignore.
----@field timeout integer? # Maxmimum number of traces before returning regardless of parameters.
----@field traces integer # Number of traces done.
----@field dontignore EntityHandle # A single entity to always hit, ignoring if it exists in `ignore`.
+---@field ignore (EntityHandle|EntityHandle[])? # Entity or array of entities to ignore
+---@field ignoreclass (string|string[])? # Class or array of classes to ignore
+---@field ignorename (string|string[])? # Name or array of names to ignore
+---@field timeout integer? # Maxmimum number of traces before returning regardless of parameters
+---@field traces integer # Number of traces done
+---@field dontignore EntityHandle # A single entity to always hit, ignoring if it exists in `ignore`
 
 ---
 ---Does a raytrace along a line with extended parameters.
 ---You ignore multiple entities as well as classes and names.
 ---Because the trace has to be redone multiple times, a `timeout` parameter can be defined to cap the number of traces.
 ---
----@param parameters TraceTableLineExt
----@return boolean
+---@param parameters TraceTableLineExt # Trace parameters
+---@return boolean # `true` if the trace was successful
 function TraceLineExt(parameters)
     if IsEntity(parameters.ignore) then
         parameters.ignoreent = {parameters.ignore}
@@ -803,8 +802,8 @@ end
 ---
 ---Does a raytrace along a line until it hits the world or reaches the end of the line.
 ---
----@param parameters TraceTableLine
----@return TraceTableLine
+---@param parameters TraceTableLine # Trace parameters
+---@return TraceTableLine # Trace parameters with results
 function TraceLineWorld(parameters)
     local result = TraceLine(parameters)
     while parameters.hit and parameters.enthit:GetClassname() ~= "worldent" do
@@ -819,8 +818,8 @@ end
 ---
 ---Does a raytrace along a line until it hits the specified entity or reaches the end of the line.
 ---
----@param parameters TraceTableLine
----@return TraceTableLine
+---@param parameters TraceTableLine # Trace parameters
+---@return TraceTableLine # Trace parameters with results
 function TraceLineEntity(ent, parameters)
     local result = TraceLine(parameters)
     while parameters.hit and parameters.enthit ~= ent do
@@ -832,12 +831,14 @@ function TraceLineEntity(ent, parameters)
     return parameters
 end
 
+---
 ---Performs a simple line trace and returns the trace table.
----@param startpos Vector
----@param endpos Vector
----@param ignore? EntityHandle
----@param mask? integer
----@return TraceTableLine
+---
+---@param startpos Vector # Start position
+---@param endpos Vector # End position
+---@param ignore? EntityHandle # Entity to ignore
+---@param mask? integer # Trace mask
+---@return TraceTableLine # Trace table with results
 function TraceLineSimple(startpos, endpos, ignore, mask)
     ---@type TraceTableLine
     local traceTable = {
@@ -851,18 +852,18 @@ function TraceLineSimple(startpos, endpos, ignore, mask)
 end
 
 ---
----Get if an entity is the world entity.
+---Checks if an entity is the world entity.
 ---
----@param entity EntityHandle
----@return boolean
+---@param entity EntityHandle # Entity to check
+---@return boolean # `true` if the entity is the world entity, `false` otherwise
 function IsWorld(entity)
     return IsEntity(entity) and entity:GetClassname() == "worldent"
 end
 
 ---
----Get the world entity.
+---Gets the world entity.
 ---
----@return EntityHandle
+---@return EntityHandle # World entity
 function GetWorld()
     return Entities:FindByClassname(nil, "worldent")
 end
@@ -899,9 +900,11 @@ local physicsClasses = {
     "item_hlvr_weapon_generic_pistol",
 }
 
----Get if an entity is a physical entity.
----@param entity EntityHandle
----@return boolean
+---
+---Checks if an entity is a physical entity.
+---
+---@param entity EntityHandle # Entity to check
+---@return boolean # `true` if the entity is a physical entity, `false` otherwise
 function IsPhysicsObject(entity)
     if IsEntity(entity) then
         if entity:GetClassname() == "prop_animinteractable" then
@@ -917,11 +920,11 @@ function IsPhysicsObject(entity)
 end
 
 ---
----Get if a table has a key (this essentially the same as tbl[key] ~= nil).
+---Checks if a table has a key (this essentially the same as tbl[key] ~= nil).
 ---
----@param tbl table
----@param key any
----@return boolean
+---@param tbl table # Table to check
+---@param key any # Key to look for
+---@return boolean # `true` if the table has the key, `false` otherwise
 ---@luadoc-ignore
 ---@diagnostic disable-next-line:lowercase-global
 function haskey(tbl, key)
@@ -932,26 +935,26 @@ function haskey(tbl, key)
 end
 
 ---
----Check if a value is truthy or falsy.
+---Checks if a value is truthy or falsy.
 ---
 --- **falsy == `nil`|`false`|`0`|`""`|`{}`**
 ---
----@param value any # The value to be checked.
----@return boolean # Returns true if the value is truthy, false otherwise.
+---@param value any # The value to be checked
+---@return boolean # `true` if the value is truthy, `false` otherwise
 ---@diagnostic disable-next-line:lowercase-global
 function truthy(value)
     return not (value == nil or value == false or value == 0 or value == "" or value == "0" or value == "false" or (type(value) == "table" and next(value) == nil))
 end
 
 ---
----Search an entity for a key using a search pattern. E.g. "getclass" will find "GetClassname"
+---Searches an entity for a key using a search pattern. E.g. "getclass" will find "GetClassname"
 ---
 ---Works with `class.lua` EntityClass entities.
 ---
----@param entity EntityHandle|EntityClass
----@param searchPattern string
----@return string? key # The full name of the first key matching `searchPattern`.
----@return any? value # The value of the key found.
+---@param entity EntityHandle|EntityClass # The entity to search
+---@param searchPattern string # The name pattern to search for
+---@return string? key # The full name of the first key matching `searchPattern`
+---@return any? value # The value of the key found
 function SearchEntity(entity, searchPattern)
     searchPattern = searchPattern:lower()
 
@@ -993,10 +996,10 @@ end
 ---
 ---Linearly interpolates between two angles.
 ---
----@param t number # The interpolation parameter, where 0 returns angle_start and 1 returns angle_end.
----@param angle_start number # The starting angle in degrees.
----@param angle_end number # The ending angle in degrees.
----@return number # The interpolated angle.
+---@param t number # The interpolation parameter, where `0` returns `angle_start` and `1` returns `angle_end`
+---@param angle_start number # The starting angle in degrees
+---@param angle_end number # The ending angle in degrees
+---@return number # The interpolated angle
 function LerpAngle(t, angle_start, angle_end)
     angle_start = angle_start % 360
     angle_end = angle_end % 360
@@ -1010,22 +1013,30 @@ function LerpAngle(t, angle_start, angle_end)
     return interpolated_angle
 end
 
+---
+---Calculates the closest point on an entity's OBB to a position.
+---
+---This is a modified version of the original function that fixes
+---off-center models not calculating correctly.
+---
+---@param entity EntityHandle # The entity to calculate the closest point on
+---@param position Vector # The position to calculate the closest point to
+---@return Vector # The closest point on the entity's OBB to the position
 function CalcClosestPointOnEntityOBBAdjusted(entity, position)
     local org = entity:GetOrigin()
     entity:SetOrigin(org + (entity:GetCenter() - entity:GetOrigin()))
     local calcpos = CalcClosestPointOnEntityOBB(entity, position)
     entity:SetOrigin(org)
     return calcpos
-    -- return calcpos + (entity:GetCenter() - entity:GetOrigin())
 end
 
 ---
 ---Assigns a default value to a table which will be returned if an invalid key is accessed.
 ---
 ---@generic T
----@param tbl T # The table to which the default value will be assigned.
----@param default any # The default value to be returned for invalid keys.
----@return T # The table with the default value assigned.
+---@param tbl T # The table to which the default value will be assigned
+---@param default any # The default value to be returned for invalid keys
+---@return T # The table with the default value assigned
 function DefaultTable(tbl, default)
     return setmetatable(tbl, {
         __index = function ()
@@ -1037,10 +1048,10 @@ end
 ---
 ---Wraps a value within a specified range.
 ---
----@param value number The value to be wrapped.
----@param min number # The minimum value of the range.
----@param max number # The maximum value of the range.
----@return number # The wrapped value within the specified range.
+---@param value number The value to be wrapped
+---@param min number # The minimum value of the range
+---@param max number # The maximum value of the range
+---@return number # The wrapped value within the specified range
 function Wrap(value, min, max)
     local range = max - min + 1
     return ((value - min) % range) + min
@@ -1065,9 +1076,9 @@ end
 ---         return 0
 ---     end, 0)
 ---
----@param on? fun(...): any # Function called when the condition is true.
----@param off? fun(...): any # Function called when the condition is false.
----@return fun(condition: boolean, ...): any # The created toggle function.
+---@param on? fun(...): any # Function called when the condition is true
+---@param off? fun(...): any # Function called when the condition is false
+---@return fun(condition: boolean, ...): any # The created toggle function
 function CreateToggleBehavior(on, off)
     local flag = false
 
@@ -1091,10 +1102,10 @@ function CreateToggleBehavior(on, off)
 end
 
 ---
----Compute the closest corner relative to a vector on the AABB of an entity.
+---Computes the closest corner relative to a vector on the AABB of an entity.
 ---
----@param entity EntityHandle
----@param position Vector
+---@param entity EntityHandle # The entity to calculate the closest corner on
+---@param position Vector # The vector to calculate the closest corner to
 function CalcClosestCornerOnEntityAABB(entity, position)
     local corners = entity:GetBoundingCorners(true)
     local closestCorner = corners[1]
@@ -1123,9 +1134,9 @@ end
 ---If the random roll succeeds, returns `onTrue` (default: true).  
 ---If it fails, returns `onFalse` (default: false).
 ---
----@param chance number # The percentage chance of success (0-100).
----@param onTrue? any # Value to return if the chance succeeds (default: true).
----@param onFalse? any # Value to return if the chance fails (default: false).
+---@param chance number # The percentage chance of success (0-100)
+---@param onTrue? any # Value to return if the chance succeeds (default: `true`)
+---@param onFalse? any # Value to return if the chance fails (default: `false`)
 ---@return boolean|any
 function RandomChance(chance, onTrue, onFalse)
     if onTrue == nil then onTrue = true end

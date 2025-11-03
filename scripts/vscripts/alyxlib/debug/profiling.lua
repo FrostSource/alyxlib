@@ -23,7 +23,7 @@ local freq = ffi.new("LARGE_INTEGER")
 kernal32.QueryPerformanceFrequency(freq)
 
 ---
----Profiler class
+---Profiler class.
 ---
 ---@class Profiler
 local profiler = {
@@ -108,17 +108,17 @@ function profiler:Profile(func)
 end
 
 ---
----Get the mean (average) profiled time in seconds.
+---Gets the mean (average) profiled time in seconds.
 ---
----@return number
+---@return number # The mean profiled time
 function profiler:GetMean()
     return self.totalTime / self.numMeasurements
 end
 
 ---
----Get the median profiled time in seconds.
+---Gets the median profiled time in seconds.
 ---
----@return number
+---@return number # The median profiled time
 function profiler:GetMedian()
     if self.numMeasurements == 0 then
         return 0
@@ -136,14 +136,14 @@ function profiler:GetMedian()
 end
 
 ---
----Calculate the standard deviation of the measurements.
+---Calculates the standard deviation of the measurements.
 ---
----The standard deviation is used to determine how spread out the measurements are.
----The higher the value, the more the measurements deviate from the mean, indicating greater variability.
----A lower value means the measurements are closer to the mean, indicating more consistency.
+---The standard deviation is used to determine how spread out the measurements are.  
+---The higher the value, the more the measurements deviate from the mean, indicating greater variability.  
+---A lower value means the measurements are closer to the mean, indicating more consistency.  
 ---A result of 0 means there is no variability (either because all measurements are the same, or there are no measurements).
 ---
----@return number
+---@return number # The standard deviation
 function profiler:GetStandardDeviation()
     local mean = self:GetMean()
     if self.useRunningTotal then

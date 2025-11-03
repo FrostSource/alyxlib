@@ -3,6 +3,10 @@
     https://github.com/FrostSource/alyxlib
 
     Panorama core library.
+
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
+    
+    require "alyxlib.panorama.core"
 ]]
 
 Panorama = {}
@@ -18,13 +22,13 @@ local function FilterText(text)
 end
 
 ---
----Initializes a panorama panel with a unique id.
+---Initializes a panorama panel with a unique id.  
 ---This must be done every time the entity loads, even on save game loads.
 ---
 ---The entity can be initialized if it accepts the input "AddCSSClass".
 ---
----@param panelEntity EntityHandle # The entity to initialize.
----@param customId? string # If nil the id will be generated automatically.
+---@param panelEntity EntityHandle # The entity to initialize
+---@param customId? string # The custom id to use, otherwise a unique id will be generated
 function Panorama:InitPanel(panelEntity, customId)
     local id = customId
 
@@ -57,10 +61,10 @@ local function flattenOrderedTable(tbl, out)
 end
 
 ---
----Send data to a panorama panel.
+---Sends data to a panorama panel.
 ---
----@param panelEntity EntityHandle # The entity to send data to.
----@param ... any # The data to send. Each value will be converted to a string.
+---@param panelEntity EntityHandle # The entity to send data to
+---@param ... any # The data to send - each value will be converted to a string
 function Panorama:Send(panelEntity, ...)
     ---@diagnostic disable-next-line: undefined-field
     local id = panelEntity.__panoid
@@ -138,10 +142,10 @@ function Panorama:ToJSON(value)
 end
 
 ---
----Get the panorama id from an entity if it has one.
+---Gets the panorama id from an entity if it has one.
 ---
----@param entityPanel EntityHandle
----@return string?
+---@param entityPanel EntityHandle # The entity to get the id from
+---@return string? # The panorama id
 function Panorama:GetId(entityPanel)
 ---@diagnostic disable-next-line: undefined-field
     return entityPanel.__panoid

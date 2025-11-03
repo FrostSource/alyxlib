@@ -1,6 +1,13 @@
 --[[
     v1.2.0
     https://github.com/FrostSource/alyxlib
+
+    Wrist attachments allow you to attach entities to the player's hands
+    in an addon shared way.
+
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
+    
+    require "alyxlib.player.wrist_attachments"
 ]]
 
 ---@class WristAttachments
@@ -53,14 +60,15 @@ local function getHand(attachment)
     end
 end
 
-
----Add a new entity as a wrist attachment.
----@param entity EntityHandle # The entity which will become a wrist attachment.
----@param hand? WristAttachmentHandType # The hand type to attach to initially.
----@param length number # Physical length of the entity to make sure it will not overlap with other wrist attachments.
----@param priority number? # Priority for the entity when there are other wrist attacments. Lower number is higher priority. Cannot specify a value lower than 0.
----@param offset Vector? # Optional offset for the entity (x component is ignored).
----@param angles QAngle? # Optional angles for the entity.
+---
+---Adds a new entity as a wrist attachment.
+---
+---@param entity EntityHandle # The entity which will become a wrist attachment
+---@param hand? WristAttachmentHandType # The hand type to attach to initially
+---@param length number # Physical length of the entity to make sure it will not overlap with other wrist attachments
+---@param priority number? # Priority for the entity when there are other wrist attacments - lower number is higher priority, cannot specify a value lower than 0
+---@param offset Vector? # Optional origin offset for the entity (x component is ignored)
+---@param angles QAngle? # Optional angles offset for the entity
 function WristAttachments:Add(entity, hand, length, priority, offset, angles)
 
     if self:IsEntityAttached(entity) then
@@ -81,11 +89,13 @@ function WristAttachments:Add(entity, hand, length, priority, offset, angles)
     self:Update()
 end
 
----Set the hand that the entity should be attached to.
----@param entity EntityHandle # The entity to change data for.
----@param hand WristAttachmentHandType # The type of hand to attach to.
----@param offset Vector # Optional offset for the entity (x component is ignored).
----@param angles QAngle # Optional angles for the entity.
+---
+---Sets the hand that the entity should be attached to.
+---
+---@param entity EntityHandle # The entity to change data for
+---@param hand WristAttachmentHandType # The type of hand to attach to
+---@param offset? Vector # Optional origin offset for the entity (x component is ignored)
+---@param angles? QAngle # Optional angles offset for the entity
 function WristAttachments:SetHand(entity, hand, offset, angles)
     local attachment = self:GetEntityAttachment(entity)
     if attachment then
@@ -98,9 +108,11 @@ function WristAttachments:SetHand(entity, hand, offset, angles)
     end
 end
 
----Get the hand that the entity is attached to.
----@param entity EntityHandle
----@return CPropVRHand?
+---
+---Gets the hand that the entity is attached to.
+---
+---@param entity EntityHandle # The entity to get the hand for
+---@return CPropVRHand? # The hand that the entity is attached to
 function WristAttachments:GetHand(entity)
     for _, attachment in ipairs(self.attachments) do
         if attachment.entity == entity then
@@ -109,9 +121,11 @@ function WristAttachments:GetHand(entity)
     end
 end
 
----Get the attachment data related to an attach entity.
----@param entity EntityHandle # The entity to get the data for.
----@return WristAttachmentData? # The attachment data for the entity, if it is attached.
+---
+---Gets the attachment data related to an attach entity.
+---
+---@param entity EntityHandle # The entity to get the data for
+---@return WristAttachmentData? # The attachment data for the entity, or `nil` if not found
 function WristAttachments:GetEntityAttachment(entity)
     for _, attachment in ipairs(self.attachments) do
         if attachment.entity == entity then
@@ -121,13 +135,21 @@ function WristAttachments:GetEntityAttachment(entity)
     return nil
 end
 
----Get if an entity is attached to a wrist using this system.
----@param entity EntityHandle # The entity to check.
----@return boolean # True if attached, false otherwise.
+---
+---Checks if an entity is attached to a wrist using this system.
+---
+---@param entity EntityHandle # The entity to check
+---@return boolean # `true` if attached, `false` otherwise.
 function WristAttachments:IsEntityAttached(entity)
     return self:GetEntityAttachment(entity) ~= nil
 end
 
+---
+---Updates the attachments.
+---
+---This is called automatically when an attachment is added or removed
+---or when the player's primary hand changes.
+---
 function WristAttachments:Update()
     local offsets = {
         [Player.LeftHand] = 1,

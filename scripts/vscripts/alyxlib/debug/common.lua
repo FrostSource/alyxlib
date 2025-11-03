@@ -4,7 +4,7 @@
 
     Debug utility functions.
 
-    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
 
     require "alyxlib.debug.common"
 ]]
@@ -20,9 +20,9 @@ Debug.version = "v2.2.0"
 ---
 ---`pattern` can also be an entity handle string, e.g. `0x0026caf8`
 ---
----@param pattern string # The search pattern to look for.
----@param exact boolean? # If true the pattern must match exactly, otherwise wildcards will be used.
----@return EntityHandle? # The found entity, or nil if not found.
+---@param pattern string # The search pattern to look for
+---@param exact boolean? # If true the pattern must match exactly, otherwise wildcards will be used
+---@return EntityHandle? # The found entity, or nil if not found
 function Debug.FindEntityByPattern(pattern, exact)
 
     if pattern == nil then
@@ -63,9 +63,9 @@ entfind = Debug.FindEntityByPattern
 ---
 ---`pattern` can also be an entity handle string, e.g. `0x0026caf8`
 ---
----@param pattern string # The search pattern to look for.
----@param exact boolean? # If true the pattern must match exactly, otherwise wildcards will be used.
----@return EntityHandle[]
+---@param pattern string # The search pattern to look for
+---@param exact boolean? # If true the pattern must match exactly, otherwise wildcards will be used
+---@return EntityHandle[] # The found entities
 function Debug.FindAllEntitiesByPattern(pattern, exact)
     local ents = {}
 
@@ -88,17 +88,17 @@ function Debug.FindAllEntitiesByPattern(pattern, exact)
 end
 
 ---
----Prints a formated indexed list of entities with custom property information.
+---Prints a formated indexed list of entities with custom property information.  
 ---Also links children with their parents by displaying the index alongside the parent for easy look-up.
 ---
 ---    Debug.PrintEntityList(ents, {"getclassname", "getname", "getname"})
 ---
----If no properties are supplied the default properties are used: GetClassname, GetName, GetModelName
----If an empty property table is supplied only the base values are shown: Index, Handle, Parent
+---If no properties are supplied the default properties are used: GetClassname, GetName, GetModelName.  
+---If an empty property table is supplied only the base values are shown: Index, Handle, Parent.  
 ---Property patterns do not need to be functions.
 ---
----@param list EntityHandle[] # List of entities to print.
----@param properties? string[] # List of property patterns to search for.
+---@param list EntityHandle[] # List of entities to print
+---@param properties? string[] # List of property patterns to search for
 function Debug.PrintEntityList(list, properties)
 
     if #list == 0 then
@@ -207,10 +207,11 @@ function Debug.PrintEntityList(list, properties)
 end
 
 local cachedEntities = {}
+
 ---
 ---Prints information about all existing entities.
 ---
----@param properties? string[] # List of property patterns to search for when displaying entity information.
+---@param properties? string[] # List of property patterns to search for
 function Debug.PrintAllEntities(properties)
     properties = properties or {"GetClassname", "GetName", "GetModelName"}
     local list = {}
@@ -226,7 +227,7 @@ end
 ---
 ---Prints information about any new entities since the last time `Debug.PrintAllEntities` was called.
 ---
----@param properties? string[] # List of property patterns to search for when displaying entity information.
+---@param properties? string[] # List of property patterns to search for
 function Debug.PrintDiffEntities(properties)
     properties = properties or {"GetClassname", "GetName", "GetModelName"}
     local list = {}
@@ -241,14 +242,14 @@ function Debug.PrintDiffEntities(properties)
 end
 
 ---
----Print entities matching a search string.
+---Prints entities matching a search string.
 ---
 ---Searches name, classname and model name.
 ---
----@param search string # Search string, may include `*`.
----@param exact boolean # If the search should match exactly or part of the name.
----@param dont_include_parents boolean # Parents won't be included in the results.
----@param properties? string[] # List of property patterns to search for when displaying entity information.
+---@param search string # Search string, may include `*`
+---@param exact boolean # If the search should match exactly or part of the name
+---@param dont_include_parents boolean # Parents won't be included in the results
+---@param properties? string[] # List of property patterns to search for
 function Debug.PrintEntities(search, exact, dont_include_parents, properties)
     -- Get all matching ents
     local preents = {}
@@ -278,9 +279,9 @@ end
 ---
 ---Prints information about all entities within a sphere.
 ---
----@param origin Vector # Position to search for entities at.
----@param radius number # Max radius to find entities within.
----@param properties? string[] # List of property patterns to search for when displaying entity information.
+---@param origin Vector # Position to search for entities at
+---@param radius number # Max radius to find entities within
+---@param properties? string[] # List of property patterns to search for
 function Debug.PrintAllEntitiesInSphere(origin, radius, properties)
     Debug.PrintEntityList(Entities:FindAllInSphere(origin, radius), properties)
 end
@@ -390,7 +391,7 @@ end
 ---
 ---Prints the keys/values of a table but not any tested tables.
 ---
----@param tbl table # Table to print.
+---@param tbl table # Table to print
 function Debug.PrintTableShallow(tbl)
     if type(tbl) ~= "table" then return end
     print("{")
@@ -403,8 +404,8 @@ end
 ---
 ---Prints an ordered table as a numbered list in the console.
 ---
----@param tbl table # Table to print.
----@param prefix? string # Optional prefix for each line.
+---@param tbl table # Table to print
+---@param prefix? string # Optional prefix for each line
 function Debug.PrintList(tbl, prefix)
     local m = 0
     prefix = prefix or ""
@@ -427,7 +428,7 @@ end
 ---
 ---Prints all the values in a table, one value per line, without any numbering or padding.
 ---
----@param tbl table # Table to print.
+---@param tbl table # Table to print
 function Debug.PrintSimpleTable(tbl)
     if type(tbl) ~= "table" then
         return warn("Parameter 'tbl' is not a table " .. Debug.GetSourceLine(3))
@@ -441,7 +442,7 @@ end
 ---
 ---Prints a value and its type in an easy to read format.
 ---
----@param value any
+---@param value any # Value to print
 function Debug.PrintValue(value)
     local vs, ts = getValueString(value)
     print(vs..ts)
@@ -450,8 +451,8 @@ end
 ---
 ---Draws a debug line to an entity in game.
 ---
----@param ent EntityHandle|string # Handle or targetname of the entity(s) to find.
----@param duration number? # Number of seconds the debug should display for.
+---@param ent EntityHandle|string # Handle or targetname of the entity(s) to find
+---@param duration number? # Number of seconds the debug should display for
 ---@return EntityHandle[]|EntityHandle? # Entities found, or the entity given
 function Debug.ShowEntity(ent, duration)
     duration = duration or 20
@@ -503,7 +504,7 @@ CBaseEntity.PrintCriteria = Debug.PrintEntityCriteria
 ---
 ---Prints current context criteria for an entity except for values saved using `storage.lua`.
 ---
----@param ent EntityHandle
+---@param ent EntityHandle # Entity to print
 function Debug.PrintEntityBaseCriteria(ent)
     ---@type table<string, any>
     local c, d = {}, {}
@@ -555,8 +556,8 @@ local classes = {
 ---
 ---If the entity is an EntityClass entity the original Valve class name will be returned instead of the EntityClass.
 ---
----@param ent EntityHandle # The entity to get the class name of.
----@return string # The class name of the entity or "none" if not found.
+---@param ent EntityHandle # The entity to get the class name of
+---@return string # The class name of the entity or "none" if not found
 function Debug.GetClassname(ent)
 
     -- AI_Squad doesn't exist until CAI_BaseNPC:GetSquad() is called
@@ -575,6 +576,9 @@ function Debug.GetClassname(ent)
     end
 end
 
+---
+---Prints the table values of all built-in Valve classes.
+---
 function Debug.PrintMetaClasses()
     for val, name in pairs(classes) do
         print(name .. ": " .. tostring(val))
@@ -583,6 +587,8 @@ end
 
 ---
 ---Prints a visual ASCII graph showing the distribution of values between a min/max bound.
+---
+---Higher heights give more accurate results but can overflow the console making it hard to read.
 ---
 ---E.g.
 ---
@@ -606,10 +612,10 @@ end
 ---    val1 = 0.5374761223793
 ---    val2 = 0.7315416932106
 ---
----@param height integer # Height of the actual graph in print rows. Heigher values give more accurate results but can overflow the console making it hard to read.
----@param min_val? number # Minimum expected value for `name_value_pairs`. Default is `0`.
----@param max_val? number # Maxmimum expected value for `name_value_pairs`. Default is `1`.
----@param name_value_pairs table<string,number> # Values to visualize on the graph.
+---@param height integer # Height of the actual graph in print rows
+---@param min_val? number # Minimum expected value for `name_value_pairs`; default is `0`
+---@param max_val? number # Maxmimum expected value for `name_value_pairs`; default is `1`
+---@param name_value_pairs table<string,number> # Values to visualize on the graph
 function Debug.PrintGraph(height, min_val, max_val, name_value_pairs)
     height = height or 10
     min_val = min_val or 0
@@ -735,7 +741,7 @@ end
 ---
 ---Prints a nested list of entity inheritance.
 ---
----@param ent EntityHandle
+---@param ent EntityHandle # Entity to print the inheritance of
 function Debug.PrintInheritance(ent)
     print(ent:GetClassname() .. " -> " .. tostring(ent))
     local parent = getmetatable(ent)
@@ -759,8 +765,8 @@ end
 ---
 ---Returns a simplified vector string with decimal places truncated.
 ---
----@param vector Vector|QAngle|table
----@return string
+---@param vector Vector|QAngle|table # Object to print
+---@return string # Vector string
 function Debug.SimpleVector(vector)
     return "[" .. math.trunc(vector.x, 3) .. ", " .. math.trunc(vector.y, 3) .. ", " .. math.trunc(vector.z, 3) .. "]"
 end
@@ -768,7 +774,7 @@ end
 vecstr = Debug.SimpleVector
 
 ---
----Draw a simple sphere without worrying about all the properties.
+---Draws a simple sphere without worrying about all the properties.
 ---
 ---@param x number # X position
 ---@param y number # Y position
@@ -801,7 +807,7 @@ function Debug.Sphere(x, y, z, radius, time, color)
 end
 
 ---
----Draw a simple line without worrying about all the properties.
+---Draws a simple line without worrying about all the properties.
 ---
 ---@param startPos Vector # Start position
 ---@param endPos Vector # End position
@@ -863,7 +869,7 @@ end
 ---@param tblpart string # Entity table string
 ---@param colon? string # The colon part
 ---@param hash? string # The hash part
----@return EntityHandle?
+---@return EntityHandle? # The found entity, or nil if not found
 function Debug.FindEntityByHandleString(tblpart, colon, hash)
     if tblpart == nil and colon == nil and hash == nil then
         devwarn("Must provide a valid entity table string, e.g. 'table: 0x0012b03'")
@@ -919,7 +925,7 @@ end
 ---Converts a number to its ordinal string representation (e.g., 1 → "1st", 2 → "2nd", 3 → "3rd").
 ---
 ---@param n integer # Number to convert to ordinal representation
----@return string
+---@return string # Ordinal string
 function Debug.ToOrdinalString(n)
     local lastTwo = n % 100
     if lastTwo >= 11 and lastTwo <= 13 then
@@ -936,7 +942,7 @@ end
 ---Get the script name and line number of a function or traceback level.
 ---
 ---@param f integer|function # Level or function
----@return string
+---@return string # Source
 function Debug.GetSourceLine(f)
     return debug.getinfo(f, "S").short_src..":"..tostring(debug.getinfo(f, "l").currentline)
 end
@@ -959,8 +965,8 @@ end
 ---
 ---Converts a table to single line string representation.
 ---
----@param tbl table # The table to convert.
----@return string # The string representation.
+---@param tbl table # The table to convert
+---@return string # The string representation
 function Debug.TableStr(tbl)
     local vals = {}
     for key, value in pairs(tbl) do
@@ -975,7 +981,7 @@ end
 ---
 ---@param classname string # The classname of the entity
 ---@param spawnkeys? table|string # The spawnkeys table or targetname
----@return EntityHandle
+---@return EntityHandle # The spawned entity
 ---@diagnostic disable-next-line: lowercase-global
 function entspawn(classname, spawnkeys)
     if type(spawnkeys) == "string" then

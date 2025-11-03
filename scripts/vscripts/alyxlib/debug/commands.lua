@@ -2,7 +2,7 @@
     v1.1.1
     https://github.com/FrostSource/alyxlib
 
-    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
     
     require "alyxlib.debug.commands"
 ]]
@@ -14,10 +14,10 @@ local alyxlibCommands = {}
 ---
 ---Registers a command for the AlyxLib library.
 ---
----@param name string # Name of the command that will be given in the console.
----@param func fun(_:string, ...:string) # Function to run when the command is called.
----@param helpText? string # Description of the command.
----@param flags? number # Flags for the command.
+---@param name string # Name of the command that will be given in the console
+---@param func fun(_:string, ...:string) # Function to run when the command is called
+---@param helpText? string # Description of the command
+---@param flags? number # Flags for the command
 function RegisterAlyxLibCommand(name, func, helpText, flags)
     helpText = helpText or "[No description]"
     Convars:RegisterCommand(name, func, helpText, flags or 0)
@@ -27,11 +27,11 @@ end
 ---
 ---Registers a new AlyxLib console variable.
 ---
----@param name string # Name of the convar that will be given in the console.
----@param defaultValue string|function # Default value of the convar or initializer function.
----@param helpText? string # Description of the convar.
----@param flags? integer # Flags for the convar.
----@param callback? fun(newVal:string, oldVal:string): any # Update function called after the value has been changed.
+---@param name string # Name of the convar that will be given in the console
+---@param defaultValue string|function # Default value of the convar or initializer function
+---@param helpText? string # Description of the convar
+---@param flags? integer # Flags for the convar
+---@param callback? fun(newVal:string, oldVal:string): any # Update function called after the value has been changed
 function RegisterAlyxLibConvar(name, defaultValue, helpText, flags, callback)
     helpText = helpText or "[No description]"
     flags = flags or 0
@@ -46,12 +46,12 @@ end
 ---
 ---Registers a new AlyxLib console variable.
 ---
----@param name string # Name of the convar that will be given in the console.
----@param defaultValue string # Default value of the convar.
----@param helpText? string # Description of the convar.
----@param flags? integer # Flags for the convar.
----@param postUpdate? fun(newVal:string, oldVal:string): any # Update function called after the value has been changed.
----@param persistent? boolean # Whether the convar should be persistent.
+---@param name string # Name of the convar that will be given in the console
+---@param defaultValue string # Default value of the convar
+---@param helpText? string # Description of the convar
+---@param flags? integer # Flags for the convar
+---@param postUpdate? fun(newVal:string, oldVal:string): any # Update function called after the value has been changed
+---@param persistent? boolean # Whether the convar should be persistent
 function RegisterAlyxLibEasyConvar(name, defaultValue, helpText, flags, postUpdate, persistent)
     helpText = helpText or "[No description]"
     EasyConvars:RegisterConvar(name, defaultValue, helpText, flags or 0, postUpdate)

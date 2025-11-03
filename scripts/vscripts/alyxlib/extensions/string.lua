@@ -4,7 +4,7 @@
 
     Provides string class extension methods.
 
-    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
     
     require "alyxlib.extensions.string"
 ]]
@@ -18,26 +18,32 @@ local function escape(s)
     return (s:gsub("([^%w])", "%%%1"))
 end
 
+---
+---Checks if a string starts with a substring.
+---
+---@param s string # The string to check
+---@param substr string # The substring to check
+---@return boolean # `true` if the string starts with the substring, `false` otherwise
 function string.startswith(s, substr)
     return s:sub(1, #substr) == substr
 end
 
 ---
----Gets if a string ends with a substring.
+---Checks if a string ends with a substring.
 ---
----@param s string
----@param substr string
----@return boolean
+---@param s string # The string to check
+---@param substr string # The substring to check
+---@return boolean # `true` if the string ends with the substring, `false` otherwise
 function string.endswith(s, substr)
     return substr == "" or s:sub(-#substr) == substr
 end
 
 ---
----Split an input string using a raw pattern string. No changes are made to the pattern.
+---Splits a string using a raw pattern string. No changes are made to the pattern.
 ---
----@param s string
----@param pattern string # Split pattern.
----@return string[]
+---@param s string # String to split.
+---@param pattern string # Split pattern
+---@return string[] # Array of split strings
 function string.splitraw(s, pattern)
     local t = {}
     for str in s:gmatch(pattern) do
@@ -47,13 +53,17 @@ function string.splitraw(s, pattern)
 end
 
 ---
----Split an input string using a separator string.
+---Splits a string using a separator string.
+---
+---If `sep` is omitted, splits on whitespace (`%s`).
+---
+---Uses Lua pattern matching; escape special characters if needed.
 ---
 ---@link https://stackoverflow.com/a/7615129
 ---
----@param s string
----@param sep string? # String to split by. Default is whitespace.
----@return string[]
+---@param s string # String to split
+---@param sep string? # String to split by
+---@return string[] # Array of split strings
 function string.split(s, sep)
     if sep == nil then
         sep = '%s'
@@ -65,12 +75,13 @@ end
 
 ---
 ---Truncates a string to a maximum length.
+---
 ---If the string is shorter than `len` the original string is returned.
 ---
----@param s string
----@param len integer # Maximum length the string can be.
----@param replacement? string # Suffix for long strings. Default is '...'
----@return string
+---@param s string # String to truncate
+---@param len integer # Maximum length the string can be
+---@param replacement? string # Suffix for long strings. Default is `...`
+---@return string # The truncated string
 function string.truncate(s, len, replacement)
     replacement = replacement or "..."
     if #s > len then
@@ -149,9 +160,9 @@ end
 ---
 ---If `onlyFirstLetter` is false or not provided, it capitalizes all letters.
 ---
----@param s string # The input string to be capitalized.
----@param onlyFirstLetter boolean # (optional) If true, only the first letter is capitalized. Default is false.
----@return string # The capitalized string.
+---@param s string # The string to be capitalized
+---@param onlyFirstLetter? boolean # If true, only the first letter is capitalized
+---@return string # The capitalized string
 function string.capitalize(s, onlyFirstLetter)
     if onlyFirstLetter then
         local upper = s:gsub("^%l", string.upper)
