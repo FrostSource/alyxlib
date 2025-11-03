@@ -247,9 +247,9 @@ function ifrequire(modname, callback)
 
     if callback then
         callback(result)
-        return result
     end
-    return nil
+
+    return result
 end
 
 ---
