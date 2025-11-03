@@ -466,21 +466,25 @@ end
 ---        end
 ---    end)
 ---
----@param propertyFunction fun(handle: EntityHandle): any # Property function to track, e.g. GetRenderAlpha.
----@param onChangeFunction fun(prevValue: any, newValue: any) # Function to call when a change is detected.
----@param interval? number # Think interval, or smallest possible if nil.
----@param context? EntityHandle # Entity to run the thinker on, or this entity if nil.
+---@param propertyFunction fun(handle: EntityHandle): any # Property function to track
+---@param onChangeFunction fun(prevValue: any, newValue: any) # Function to call when a change is detected
+---@param interval? number # Think interval (default: 0)
+---@param context? EntityHandle # Entity to run the thinker on, or the calling entity if `nil`
+---@return string # The name of the think for stopping later
 function CBaseEntity:TrackProperty(propertyFunction, onChangeFunction, interval, context)
     interval = interval or 0
     context = context or self
     local value = propertyFunction(self)
-    context:SetContextThink(tostring(propertyFunction), function()
+    local name = tostring(propertyFunction)
+    context:SetContextThink(name, function()
         local newValue = propertyFunction(self)
         if newValue ~= value then
             onChangeFunction(value, newValue)
         end
         return interval
     end, interval)
+
+    return name
 end
 
 ---
