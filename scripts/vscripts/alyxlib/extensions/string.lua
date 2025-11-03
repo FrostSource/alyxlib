@@ -80,25 +80,66 @@ function string.truncate(s, len, replacement)
 end
 
 ---
----Trims characters from the left side of the string up to the last occurrence of a specified character.
+---Slices the string from the left, returning everything after the last occurrence of a specified character.
 ---
----@param s string
----@param char string # The character to trim the string at the last occurrence.
----@return string # The trimmed string.
-function string.trimleft(s, char)
-    local index = s:match(".*" .. char .. "()")
+---@param s string # The string to slice
+---@param char string # The character to trim the string at the last occurrence
+---@return string # The trimmed string
+function string.sliceleft(s, char)
+    local index = s:match(".*" .. escape(char) .. "()")
     return index and s:sub(index) or s
 end
 
+
 ---
----Trims characters from the right side of the string up to the last occurrence of a specified character.
+---Slices the string from the right, returning everything before the first occurrence of a specified character.
 ---
----@param s string
----@param char string # The character to trim the string at the last occurrence.
----@return string # The trimmed string.
-function string.trimright(s, char)
-    local index = s:find(char)
+---@param s string # The string to slice
+---@param char string # The character to trim the string at the last occurrence
+---@return string # The trimmed string
+function string.sliceright(s, char)
+    local index = s:find(escape(char))
     return index and s:sub(1, index - 1) or s
+end
+
+---
+---Trims characters from the left side of a string.
+---
+---@param s string # String to trim
+---@param chars? string # Characters to trim (defaults to whitespace)
+---@return string # The trimmed string
+function string.trimleft(s, chars)
+    if chars == nil then
+        chars = "%s"
+    else
+        chars = escape(chars)
+    end
+    return (s:gsub("^[" .. chars .. "]+", ""))
+end
+
+---
+---Trims characters from the right side of a string.
+---
+---@param s string # String to trim
+---@param chars? string # Characters to trim (defaults to whitespace)
+---@return string # The trimmed string
+function string.trimright(s, chars)
+    if chars == nil then
+        chars = "%s"
+    else
+        chars = escape(chars)
+    end
+    return (s:gsub("[" .. chars .. "]+$", ""))
+end
+
+---
+---Trims characters from both sides of a string.
+---
+---@param s string # String to trim
+---@param chars? string # Characters to trim (defaults to whitespace)
+---@return string # The trimmed string
+function string.trim(s, chars)
+    return string.trimleft(string.trimright(s, chars), chars)
 end
 
 ---
