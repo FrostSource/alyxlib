@@ -21,14 +21,20 @@ function math.sign(x)
 end
 
 ---
----Truncates a number to the specified number of decimal places.
+---Truncates a number to a given number of decimal places.
 ---
----@param number number # The input number.The input number.
----@param places? integer # The number of decimal places to keep.
----@return number #  The input number truncated to the specified decimal places.
+---@param number number # The number to truncate
+---@param places? integer # Decimal places to truncate to (default: 0)
+---@return number # The truncated number
 function math.trunc(number, places)
-    local shift = 10 ^ (places or 1)
-    return math.floor(number * shift) / shift
+    places = places or 0
+    local factor = 10 ^ places
+    if places >= 0 then
+        return math.floor(number * factor) / factor
+    else
+        factor = 10 ^ (-places)
+        return math.floor(number / factor) * factor
+    end
 end
 
 ---
