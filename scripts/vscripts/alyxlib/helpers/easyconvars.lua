@@ -519,12 +519,28 @@ function EasyConvars:SetIfUnchanged(name, value)
     end
 end
 
+---@type function[]
+local postInitializers = {}
+
 ---
----Sets the function to be called after all convars have been initialized.
+---Adds a function to be called after all convars have been initialized.
 ---
----@param func function
+---Useful for setting convars that are dependent on other convars.
+---
+---@param func function # The function to call
+function EasyConvars:AddPostInitializer(func)
+    table.insert(postInitializers, func)
+end
+
+---
+---Adds a function to be called after all convars have been initialized.
+---
+---**Deprecated: Use [AddPostInitializer](lua://EasyConvars.AddPostInitializer) instead**
+---
+---@deprecated
+---@param func function # The function to call
 function EasyConvars:SetPostInitializer(func)
-    postInitializer = func
+    self:AddPostInitializer(func)
 end
 
 
@@ -553,8 +569,8 @@ listener("player_activate", function (params)
         end
         EasyConvars._isLoading = false
 
-        if postInitializer then
-            postInitializer()
+        for _, func in pairs(postInitializers) do
+            func()
         end
 
     end)
