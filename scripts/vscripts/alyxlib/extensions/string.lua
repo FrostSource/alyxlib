@@ -11,11 +11,13 @@
 
 local version = "v1.3.1"
 
----
----Gets if a string starts with a substring.
----@param s string
----@param substr string
----@return boolean
+---Escapes special characters in a string.
+---@param s string # The string to escape
+---@return string # The escaped string
+local function escape(s)
+    return (s:gsub("([^%w])", "%%%1"))
+end
+
 function string.startswith(s, substr)
     return s:sub(1, #substr) == substr
 end
@@ -55,6 +57,8 @@ end
 function string.split(s, sep)
     if sep == nil then
         sep = '%s'
+    else
+        sep = escape(sep)
     end
     return string.splitraw(s, '([^'..sep..']+)')
 end
