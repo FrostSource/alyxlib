@@ -498,12 +498,13 @@ end
 ---
 ---@return EntityHandle[] # List of items
 function CBasePlayer:GetImmediateItems()
-    return {
-        self.LeftHand.WristItem,
-        self.RightHand.WristItem,
-        self.LeftHand.ItemHeld,
-        self.RightHand.ItemHeld
-    }
+    local lh, rh = self.LeftHand, self.RightHand
+    local items = {}
+    if lh and lh.WristItem then items[#items+1] = lh.WristItem end
+    if rh and rh.WristItem then items[#items+1] = rh.WristItem end
+    if lh and lh.ItemHeld then items[#items+1] = lh.ItemHeld end
+    if rh and rh.ItemHeld then items[#items+1] = rh.ItemHeld end
+    return items
 end
 
 ---
