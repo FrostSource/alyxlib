@@ -605,13 +605,13 @@ function TablePluck(tbl, key)
 end
 
 ---
----Returns the index of the first value that matches the predicate.
+---Returns the key of the first value that matches the predicate.
 ---
----@param list table # List to search
+---@param tbl table # Table to search
 ---@param predicate fun(value:any):boolean # Predicate function
----@return any # Index of the first value that matches the predicate
-function TableFindKey(list, predicate)
-    for i, v in pairs(list) do
+---@return any # Key of the first value that matches the predicate
+function TableFindKey(tbl, predicate)
+    for i, v in pairs(tbl) do
         if predicate(v) then
             return i
         end
