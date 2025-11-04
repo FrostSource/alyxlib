@@ -261,7 +261,7 @@ end
 ---Get the name of a hand.
 ---
 ---@param hand CPropVRHand|0|1 # The hand entity or ID
----@param use_operant boolean? # If true, name will use primary/secondary instead of right/left
+---@param use_operant? boolean # If true, name will use primary/secondary instead of right/left
 function Input:GetHandName(hand, use_operant)
     if type(hand) ~= "number" then
         hand = hand:GetHandID()

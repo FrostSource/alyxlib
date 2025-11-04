@@ -573,7 +573,7 @@ ListenToGameEvent("player_stored_item_in_itemholder", listenEventPlayerStoredIte
 ---@class PlayerEventPlayerRemovedItemFromItemholder : GameEventPlayerRemovedItemFromItemholder
 ---@field item EntityHandle # The entity handle of the item that removed
 ---@field item_class string # Classname of the entity that was removed
----@field hand CPropVRHand  # Hand that the entity was removed form
+---@field hand CPropVRHand  # Hand that the entity was removed from
 
 ---Tracking wrist items
 ---@param data GameEventPlayerRemovedItemFromItemholder
