@@ -152,7 +152,7 @@ end
 ---
 ---@param handle EntityHandle # Entity to save on
 ---@param name string # Name to save as
----@param value number # Number to save
+---@param value number|nil # Number to save
 ---@return boolean # If the save was successful
 function Storage.SaveNumber(handle, name, value)
     handle = resolveHandle(handle)
@@ -160,6 +160,13 @@ function Storage.SaveNumber(handle, name, value)
         Warn("Invalid save handle ("..tostring(handle)..")!")
         return false
     end
+
+    if value == nil then
+        handle:SetContext(name, nil, 0)
+        handle:SetContext(name..separator.."type", nil, 0)
+        return true
+    end
+
     handle:SetContextNum(name, value, 0)
     handle:SetContext(name..separator.."type", "number", 0)
     return true
@@ -170,7 +177,7 @@ end
 ---
 ---@param handle EntityHandle # Entity to save on
 ---@param name string # Name to save as
----@param bool boolean # Boolean to save
+---@param bool boolean|nil # Boolean to save
 ---@return boolean # If the save was successful
 function Storage.SaveBoolean(handle, name, bool)
     handle = resolveHandle(handle)
@@ -178,6 +185,13 @@ function Storage.SaveBoolean(handle, name, bool)
         Warn("Invalid save handle ("..tostring(handle)..")!")
         return false
     end
+
+    if bool == nil then
+        handle:SetContext(name, nil, 0)
+        handle:SetContext(name..separator.."type", nil, 0)
+        return true
+    end
+
     handle:SetContextNum(name, bool and 1 or 0, 0)
     handle:SetContext(name..separator.."type", "boolean", 0)
     return true
@@ -188,7 +202,7 @@ end
 ---
 ---@param handle EntityHandle # Entity to save on
 ---@param name string # Name to save as
----@param vector Vector # Vector to save
+---@param vector Vector|nil # Vector to save
 ---@return boolean # If the save was successful
 function Storage.SaveVector(handle, name, vector)
     handle = resolveHandle(handle)
@@ -196,6 +210,13 @@ function Storage.SaveVector(handle, name, vector)
         Warn("Invalid save handle ("..tostring(handle)..")!")
         return false
     end
+
+    if vector == nil then
+        handle:SetContext(name, nil, 0)
+        handle:SetContext(name..separator.."type", nil, 0)
+        return true
+    end
+
     handle:SetContext(name, "", 0)
     handle:SetContext(name..separator.."type", "vector", 0)
     Storage.SaveNumber(handle, name..separator.."x", vector.x)
@@ -209,7 +230,7 @@ end
 ---
 ---@param handle EntityHandle # Entity to save on
 ---@param name string # Name to save as
----@param qangle QAngle # QAngle to save
+---@param qangle QAngle|nil # QAngle to save
 ---@return boolean # If the save was successful
 function Storage.SaveQAngle(handle, name, qangle)
     handle = resolveHandle(handle)
@@ -217,6 +238,13 @@ function Storage.SaveQAngle(handle, name, qangle)
         Warn("Invalid save handle ("..tostring(handle)..")!")
         return false
     end
+
+    if qangle == nil then
+        handle:SetContext(name, nil, 0)
+        handle:SetContext(name..separator.."type", nil, 0)
+        return true
+    end
+
     handle:SetContext(name, "", 0)
     handle:SetContext(name..separator.."type", "qangle", 0)
     Storage.SaveNumber(handle, name..separator.."x", qangle.x)
@@ -304,10 +332,10 @@ function Storage.SaveEntity(handle, name, entity, useClassname)
     end
 
     if entity == nil then
-        Storage.SaveString(handle, name..separator.."targetname", "")
-        Storage.SaveString(handle, name..separator.."classname", "")
-        handle:SetContext(name..separator.."unique", "", 0)
-        handle:SetContext(name..separator.."type", "entity", 0)
+        Storage.SaveString(handle, name..separator.."targetname", nil)
+        Storage.SaveString(handle, name..separator.."classname", nil)
+        handle:SetContext(name..separator.."unique", nil, 0)
+        handle:SetContext(name..separator.."type", nil, 0)
         return true
     elseif not entity or not IsValidEntity(entity) then
         return false
@@ -376,6 +404,7 @@ end
 function Storage.LoadString(handle, name, default)
     handle = resolveHandle(handle)
     local t = handle:GetContext(name..separator.."type")
+
     if t == "string" then
         local value = handle:GetContext(name)
         if value == nil then return default end
