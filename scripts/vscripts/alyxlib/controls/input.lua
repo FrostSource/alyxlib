@@ -351,7 +351,7 @@ local function getCorrectAnalogValue(analogValue)
 end
 
 ---
----Listens to a specific analog value reaching a certain value.
+---Listens to a specific analog action reaching a certain value.
 ---
 ---@param kind "up"|"down" # `up` means listen for the value moving above `analogValue`, `down` means listen for it moving below
 ---@param hand CPropVRHand|InputHandKind # The hand entity or kind of hand to listen on
@@ -359,21 +359,32 @@ end
 ---@param analogValue AnalogValueType # The value(s) to listen for
 ---@param callback fun(params:InputAnalogCallback) # The function that will be called when conditions are met
 ---@param context? any # Optional context passed into the callback as the first value
+---@return integer # The callback ID
+---@return integer|nil # The second callback ID, if `hand` is `InputHandBoth`
 function Input:ListenToAnalog(kind, hand, analogAction, analogValue, callback, context)
-    local handid = convertHandKindToHandId(hand)
 
+    if type(hand) ~= "number" then
+        hand = hand:GetHandID()
+    -- Quick way to register both hands.
+    elseif hand == -1 then
+        local id1 = self:ListenToAnalog(kind, 0, analogAction, analogValue, callback, context)
+        local id2 = self:ListenToAnalog(kind, 1, analogAction, analogValue, callback, context)
+        return id1, id2
+    end
+
+    local handid = convertHandKindToHandId(hand)
     local value = getCorrectAnalogValue(analogValue)
 
     callbackId = callbackId + 1
     analogCallbacks[callbackId] = {
-        checkGreaterThan = kind == "up",
-        actualhandid = handid,
         func = callback,
         context = context,
-        literalhandtype = 1 - handid,
+        handkind = hand,
+        actualhandid = handid,
         analog = analogAction,
+        checkGreaterThan = kind == "up",
+        literalhandtype = 1 - handid,
         value = value,
-        handkind = hand
     }
 
     return callbackId
@@ -467,7 +478,7 @@ end
 ---A callback for when a button is pressed.
 ---
 ---@class InputPressCallback
----@field kind "press" # The kind of event
+---@field kind "press" # The kind of action event
 ---@field press_time number # The server time at which the button was pressed
 ---@field hand CPropVRHand # EntityHandle for the hand that pressed the button
 ---@field button DigitalInputAction # The ID of the button that was pressed
@@ -476,7 +487,7 @@ end
 ---A callback for when a button is released.
 ---
 ---@class InputReleaseCallback
----@field kind "release" # The kind of event
+---@field kind "release" # The kind of action event
 ---@field release_time number # The server time at which the button was released
 ---@field hand CPropVRHand # EntityHandle for the hand that released the button
 ---@field button DigitalInputAction # The ID of the button that was pressed
@@ -486,6 +497,7 @@ end
 ---A callback for when an analog action is moved.
 ---
 ---@class InputAnalogCallback
+---@field kind "up"|"down" # The kind of analog event
 ---@field value Vector # The vector value of the analog action at the time of detection
 ---@field hand CPropVRHand # EntityHandle for the hand that moved the analog action
 ---@field analog AnalogInputAction # The ID of the analog action that was moved
@@ -593,7 +605,8 @@ local function InputThink()
             local t = {
                 value = value,
                 analog = analogData.analog,
-                hand = hmd:GetVRHand(analogData.actualhandid)
+                hand = hmd:GetVRHand(analogData.actualhandid),
+                kind = analogData.checkGreaterThan and "up" or "down",
             }
             if analogData.context then
                 analogData.func(analogData.context, t)
