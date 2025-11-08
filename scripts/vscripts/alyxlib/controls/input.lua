@@ -504,7 +504,7 @@ end
 ---@field hand CPropVRHand # EntityHandle for the hand that moved the analog action
 ---@field analog AnalogInputAction # The ID of the analog action that was moved
 
----@alias INPUT_CALLBACK InputPressCallback|InputReleaseCallback
+---@alias InputGenericCallback InputPressCallback|InputReleaseCallback
 
 local function InputThink()
     ---@TODO remove these variables and use cached literal/hand entity
