@@ -292,6 +292,8 @@ end
 ---@param presses integer|nil # Number of times the button must be pressed in quick succession. E.g. 2 for double click. Only applicable for `kind` press
 ---@param callback fun(params:InputPressCallback|InputReleaseCallback)|fun(context:T,params:InputPressCallback|InputReleaseCallback) # The function that will be called when the button is pressed
 ---@param context? T # Optional context passed into the callback as the first value
+---@return integer # The callback ID
+---@return integer|nil # The second callback ID, if `hand` is `InputHandBoth`
 function Input:ListenToButton(kind, hand, button, presses, callback, context)
 
     if type(hand) ~= "number" then
