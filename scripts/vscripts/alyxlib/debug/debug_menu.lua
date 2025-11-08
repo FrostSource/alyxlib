@@ -1002,7 +1002,9 @@ function DebugMenu:StopListeningForMenuActivation()
     Player:SetContextThink("debug_menu_activate", nil, 0)
 end
 
-if Convars:GetInt("developer") > 0 then
+-- Developer condition has been "disabled"
+-- All players can now open the menu
+if Convars:GetInt("developer") > -1 then
     ListenToPlayerEvent("vr_player_ready", function()
         -- Kill existing panel on load to avoid missing logic errors
         local panel = Entities:FindByName(nil, "alyxlib_debug_menu")
