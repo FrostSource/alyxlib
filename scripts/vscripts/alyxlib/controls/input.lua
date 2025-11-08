@@ -637,7 +637,7 @@ function Input:Start(on)
     if on == nil then on = Entities:GetLocalPlayer() end
     tracking_ent = on
     tracking_ent:SetContextThink("InputThink", InputThink, 0)
-    print("Input system starting...")
+    devprint("Input system starting...")
 end
 
 ---
