@@ -1106,6 +1106,15 @@ if Convars:GetInt("developer") > -1 then
     end, nil)
 end
 
+--[[
+    Settings tab
+]]
+DebugMenu:AddCategory("settings", "")
+DebugMenu:AddToggle("settings", "menu_hand", "Menu on primary hand", "debug_menu_hand")
+DebugMenu:AddToggle("settings", "menu_floating", "Menu floating", "debug_menu_floating")
+DebugMenu:AddToggle("settings", "menu_lock", "Menu locked", "debug_menu_lock")
+DebugMenu:AddToggle("settings", "menu_extras", "Menu extras", "debug_menu_extras")
+DebugMenu:AddSlider("settings", "menu_height", "Menu height", "debug_menu_height", 7, 30, false, 2)
 
 --[[
     Default AlyxLib tab

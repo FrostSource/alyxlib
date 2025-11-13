@@ -407,3 +407,32 @@ Label.custom_label
     transition-duration: 0s;
     transition-timing-function: ease-in;
 }
+
+.TopBar
+{
+    flow-children: right;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+#SettingsButton
+{
+    background-image: url("s2r://panorama/images/game_menu_ui/options_advanced_png.vtex");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    width: 80px;
+    /* margin-top: 24px; */
+    margin-left: 24px;
+    margin-right: 24px;
+    /* padding-top: 8px; */
+    /* background-color: #FFBE5533; */
+    border: 2px solid #FFBE55;
+    horizontal-align: left;
+}
+
+#SettingsButton:hover
+{
+    background-image: url("s2r://panorama/images/game_menu_ui/options_advanced_hover_png.vtex");
+    background-color: #FFBE5588;
+}

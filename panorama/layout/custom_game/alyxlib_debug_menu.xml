@@ -29,10 +29,14 @@
                         <Panel id="CategoriesContainer" class="col_body">
                             
                             <!-- Close menu button -->
-                            <Button id="CloseMenuButton" onactivate="CloseMenu()">
-                                <Label class="button_label" text="Close Menu"/>
-                                <Image class="button_bullet" src="s2r://panorama/images/game_menu_ui/btn_bullet_child_page_png.vtex" />
-                            </Button>
+                            <Panel class="TopBar">
+                                <Button id="SettingsButton" onactivate="ShowSettings()">
+                                </Button>
+                                <Button id="CloseMenuButton" onactivate="CloseMenu()">
+                                    <Label class="button_label" text="Close Menu"/>
+                                    <Image class="button_bullet" src="s2r://panorama/images/game_menu_ui/btn_bullet_child_page_png.vtex" />
+                                </Button>
+                            </Panel>
 
                             <!-- Cycle left -->
                             <Panel id="CategoryCycler" class="cycle_item custom_cycle">

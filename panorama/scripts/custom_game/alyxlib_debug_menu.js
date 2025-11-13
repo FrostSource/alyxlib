@@ -5,6 +5,8 @@
 
 let panelReady = false;
 
+let settingsCategory = null;
+
 /**
  * Fires a Panorama output with the given name and arguments.
  * The output is routed to the panel's input 'RunScriptCode'.
@@ -24,7 +26,7 @@ function FireOutput(outputName, ...args) {
 }
 
 /**
- * Maps category id to category object.
+ * List of all categories.
  * @type {Category[]}
  */
 let categories = [];
@@ -136,7 +138,10 @@ class Category
         this.panel.AddClass("scroll");
         this.content = $.CreatePanel("Panel", this.panel, `${this.id}_content`);
         this.content.AddClass("content");
+    }
 
+    AddToCategoryBar()
+    {
         // Create category button
         this.button = CreateDebugMenuButton($("#CategoryBar"), () => SetCategoryVisible(this.id), "CategoryButton", `${this.id}_button`);
         
@@ -174,17 +179,21 @@ class Category
         if (visible)
         {
             this.panel.AddClass("Visible");
-            this.button.AddClass("Selected");
+            if (this.button != null)
+                this.button.AddClass("Selected");
         }
         else
         {
             this.panel.RemoveClass("Visible");
-            this.button.RemoveClass("Selected");
+            if (this.button != null)
+                this.button.RemoveClass("Selected");
         }
     }
 
     SetBarButtonVisible(visible)
     {
+        if (this.button == null) return;
+
         if (visible)
             this.button.visible = true;
         else
@@ -821,6 +830,9 @@ class SubMenuLabel
  */
 function SetCategoryVisible(id)
 {
+    // Hide settings if available
+    if (settingsCategory) settingsCategory.SetVisible(false);
+
     for (const category of categories)
     {
         if (category.id == id)
@@ -893,14 +905,19 @@ function CreateCategory(id, name)
 {
     let category = new Category(id, name);
 
-    categories.push(category);
+    if (id === "settings") {
+        settingsCategory = category;
+    } else {
+        category.AddToCategoryBar();
+        categories.push(category);
+    }
 
     // Restore selected tab on refresh
     if ($.GetContextPanel().currentlySelectedCategory) {
         if ($.GetContextPanel().currentlySelectedCategory == category.id) {
             SetCategoryVisible(category.id);
         }
-    } else if (currentlySelectedCategory == null) {
+    } else if (currentlySelectedCategory == null && category !== settingsCategory) {
         SetCategoryVisible(category.id)
     }
     
@@ -916,6 +933,8 @@ function CreateCategory(id, name)
  */
 function GetCategory(id)
 {
+    if (id === "settings") return settingsCategory;
+
     for (const category of categories)
     {
         if (category.id == id) return category;
@@ -936,6 +955,14 @@ function CloseMenu()
 function StartPanelDrag()
 {
     FireOutput("_DebugMenuDrag");
+}
+
+function ShowSettings()
+{
+    if (settingsCategory) {
+        SetCategoryVisible();
+        settingsCategory.SetVisible(true);
+    }
 }
 
 /**
