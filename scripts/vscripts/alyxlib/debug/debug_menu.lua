@@ -42,6 +42,39 @@ RegisterAlyxLibConvar("debug_menu_lock", "0", "Prevents the debug menu from bein
 
 RegisterAlyxLibConvar("debug_menu_extras", "0", "Enable the extras tab by default", 0)
 
+RegisterAlyxLibCommand("debug_menu_dump_convars", function()
+    local categories = DebugMenu:GetLinkedConvars()
+    for _, category in pairs(categories) do
+        for _, convar in pairs(category.convars) do
+            Msg(string.format("%s : %s\n", convar.name, convar.value))
+        end
+    end
+end, "Dumps all convars tied to the debug menu and their values to the console", 0)
+
+RegisterAlyxLibCommand("debug_menu_generate_cfg", function ()
+    -- By collecting first we avoid warnings printed throughout the list
+
+    local categories = DebugMenu:GetLinkedConvars()
+
+    Msg("\n// Copy and paste the following into debug_menu.cfg to save your settings\n\n")
+
+    for _, category in pairs(categories) do
+        Msg("// " .. category.categoryName .. "\n")
+        for _, convar in pairs(category.convars) do
+            if convar.value ~= nil then
+                local defaultStr = ""
+                if convar.default ~= nil then
+                    defaultStr = (convar.default ~= convar.value) and ("// default: "..convar.default.."") or ""
+                end
+                local valStr = convar.value or ""
+                local str = string.format("%-" .. category.maxLengthConvar .. "s %-" .. category.maxLengthValue .. "s %s\n", convar.name, valStr, defaultStr)
+                Msg(str)
+            end
+        end
+        Msg("\n")
+    end
+end, "Prints the current Debug Menu settings in cfg format which can be pasted into any cfg file", 0)
+
 ---
 ---The debug menu allows for easier VR testing by offering a customizable in-game menu.
 ---
@@ -953,6 +986,56 @@ function DebugMenu:SetItemVisibilityCondition(categoryId, itemId, condition)
     end
 
     item.condition = condition
+end
+
+---
+---A category of convars dumped by `DebugMenu:GetLinkedConvars`.
+---
+---@class DebugMenuDumpedCategory
+---@field categoryName string # The name of the category
+---@field maxLengthConvar number # The length of the longest convar name
+---@field maxLengthValue number # The length of the longest convar value
+---@field convars {name:string, value:string?, default:string?}[] # The convars in this category
+
+---
+---Gets a list of all convars linked to debug menu items.
+---
+---@return DebugMenuDumpedCategory[] # A list of all convars
+function DebugMenu:GetLinkedConvars()
+    ---@type DebugMenuDumpedCategory[]
+    local categories = {}
+
+    for _,category in pairs(DebugMenu.categories) do
+        local convars = {}
+        local dumpedCategory = {categoryName = category.name, maxLengthConvar = 0, maxLengthValue = 0, convars = convars}
+        table.insert(categories, dumpedCategory)
+        for _,item in pairs(category.items) do
+            local convar = item.convar
+            if convar ~= nil then
+                dumpedCategory.maxLengthConvar = math.max(dumpedCategory.maxLengthConvar, #convar)
+                if convar and convar ~= "" then
+
+                    local default = nil
+                    local val = nil
+
+                    if EasyConvars:Exists(convar) then
+                        default = tostring(EasyConvars:GetConvarData(convar).defaultValue)
+                        val = EasyConvars:GetStr(convar)
+                    else
+                        val = Convars:GetStr(convar)
+                    end
+
+                    if val ~= nil then
+                        dumpedCategory.maxLengthValue = math.max(dumpedCategory.maxLengthValue, #val)
+                    end
+
+                    table.insert(convars, {name = convar, value = val, default = default})
+                end
+            end
+        end
+    end
+
+    return categories
 end
 
 ---
