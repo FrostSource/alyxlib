@@ -361,6 +361,11 @@ local debugPanelScriptScope = {
 ---Parenting causes stutters so it must be calculated manually.
 ---@param panel EntityHandle
 local function updatePanelWithAnchorParent(panel)
+    ---@TODO Unsure best way to follow moving non vr player
+    if not Player.HMDAnchor then
+        return
+    end
+
     ---@type EntityHandle?
     local currentAnchorParent = nil
     local anchorRelativeTransform = nil
