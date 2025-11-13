@@ -40,7 +40,7 @@
 
                             <!-- Cycle left -->
                             <Panel id="CategoryCycler" class="cycle_item custom_cycle">
-                                <Button id="CycleCategoryLeftButton" class="CycleCategoryLeft" onactivate="CycleCategories(-1)">
+                                <Button id="CycleCategoryLeftButton" class="cycle_button_left CycleCategoryLeft" onactivate="CycleCategories(-1)">
                                     <Panel class="cycle_image cycle_image_left"/>
                                     <Label id="CycleCategoryLeftButtonLabel" text="" />
                                 </Button>
@@ -49,7 +49,7 @@
                                 <Panel id="CategoryBar" class="CategoryBar" />
 
                                 <!-- Cycle right -->
-                                <Button id="CycleCategoryRightButton" class="CycleCategoryRight" onactivate="CycleCategories(1)">
+                                <Button id="CycleCategoryRightButton" class="cycle_button_right CycleCategoryRight" onactivate="CycleCategories(1)">
                                     <Panel class="cycle_image cycle_image_right"/>
                                     <Label id="CycleCategoryRightButtonLabel" text="" />
                                 </Button>
