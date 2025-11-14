@@ -41,6 +41,8 @@ require "alyxlib.player.core"
 
 ---@type AlyxLibGlobalPrecacheItem[]
 _G.AlyxLibGlobalPrecacheList = {}
+---@type function[]
+_G.AlyxlibGlobalPrecacheCallbacks = {}
 
 ---
 ---Add an asset to be precached when the player spawns.
@@ -64,11 +66,27 @@ local function precacheAsync(callback)
     SpawnEntityFromTableAsynchronous("logic_script", {
         vscripts = "alyxlib/precache",
     }, function (spawnedEnt)
-        if type(callback) == "function" then
-            callback()
-        end
         spawnedEnt:Kill()
     end, nil)
+end
+
+---Returns whether assets are waiting to be precached.
+function GlobalPrecachePending()
+    return #AlyxLibGlobalPrecacheList > 0
+end
+
+---
+---Arrange to call the provided functions once all assets are precached.
+---If none are currently pending, call immediately. Otherwise, store the callback
+---to be called once [GlobalPrecacheFlush](lua://GlobalPrecacheFlush) is finished.
+---
+---@param callback function # The function to call when the precaching is complete
+function GlobalPrecacheOnFinished(callback)
+    if GlobalPrecachePending() then
+        table.insert(AlyxlibGlobalPrecacheCallbacks, callback)
+    else
+        callback()
+    end
 end
 
 ---
@@ -80,12 +98,11 @@ end
 ---
 ---@param callback? function # The function to call when the precaching is complete
 function GlobalPrecacheFlush(callback)
-    precacheAsync(function()
-        AlyxLibGlobalPrecacheList = {}
-        if type(callback) == "function" then
-            callback()
-        end
-    end)
+    if type(callback) == "function" then
+        -- Unconditionally insert, precacheAsync will call this.
+        table.insert(AlyxlibGlobalPrecacheCallbacks, callback)
+    end
+    precacheAsync()
 end
 
 ---
@@ -95,18 +112,23 @@ end
 ---
 ---@param context CScriptPrecacheContext
 function _PrecacheGlobalItems(context)
-    if #AlyxLibGlobalPrecacheList > 0 then
-        devprints("Globally precaching", #AlyxLibGlobalPrecacheList, "resources...")
-        for _, item in ipairs(AlyxLibGlobalPrecacheList) do
-            devprints2("\tPrecaching", item.type, item.path)
-            if item.type == "model" then
-                PrecacheModel(item.path, context)
-            elseif item.type == "entity" then
-                PrecacheEntityFromTable(item.path, item.spawnkeys, context)
-            else
-                PrecacheResource(item.type, item.path, context)
-            end
+    devprints("Globally precaching", #AlyxLibGlobalPrecacheList, "resources...")
+    -- Use a while loop and pop here, so any errors don't discard items.
+    while #AlyxLibGlobalPrecacheList > 0 do
+        local item = table.remove(AlyxLibGlobalPrecacheList)
+        devprints2("\tPrecaching", item.type, item.path)
+        if item.type == "model" then
+            PrecacheModel(item.path, context)
+        elseif item.type == "entity" then
+            PrecacheEntityFromTable(item.path, item.spawnkeys, context)
+        else
+            PrecacheResource(item.type, item.path, context)
         end
+    end
+    -- Protect against callbacks added by a callback.
+    while #AlyxlibGlobalPrecacheCallbacks > 0 do
+        local cback = table.remove(AlyxlibGlobalPrecacheCallbacks)
+        cback()
     end
 end
 
