@@ -108,6 +108,12 @@ end
 ---
 ---@param callback? function # The function to call when the precaching is complete
 function GlobalPrecache:Flush(callback)
+    -- Guard against non-existant player crash
+    if not Entities:GetLocalPlayer() then
+        Warning("Cannot flush precache while player does not exist!\n")
+        return
+    end
+
     if type(callback) == "function" then
         -- Unconditionally insert, precacheAsync will call this.
         table.insert(AlyxlibGlobalPrecacheCallbacks, callback)
