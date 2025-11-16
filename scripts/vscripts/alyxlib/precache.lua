@@ -142,9 +142,14 @@ function _PrecacheGlobalItems(context)
     end
 end
 
----player_spawn seems to be the soonest time to async spawn without crashing.
----@param params GameEventPlayerSpawn
-ListenToGameEvent("player_spawn", function (params)
+require "alyxlib.player.events"
+
+local listento = ListenToPlayerEvent or ListenToGameEvent
+
+---player_activate seems to be the soonest time to async spawn
+---in all circumstances without crashing.
+---@param event GameEventPlayerSpawn
+listento("player_activate", function (event)
     precacheAsync()
 end, nil)
 
