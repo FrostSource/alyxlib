@@ -18,9 +18,12 @@ if thisEntity then
     return
 end
 
-local version = "v1.0.2"
-
 require "alyxlib.player.core"
+
+---@class GlobalPrecache
+---@overload fun(type: AlyxLibGlobalPrecacheType, path: string, spawnkeys: table?): nil
+GlobalPrecache = {}
+GlobalPrecache.version = "v1.0.3"
 
 ---@alias AlyxLibGlobalPrecacheType
 ---| "model_folder"
@@ -52,7 +55,7 @@ _G.AlyxlibGlobalPrecacheCallbacks = {}
 ---@param type AlyxLibGlobalPrecacheType # The type of asset to precache
 ---@param path string # The asset path to precache (or the classname if type is entity)
 ---@param spawnkeys table? # The spawnkeys table if type is entity
-function GlobalPrecache(type, path, spawnkeys)
+function GlobalPrecache:Add(type, path, spawnkeys)
     table.insert(AlyxLibGlobalPrecacheList, {
         type = type,
         path = path,
@@ -60,9 +63,16 @@ function GlobalPrecache(type, path, spawnkeys)
     })
 end
 
+-- Backwards compatibility, allow GlobalPrecache()
+setmetatable(GlobalPrecache, {
+    __call=function(_, type, path, spawnkeys)
+        Warning(("Use GlobalPrecache:Add(...) instead of GlobalPrecache(%q, %q).\n"):format(type, path))
+        GlobalPrecache:Add(type, path, spawnkeys)
+    end
+})
+
 ---Starts the precache process.
----@param callback? function # The function to call when the precaching is complete
-local function precacheAsync(callback)
+local function precacheAsync()
     SpawnEntityFromTableAsynchronous("logic_script", {
         vscripts = "alyxlib/precache",
     }, function (spawnedEnt)
@@ -71,18 +81,18 @@ local function precacheAsync(callback)
 end
 
 ---Returns whether assets are waiting to be precached.
-function GlobalPrecachePending()
+function GlobalPrecache:IsPending()
     return #AlyxLibGlobalPrecacheList > 0
 end
 
 ---
 ---Arrange to call the provided functions once all assets are precached.
 ---If none are currently pending, call immediately. Otherwise, store the callback
----to be called once [GlobalPrecacheFlush](lua://GlobalPrecacheFlush) is finished.
+---to be called once [GlobalPrecache:Flush()](lua://GlobalPrecache.Flush) is finished.
 ---
 ---@param callback function # The function to call when the precaching is complete
-function GlobalPrecacheOnFinished(callback)
-    if GlobalPrecachePending() then
+function GlobalPrecache:OnFinished(callback)
+    if GlobalPrecache:IsPending() then
         table.insert(AlyxlibGlobalPrecacheCallbacks, callback)
     else
         callback()
@@ -94,10 +104,10 @@ end
 ---
 ---This is an asynchronous process; the assets will not be immediately available after calling this function.
 ---
----If you are precaching *after* the player has spawned, call this function after preceding [GlobalPrecache](lua://GlobalPrecache) calls.
+---If you are precaching *after* the player has spawned, call this function after preceding [GlobalPrecache:Add()](lua://GlobalPrecache.Add) calls.
 ---
 ---@param callback? function # The function to call when the precaching is complete
-function GlobalPrecacheFlush(callback)
+function GlobalPrecache:Flush(callback)
     if type(callback) == "function" then
         -- Unconditionally insert, precacheAsync will call this.
         table.insert(AlyxlibGlobalPrecacheCallbacks, callback)
@@ -138,4 +148,4 @@ ListenToGameEvent("player_spawn", function (params)
     precacheAsync()
 end, nil)
 
-return version
+return GlobalPrecache.version
