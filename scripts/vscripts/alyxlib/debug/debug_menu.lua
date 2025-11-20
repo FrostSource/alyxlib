@@ -1169,6 +1169,8 @@ DebugMenu:AddToggle("settings", "menu_lock", "Menu locked", "debug_menu_lock")
 DebugMenu:AddToggle("settings", "menu_extras", "Menu extras", "debug_menu_extras")
 DebugMenu:AddSlider("settings", "menu_width", "Menu width", "debug_menu_width", 10, 30, false, 0)
 DebugMenu:AddSlider("settings", "menu_height", "Menu height", "debug_menu_height", 7, 30, false, 0)
+DebugMenu:AddLabel("settings", "", "Print all current menu settings to the console for saving")
+DebugMenu:AddButton("settings", "print_settings", "Print Settings To Console", "debug_menu_generate_cfg")
 
 --[[
     Default AlyxLib tab
