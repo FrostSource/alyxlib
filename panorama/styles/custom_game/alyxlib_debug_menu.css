@@ -157,7 +157,7 @@ Button.custom_button_with_subtitle.error_msg:not(.disabled) Label.button_label.s
     /* background-color: yellow; */
     width: fill-parent-flow(1);
     height: 100%;
-    opacity: 0.5;
+    opacity: 1.0;
 }
 .CategoryButton
 {
