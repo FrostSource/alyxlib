@@ -187,6 +187,15 @@ local function TransformToWorld(entity, localTransform)
     return worldPos, angles
 end
 
+---Mirrors the offset and angles for the opposite hand.
+---@param offset Vector
+---@param angles QAngle
+local function mirrorOffsetToOppositeHand(offset, angles, hand)
+    offset = Vector(offset.x, -offset.y, offset.z)
+    angles = QAngle(-angles.x, 180-angles.y, angles.z)
+    return offset, angles
+end
+
 ---@param dragHand CPropVRHand
 local function startDraggingMenu(dragHand)
 
@@ -215,8 +224,7 @@ local function startDraggingMenu(dragHand)
             local localAngles = panel:GetLocalAngles()
 
             if hand == Player.LeftHand then
-                localAngles.y = localAngles.y - 180
-                localOrigin.y = -localOrigin.y
+                localOrigin, localAngles = mirrorOffsetToOppositeHand(localOrigin, localAngles)
             end
 
             Convars:SetFloat("debug_menu_offset_x", localOrigin.x)
@@ -409,15 +417,20 @@ function DebugMenu:UpdateMenuAttachment()
         updatePanelWithAnchorParent(self.panel)
     else
         local hand = Convars:GetBool("debug_menu_hand") and Player.PrimaryHand or Player.SecondaryHand
-        if hand == Player.RightHand then
-            self.panel:SetParent(hand, "constraint1")
-            self.panel:SetLocalAngles(Convars:GetFloat("debug_menu_offset_pitch"), Convars:GetFloat("debug_menu_offset_yaw"), Convars:GetFloat("debug_menu_offset_roll"))
-            self.panel:SetLocalOrigin(Vector(Convars:GetFloat("debug_menu_offset_x"), Convars:GetFloat("debug_menu_offset_y"), Convars:GetFloat("debug_menu_offset_z")))
-        else
-            self.panel:SetParent(hand, "constraint1")
-            self.panel:SetLocalAngles(Convars:GetFloat("debug_menu_offset_pitch"), Convars:GetFloat("debug_menu_offset_yaw")-180, Convars:GetFloat("debug_menu_offset_roll"))
-            self.panel:SetLocalOrigin(Vector(Convars:GetFloat("debug_menu_offset_x"), -Convars:GetFloat("debug_menu_offset_y"), Convars:GetFloat("debug_menu_offset_z")))
+
+        local x,y,z = Convars:GetFloat("debug_menu_offset_x"), Convars:GetFloat("debug_menu_offset_y"), Convars:GetFloat("debug_menu_offset_z")
+        local pitch,yaw,roll = Convars:GetFloat("debug_menu_offset_pitch"), Convars:GetFloat("debug_menu_offset_yaw"), Convars:GetFloat("debug_menu_offset_roll")
+
+        local offset = Vector(x, y, z)
+        local angles = QAngle(pitch, yaw, roll)
+
+        if hand == Player.LeftHand then
+            offset, angles = mirrorOffsetToOppositeHand(offset, angles)
         end
+
+        self.panel:SetParent(hand, handAttachment)
+        self.panel:SetLocalOrigin(offset)
+        self.panel:SetLocalQAngle(angles)
     end
 end
 
