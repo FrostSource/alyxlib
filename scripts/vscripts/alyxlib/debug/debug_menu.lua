@@ -402,6 +402,35 @@ end
 ---Updates the physical menu by attaching it to the correct hand.
 ---
 function DebugMenu:UpdateMenuAttachment()
+    if not IsValidEntity(self.panel) then return end
+
+    if not Player.HMDAvatar or IsFakeVREnabled() then
+        SendToConsole("bind r _debug_menu_test_button_press")
+    else
+        local handType = -1
+        if not Convars:GetBool("debug_menu_floating") then
+            handType = Convars:GetInt("debug_menu_hand") == 1 and InputHandSecondary or InputHandPrimary
+
+            StopListeningToPlayerEvent(handChangedListener)
+            handChangedListener = ListenToPlayerEvent("primary_hand_changed", function()
+                self:UpdateMenuAttachment()
+            end)
+        end
+
+        -- Cough handpose gets in the way for close menus
+        Player:SetCoughHandEnabled(false)
+
+        Input:StopListeningByContext(self)
+        -- Handle distant button presses
+        Input:ListenToButton("press",
+            handType,
+            DIGITAL_INPUT_MENU_INTERACT, 1,
+            function (context, params)
+                lastClickHand = params.hand
+                self:ClickHoveredButton()
+            end, self)
+    end
+
     if Convars:GetBool("debug_menu_floating") or not Player.HMDAvatar or IsFakeVREnabled() then
         local player = Entities:GetLocalPlayer()
         local eyePos = player:EyePosition()
@@ -458,32 +487,6 @@ function DebugMenu:ShowMenu()
     })
 
     self:UpdateMenuAttachment()
-
-    if not Player.HMDAvatar or IsFakeVREnabled() then
-        SendToConsole("bind r _debug_menu_test_button_press")
-    else
-        local handType = -1
-        if not Convars:GetBool("debug_menu_floating") then
-            handType = Convars:GetInt("debug_menu_hand") == 1 and InputHandSecondary or InputHandPrimary
-
-            handChangedListener = ListenToPlayerEvent("primary_hand_changed", function()
-                self:UpdateMenuAttachment()
-            end)
-        end
-
-        -- Cough handpose gets in the way for close menus
-        Player:SetCoughHandEnabled(false)
-
-        -- Handle distant button presses
-        Input:ListenToButton("press",
-            handType,
-            DIGITAL_INPUT_MENU_INTERACT, 1,
-            function (context, params)
-                lastClickHand = params.hand
-                self:ClickHoveredButton()
-            end, self)
-
-    end
 
     self.panel:AddCSSClasses("Visible")
 
