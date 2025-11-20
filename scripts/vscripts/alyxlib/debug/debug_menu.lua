@@ -58,20 +58,24 @@ end, "Dumps all convars tied to the debug menu and their values to the console",
 RegisterAlyxLibCommand("debug_menu_generate_cfg", function ()
     -- By collecting first we avoid warnings printed throughout the list
 
-    local categories = DebugMenu:GetLinkedConvars()
+    local dumps = DebugMenu:GetLinkedConvars()
 
     Msg("\n// Copy and paste the following into debug_menu.cfg to save your settings\n\n")
 
-    for _, category in pairs(categories) do
-        Msg("// " .. category.categoryName .. "\n")
-        for _, convar in pairs(category.convars) do
+    for _, dump in pairs(dumps) do
+        local name = dump.category.name
+        if name == nil or name == "" then
+            name = dump.category.id
+        end
+        Msg("// " .. name .. "\n")
+        for _, convar in pairs(dump.convars) do
             if convar.value ~= nil then
                 local defaultStr = ""
                 if convar.default ~= nil then
                     defaultStr = (convar.default ~= convar.value) and ("// default: "..convar.default.."") or ""
                 end
                 local valStr = convar.value or ""
-                local str = string.format("%-" .. category.maxLengthConvar .. "s %-" .. category.maxLengthValue .. "s %s\n", convar.name, valStr, defaultStr)
+                local str = string.format("%-" .. dump.maxLengthConvar .. "s %-" .. dump.maxLengthValue .. "s %s\n", convar.name, valStr, defaultStr)
                 Msg(str)
             end
         end
@@ -1050,7 +1054,7 @@ end
 ---A category of convars dumped by `DebugMenu:GetLinkedConvars`.
 ---
 ---@class DebugMenuDumpedCategory
----@field categoryName string # The name of the category
+---@field category DebugMenuCategory # The category that these convars are linked to
 ---@field maxLengthConvar number # The length of the longest convar name
 ---@field maxLengthValue number # The length of the longest convar value
 ---@field convars {name:string, value:string?, default:string?}[] # The convars in this category
@@ -1065,8 +1069,11 @@ function DebugMenu:GetLinkedConvars()
 
     for _,category in pairs(DebugMenu.categories) do
         local convars = {}
-        local dumpedCategory = {categoryName = category.name, maxLengthConvar = 0, maxLengthValue = 0, convars = convars}
+
+        ---@type DebugMenuDumpedCategory
+        local dumpedCategory = {category = category, maxLengthConvar = 0, maxLengthValue = 0, convars = convars}
         table.insert(categories, dumpedCategory)
+
         for _,item in pairs(category.items) do
             local convar = item.convar
             if convar ~= nil then
