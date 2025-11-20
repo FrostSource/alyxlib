@@ -488,7 +488,7 @@ function EasyConvars:SetRaw(name, value)
 end
 
 ---
----Get if the convar was changed by the user in the console.
+---Gets if the convar was changed by the user in the console or via CFG.
 ---
 ---@param name string # Name of the convar
 function EasyConvars:WasChangedByUser(name)

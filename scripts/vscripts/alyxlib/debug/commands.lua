@@ -27,6 +27,9 @@ end
 ---
 ---Registers a new AlyxLib console variable.
 ---
+---If `defaultValue` or `callback` is a function, the convar will be
+---created using `EasyConvars`.
+---
 ---@param name string # Name of the convar that will be given in the console
 ---@param defaultValue string|function # Default value of the convar or initializer function
 ---@param helpText? string # Description of the convar
