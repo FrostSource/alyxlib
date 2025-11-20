@@ -15,12 +15,12 @@ end, "Forces the debug menu to show")
 
 RegisterAlyxLibConvar("debug_menu_hand", "1", "Hand to attach the debug menu to, 0 = Secondary : 1 = Primary")
 
-RegisterAlyxLibConvar("debug_menu_offset_x", "4", "X offset of the debug menu", 0)
-RegisterAlyxLibConvar("debug_menu_offset_y", "-9", "Y offset of the debug menu", 0)
-RegisterAlyxLibConvar("debug_menu_offset_z", "0", "Z offset of the debug menu", 0)
-RegisterAlyxLibConvar("debug_menu_offset_pitch", "0", "Pitch offset of the debug menu", 0)
-RegisterAlyxLibConvar("debug_menu_offset_yaw", "180", "Yaw offset of the debug menu", 0)
-RegisterAlyxLibConvar("debug_menu_offset_roll", "0", "Roll offset of the debug menu", 0)
+RegisterAlyxLibConvar("debug_menu_offset_x", "-3", "X offset of the debug menu", 0)
+RegisterAlyxLibConvar("debug_menu_offset_y", "-5", "Y offset of the debug menu", 0)
+RegisterAlyxLibConvar("debug_menu_offset_z", "-1", "Z offset of the debug menu", 0)
+RegisterAlyxLibConvar("debug_menu_offset_pitch", "-14", "Pitch offset of the debug menu", 0)
+RegisterAlyxLibConvar("debug_menu_offset_yaw", "-172", "Yaw offset of the debug menu", 0)
+RegisterAlyxLibConvar("debug_menu_offset_roll", "-2", "Roll offset of the debug menu", 0)
 
 RegisterAlyxLibConvar("debug_menu_height", "14", "Height of the debug menu, min=7 : max=30", 0, function(newVal, oldVal)
     if DebugMenu:IsOpen() then
