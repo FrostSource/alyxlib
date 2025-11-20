@@ -9,11 +9,15 @@
     require "alyxlib.debug.debug_menu"
 ]]
 
+local function updateAttachment()
+    DebugMenu:UpdateMenuAttachment()
+end
+
 RegisterAlyxLibCommand("debug_menu_show", function (name, ...)
     DebugMenu:ShowMenu()
 end, "Forces the debug menu to show")
 
-RegisterAlyxLibConvar("debug_menu_hand", "1", "Hand to attach the debug menu to, 0 = Secondary : 1 = Primary")
+RegisterAlyxLibConvar("debug_menu_hand", "1", "Hand to attach the debug menu to, 0 = Secondary : 1 = Primary", 0, updateAttachment)
 
 RegisterAlyxLibConvar("debug_menu_offset_x", "-3", "X offset of the debug menu", 0)
 RegisterAlyxLibConvar("debug_menu_offset_y", "-5", "Y offset of the debug menu", 0)
@@ -22,11 +26,11 @@ RegisterAlyxLibConvar("debug_menu_offset_pitch", "-14", "Pitch offset of the deb
 RegisterAlyxLibConvar("debug_menu_offset_yaw", "-172", "Yaw offset of the debug menu", 0)
 RegisterAlyxLibConvar("debug_menu_offset_roll", "-2", "Roll offset of the debug menu", 0)
 
+RegisterAlyxLibConvar("debug_menu_width", "15", "Width of the debug menu, min=10 : max=30", 0, function(newVal, oldVal)
+    DebugMenu:SetSize(Convars:GetInt("debug_menu_width"), nil)
+end)
 RegisterAlyxLibConvar("debug_menu_height", "14", "Height of the debug menu, min=7 : max=30", 0, function(newVal, oldVal)
-    if DebugMenu:IsOpen() then
-        DebugMenu:CloseMenu()
-        DebugMenu:ShowMenu()
-    end
+    DebugMenu:SetSize(nil, Convars:GetInt("debug_menu_height"))
 end)
 
 RegisterAlyxLibConvar("debug_menu_floating", function()
@@ -36,7 +40,7 @@ RegisterAlyxLibConvar("debug_menu_floating", function()
     end
 
     return false
-end, "Menu will float in world instead of attached to hand")
+end, "Menu will float in world instead of attached to hand", 0, updateAttachment)
 
 RegisterAlyxLibConvar("debug_menu_lock", "0", "Prevents the debug menu from being repositioned by the player", 0)
 
@@ -74,6 +78,18 @@ RegisterAlyxLibCommand("debug_menu_generate_cfg", function ()
         Msg("\n")
     end
 end, "Prints the current Debug Menu settings in cfg format which can be pasted into any cfg file", 0)
+
+---DPI of the debug menu panel.
+local DPI = 64
+
+---Minimum and maximum sizes of the debug menu panel.
+local MIN_WIDTH = 10
+local MIN_HEIGHT = 7
+local MAX_WIDTH = 30
+local MAX_HEIGHT = 30
+
+---Attachment name that the panel attaches to on the hand.
+local handAttachment = ""
 
 ---
 ---The debug menu allows for easier VR testing by offering a customizable in-game menu.
@@ -200,7 +216,6 @@ end
 local function startDraggingMenu(dragHand)
 
     local panel = DebugMenu.panel
-    local dragent = dragHand
 
     local relativeTransform = TransformToLocal(dragHand, panel:GetOrigin(), panel:GetAngles())
 
@@ -218,7 +233,7 @@ local function startDraggingMenu(dragHand)
             end
 
             local hand = Convars:GetBool("debug_menu_hand") and Player.PrimaryHand or Player.SecondaryHand
-            panel:SetParent(hand, "constraint1")
+            panel:SetParent(hand, handAttachment)
 
             local localOrigin = panel:GetLocalOrigin()
             local localAngles = panel:GetLocalAngles()
@@ -471,14 +486,14 @@ function DebugMenu:ShowMenu()
     self.panel = SpawnEntityFromTableSynchronous("point_clientui_world_panel", {
         targetname = "alyxlib_debug_menu",
         dialog_layout_name = "file://{resources}/layout/custom_game/alyxlib_debug_menu.xml",
-        width = 16,
-        height = Convars:GetInt("debug_menu_height"),
-        panel_dpi = 64,
+        width = 30,
+        height = 30,
+        panel_dpi = DPI,
         ignore_input = 0,
         lit = 0,
         interact_distance = 64,
 
-        vertical_align = "1",
+        vertical_align = "0",
         -- orientation = "0",
         horizontal_align = "1",
 
@@ -499,9 +514,10 @@ function DebugMenu:ShowMenu()
 
     debugMenuOpen = true
 
-    local panelHeight = Clamp(Convars:GetInt("debug_menu_height"), 7, 30)
-    local cssHeight = (64 * panelHeight) - 111
-    Panorama:Send(self.panel, "SetHeight", cssHeight)
+    self:SetSize(
+        Convars:GetInt("debug_menu_width"),
+        Convars:GetInt("debug_menu_height")
+    )
 
     self:SendCategoriesToPanel()
 end
@@ -859,6 +875,27 @@ function DebugMenu:SetCategoryIndex(categoryId, index)
     end
 end
 
+---
+---Sets the size of the debug menu panel if it's open.
+---
+---This does not change any convars and is not persisted.
+---
+---@param width? number # Width in "panel units"
+---@param height? number # Height in "panel units"
+function DebugMenu:SetSize(width, height)
+    if width then
+        width = Clamp(width, MIN_WIDTH, MAX_WIDTH) * DPI
+    end
+
+    if height then
+        height = Clamp(height, MIN_HEIGHT, MAX_HEIGHT) * DPI
+    end
+
+    if self.panel then
+        Panorama:Send(self.panel, "SetSize", width, height)
+    end
+end
+
 ---Resolves the default value of an element by running any value getter functions.
 ---@param item DebugMenuItem # The item to resolve
 ---@param tFunc? `Convars.GetStr`|`Convars.GetInt`|`Convars.GetFloat`|`Convars.GetBool` # The value getter function
@@ -1130,7 +1167,8 @@ DebugMenu:AddToggle("settings", "menu_hand", "Menu on primary hand", "debug_menu
 DebugMenu:AddToggle("settings", "menu_floating", "Menu floating", "debug_menu_floating")
 DebugMenu:AddToggle("settings", "menu_lock", "Menu locked", "debug_menu_lock")
 DebugMenu:AddToggle("settings", "menu_extras", "Menu extras", "debug_menu_extras")
-DebugMenu:AddSlider("settings", "menu_height", "Menu height", "debug_menu_height", 7, 30, false, 2)
+DebugMenu:AddSlider("settings", "menu_width", "Menu width", "debug_menu_width", 10, 30, false, 0)
+DebugMenu:AddSlider("settings", "menu_height", "Menu height", "debug_menu_height", 7, 30, false, 0)
 
 --[[
     Default AlyxLib tab

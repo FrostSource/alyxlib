@@ -488,7 +488,7 @@ class SubMenuSlider
 
         // This only works in VR
         TurnButtonIntoDebugMenuButton(this.panel, () => {
-            const pos = GetAffordancePosition();
+            const pos = GetAffordancePositionInMenuSpace();
             if (pos !== null) {
                 // Slider does not have actualxoffset or actuallayoutwidth THANKS AGAIN VALVE
                 // These magic numbers are estimates of where the slider is in relation to the parent panel
@@ -962,6 +962,7 @@ function ShowSettings()
     if (settingsCategory) {
         SetCategoryVisible();
         settingsCategory.SetVisible(true);
+        currentlySelectedCategory = settingsCategory;
     }
 }
 
@@ -978,6 +979,23 @@ function GetAffordancePosition() {
     if (right.visible)
         return { x: right.actualxoffset, y: right.actualyoffset };
 
+    return null;
+}
+
+/**
+ * Gets the position of the left or right 'affordance' circle for the VR finger interacting with the menu,
+ * normalized to the menu container.
+ * @returns {{x:number,y:number}?}
+ */
+function GetAffordancePositionInMenuSpace() {
+    const affordancePosition = GetAffordancePosition();
+    if (affordancePosition) {
+        let bgPanel = $("#background_panel");
+        return {
+            x: affordancePosition.x - bgPanel.actualxoffset,
+            y: affordancePosition.y - bgPanel.actualyoffset
+        };
+    }
     return null;
 }
 
@@ -1032,12 +1050,41 @@ function ClickHoveredButton()
 }
 
 /**
- * Sets the height of the menu container.
- * @param {number} height 
+ * Sets the width and height of the menu container.
+ * @param {number?} width
+ * @param {number?} height 
  */
-function SetContainerHeight(height)
-{
-    $('#CategoriesContainer').style.minHeight = `${height}px`;
+function SetContainerSize(width, height) {
+    // Clear container clip so larger sizes don't get clipped before the schedule
+    var container = $("#affordance_container");
+    container.style.clip = "rect(0px, 100%, 100%, 0px)";
+
+    let bgPanel = $("#background_panel");
+
+    if (width)
+        bgPanel.style.width = `${width}px`;
+    if (height) {
+        bgPanel.style.height = `${height}px`;
+        $('#CategoriesContainer').style.minHeight = `${height - 111}px`;
+    }
+
+    // Wait for element update and any animations
+    // 0.6s is the duration of the opening animation
+    $.Schedule(0.61, ()=> {
+        var bgWidth = bgPanel.actuallayoutwidth;
+        var bgHeight = bgPanel.actuallayoutheight;
+        var containerWidth = container.actuallayoutwidth;
+        var containerHeight = container.actuallayoutheight;
+        
+        // Calculate centered x position within container
+        var x = (containerWidth - bgWidth) / 2;
+        // Calculate the bottom y position
+        var y = (containerHeight - bgHeight);
+        
+        var clipRect = "rect(" + y + "px, " + (x + bgWidth) + "px, " + (y + bgHeight) + "px, " + x + "px)";
+        
+        container.style.clip = clipRect;
+    });
 }
 
 /**
@@ -1207,9 +1254,10 @@ function ParseCommand(command, args)
             break;
         }
 
-        case "setheight": {
-            const height = parseInt(args[0]);
-            SetContainerHeight(height);
+        case "setsize": {
+            const width = parseInt(args[0]);
+            const height = parseInt(args[1]);
+            SetContainerSize(width, height);
             break;
         }
     }
@@ -1271,6 +1319,7 @@ function ScrollHelperClick() {
 {
     // Modify preset layout buttons to work with controller trigger
     TurnButtonIntoDebugMenuButton($("#CloseMenuButton"));
+    TurnButtonIntoDebugMenuButton($("#SettingsButton"));
     TurnButtonIntoDebugMenuButton($("#TitleBar"));
     TurnButtonIntoDebugMenuButton($("#CycleCategoryLeftButton"));
     TurnButtonIntoDebugMenuButton($("#CycleCategoryRightButton"));

@@ -11,8 +11,7 @@
     <GameMenuPanel class="game_menu_root" onactivate="GameMenuNavigation_Cmd( 'GoTo Root' )">
         <Panel class="base_container" id="layout_root">
 
-            <Panel class="vr_affordance_container">
-
+            <Panel class="vr_affordance_container" id="affordance_container">
                 <Panel id="vr_affordance_left" class="VRaffordance">
                     <Panel id="vr_affordance_interior"/>
                 </Panel>
@@ -75,15 +74,13 @@
                             
                         </Panel>
                     </Panel>
-                        <Button id="ScrollHelperDown" class="scroll_helper down">
-                            <Panel style="flow-children: right; horizontal-align: center;">
-                                <Panel class="chevron_arrow" />
-                                <Panel class="chevron_arrow" />
-                                <Panel class="chevron_arrow" />
-                            </Panel>
-                        </Button>
-                    <!-- <Panel class="empty_row" />
-                    <Panel class="empty_row_bottomR_corner" /> -->
+                    <Button id="ScrollHelperDown" class="scroll_helper down">
+                        <Panel style="flow-children: right; horizontal-align: center;">
+                            <Panel class="chevron_arrow" />
+                            <Panel class="chevron_arrow" />
+                            <Panel class="chevron_arrow" />
+                        </Panel>
+                    </Button>
                 </Panel>
             </Panel>
         </Panel>
