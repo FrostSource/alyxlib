@@ -62,8 +62,9 @@ end
 ---
 ---Unregisters a player event callback.
 ---
----@param eventID integer # ID returned from [ListenToPlayerEvent](lua://ListenToPlayerEvent)
+---@param eventID integer|nil # ID returned from [ListenToPlayerEvent](lua://ListenToPlayerEvent)
 function StopListeningToPlayerEvent(eventID)
+    if not eventID then return end
     for _, event in pairs(registered_event_callbacks) do
         event[eventID] = nil
     end
