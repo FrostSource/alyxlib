@@ -62,6 +62,15 @@ RegisterAlyxLibCommand("debug_menu_generate_cfg", function ()
 
     Msg("\n// Copy and paste the following into debug_menu.cfg to save your settings\n\n")
 
+    Msg("// offsets\n")
+    Msg("debug_menu_offset_x " .. math.trunc(Convars:GetFloat("debug_menu_offset_x"), 2) .. "\n")
+    Msg("debug_menu_offset_y " .. math.trunc(Convars:GetFloat("debug_menu_offset_y"), 2) .. "\n")
+    Msg("debug_menu_offset_z " .. math.trunc(Convars:GetFloat("debug_menu_offset_z"), 2) .. "\n")
+    Msg("debug_menu_offset_pitch " .. math.trunc(Convars:GetFloat("debug_menu_offset_pitch"), 2) .. "\n")
+    Msg("debug_menu_offset_yaw " .. math.trunc(Convars:GetFloat("debug_menu_offset_yaw"), 2) .. "\n")
+    Msg("debug_menu_offset_roll " .. math.trunc(Convars:GetFloat("debug_menu_offset_roll"), 2) .. "\n")
+    Msg("\n")
+
     for _, dump in pairs(dumps) do
         local name = dump.category.name
         if name == nil or name == "" then
@@ -81,6 +90,8 @@ RegisterAlyxLibCommand("debug_menu_generate_cfg", function ()
         end
         Msg("\n")
     end
+
+    Msg("// End of debug_menu.cfg\n")
 end, "Prints the current Debug Menu settings in cfg format which can be pasted into any cfg file", 0)
 
 ---DPI of the debug menu panel.
