@@ -974,7 +974,7 @@ function GetAffordancePosition() {
     if (left.visible)
         return { x: left.actualxoffset, y: left.actualyoffset };
 
-    const right = $('#vr_affordance_left');
+    const right = $('#vr_affordance_right');
     if (right.visible)
         return { x: right.actualxoffset, y: right.actualyoffset };
 
