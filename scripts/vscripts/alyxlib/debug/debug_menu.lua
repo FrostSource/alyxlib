@@ -44,7 +44,15 @@ end, "Menu will float in world instead of attached to hand", 0, updateAttachment
 
 RegisterAlyxLibConvar("debug_menu_lock", "0", "Prevents the debug menu from being repositioned by the player", 0)
 
-RegisterAlyxLibConvar("debug_menu_extras", "0", "Enable the extras tab by default", 0)
+local extras = require("alyxlib.debug.debug_menu_extras")
+
+RegisterAlyxLibConvar("debug_menu_extras", "0", "Enable the extras tab by default", 0, function()
+    if Convars:GetBool("debug_menu_extras") then
+        extras.createTab()
+    else
+        extras.removeTab()
+    end
+end)
 
 RegisterAlyxLibCommand("debug_menu_dump_convars", function()
     local categories = DebugMenu:GetLinkedConvars()
@@ -629,6 +637,23 @@ function DebugMenu:AddCategory(id, name)
         name = name,
         items = {},
     })
+end
+
+---
+---Removes a category from the debug menu.
+---
+---This does not update the menu if it's already open;
+---use [DebugMenu:Refresh()](lua://DebugMenu.Refresh) to update manually.
+---
+---@param id string # The ID of the category to remove
+function DebugMenu:RemoveCategory(id)
+    local category, index = self:GetCategory(id)
+    if not category then
+        warn("Cannot remove category '"..id.."': Category does not exist!")
+        return
+    end
+
+    table.remove(self.categories, index)
 end
 
 ---
@@ -1261,23 +1286,5 @@ DebugMenu:AddButton(categoryId, "demo_recording", "Start Recording Demo", functi
         DebugMenu:SetItemText(categoryId, "demo_recording", "Stop Recording Demo")
     end
 end)
-
-if Convars:GetBool("debug_menu_extras") then
-    require "alyxlib.debug.debug_menu_extras"
-else
-    DebugMenu:AddSeparator(categoryId)
-
-    DebugMenu:AddButton(categoryId, "enableextras", "Enable Extras Tab...", function()
-        if package.loaded["alyxlib.debug.debug_menu_extras"] == nil then
-            require "alyxlib.debug.debug_menu_extras"
-            -- Update the panel immediately
-            local id = "alyxlib_extras"
-            DebugMenu:SendCategoryToPanel(DebugMenu:GetCategory(id))
-            DebugMenu:SetCategoryIndex(id, 2)
-            ---@TODO Allow disabling extras tab
-            DebugMenu:SetItemText(categoryId, "enableextras", "Extras Tab Enabled!")
-        end
-    end)
-end
 
 return DebugMenu.version
