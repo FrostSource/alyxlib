@@ -3,7 +3,7 @@
 
 AlyxLib Installer is a user-friendly application that allows you to easily install and modify AlyxLib for addons.
 
-[You can download the installer here](https://frostsource.github.io/AlyxLibInstaller/)
+[You can download the installer by clicking here!](https://frostsource.github.io/AlyxLibInstaller/)
 
 ??? example "Preview"
     ![image](../assets/aids/installer/installer-overview.png)
@@ -52,7 +52,7 @@ The installer needs permission to create symlinks, which requires either running
 
 ## Using the installer
 
-!!! note ""
+!!! note
     AlyxLib settings for your addon are saved to a hidden folder in your addon's `content` folder called `.alyxlib/config.json`.
 
 ### The console
@@ -153,7 +153,7 @@ This will remove any AlyxLib related files that have not been modified in your a
 
 ### Using file removal on upload
 
-AlyxLib Installer comes with a feature for removing any files in your addon's `game` folder when you click `Remove For Upload`.
+AlyxLib Installer comes with a feature for deleting files you don't want in your addon's `game` folder when you click `Remove For Upload`.
 
 These files can be defined in `Addon -> Manage Removal List`.
 
@@ -178,10 +178,13 @@ If any files match the patterns in the removal list, the installer will remind y
 ??? example "Image"
     ![image](../assets/aids/installer/installer-file_remove_reminder.png)
 
+!!! warning ""
+    This feature might change from permanent deletion to temporary removal in a future update.
+
 
 ## Settings
 
-You can configure installer settings in the `Settings` file menu.
+You can configure installer settings in the `Settings` taskbar menu.
 
 - **Remember Last Addon**
 

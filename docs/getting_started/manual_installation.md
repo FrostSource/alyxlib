@@ -16,7 +16,7 @@ Copy the following AlyxLib folders/files to your addon **game** folder:
 * `scripts/vscripts/game/gameinit.lua` [for auto loading during testing]
 
 !!! danger "Important"
-    Always remove the above files before uploading your addon to the workshop. Uploading these files might cause your addon to break future versions of AlyxLib.
+    Always remove the above files before uploading your addon to the workshop. Uploading these files might cause your addon to break future versions of AlyxLib for players using your addon.
 
 If using VSCode, you can copy the snippet files to your `.vscode` folder:
 
@@ -103,7 +103,7 @@ To develop your own Panorama panels with AlyxLib, copy the following files into 
 
 ## Git
 
-If you are using Git, you will need to add the following files to your `.gitignore` file:
+If you are using Git (or other source control), you should add the following paths to your `.gitignore` file to keep your repository clean:
 
 ```gitignore
 # Source 2 ignores
