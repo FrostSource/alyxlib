@@ -1,5 +1,5 @@
 --[[
-	v1.0.2
+	v1.0.3
 	https://github.com/FrostSource/alyxlib
 
 	If not using `alyxlib/init.lua`, load this file at game start using the following line:
@@ -9,7 +9,7 @@
 require "alyxlib.globals"
 require "alyxlib.math.common"
 
-local version = "v1.0.2"
+local version = "v1.0.3"
 
 local hasfrac = math.has_frac
 

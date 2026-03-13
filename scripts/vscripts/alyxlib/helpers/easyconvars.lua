@@ -1,5 +1,5 @@
 --[[
-    v2.0.0
+    v2.1.0
     https://github.com/FrostSource/alyxlib
 
     Allows for quick creation of convars which support persistence saving, checking GlobalSys for default values, and callbacks on value change.
@@ -16,7 +16,7 @@ require "alyxlib.globals"
 ---
 ---@class EasyConvars
 EasyConvars = {}
-EasyConvars.version = "v2.0.0"
+EasyConvars.version = "v2.1.0"
 
 ---
 ---Data of a registered convar.

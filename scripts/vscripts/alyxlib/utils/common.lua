@@ -1,5 +1,5 @@
 --[[
-    v3.1.0
+    v3.1.1
     https://github.com/FrostSource/alyxlib
 
     This file contains utility functions to help reduce repetitive code
@@ -15,7 +15,7 @@
 ---
 ---@class Util
 Util = {}
-Util.version = "v3.1.0"
+Util.version = "v3.1.1"
 
 ---
 ---Converts `vr_tip_attachment` from a game event (1,2) into a hand id (0,1) taking primary hand into account.

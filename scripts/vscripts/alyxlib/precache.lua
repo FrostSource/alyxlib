@@ -1,5 +1,5 @@
 --[[
-    v1.0.2
+    v1.1.0
     https://github.com/FrostSource/alyxlib
 
     Precaching can only be done with an entity attached script, so this script collects a list of assets to be automatically
@@ -21,7 +21,7 @@ end
 ---@class GlobalPrecache
 ---@overload fun(type: AlyxLibGlobalPrecacheType, path: string, spawnkeys: table?): nil
 GlobalPrecache = {}
-GlobalPrecache.version = "v1.0.3"
+GlobalPrecache.version = "v1.1.0"
 
 ---@alias AlyxLibGlobalPrecacheType
 ---| "model_folder"

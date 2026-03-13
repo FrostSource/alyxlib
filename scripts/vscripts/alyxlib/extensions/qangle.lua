@@ -1,5 +1,5 @@
 --[[
-    v1.0.0
+    v1.0.1
     https://github.com/FrostSource/alyxlib
 
     Provides QAngle class extension methods.
@@ -10,7 +10,7 @@
 ]]
 -- require "alyxlib.math.common"
 
-local version = "v1.0.0"
+local version = "v1.0.1"
 
 ---@class QAngle
 local meta = getmetatable(QAngle())

@@ -1,5 +1,5 @@
 --[[
-    v2.3.1
+    v2.4.0
     https://github.com/FrostSource/alyxlib
 
     Provides object-oriented class and inheritance functionality.
@@ -8,7 +8,7 @@
     
     require "alyxlib.class"
 ]]
-local version = "v2.3.1"
+local version = "v2.4.0"
 
 require "alyxlib.storage"
 require "alyxlib.globals"

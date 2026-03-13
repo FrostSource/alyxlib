@@ -1,5 +1,5 @@
 --[[
-    v1.0.2
+    v1.0.3
     https://github.com/FrostSource/alyxlib
 
     Allows quick debugging of VR controllers.
@@ -12,7 +12,7 @@
 -- Used for button descriptions
 require "alyxlib.controls.input"
 
-local version = "v1.0.2"
+local version = "v1.0.3"
 
 
 Convars:RegisterCommand("alyxlib_start_print_controller_button_presses", function (_)

@@ -1,5 +1,5 @@
 --[[
-    v1.1.1
+    v1.2.0
     https://github.com/FrostSource/alyxlib
 
     If not using `alyxlib/init.lua`, load this file at game start using the following line:
@@ -7,7 +7,7 @@
     require "alyxlib.debug.commands"
 ]]
 
-local version = "v1.1.1"
+local version = "v1.2.0"
 
 local alyxlibCommands = {}
 

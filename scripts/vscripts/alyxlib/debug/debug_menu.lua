@@ -1,5 +1,5 @@
 --[[
-    v1.0.0
+    v1.1.0
     https://github.com/FrostSource/alyxlib
 
     The debug menu allows for easier VR testing by offering a customizable in-game menu.
@@ -109,7 +109,7 @@ local handAttachment = ""
 ---
 ---@class DebugMenu
 DebugMenu = {}
-DebugMenu.version = "v1.0.0"
+DebugMenu.version = "v1.1.0"
 
 ---
 ---A category of items in the debug menu.

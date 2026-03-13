@@ -1,5 +1,5 @@
 --[[
-    v1.2.3
+    v1.2.4
     https://github.com/FrostSource/alyxlib
 
     An inventory is a table where each key has an integer value assigned to it.
@@ -10,7 +10,7 @@
     require "alyxlib.data.inventory"
 ]]
 
-local version = "v1.2.3"
+local version = "v1.2.4"
 
 ---
 ---Inventory data structure.

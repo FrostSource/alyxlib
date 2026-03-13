@@ -1,5 +1,5 @@
 --[[
-    v3.2.0
+    v3.3.0
     https://github.com/FrostSource/alyxlib
 
     Helps with saving/loading values for persistency between game sessions.
@@ -58,7 +58,7 @@ end
 local separator = "::"
 
 Storage = {}
-Storage.version = "v3.2.0"
+Storage.version = "v3.3.0"
 ---Collection of type names associated with a class table.
 ---The table should have both __save() and __load() functions.
 ---@type table<string,table>

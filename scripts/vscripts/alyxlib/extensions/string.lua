@@ -1,5 +1,5 @@
 --[[
-    v1.3.1
+    v2.0.0
     https://github.com/FrostSource/alyxlib
 
     Provides string class extension methods.
@@ -9,7 +9,7 @@
     require "alyxlib.extensions.string"
 ]]
 
-local version = "v1.3.1"
+local version = "v2.0.0"
 
 ---Escapes special characters in a string.
 ---@param s string # The string to escape

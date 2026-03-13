@@ -1,5 +1,5 @@
 --[[
-    v1.2.0
+    v1.2.1
     https://github.com/FrostSource/alyxlib
 
     Wrist attachments allow you to attach entities to the player's hands
@@ -12,7 +12,7 @@
 
 ---@class WristAttachments
 WristAttachments = {}
-WristAttachments.version = "v1.2.0"
+WristAttachments.version = "v1.2.1"
 
 ---@alias WristAttachmentHandType "left"|"right"|"primary"|"secondary"
 

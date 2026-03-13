@@ -1,5 +1,5 @@
 --[[
-    v1.1.0
+    v1.2.0
     https://github.com/FrostSource/alyxlib
 
     Adds functions and console commands to help debugging outside VR mode.
@@ -9,7 +9,7 @@
     require "alyxlib.debug.novr"
 ]]
 
-local version = "v1.1.0"
+local version = "v1.2.0"
 
 ---
 ---Provides functions to help debugging outside VR mode.

@@ -1,5 +1,5 @@
 --[[
-    v1.0.0
+    v1.0.1
     https://github.com/FrostSource/alyxlib
 
     Provides point_template extension methods.
@@ -9,7 +9,7 @@
     require "alyxlib.extensions.template"
 ]]
 
-local version = "v1.0.0"
+local version = "v1.0.1"
 
 ---
 ---Spawn the template at the IO caller position, rotated around the caller.

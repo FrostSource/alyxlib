@@ -1,5 +1,5 @@
 --[[
-    v1.5.1
+    v1.5.2
     https://github.com/FrostSource/alyxlib
 
     A queue is a data structure where items are added at one end and removed from the other, so the first item added is the first one taken out.
@@ -9,7 +9,7 @@
     require "alyxlib.data.queue"
 ]]
 
-local version = "v1.5.1"
+local version = "v1.5.2"
 
 ---
 ---Queue data structure.

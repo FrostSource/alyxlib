@@ -1,5 +1,5 @@
 --[[
-    v1.0.0
+    v1.0.1
     https://github.com/FrostSource/alyxlib
 
     This script searches for, and deletes, any extension fixed-up entities that appear to be duplicates.

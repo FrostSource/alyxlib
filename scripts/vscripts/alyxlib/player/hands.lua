@@ -1,5 +1,5 @@
 --[[
-    v1.3.0
+    v1.3.1
     https://github.com/FrostSource/alyxlib
 
     Code for player hands.
@@ -9,7 +9,7 @@
     require "alyxlib.player.hands"
 ]]
 
-local version = "v1.3.0"
+local version = "v1.3.1"
 
 ---
 ---Merges an existing prop with this hand.

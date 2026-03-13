@@ -1,5 +1,5 @@
 --[[
-    v1.2.4
+    v1.2.5
     https://github.com/FrostSource/alyxlib
 
     Weighted random allows you to assign chances to tables keys.
@@ -9,7 +9,7 @@
     require "alyxlib.math.weighted_random"
 ]]
 
-local version = "v1.2.4"
+local version = "v1.2.5"
 
 ---
 ---A list of tables with associated weights.

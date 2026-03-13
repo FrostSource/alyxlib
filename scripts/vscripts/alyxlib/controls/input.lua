@@ -1,5 +1,5 @@
 --[[
-    v4.0.2
+    v4.1.0
     https://github.com/FrostSource/alyxlib
 
     Simplifies the tracking of digital action presses/releases and analog values.
@@ -15,7 +15,7 @@
 ---@class Input
 Input = {}
 Input.__index = Input
-Input.version = "v4.0.2"
+Input.version = "v4.1.0"
 
 ---
 ---If the input system should start automatically on player spawn.

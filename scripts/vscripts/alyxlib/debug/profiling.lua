@@ -1,5 +1,5 @@
 --[[
-    v1.0.0
+    v1.0.1
     https://github.com/FrostSource/alyxlib
 
     Profiler allows for easy profiling of functions.

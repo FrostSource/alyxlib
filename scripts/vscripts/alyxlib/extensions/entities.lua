@@ -1,5 +1,5 @@
 --[[
-    v1.8.0
+    v1.8.1
     https://github.com/FrostSource/alyxlib
 
     Extensions for the `Entities` class.
@@ -10,7 +10,7 @@
 ]]
 require "alyxlib.extensions.entity"
 
-local version = "v1.8.0"
+local version = "v1.8.1"
 
 
 ---

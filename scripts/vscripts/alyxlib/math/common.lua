@@ -1,5 +1,5 @@
 --[[
-    v1.3.0
+    v2.0.0
     https://github.com/FrostSource/alyxlib
 
     Extends the math library with useful functions.
@@ -9,7 +9,7 @@
     require "alyxlib.math.common"
 ]]
 
-local version = "v1.3.0"
+local version = "v2.0.0"
 
 ---
 ---Gets the sign of a number.

@@ -1,5 +1,5 @@
 --[[
-    v2.2.0
+    v2.3.0
     https://github.com/FrostSource/alyxlib
 
     Debug utility functions.
@@ -13,7 +13,7 @@ require "alyxlib.extensions.entity"
 require "alyxlib.math.common"
 
 Debug = {}
-Debug.version = "v2.2.0"
+Debug.version = "v2.3.0"
 
 ---
 ---Finds the first entity whose name, class or model matches `pattern`.
