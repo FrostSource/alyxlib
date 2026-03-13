@@ -857,6 +857,16 @@ function DebugMenu:AddCycle(categoryId, cycleId, title, convar, values, callback
 end
 
 ---
+---Shows a dialog box with the specified text and a "CLOSE" button.
+---
+---@param text string # The text to display in the dialog
+function DebugMenu:ShowDialog(text)
+    if self.panel then
+        Panorama:Send(self.panel, "ShowDialog", text)
+    end
+end
+
+---
 ---Sets the text of an item.
 ---
 ---Only works on the following types:

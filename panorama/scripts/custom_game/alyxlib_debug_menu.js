@@ -971,6 +971,24 @@ function ShowSettings()
     }
 }
 
+function OpenDialog(text)
+{
+    const dialog = $('#modal_background');
+    const label = $('#dialog_label');
+    const contentContainer = $('#ContentContainer');
+    label.text = text;
+    dialog.visible = true;
+    contentContainer.style.blur = "gaussian( 5 )";
+}
+
+function CloseDialog()
+{
+    const dialog = $('#modal_background');
+    const contentContainer = $('#ContentContainer');
+    dialog.visible = false;
+    contentContainer.style.blur = "none";
+}
+
 /**
  * Gets the position of the left or right 'affordance' circle for the VR finger interacting with the menu.
  * @returns {{x:number,y:number}?}
@@ -1265,6 +1283,12 @@ function ParseCommand(command, args)
             const width = parseInt(args[0]);
             const height = parseInt(args[1]);
             SetContainerSize(width, height);
+            break;
+        }
+
+        case "showdialog": {
+            const text = args[0];
+            OpenDialog(text);
             break;
         }
     }
