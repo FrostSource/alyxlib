@@ -488,14 +488,9 @@ end, "Prints context criteria for an entity except for values saved using storag
 ---
 RegisterAlyxLibCommand("healme", function (_, amount)
 
-    amount = tonumber(amount)
+    amount = tonumber(amount) or 10
 
-    if not amount then
-        warn("Must provide a health amount")
-        return
-    end
-
-    Player:SetHealth(amount)
+    Player:SetHealth(Player:GetHealth() + amount)
 end, "Heals the player by a given amount", 0)
 
 ---
