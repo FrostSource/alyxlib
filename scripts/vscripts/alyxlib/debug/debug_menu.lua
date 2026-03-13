@@ -44,16 +44,6 @@ end, "Menu will float in world instead of attached to hand", 0, updateAttachment
 
 RegisterAlyxLibConvar("debug_menu_lock", "0", "Prevents the debug menu from being repositioned by the player", 0)
 
-local extras = require("alyxlib.debug.debug_menu_extras")
-
-RegisterAlyxLibConvar("debug_menu_extras", "0", "Enable the extras tab by default", 0, function()
-    if Convars:GetBool("debug_menu_extras") then
-        extras.createTab()
-    else
-        extras.removeTab()
-    end
-end)
-
 RegisterAlyxLibCommand("debug_menu_dump_convars", function()
     local categories = DebugMenu:GetLinkedConvars()
     for _, category in pairs(categories) do
@@ -1209,82 +1199,9 @@ DebugMenu:AddCategory("settings", "")
 DebugMenu:AddToggle("settings", "menu_hand", "Menu on primary hand", "debug_menu_hand")
 DebugMenu:AddToggle("settings", "menu_floating", "Menu floating", "debug_menu_floating")
 DebugMenu:AddToggle("settings", "menu_lock", "Menu locked", "debug_menu_lock")
-DebugMenu:AddToggle("settings", "menu_extras", "Menu extras", "debug_menu_extras")
 DebugMenu:AddSlider("settings", "menu_width", "Menu width", "debug_menu_width", 10, 30, false, 0)
 DebugMenu:AddSlider("settings", "menu_height", "Menu height", "debug_menu_height", 7, 30, false, 0)
 DebugMenu:AddLabel("settings", "", "Print all current menu settings to the console for saving")
 DebugMenu:AddButton("settings", "print_settings", "Print Settings To Console", "debug_menu_generate_cfg")
-
---[[
-    Default AlyxLib tab
-]]
----@TODO Move to its own file
-
-local categoryId = "alyxlib"
-
-DebugMenu:AddCategory(categoryId, "AlyxLib")
-
-DebugMenu:AddSeparator(categoryId, nil, "Basic")
-
-if IsVREnabled() then
-    DebugMenu:AddToggle(categoryId, "noclip_vr", "NoClip VR", "noclip_vr", nil, function()
-        return Convars:GetBool("noclip_vr_enabled")
-    end)
-    DebugMenu:AddLabel(categoryId, "noclip_vr_label", "Hold movement trigger to boost")
-    DebugMenu:AddSlider(categoryId, "noclip_vr_speed", "NoClip VR Speed", "noclip_vr_speed", 0.5, 10, false, 2)
-    DebugMenu:AddSlider(categoryId, "noclip_vr_boost_speed", "NoClip VR Boost Speed", "noclip_vr_boost_speed", 0.5, 10, false, 2)
-end
-
-DebugMenu:AddToggle(categoryId, "buddha", "Buddha Mode", "buddha")
-
-DebugMenu:AddToggle(categoryId, "lefthanded", "Left Handed", "hlvr_left_hand_primary")
-
-DebugMenu:AddToggle(categoryId, "gameinstructor", "Game Instructor Hints", nil,
-function(on)
-    Convars:SetBool("gameinstructor_enable", on)
-    Convars:SetBool("sv_gameinstructor_disable", not on)
-end,
-function()
-    return Convars:GetBool("gameinstructor_enable") and not Convars:GetBool("sv_gameinstructor_disable")
-end)
-
-DebugMenu:AddSeparator(categoryId, nil, "Equipment")
-
-if IsVREnabled() or IsFakeVREnabled() then
-    DebugMenu:AddButton(categoryId, "givegrabbity", "Give Grabbity Gloves", "hlvr_give_grabbity_gloves")
-end
-
-DebugMenu:AddButton(categoryId, "giveammo", "Give 999 Ammo", function()
-    SendToConsole("hlvr_setresources 999 999 999 " .. Player:GetResin())
-end)
-
-DebugMenu:AddButton(categoryId, "giveresin", "Give 999 Resin", function()
-    SendToConsole("hlvr_addresources 0 0 0 " .. (999 - Player:GetResin()))
-end)
-
-DebugMenu:AddSeparator(categoryId, nil, "Session")
-
-local isRecordingDemo = false
-local currentDemo = ""
-
-DebugMenu:AddLabel(categoryId, "demo_recording_label", "Last Demo: N/A")
-
-DebugMenu:AddButton(categoryId, "demo_recording", "Start Recording Demo", function()
-    if isRecordingDemo then
-        SendToConsole("stop")
-        currentDemo = ""
-        isRecordingDemo = false
-        DebugMenu:SetItemText(categoryId, "demo_recording", "Start Recording Demo")
-    else
-        local localtime = LocalTime()
-        -- remove all whitespace and slashes
-        local sanitizedMap = GetMapName():gsub("%s+", ""):gsub("/", "_")
-        currentDemo = "demo_" .. sanitizedMap .. "_" .. localtime.Hours .. "-" .. localtime.Minutes .. "-" .. localtime.Seconds
-        SendToConsole("record " .. currentDemo)
-        DebugMenu:SetItemText(categoryId, "demo_recording_label", "Last Demo: " .. currentDemo .. ".dem")
-        isRecordingDemo = true
-        DebugMenu:SetItemText(categoryId, "demo_recording", "Stop Recording Demo")
-    end
-end)
 
 return DebugMenu.version

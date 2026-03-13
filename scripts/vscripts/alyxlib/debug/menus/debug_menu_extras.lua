@@ -2,7 +2,7 @@
     v1.0.0
     https://github.com/FrostSource/alyxlib
 
-    Extra debug menu category which can be enabled via the AlyxLib debug menu tab.
+    Extra debug menu category for developers.
 ]]
 
 local version = "v1.0.0"
@@ -22,7 +22,7 @@ local function createTab()
         return
     end
 
-    DebugMenu:AddCategory(categoryId, "AlyxLib Extras")
+    DebugMenu:AddCategory(categoryId, "Developer")
 
     DebugMenu:AddSeparator(categoryId, nil, "Display")
 
@@ -49,8 +49,10 @@ local function createTab()
         end
     end)
 
+    DebugMenu:AddToggle(categoryId, "lefthanded", "Left Handed", "hlvr_left_hand_primary")
+
     DebugMenu:SendCategoryToPanel(DebugMenu:GetCategory(categoryId))
-    DebugMenu:SetCategoryIndex(categoryId, 2)
+    DebugMenu:SetCategoryIndex(categoryId, 3)
 
 end
 
