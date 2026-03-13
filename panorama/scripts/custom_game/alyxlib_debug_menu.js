@@ -5,6 +5,7 @@
 
 let panelReady = false;
 
+/** @type {Category} */
 let settingsCategory = null;
 
 /**
@@ -31,7 +32,7 @@ function FireOutput(outputName, ...args) {
  */
 let categories = [];
 
-const numberOfVisibleCategories = 5;
+let numberOfVisibleCategories = 5;
 
 let categoryBarCycleIndex = 0;
 
@@ -874,6 +875,10 @@ function CycleCategories(direction)
  */
 function UpdateCategoryBarVisibility()
 {
+    const bgPanel = $("#background_panel");
+    const width = bgPanel.actuallayoutwidth;
+    numberOfVisibleCategories = Math.max(1, Math.floor(width / 190));
+
     const selectedIndex = categories.indexOf(currentlySelectedCategory);
     if (selectedIndex < categoryBarCycleIndex) {
         categoryBarCycleIndex = selectedIndex;
@@ -1056,13 +1061,15 @@ function ClickHoveredButton()
  */
 function SetContainerSize(width, height) {
     // Clear container clip so larger sizes don't get clipped before the schedule
-    var container = $("#affordance_container");
+    const container = $("#affordance_container");
     container.style.clip = "rect(0px, 100%, 100%, 0px)";
 
-    let bgPanel = $("#background_panel");
+    const bgPanel = $("#background_panel");
 
-    if (width)
+    if (width) {
         bgPanel.style.width = `${width}px`;
+        $.Schedule(0.1, ()=> { UpdateCategoryBarVisibility(); });
+    }
     if (height) {
         bgPanel.style.height = `${height}px`;
         $('#CategoriesContainer').style.minHeight = `${height - 111}px`;
@@ -1071,17 +1078,17 @@ function SetContainerSize(width, height) {
     // Wait for element update and any animations
     // 0.6s is the duration of the opening animation
     $.Schedule(0.61, ()=> {
-        var bgWidth = bgPanel.actuallayoutwidth;
-        var bgHeight = bgPanel.actuallayoutheight;
-        var containerWidth = container.actuallayoutwidth;
-        var containerHeight = container.actuallayoutheight;
+        let bgWidth = bgPanel.actuallayoutwidth;
+        let bgHeight = bgPanel.actuallayoutheight;
+        let containerWidth = container.actuallayoutwidth;
+        let containerHeight = container.actuallayoutheight;
         
         // Calculate centered x position within container
-        var x = (containerWidth - bgWidth) / 2;
+        let x = (containerWidth - bgWidth) / 2;
         // Calculate the bottom y position
-        var y = (containerHeight - bgHeight);
+        let y = (containerHeight - bgHeight);
         
-        var clipRect = "rect(" + y + "px, " + (x + bgWidth) + "px, " + (y + bgHeight) + "px, " + x + "px)";
+        const clipRect = "rect(" + y + "px, " + (x + bgWidth) + "px, " + (y + bgHeight) + "px, " + x + "px)";
         
         container.style.clip = clipRect;
     });

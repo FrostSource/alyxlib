@@ -895,13 +895,15 @@ function DebugMenu:SetCategoryIndex(categoryId, index)
         return
     end
 
-    index = math.max(1, math.min(index, #self.categories)) -- Clamp index to valid range
+    -- Account for 'settings' as invisible first tab
+    index = index + 1
+    index = Clamp(index, 2, #self.categories)
 
     table.remove(self.categories, currentIndex)
     table.insert(self.categories, index, category)
 
     if self.panel then
-        Panorama:Send(self.panel, "SetCategoryIndex", categoryId, index-1)
+        Panorama:Send(self.panel, "SetCategoryIndex", categoryId, index - 2)
     end
 end
 

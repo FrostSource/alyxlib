@@ -161,7 +161,7 @@ Button.custom_button_with_subtitle.error_msg:not(.disabled) Label.button_label.s
 }
 .CategoryButton
 {
-    width: 150px;
+    width: fill-parent-flow(1);
     height: 100%;
     /* background-color: red; */
     horizontal-align: left;
