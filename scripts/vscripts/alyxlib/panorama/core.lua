@@ -99,6 +99,13 @@ function Panorama:Send(panelEntity, ...)
 
     dataString = FilterText(dataString)
 
+    -- above 404 it will be clamped
+    -- above 462 it will be completely ignored
+    if #dataString > 404 then
+        warn("Panorama string length", #dataString, "exceeds 404 characters and may be truncated! Consider reducing the amount of data being sent or splitting it into multiple sends.")
+        ---@TODO split into multiple sends, need a way to buffer SendToConsole calls and ensure they are sent in order
+    end
+
     -- print("Sending to pano:", dataString)
     SendToConsole("@panorama_dispatch_event AddStyleToEachChild('"..dataString.."')")
 end
