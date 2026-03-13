@@ -462,6 +462,7 @@ function DebugMenu:UpdateMenuAttachment()
     if Convars:GetBool("debug_menu_floating") or not Player.HMDAvatar or IsFakeVREnabled() then
         local player = Entities:GetLocalPlayer()
         local eyePos = player:EyePosition()
+        eyePos = eyePos + player:EyeAngles():Up() * -((Convars:GetFloat("debug_menu_height") or 0) / 2)
         local fDir = player:EyeAngles():Forward()
         local fAng = VectorToAngles(fDir)
         fAng = RotateOrientation(fAng, QAngle(0, -90, 90))
