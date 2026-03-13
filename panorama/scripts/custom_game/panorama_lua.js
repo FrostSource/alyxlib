@@ -17,6 +17,13 @@
 // @ts-ignore
 if(false)p=require("./panoramadoc");
 
+function DecodeString(str)
+{
+    str = str.replace(/U\+000A/g, "\n");
+    str = str.replace(/U\+00027/g, "'");
+    return str;
+}
+
 /**
  * 
  * @param {null} _ Unused variable.
@@ -25,7 +32,7 @@ if(false)p=require("./panoramadoc");
 function LuaCallback(_, encoded)
 {
     // $.Msg(encoded)
-    let decoded = encoded.split("|");
+    let decoded = DecodeString(encoded).split("|");
     let panel = $.GetContextPanel();
     //$.Msg(decoded[0], panel.BHasClass(decoded[0]))
 

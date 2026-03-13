@@ -11,8 +11,7 @@
     <GameMenuPanel class="game_menu_root" onactivate="GameMenuNavigation_Cmd( 'GoTo Root' )">
         <Panel class="base_container" id="layout_root">
 
-            <Panel class="vr_affordance_container">
-
+            <Panel class="vr_affordance_container" id="affordance_container">
                 <Panel id="vr_affordance_left" class="VRaffordance">
                     <Panel id="vr_affordance_interior"/>
                 </Panel>
@@ -20,57 +19,64 @@
                     <Panel id="vr_affordance_interior"/>
                 </Panel>
 
+                
                 <Panel id="background_panel" class="bg">
-                    <Panel id="TitleBar" class="header" onactivate="StartPanelDrag()">
-                        <Label class="header" text="Debug Menu" />
-                    </Panel>
-                    <Panel class="empty_row" />
-                    <Panel class="row">
-                        <Panel id="CategoriesContainer" class="col_body">
-                            
-                            <!-- Close menu button -->
-                            <Button id="CloseMenuButton" onactivate="CloseMenu()">
-                                <Label class="button_label" text="Close Menu"/>
-                                <Image class="button_bullet" src="s2r://panorama/images/game_menu_ui/btn_bullet_child_page_png.vtex" />
-                            </Button>
+                    <Panel class="base_container" id="ContentContainer">
 
-                            <!-- Cycle left -->
-                            <Panel id="CategoryCycler" class="cycle_item custom_cycle">
-                                <Button id="CycleCategoryLeftButton" class="CycleCategoryLeft" onactivate="CycleCategories(-1)">
-                                    <Panel class="cycle_image cycle_image_left"/>
-                                    <Label id="CycleCategoryLeftButtonLabel" text="" />
-                                </Button>
-
-                                <!-- Category buttons are kept here -->
-                                <Panel id="CategoryBar" class="CategoryBar" />
-
-                                <!-- Cycle right -->
-                                <Button id="CycleCategoryRightButton" class="CycleCategoryRight" onactivate="CycleCategories(1)">
-                                    <Panel class="cycle_image cycle_image_right"/>
-                                    <Label id="CycleCategoryRightButtonLabel" text="" />
-                                </Button>
-                            </Panel>
-                            
-                            <!-- Category sub menu separator -->
-                            <Panel class="row_divider">
-                                <Panel class="button_label">
-                                    <Panel class="row_divider_line" />
-                                </Panel>
-                                <Panel class="button_bullet" />
-                            </Panel>
-
-                            <Button id="ScrollHelperUp" class="scroll_helper up">
-                                <Panel style="flow-children: right; horizontal-align: center;">
-                                    <Panel class="chevron_arrow" />
-                                    <Panel class="chevron_arrow" />
-                                    <Panel class="chevron_arrow" />
-                                </Panel>
-                            </Button>
-
-                            <!-- Individual submenus are added here at the end of CategoriesContainer -->
-                            
+                        <Panel id="TitleBar" class="header" onactivate="StartPanelDrag()">
+                            <Label class="header" text="Debug Menu" />
                         </Panel>
-                    </Panel>
+                        <Panel class="empty_row" />
+                        <Panel class="row">
+                            <Panel id="CategoriesContainer" class="col_body">
+                                
+                                <!-- Close menu button -->
+                                <Panel class="TopBar">
+                                    <Button id="SettingsButton" onactivate="ShowSettings()">
+                                    </Button>
+                                    <Button id="CloseMenuButton" onactivate="CloseMenu()">
+                                        <Label class="button_label" text="Close Menu"/>
+                                        <Image class="button_bullet" src="s2r://panorama/images/game_menu_ui/btn_bullet_child_page_png.vtex" />
+                                    </Button>
+                                </Panel>
+
+                                <!-- Cycle left -->
+                                <Panel id="CategoryCycler" class="cycle_item custom_cycle">
+                                    <Button id="CycleCategoryLeftButton" class="cycle_button_left CycleCategoryLeft" onactivate="CycleCategories(-1)">
+                                        <Panel class="cycle_image cycle_image_left"/>
+                                        <Label id="CycleCategoryLeftButtonLabel" text="" />
+                                    </Button>
+
+                                    <!-- Category buttons are kept here -->
+                                    <Panel id="CategoryBar" class="CategoryBar" />
+
+                                    <!-- Cycle right -->
+                                    <Button id="CycleCategoryRightButton" class="cycle_button_right CycleCategoryRight" onactivate="CycleCategories(1)">
+                                        <Panel class="cycle_image cycle_image_right"/>
+                                        <Label id="CycleCategoryRightButtonLabel" text="" />
+                                    </Button>
+                                </Panel>
+                                
+                                <!-- Category sub menu separator -->
+                                <Panel class="row_divider">
+                                    <Panel class="button_label">
+                                        <Panel class="row_divider_line" />
+                                    </Panel>
+                                    <Panel class="button_bullet" />
+                                </Panel>
+
+                                <Button id="ScrollHelperUp" class="scroll_helper up">
+                                    <Panel style="flow-children: right; horizontal-align: center;">
+                                        <Panel class="chevron_arrow" />
+                                        <Panel class="chevron_arrow" />
+                                        <Panel class="chevron_arrow" />
+                                    </Panel>
+                                </Button>
+
+                                <!-- Individual submenus are added here at the end of CategoriesContainer -->
+                                
+                            </Panel>
+                        </Panel>
                         <Button id="ScrollHelperDown" class="scroll_helper down">
                             <Panel style="flow-children: right; horizontal-align: center;">
                                 <Panel class="chevron_arrow" />
@@ -78,9 +84,47 @@
                                 <Panel class="chevron_arrow" />
                             </Panel>
                         </Button>
-                    <!-- <Panel class="empty_row" />
-                    <Panel class="empty_row_bottomR_corner" /> -->
+                    </Panel>
+
+                    <Panel id="modal_background" onactivate="CloseDialog()">
+                        <Panel id="modal_dialog" onactivate="">
+                            <Panel class="header_info_panel" />
+                            <Panel class="empty_row" />
+
+                            <Panel class="row">
+                            <Panel class="col_body_sibling">
+                                <Panel class="info_body">
+                                <Panel id="main_confirm" class="row">
+                                    <Panel class="col_body_sibling">
+                                    <Panel class="label">
+                                        <Label class="modal_body_copy" id="dialog_label" text="This is a single test for something"/>
+                                    </Panel>
+                                    </Panel>
+                                </Panel>
+                                
+                                <Panel class="row_divider">
+                                    <Panel class="button_label">
+                                    <Panel class="row_divider_line" />
+                                    </Panel>
+                                    <Panel class="button_bullet" />
+                                </Panel>
+
+                                <!-- <Panel class="button_container_left"> -->
+                                    <Button class="button_modal centered " onactivate="CloseDialog()">
+                                        <Label class="cta" text="Close" />
+                                    </Button>
+                                <!-- </Panel> -->
+                                </Panel>
+                            </Panel>
+                            </Panel>  
+                                
+                            <Panel class="empty_row" />
+                            <Panel class="empty_row_bottomR_corner" />
+                            
+                        </Panel>
+                    </Panel>
                 </Panel>
+
             </Panel>
         </Panel>
     </GameMenuPanel>

@@ -1,17 +1,26 @@
 #background_panel.bg
 {
+    /* background_panel size is updated in JS SetContainerSize() */
     /*opacity-mask: url("s2r://panorama/images/game_menu_ui/menu_type_mask_psd.vtex");*/
-    flow-children: down;
+    flow-children: none;
     width: 100%;
     background-color: gradient( radial, 50% 50%, 0% 0%, 100% 100%, from( #553c18 ), color-stop( 0.97, #000000 ), to( #000000 ) );
     box-shadow: inset #995e0011 2px 2px 4px 4px;
     opacity: .9;
     height: 100%;
+    horizontal-align: center;
+    vertical-align: bottom;
+}
+#ContentContainer
+{
+    blur: none;
 }
 .vr_affordance_container{
+    width: 100%;
     height: 100%;
 }
 #layout_root{
+    width: 100%;
     height: 100%;
 }
 
@@ -153,11 +162,11 @@ Button.custom_button_with_subtitle.error_msg:not(.disabled) Label.button_label.s
     /* background-color: yellow; */
     width: fill-parent-flow(1);
     height: 100%;
-    opacity: 0.5;
+    opacity: 1.0;
 }
 .CategoryButton
 {
-    width: 150px;
+    width: fill-parent-flow(1);
     height: 100%;
     /* background-color: red; */
     horizontal-align: left;
@@ -406,4 +415,89 @@ Label.custom_label
     transition-property: none;
     transition-duration: 0s;
     transition-timing-function: ease-in;
+}
+
+.TopBar
+{
+    flow-children: right;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+#SettingsButton
+{
+    background-image: url("s2r://panorama/images/game_menu_ui/options_advanced_png.vtex");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    width: 80px;
+    /* margin-top: 24px; */
+    margin-left: 24px;
+    margin-right: 24px;
+    /* padding-top: 8px; */
+    /* background-color: #FFBE5533; */
+    border: 2px solid #FFBE55;
+    horizontal-align: left;
+}
+
+#SettingsButton:hover
+{
+    background-image: url("s2r://panorama/images/game_menu_ui/options_advanced_hover_png.vtex");
+    background-color: #FFBE5588;
+}
+
+
+
+#modal_dialog_container
+{
+    width: 100%;
+    height: 100%;
+    flow-children: none;
+}
+#modal_dialog
+{
+    horizontal-align: center;
+    vertical-align: middle;
+    /* background-color: red; */
+    /* z: 100px; */
+    /* perspective: 100; */
+    background-color: gradient( radial, 50% 50%, 0% 0%, 100% 100%, from( #553c18ee ), color-stop( 0.97, #000000 ), to( #000000 ) );
+    /* box-shadow: inset #995e0011 2px 2px 4px 4px; */
+    opacity: 0.99;
+    border-radius: 1%;
+}
+#modal_background
+{
+    width: 100%;
+    height: 100%;
+    background-color: #00000055;
+    visibility: collapse;
+}
+
+.centered
+{
+    horizontal-align: center;
+    vertical-align: middle;
+}
+
+.button_modal
+{
+    width: 220px;
+    min-height: 78px;
+    /* margin-top: 24px;
+    margin-right: 24px;
+    padding-top: 8px;
+    background-color: #FFBE5533;
+    border: 2px solid #FFBE55;
+    text-align: center; */
+}
+
+#dialog_label
+{
+    font-size: 38px;
+    text-align: center;
+    margin: 24px;
+    /* Bottom has a gap for unknown reasons at certain font sizes */
+    /* This doesn't fix it but lessens it */
+    margin-bottom: 0px;
 }

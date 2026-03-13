@@ -1,16 +1,16 @@
 --[[
-    v1.3.0
+    v1.3.1
     https://github.com/FrostSource/alyxlib
 
     Provides Vector class extension methods.
 
-    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
     
     require "alyxlib.extensions.vector"
 ]]
 require "alyxlib.math.common"
 
-local version = "v1.3.0"
+local version = "v1.3.1"
 
 ---@class Vector
 local meta = getmetatable(Vector())
@@ -22,7 +22,7 @@ local zero = Vector(0, 0, 0)
 ---
 ---Calculates the perpendicular vector to the current vector.
 ---
----@return Vector # The perpendicular vector.
+---@return Vector # The perpendicular vector
 function meta:Perpendicular()
     if self.y == 0 and self.z == 0 then
         if self.x == 0 then
@@ -37,11 +37,11 @@ function meta:Perpendicular()
 end
 
 ---
----Check if the current vector is perpendicular to another vector.
+---Checks if the current vector is perpendicular to another vector.
 ---
----@param vector Vector # The other vector to check perpendicularity against.
----@param tolerance? number # (optional) The tolerance value for the dot product comparison. Default is 1e-8.
----@return boolean # True if the vectors are perpendicular, false otherwise.
+---@param vector Vector # The other vector to check perpendicularity against
+---@param tolerance? number # (optional) The tolerance value for the dot product comparison. Default is `1e-8`
+---@return boolean # True if the vectors are perpendicular, false otherwise
 function meta:IsPerpendicularTo(vector, tolerance)
     tolerance = tolerance or 1e-8
     return math.abs(self:Dot(vector)) <= tolerance
@@ -50,8 +50,8 @@ end
 ---
 ---Checks if the current vector is parallel to the given vector.
 ---
----@param vector Vector # The vector to compare with.
----@return boolean # True if the vectors are parallel, false otherwise.
+---@param vector Vector # The vector to compare with
+---@return boolean # True if the vectors are parallel, false otherwise
 function meta:IsParallelTo(vector)
     -- Treat zero vectors as parallel to any vector
     if self == zero or vector == zero then
@@ -62,11 +62,11 @@ function meta:IsParallelTo(vector)
 end
 
 ---
----Spherical linear interpolation between the calling vector and the target vector over t = [0, 1].
+---Spherical linear interpolation between the calling vector and the target vector over `t = [0, 1]`.
 ---
----@param target Vector # The target vector to interpolate towards.
----@param t number # The interpolation factor, ranging from 0 to 1.
----@return Vector # The resulting vector after spherical linear interpolation.
+---@param target Vector # The target vector to interpolate towards
+---@param t number # The interpolation factor, ranging from 0 to 1
+---@return Vector # The resulting vector after spherical linear interpolation
 function meta:Slerp(target, t)
     local dot = self:Dot(target)
     dot = math.max(-1, math.min(1, dot))
@@ -83,19 +83,18 @@ end
 
 ---
 ---Translates a vector within a local coordinate system.
+---
 ---This function computes a new vector by applying an offset relative to the local axes defined by the forward, right, and up direction vectors.
 ---
----@param offset Vector # The translation offset vector. This defines how much to move along the forward, right, and up directions.
----                    - `offset.x`: Translation along the forward vector.
----                    - `offset.y`: Translation along the right vector.
----                    - `offset.z`: Translation along the up vector.
+---@param offset Vector # The translation offset vector. This defines how much to move along the forward, right, and up directions
+---                    - `offset.x`: Translation along the forward vector
+---                    - `offset.y`: Translation along the right vector
+---                    - `offset.z`: Translation along the up vector
 ---
----@param forward Vector # The forward direction of the local coordinate system.
----@param right Vector # The right direction of the local coordinate system.
----@param up Vector # The up direction of the local coordinate system.
----
----@return Vector # A new vector representing the translated position.
----
+---@param forward Vector # The forward direction of the local coordinate system
+---@param right Vector # The right direction of the local coordinate system
+---@param up Vector # The up direction of the local coordinate system
+---@return Vector # A new vector representing the translated position
 function meta:LocalTranslate(offset, forward, right, up)
     local x = self.x + offset.x * forward.x + offset.y * right.x + offset.z * up.x
     local y = self.y + offset.x * forward.y + offset.y * right.y + offset.z * up.y
@@ -106,8 +105,8 @@ end
 ---
 ---Calculates the angle difference in degrees between the calling vector and the given vector. This is always the smallest angle.
 ---
----@param vector Vector # The vector to calculate the angle difference with.
----@return number # Angle difference in degrees.
+---@param vector Vector # The vector to calculate the angle difference with
+---@return number # Angle difference in degrees
 function meta:AngleDiff(vector)
     local denominator = math.sqrt(self:Length() * vector:Length())
     if denominator < 1e-15 then
@@ -120,9 +119,9 @@ end
 ---
 ---Calculates the signed angle difference between the calling vector and the given vector around the specified axis.
 ---
----@param vector Vector # The vector to calculate the angle difference with.
----@param axis? Vector # The axis of rotation around which the angle difference is calculated.
----@return number # The signed angle difference in degrees.
+---@param vector Vector # The vector to calculate the angle difference with
+---@param axis? Vector # The axis of rotation around which the angle difference is calculated
+---@return number # The signed angle difference in degrees
 function meta:SignedAngleDiff(vector, axis)
     axis = axis or Vector(0, 0, 1)
     local unsignedAngle = self:AngleDiff(vector)
@@ -145,6 +144,7 @@ end
 
 ---
 ---Returns the squared length (magnitude) of the vector.
+---
 ---More efficient than calculating the actual length as it avoids using `sqrt()`.
 ---
 ---@return number
@@ -155,9 +155,10 @@ end
 ---
 ---Checks if this vector is similar to another vector within a given tolerance.
 ---
----@param vector Vector # The vector to compare against.
----@param tolerance? number # The tolerance within which the vectors are considered similar. Default is 1e-5. See [math.isclose](lua://math.isclose)
----@return boolean # Returns `true` if the vectors are similar within the tolerance, otherwise `false`.
+---@see math.isclose
+---@param vector Vector # The vector to compare against
+---@param tolerance? number # The tolerance within which the vectors are considered similar. Default is `1e-5`
+---@return boolean # Returns `true` if the vectors are similar within the tolerance, otherwise `false`
 function meta:IsSimilarTo(vector, tolerance)
     tolerance = tolerance or 1e-5
     return IsVector(vector)
@@ -169,7 +170,7 @@ end
 ---
 ---Creates a copy of the vector.
 ---
----@return Vector # A new vector with the same components as the original.
+---@return Vector # A new vector with the same components as the original
 function meta:Clone()
     return Vector(self.x, self.y, self.y)
 end

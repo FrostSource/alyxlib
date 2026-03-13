@@ -1,28 +1,36 @@
 --[[
-    v1.0.0
+    v1.1.0
     https://github.com/FrostSource/alyxlib
 
     The debug menu allows for easier VR testing by offering a customizable in-game menu.
+
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
+    
+    require "alyxlib.debug.debug_menu"
 ]]
+
+local function updateAttachment()
+    DebugMenu:UpdateMenuAttachment()
+end
 
 RegisterAlyxLibCommand("debug_menu_show", function (name, ...)
     DebugMenu:ShowMenu()
 end, "Forces the debug menu to show")
 
-RegisterAlyxLibConvar("debug_menu_hand", "1", "Hand to attach the debug menu to, 0 = Secondary : 1 = Primary")
+RegisterAlyxLibConvar("debug_menu_hand", "1", "Hand to attach the debug menu to, 0 = Secondary : 1 = Primary", 0, updateAttachment)
 
-RegisterAlyxLibConvar("debug_menu_offset_x", "4", "X offset of the debug menu", 0)
-RegisterAlyxLibConvar("debug_menu_offset_y", "-9", "Y offset of the debug menu", 0)
-RegisterAlyxLibConvar("debug_menu_offset_z", "0", "Z offset of the debug menu", 0)
-RegisterAlyxLibConvar("debug_menu_offset_pitch", "0", "Pitch offset of the debug menu", 0)
-RegisterAlyxLibConvar("debug_menu_offset_yaw", "180", "Yaw offset of the debug menu", 0)
-RegisterAlyxLibConvar("debug_menu_offset_roll", "0", "Roll offset of the debug menu", 0)
+RegisterAlyxLibConvar("debug_menu_offset_x", "-3", "X offset of the debug menu", 0)
+RegisterAlyxLibConvar("debug_menu_offset_y", "-5", "Y offset of the debug menu", 0)
+RegisterAlyxLibConvar("debug_menu_offset_z", "-1", "Z offset of the debug menu", 0)
+RegisterAlyxLibConvar("debug_menu_offset_pitch", "-14", "Pitch offset of the debug menu", 0)
+RegisterAlyxLibConvar("debug_menu_offset_yaw", "-172", "Yaw offset of the debug menu", 0)
+RegisterAlyxLibConvar("debug_menu_offset_roll", "-2", "Roll offset of the debug menu", 0)
 
+RegisterAlyxLibConvar("debug_menu_width", "15", "Width of the debug menu, min=10 : max=30", 0, function(newVal, oldVal)
+    DebugMenu:SetSize(Convars:GetInt("debug_menu_width"), nil)
+end)
 RegisterAlyxLibConvar("debug_menu_height", "14", "Height of the debug menu, min=7 : max=30", 0, function(newVal, oldVal)
-    if DebugMenu:IsOpen() then
-        DebugMenu:CloseMenu()
-        DebugMenu:ShowMenu()
-    end
+    DebugMenu:SetSize(nil, Convars:GetInt("debug_menu_height"))
 end)
 
 RegisterAlyxLibConvar("debug_menu_floating", function()
@@ -32,50 +40,113 @@ RegisterAlyxLibConvar("debug_menu_floating", function()
     end
 
     return false
-end, "Menu will float in world instead of attached to hand")
+end, "Menu will float in world instead of attached to hand", 0, updateAttachment)
 
 RegisterAlyxLibConvar("debug_menu_lock", "0", "Prevents the debug menu from being repositioned by the player", 0)
 
-RegisterAlyxLibConvar("debug_menu_extras", "0", "Enable the extras tab by default", 0)
+RegisterAlyxLibCommand("debug_menu_dump_convars", function()
+    local categories = DebugMenu:GetLinkedConvars()
+    for _, category in pairs(categories) do
+        for _, convar in pairs(category.convars) do
+            Msg(string.format("%s : %s\n", convar.name, convar.value))
+        end
+    end
+end, "Dumps all convars tied to the debug menu and their values to the console", 0)
+
+RegisterAlyxLibCommand("debug_menu_generate_cfg", function ()
+    -- By collecting first we avoid warnings printed throughout the list
+
+    local dumps = DebugMenu:GetLinkedConvars()
+
+    Msg("\n// Copy and paste the following into debug_menu.cfg to save your settings\n\n")
+
+    Msg("// offsets\n")
+    Msg("debug_menu_offset_x " .. math.trunc(Convars:GetFloat("debug_menu_offset_x"), 2) .. "\n")
+    Msg("debug_menu_offset_y " .. math.trunc(Convars:GetFloat("debug_menu_offset_y"), 2) .. "\n")
+    Msg("debug_menu_offset_z " .. math.trunc(Convars:GetFloat("debug_menu_offset_z"), 2) .. "\n")
+    Msg("debug_menu_offset_pitch " .. math.trunc(Convars:GetFloat("debug_menu_offset_pitch"), 2) .. "\n")
+    Msg("debug_menu_offset_yaw " .. math.trunc(Convars:GetFloat("debug_menu_offset_yaw"), 2) .. "\n")
+    Msg("debug_menu_offset_roll " .. math.trunc(Convars:GetFloat("debug_menu_offset_roll"), 2) .. "\n")
+    Msg("\n")
+
+    for _, dump in pairs(dumps) do
+        local name = dump.category.name
+        if name == nil or name == "" then
+            name = dump.category.id
+        end
+        Msg("// " .. name .. "\n")
+        for _, convar in pairs(dump.convars) do
+            if convar.value ~= nil then
+                local defaultStr = ""
+                if convar.default ~= nil then
+                    defaultStr = (convar.default ~= convar.value) and ("// default: "..convar.default.."") or ""
+                end
+                local valStr = convar.value or ""
+                local str = string.format("%-" .. dump.maxLengthConvar .. "s %-" .. dump.maxLengthValue .. "s %s\n", convar.name, valStr, defaultStr)
+                Msg(str)
+            end
+        end
+        Msg("\n")
+    end
+
+    Msg("// End of debug_menu.cfg\n")
+end, "Prints the current Debug Menu settings in cfg format which can be pasted into any cfg file", 0)
+
+---DPI of the debug menu panel.
+local DPI = 64
+
+---Minimum and maximum sizes of the debug menu panel.
+local MIN_WIDTH = 10
+local MIN_HEIGHT = 7
+local MAX_WIDTH = 30
+local MAX_HEIGHT = 30
+
+---Attachment name that the panel attaches to on the hand.
+local handAttachment = ""
 
 ---
 ---The debug menu allows for easier VR testing by offering a customizable in-game menu.
 ---
 ---@class DebugMenu
 DebugMenu = {}
-DebugMenu.version = "v1.0.0"
+DebugMenu.version = "v1.1.0"
 
 ---
 ---A category of items in the debug menu.
 ---
 ---@class DebugMenuCategory
----@field id string # The unique ID for this category.
----@field name string # The display name for this category.
----@field items DebugMenuItem[] # The items in this category.
+---@field id string # The unique ID for this category
+---@field name string # The display name for this category
+---@field items DebugMenuItem[] # The items in this category
 
 ---
 ---An item in the debug menu.
 ---
 ---@class DebugMenuItem
----@field categoryId string # The ID of the category this item is in.
----@field id string # The unique ID for this item.
----@field text string # The text to display for this item (if applicable).
----@field callback function # The function to call when this item is clicked.
+---@field categoryId string # The ID of the category this item is in
+---@field id string # The unique ID for this item
+---@field text string # The text to display for this item (if applicable)
+---@field callback function # The function to call when this item is clicked
 ---@field type "button"|"toggle"|"separator"|"slider"|"cycle" # Type of menu element this item is.
----@field default any|function # The default value sent to the menu. If this is a function the return value will be used.
----@field min number # Minimum value of this slider.
----@field max number # Maxmimum value of this slider.
----@field isPercentage boolean # If true, this slider displays its value as a percentage of min/max.
----@field convar string # The console variable associated with this element. 
----@field values {text:string,value:any}[] # Text/value pairs for this cycler.
----@field truncate number # The number of decimal places to truncate the slider value to (-1 for no truncating).
----@field increment number  # The increment value to snap the slider value to (0 for no snapping).
----@field condition? string|fun():boolean # The condition that must be met for this item to be visible.
+---@field default any|function # The default value sent to the menu. If this is a function the return value will be used
+---@field min number # Minimum value of this slider
+---@field max number # Maxmimum value of this slider
+---@field isPercentage boolean # If true, this slider displays its value as a percentage of min/max
+---@field convar string # The console variable associated with this element
+---@field values {text:string,value:any}[] # Text/value pairs for this cycler
+---@field truncate number # The number of decimal places to truncate the slider value to (-1 for no truncating)
+---@field increment number  # The increment value to snap the slider value to (0 for no snapping)
+---@field condition? string|fun():boolean # The condition that must be met for this item to be visible
 
+---
 ---The panel entity.
+---
 ---@type CPointClientUIWorldPanel
 DebugMenu.panel = nil
 
+---
+---The categories in the debug menu.
+---
 ---@type DebugMenuCategory[]
 DebugMenu.categories = {}
 
@@ -145,11 +216,19 @@ local function TransformToWorld(entity, localTransform)
     return worldPos, angles
 end
 
+---Mirrors the offset and angles for the opposite hand.
+---@param offset Vector
+---@param angles QAngle
+local function mirrorOffsetToOppositeHand(offset, angles, hand)
+    offset = Vector(offset.x, -offset.y, offset.z)
+    angles = QAngle(-angles.x, 180-angles.y, angles.z)
+    return offset, angles
+end
+
 ---@param dragHand CPropVRHand
 local function startDraggingMenu(dragHand)
 
     local panel = DebugMenu.panel
-    local dragent = dragHand
 
     local relativeTransform = TransformToLocal(dragHand, panel:GetOrigin(), panel:GetAngles())
 
@@ -167,14 +246,13 @@ local function startDraggingMenu(dragHand)
             end
 
             local hand = Convars:GetBool("debug_menu_hand") and Player.PrimaryHand or Player.SecondaryHand
-            panel:SetParent(hand, "constraint1")
+            panel:SetParent(hand, handAttachment)
 
             local localOrigin = panel:GetLocalOrigin()
             local localAngles = panel:GetLocalAngles()
 
             if hand == Player.LeftHand then
-                localAngles.y = localAngles.y - 180
-                localOrigin.y = -localOrigin.y
+                localOrigin, localAngles = mirrorOffsetToOppositeHand(localOrigin, localAngles)
             end
 
             Convars:SetFloat("debug_menu_offset_x", localOrigin.x)
@@ -319,6 +397,11 @@ local debugPanelScriptScope = {
 ---Parenting causes stutters so it must be calculated manually.
 ---@param panel EntityHandle
 local function updatePanelWithAnchorParent(panel)
+    ---@TODO Unsure best way to follow moving non vr player
+    if not Player.HMDAnchor then
+        return
+    end
+
     ---@type EntityHandle?
     local currentAnchorParent = nil
     local anchorRelativeTransform = nil
@@ -347,9 +430,39 @@ end
 ---Updates the physical menu by attaching it to the correct hand.
 ---
 function DebugMenu:UpdateMenuAttachment()
+    if not IsValidEntity(self.panel) then return end
+
+    if not Player.HMDAvatar or IsFakeVREnabled() then
+        SendToConsole("bind r _debug_menu_test_button_press")
+    else
+        local handType = -1
+        if not Convars:GetBool("debug_menu_floating") then
+            handType = Convars:GetInt("debug_menu_hand") == 1 and InputHandSecondary or InputHandPrimary
+
+            StopListeningToPlayerEvent(handChangedListener)
+            handChangedListener = ListenToPlayerEvent("primary_hand_changed", function()
+                self:UpdateMenuAttachment()
+            end)
+        end
+
+        -- Cough handpose gets in the way for close menus
+        Player:SetCoughHandEnabled(false)
+
+        Input:StopListeningByContext(self)
+        -- Handle distant button presses
+        Input:ListenToButton("press",
+            handType,
+            DIGITAL_INPUT_MENU_INTERACT, 1,
+            function (context, params)
+                lastClickHand = params.hand
+                self:ClickHoveredButton()
+            end, self)
+    end
+
     if Convars:GetBool("debug_menu_floating") or not Player.HMDAvatar or IsFakeVREnabled() then
         local player = Entities:GetLocalPlayer()
         local eyePos = player:EyePosition()
+        eyePos = eyePos + player:EyeAngles():Up() * -((Convars:GetFloat("debug_menu_height") or 0) / 2)
         local fDir = player:EyeAngles():Forward()
         local fAng = VectorToAngles(fDir)
         fAng = RotateOrientation(fAng, QAngle(0, -90, 90))
@@ -362,15 +475,20 @@ function DebugMenu:UpdateMenuAttachment()
         updatePanelWithAnchorParent(self.panel)
     else
         local hand = Convars:GetBool("debug_menu_hand") and Player.PrimaryHand or Player.SecondaryHand
-        if hand == Player.RightHand then
-            self.panel:SetParent(hand, "constraint1")
-            self.panel:SetLocalAngles(Convars:GetFloat("debug_menu_offset_pitch"), Convars:GetFloat("debug_menu_offset_yaw"), Convars:GetFloat("debug_menu_offset_roll"))
-            self.panel:SetLocalOrigin(Vector(Convars:GetFloat("debug_menu_offset_x"), Convars:GetFloat("debug_menu_offset_y"), Convars:GetFloat("debug_menu_offset_z")))
-        else
-            self.panel:SetParent(hand, "constraint1")
-            self.panel:SetLocalAngles(Convars:GetFloat("debug_menu_offset_pitch"), Convars:GetFloat("debug_menu_offset_yaw")-180, Convars:GetFloat("debug_menu_offset_roll"))
-            self.panel:SetLocalOrigin(Vector(Convars:GetFloat("debug_menu_offset_x"), -Convars:GetFloat("debug_menu_offset_y"), Convars:GetFloat("debug_menu_offset_z")))
+
+        local x,y,z = Convars:GetFloat("debug_menu_offset_x"), Convars:GetFloat("debug_menu_offset_y"), Convars:GetFloat("debug_menu_offset_z")
+        local pitch,yaw,roll = Convars:GetFloat("debug_menu_offset_pitch"), Convars:GetFloat("debug_menu_offset_yaw"), Convars:GetFloat("debug_menu_offset_roll")
+
+        local offset = Vector(x, y, z)
+        local angles = QAngle(pitch, yaw, roll)
+
+        if hand == Player.LeftHand then
+            offset, angles = mirrorOffsetToOppositeHand(offset, angles)
         end
+
+        self.panel:SetParent(hand, handAttachment)
+        self.panel:SetLocalOrigin(offset)
+        self.panel:SetLocalQAngle(angles)
     end
 end
 
@@ -382,14 +500,14 @@ function DebugMenu:ShowMenu()
     self.panel = SpawnEntityFromTableSynchronous("point_clientui_world_panel", {
         targetname = "alyxlib_debug_menu",
         dialog_layout_name = "file://{resources}/layout/custom_game/alyxlib_debug_menu.xml",
-        width = 16,
-        height = Convars:GetInt("debug_menu_height"),
-        panel_dpi = 64,
+        width = MAX_WIDTH,
+        height = MAX_HEIGHT,
+        panel_dpi = DPI,
         ignore_input = 0,
         lit = 0,
         interact_distance = 64,
 
-        vertical_align = "1",
+        vertical_align = "0",
         -- orientation = "0",
         horizontal_align = "1",
 
@@ -398,32 +516,6 @@ function DebugMenu:ShowMenu()
     })
 
     self:UpdateMenuAttachment()
-
-    if not Player.HMDAvatar or IsFakeVREnabled() then
-        SendToConsole("bind r _debug_menu_test_button_press")
-    else
-        local handType = -1
-        if not Convars:GetBool("debug_menu_floating") then
-            handType = Convars:GetInt("debug_menu_hand") == 1 and InputHandSecondary or InputHandPrimary
-
-            handChangedListener = ListenToPlayerEvent("primary_hand_changed", function()
-                self:UpdateMenuAttachment()
-            end)
-        end
-
-        -- Cough handpose gets in the way for close menus
-        Player:SetCoughHandEnabled(false)
-
-        -- Handle distant button presses
-        Input:ListenToButton("press",
-            handType,
-            DIGITAL_INPUT_MENU_INTERACT, 1,
-            function (context, params)
-                lastClickHand = params.hand
-                self:ClickHoveredButton()
-            end, self)
-
-    end
 
     self.panel:AddCSSClasses("Visible")
 
@@ -436,9 +528,10 @@ function DebugMenu:ShowMenu()
 
     debugMenuOpen = true
 
-    local panelHeight = Clamp(Convars:GetInt("debug_menu_height"), 7, 30)
-    local cssHeight = (64 * panelHeight) - 111
-    Panorama:Send(self.panel, "SetHeight", cssHeight)
+    self:SetSize(
+        Convars:GetInt("debug_menu_width"),
+        Convars:GetInt("debug_menu_height")
+    )
 
     self:SendCategoriesToPanel()
 end
@@ -488,7 +581,7 @@ function DebugMenu:ClickHoveredButton()
 end
 
 ---
----Get a debug menu item by id.
+---Gets a debug menu item by id.
 ---
 ---@param id string # The item ID
 ---@param categoryId? string # Optionally specify a category to look in. If not specified, will look in all categories
@@ -506,7 +599,7 @@ function DebugMenu:GetItem(id, categoryId)
 end
 
 ---
----Get a debug menu category by id.
+---Gets a debug menu category by id.
 ---
 ---@param id string # The category ID
 ---@return DebugMenuCategory? # The category if it exists
@@ -520,7 +613,7 @@ function DebugMenu:GetCategory(id)
 end
 
 ---
----Add a category to the debug menu.
+---Adds a category to the debug menu.
 ---
 ---@param id string # The unique ID for this category
 ---@param name string # The display name for this category
@@ -538,7 +631,24 @@ function DebugMenu:AddCategory(id, name)
 end
 
 ---
----Add a separator line to a category.
+---Removes a category from the debug menu.
+---
+---This does not update the menu if it's already open;
+---use [DebugMenu:Refresh()](lua://DebugMenu.Refresh) to update manually.
+---
+---@param id string # The ID of the category to remove
+function DebugMenu:RemoveCategory(id)
+    local category, index = self:GetCategory(id)
+    if not category then
+        warn("Cannot remove category '"..id.."': Category does not exist!")
+        return
+    end
+
+    table.remove(self.categories, index)
+end
+
+---
+---Adds a separator line to a category.
 ---
 ---@param categoryId string # The category ID to add the separator to
 ---@param separatorId? string # Optional ID for the separator if you want to modify it later
@@ -559,7 +669,7 @@ function DebugMenu:AddSeparator(categoryId, separatorId, text)
 end
 
 ---
----Add a button to a category.
+---Adds a button to a category.
 ---
 ---@param categoryId string # The category ID to add the button to
 ---@param buttonId string # The unique ID for this button
@@ -591,7 +701,7 @@ function DebugMenu:AddButton(categoryId, buttonId, text, command)
 end
 
 ---
----Add a toggle to a category.
+---Adds a toggle to a category.
 ---
 ---@param categoryId string # The category ID to add the toggle to
 ---@param toggleId string # The unique ID for this toggle
@@ -624,7 +734,7 @@ function DebugMenu:AddToggle(categoryId, toggleId, text, convar, callback, start
 end
 
 ---
----Add a center aligned label to a category.
+---Adds a center aligned label to a category.
 ---
 ---@param categoryId string # The category ID to add the label to
 ---@param labelId string # The unique ID for this label
@@ -645,7 +755,7 @@ function DebugMenu:AddLabel(categoryId, labelId, text)
 end
 
 ---
----Add value slider to a category.
+---Adds value slider to a category.
 ---
 ---@param categoryId string # The ID of the category to add this slider to
 ---@param sliderId string # A unique ID for this slider
@@ -690,7 +800,7 @@ function DebugMenu:AddSlider(categoryId, sliderId, text, convar, min, max, isPer
 end
 
 ---
----Add a value cycler to a category.
+---Adds a value cycler to a category.
 ---
 ---Cyclers allow users to choose from a set of values.
 ---
@@ -747,7 +857,17 @@ function DebugMenu:AddCycle(categoryId, cycleId, title, convar, values, callback
 end
 
 ---
----Set the text of an item.
+---Shows a dialog box with the specified text and a "CLOSE" button.
+---
+---@param text string # The text to display in the dialog
+function DebugMenu:ShowDialog(text)
+    if self.panel then
+        Panorama:Send(self.panel, "ShowDialog", text)
+    end
+end
+
+---
+---Sets the text of an item.
 ---
 ---Only works on the following types:
 --- - button
@@ -772,13 +892,13 @@ function DebugMenu:SetItemText(categoryId, itemId, text)
 end
 
 ---
----Sets the index of a category in the debug menu.
+---Sets the index of a category in the debug menu.  
 ---Categories are ordered by their index, starting from 1.
 ---
 ---This is an advanced function and should be used with caution.
 ---
----@param categoryId string # Id of the category to change.
----@param index number # New index for the category.
+---@param categoryId string # Id of the category to change
+---@param index number # New index for the category
 function DebugMenu:SetCategoryIndex(categoryId, index)
     local category, currentIndex = self:GetCategory(categoryId)
     if not category then
@@ -786,13 +906,36 @@ function DebugMenu:SetCategoryIndex(categoryId, index)
         return
     end
 
-    index = math.max(1, math.min(index, #self.categories)) -- Clamp index to valid range
+    -- Account for 'settings' as invisible first tab
+    index = index + 1
+    index = Clamp(index, 2, #self.categories)
 
     table.remove(self.categories, currentIndex)
     table.insert(self.categories, index, category)
 
     if self.panel then
-        Panorama:Send(self.panel, "SetCategoryIndex", categoryId, index-1)
+        Panorama:Send(self.panel, "SetCategoryIndex", categoryId, index - 2)
+    end
+end
+
+---
+---Sets the size of the debug menu panel if it's open.
+---
+---This does not change any convars and is not persisted.
+---
+---@param width? number # Width in "panel units"
+---@param height? number # Height in "panel units"
+function DebugMenu:SetSize(width, height)
+    if width then
+        width = Clamp(width, MIN_WIDTH, MAX_WIDTH) * DPI
+    end
+
+    if height then
+        height = Clamp(height, MIN_HEIGHT, MAX_HEIGHT) * DPI
+    end
+
+    if self.panel then
+        Panorama:Send(self.panel, "SetSize", width, height)
     end
 end
 
@@ -947,6 +1090,59 @@ function DebugMenu:SetItemVisibilityCondition(categoryId, itemId, condition)
 end
 
 ---
+---A category of convars dumped by `DebugMenu:GetLinkedConvars`.
+---
+---@class DebugMenuDumpedCategory
+---@field category DebugMenuCategory # The category that these convars are linked to
+---@field maxLengthConvar number # The length of the longest convar name
+---@field maxLengthValue number # The length of the longest convar value
+---@field convars {name:string, value:string?, default:string?}[] # The convars in this category
+
+---
+---Gets a list of all convars linked to debug menu items.
+---
+---@return DebugMenuDumpedCategory[] # A list of all convars
+function DebugMenu:GetLinkedConvars()
+    ---@type DebugMenuDumpedCategory[]
+    local categories = {}
+
+    for _,category in pairs(DebugMenu.categories) do
+        local convars = {}
+
+        ---@type DebugMenuDumpedCategory
+        local dumpedCategory = {category = category, maxLengthConvar = 0, maxLengthValue = 0, convars = convars}
+        table.insert(categories, dumpedCategory)
+
+        for _,item in pairs(category.items) do
+            local convar = item.convar
+            if convar ~= nil then
+                dumpedCategory.maxLengthConvar = math.max(dumpedCategory.maxLengthConvar, #convar)
+                if convar and convar ~= "" then
+
+                    local default = nil
+                    local val = nil
+
+                    if EasyConvars:Exists(convar) then
+                        default = tostring(EasyConvars:GetConvarData(convar).defaultValue)
+                        val = EasyConvars:GetStr(convar)
+                    else
+                        val = Convars:GetStr(convar)
+                    end
+
+                    if val ~= nil then
+                        dumpedCategory.maxLengthValue = math.max(dumpedCategory.maxLengthValue, #val)
+                    end
+
+                    table.insert(convars, {name = convar, value = val, default = default})
+                end
+            end
+        end
+    end
+
+    return categories
+end
+
+---
 ---Starts listening for the debug menu activation button.
 ---
 function DebugMenu:StartListeningForMenuActivation()
@@ -993,7 +1189,9 @@ function DebugMenu:StopListeningForMenuActivation()
     Player:SetContextThink("debug_menu_activate", nil, 0)
 end
 
-if Convars:GetInt("developer") > 0 then
+-- Developer condition has been "disabled"
+-- All players can now open the menu
+if Convars:GetInt("developer") > -1 then
     ListenToPlayerEvent("vr_player_ready", function()
         -- Kill existing panel on load to avoid missing logic errors
         local panel = Entities:FindByName(nil, "alyxlib_debug_menu")
@@ -1007,95 +1205,16 @@ if Convars:GetInt("developer") > 0 then
     end, nil)
 end
 
-
 --[[
-    Default AlyxLib tab
+    Settings tab
 ]]
----@TODO Move to its own file
-
-local categoryId = "alyxlib"
-
-DebugMenu:AddCategory(categoryId, "AlyxLib")
-
-DebugMenu:AddSeparator(categoryId, nil, "Basic")
-
-if IsVREnabled() then
-    DebugMenu:AddToggle(categoryId, "noclip_vr", "NoClip VR", "noclip_vr", nil, function()
-        return Convars:GetBool("noclip_vr_enabled")
-    end)
-    DebugMenu:AddLabel(categoryId, "noclip_vr_label", "Hold movement trigger to boost")
-    DebugMenu:AddSlider(categoryId, "noclip_vr_speed", "NoClip VR Speed", "noclip_vr_speed", 0.5, 10, false, 2)
-    DebugMenu:AddSlider(categoryId, "noclip_vr_boost_speed", "NoClip VR Boost Speed", "noclip_vr_boost_speed", 0.5, 10, false, 2)
-end
-
-DebugMenu:AddToggle(categoryId, "buddha", "Buddha Mode", "buddha")
-
-DebugMenu:AddToggle(categoryId, "lefthanded", "Left Handed", "hlvr_left_hand_primary")
-
-DebugMenu:AddToggle(categoryId, "gameinstructor", "Game Instructor Hints", nil,
-function(on)
-    Convars:SetBool("gameinstructor_enable", on)
-    Convars:SetBool("sv_gameinstructor_disable", not on)
-end,
-function()
-    return Convars:GetBool("gameinstructor_enable") and not Convars:GetBool("sv_gameinstructor_disable")
-end)
-
-DebugMenu:AddSeparator(categoryId, nil, "Equipment")
-
-if IsVREnabled() or IsFakeVREnabled() then
-    DebugMenu:AddButton(categoryId, "givegrabbity", "Give Grabbity Gloves", "hlvr_give_grabbity_gloves")
-end
-
-DebugMenu:AddButton(categoryId, "giveammo", "Give 999 Ammo", function()
-    SendToConsole("hlvr_setresources 999 999 999 " .. Player:GetResin())
-end)
-
-DebugMenu:AddButton(categoryId, "giveresin", "Give 999 Resin", function()
-    SendToConsole("hlvr_addresources 0 0 0 " .. (999 - Player:GetResin()))
-end)
-
-DebugMenu:AddSeparator(categoryId, nil, "Session")
-
-local isRecordingDemo = false
-local currentDemo = ""
-
-DebugMenu:AddLabel(categoryId, "demo_recording_label", "Last Demo: N/A")
-
-DebugMenu:AddButton(categoryId, "demo_recording", "Start Recording Demo", function()
-    if isRecordingDemo then
-        SendToConsole("stop")
-        currentDemo = ""
-        isRecordingDemo = false
-        DebugMenu:SetItemText(categoryId, "demo_recording", "Start Recording Demo")
-    else
-        local localtime = LocalTime()
-        -- remove all whitespace and slashes
-        local sanitizedMap = GetMapName():gsub("%s+", ""):gsub("/", "_")
-        currentDemo = "demo_" .. sanitizedMap .. "_" .. localtime.Hours .. "-" .. localtime.Minutes .. "-" .. localtime.Seconds
-        SendToConsole("record " .. currentDemo)
-        DebugMenu:SetItemText(categoryId, "demo_recording_label", "Last Demo: " .. currentDemo .. ".dem")
-        isRecordingDemo = true
-        DebugMenu:SetItemText(categoryId, "demo_recording", "Stop Recording Demo")
-    end
-end)
-
-if Convars:GetBool("debug_menu_extras") then
-    require "alyxlib.debug.debug_menu_extras"
-else
-    DebugMenu:AddSeparator(categoryId)
-
-    DebugMenu:AddButton(categoryId, "enableextras", "Enable Extras Tab...", function()
-        if package.loaded["alyxlib.debug.debug_menu_extras"] == nil then
-            require "alyxlib.debug.debug_menu_extras"
-            -- Update the panel immediately
-            local id = "alyxlib_extras"
-            DebugMenu:SendCategoryToPanel(DebugMenu:GetCategory(id))
-            DebugMenu:SetCategoryIndex(id, 2)
-            ---@TODO Allow disabling extras tab
-            DebugMenu:SetItemText(categoryId, "enableextras", "Extras Tab Enabled!")
-        end
-    end)
-end
+DebugMenu:AddCategory("settings", "")
+DebugMenu:AddToggle("settings", "menu_hand", "Menu on primary hand", "debug_menu_hand")
+DebugMenu:AddToggle("settings", "menu_floating", "Menu floating", "debug_menu_floating")
+DebugMenu:AddToggle("settings", "menu_lock", "Menu locked", "debug_menu_lock")
+DebugMenu:AddSlider("settings", "menu_width", "Menu width", "debug_menu_width", 10, 30, false, 0)
+DebugMenu:AddSlider("settings", "menu_height", "Menu height", "debug_menu_height", 7, 30, false, 0)
+DebugMenu:AddLabel("settings", "", "Print all current menu settings to the console for saving")
+DebugMenu:AddButton("settings", "print_settings", "Print Settings To Console", "debug_menu_generate_cfg")
 
 return DebugMenu.version

@@ -1,15 +1,15 @@
 --[[
-	v1.0.2
+	v1.0.3
 	https://github.com/FrostSource/alyxlib
 
-	If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
+	If not using `alyxlib/init.lua`, load this file at game start using the following line:
 	
 	require "alyxlib.data.color"
 ]]
 require "alyxlib.globals"
 require "alyxlib.math.common"
 
-local version = "v1.0.2"
+local version = "v1.0.3"
 
 local hasfrac = math.has_frac
 
@@ -32,10 +32,10 @@ local function resolveColorRange(value, default)
 end
 
 ---Converts a hue value to an RGB value.
----@param p number # The value used in the RGB calculation.
----@param q number # The value used in the RGB calculation.
----@param t number # The hue value to convert to RGB.
----@return number # The RGB value corresponding to the given hue.
+---@param p number # The value used in the RGB calculation
+---@param q number # The value used in the RGB calculation
+---@param t number # The hue value to convert to RGB
+---@return number # The RGB value corresponding to the given hue
 local function hueToRgb(p, q, t)
 	if t < 0 then t = t + 1 end
 	if t > 1 then t = t - 1 end
@@ -46,12 +46,12 @@ local function hueToRgb(p, q, t)
 end
 
 ---Converts HSL color values to RGB.
----@param h number # Hue value range [0-1].
----@param s number # Saturation value range [0-1].
----@param l number # Lightness value range [0-1].
----@return integer r # Red color value in range [0-255].
----@return integer g # Green color value in range [0-255].
----@return integer b # Blue color value in range [0-255].
+---@param h number # Hue value range [0-1]
+---@param s number # Saturation value range [0-1]
+---@param l number # Lightness value range [0-1]
+---@return integer r # Red color value in range [0-255]
+---@return integer g # Green color value in range [0-255]
+---@return integer b # Blue color value in range [0-255]
 local function hslToRgb(h, s, l)
 	local r, g, b
 
@@ -73,12 +73,12 @@ local function hslToRgb(h, s, l)
 end
 
 ---Converts RGB color values to HSL.
----@param r number # Red value range [0-255].
----@param g number # Red value range [0-255].
----@param b number # Red value range [0-255].
----@return number h # Hue color value in range [0-1].
----@return number s # Saturation color value in range [0-1].
----@return number l # Lightness color value in range [0-1].
+---@param r number # Red value range [0-255]
+---@param g number # Red value range [0-255]
+---@param b number # Red value range [0-255]
+---@return number h # Hue color value in range [0-1]
+---@return number s # Saturation color value in range [0-1]
+---@return number l # Lightness color value in range [0-1]
 local function rgbToHsl(r, g, b)
 	r = r / 255
 	g = g / 255
@@ -103,13 +103,13 @@ end
 
 ---Represents a color object with RGB and HSL components.
 ---@class Color
----@field r integer # Red component.
----@field g integer # Green component.
----@field b integer # Blue component.
----@field a integer # Alpha component.
----@field hue integer # Hue component.
----@field saturation integer # Saturation component.
----@field lightness integer # Lightness component.
+---@field r integer # Red component
+---@field g integer # Green component
+---@field b integer # Blue component
+---@field a integer # Alpha component
+---@field hue integer # Hue component
+---@field saturation integer # Saturation component
+---@field lightness integer # Lightness component
 local ColorClass = {}
 
 if Storage then
@@ -120,10 +120,10 @@ if Storage then
     ---
     ---Helper function for saving the `Color`.
     ---
-    ---@param handle EntityHandle # The entity to save on.
-    ---@param name string # The name to save as.
-    ---@param color Color # The color to save.
-    ---@return boolean # If the save was successful.
+    ---@param handle EntityHandle # The entity to save on
+    ---@param name string # The name to save as
+    ---@param color Color # The color to save
+    ---@return boolean # If the save was successful
     ---@luadoc-ignore
     function ColorClass.__save(handle, name, color)
         return Storage.SaveTableCustom(handle, name, color, "Color")
@@ -134,8 +134,8 @@ if Storage then
     ---
     ---Helper function for loading the `Color`.
     ---
-    ---@param handle EntityHandle # Entity to load from.
-    ---@param name string # Name to load.
+    ---@param handle EntityHandle # Entity to load from
+    ---@param name string # Name to load
     ---@return Color|nil
     ---@luadoc-ignore
     function ColorClass.__load(handle, name)
@@ -152,10 +152,10 @@ if Storage then
     ---Load a `Color`.
     ---
     ---@generic T
-    ---@param handle EntityHandle # Entity to load from.
-    ---@param name string # Name the Color was saved as.
-    ---@param default? T # Optional default value.
-    ---@return Color|T
+    ---@param handle EntityHandle # Entity to load from
+    ---@param name string # Name the Color was saved as
+    ---@param default? T # Optional default value
+    ---@return Color|T # The loaded Color
     ---@luadoc-ignore
     Storage.LoadColor = function(handle, name, default)
         local color = ColorClass.__load(handle, name)
@@ -231,9 +231,10 @@ end
 
 ---
 ---Converts this `Color` to a hexadecimal representation.
----The hexadecimal format is in the format #RRGGBB.
 ---
----@return string # The hexadecimal representation of this `Color`.
+---The hexadecimal string is in the format #RRGGBB.
+---
+---@return string # The hexadecimal representation of this [Color](lua://Color)
 function ColorClass:ToHexString()
 	local function toHex(val)
         return string.format("%02X", val)
@@ -242,28 +243,35 @@ function ColorClass:ToHexString()
     return "#" .. toHex(self.r) .. toHex(self.g) .. toHex(self.b)
 end
 
----Get a `Vector` from this `Color` in the form of [x=r, y=g, z=b].
----@return Vector # The color vector.
+---
+---Returns a [Vector](lua://Vector) from this [Color](lua://Color).  
+---In the form of [x=r, y=g, z=b], with ranges [0-255].
+---
+---@return Vector # The vector representation of this [Color](lua://Color)
 function ColorClass:ToVector()
 	return Vector(self[1], self[2], self[3])
 end
 
----Get a `Vector` from this `Color` in the form of [x=r, y=g, z=b] but with ranges [0-1].
----@return Vector # The color vector.
+---
+---Returns a [Vector](lua://Vector) from this [Color](lua://Color).  
+---In the form of [x=r, y=g, z=b], with ranges [0-1].
+---
+---@return Vector # The decimal vector representation of this [Color](lua://Color)
 function ColorClass:ToDecimalVector()
 	return Vector(self[1] / 255, self[2] / 255, self[3] / 255)
 end
 
 
 ---
----Sets the color based on the provided RGB (Red, Green, Blue) components and an optional alpha component.
----If any of the provided values have fractional parts, they will all be normalized to the range [0, 255].
+---Sets the RGBA components of this [Color](lua://Color).
+---
+---If any of the provided values have fractional parts, they will all be normalized to the range [0, 255].  
 ---If any of the provided values are nil or omitted, the corresponding component of the color will remain unchanged.
 ---
----@param r? number # The red component of the color.
----@param g? number # The green component of the color.
----@param b? number # The blue component of the color.
----@param a? number # The alpha component of the color.
+---@param r? number # The red component of the color
+---@param g? number # The green component of the color
+---@param b? number # The blue component of the color
+---@param a? number # The alpha component of the color
 function ColorClass:SetRGB(r, g, b, a)
 	if hasfrac(r) or hasfrac(g) or hasfrac(b) or hasfrac(a) then
 		r = r and r * 255 or self.r
@@ -278,7 +286,9 @@ function ColorClass:SetRGB(r, g, b, a)
 	self.a = a
 end
 
----Get the HSL color values from this `Color`.
+---
+---Gets the HSL color values for this [Color](lua://Color).
+---
 ---@return number h # Hue color value in range [0-360]
 ---@return number s # Saturation color value in range [0-100]
 ---@return number l # Lightness color value in range [0-100]
@@ -288,14 +298,14 @@ function ColorClass:GetHSL()
 end
 
 ---
----Sets the color based on the provided HSL (Hue, Saturation, Lightness) components.
----The method accepts values for hue, saturation, and lightness in their respective ranges and updates the color accordingly.
+---Sets the HSL (Hue, Saturation, Lightness) components of this [Color](lua://Color).
 ---
----If any of the provided values have fractional parts, they will be normalized to their appropriate ranges (0 to 360 for hue, 0 to 100 for saturation and lightness).
+---If any of the provided values have fractional parts, they will be normalized to their appropriate ranges (0 to 360 for hue, 0 to 100 for saturation and lightness).  
 ---If any of the provided values are nil or omitted, the corresponding component of the color will remain unchanged.
----@param h? number # The hue value of the color (0 to 360), representing the color's position on the color wheel.
----@param s? number # The saturation value of the color (0 to 100), determining the intensity of the color.
----@param l? number # The lightness value of the color (0 to 100), affecting the brightness of the color.
+---
+---@param h? number # The hue value of the color (0 to 360), representing the color's position on the color wheel
+---@param s? number # The saturation value of the color (0 to 100), determining the intensity of the color
+---@param l? number # The lightness value of the color (0 to 100), affecting the brightness of the color
 function ColorClass:SetHSL(h, s, l)
 	if hasfrac(h) or hasfrac(s) or hasfrac(l) then
 		h = h and h / 360 or nil
@@ -315,13 +325,13 @@ function ColorClass:SetHSL(h, s, l)
 end
 
 ---
----Create a new `Color` instance using range [0-1] or [0-255].
+---Creates a new [Color](lua://Color) instance using range [0-255] or [0-1].
 ---
----@param r? number # Red color value.
----@param g? number # Green color value.
----@param b? number # Blue color value.
----@param a? number # Alpha value.
----@return Color
+---@param r? number # Red color value
+---@param g? number # Green color value
+---@param b? number # Blue color value
+---@param a? number # Alpha value
+---@return Color # The new [Color](lua://Color)
 ---@overload fun(rgb: Vector)
 ---@overload fun(rgb: string)
 function Color(r, g, b, a)
@@ -354,10 +364,10 @@ function Color(r, g, b, a)
 end
 
 ---
----Get if a value is a `Color`.
+---Checks if a value is a `Color`.
 ---
----@param value any
----@return boolean
+---@param value any # The value to check
+---@return boolean # `true` if the value is a [Color](lua://Color), `false` otherwise
 function IsColor(value)
 	return type(value) == "table" and getmetatable(value) == ColorClass
 end

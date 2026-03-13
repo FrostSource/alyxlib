@@ -1,16 +1,19 @@
 --[[
-    v1.2.4
+    v1.2.5
     https://github.com/FrostSource/alyxlib
 
     A stack is a data structure where elements are added to the top and removed from the top, with the most recently added item being the first to be removed.
 
-    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
     
     require "alyxlib.data.stack"
 ]]
 
-local version = "v1.2.4"
+local version = "v1.2.5"
 
+---
+---Stack data structure.
+---
 ---@class Stack
 local StackClass =
 {
@@ -27,10 +30,10 @@ if pcall(require, "alyxlib.storage") then
     ---
     ---Helper function for saving the `stack`.
     ---
-    ---@param handle EntityHandle # The entity to save on.
-    ---@param name string # The name to save as.
-    ---@param stack Stack # The stack to save.
-    ---@return boolean # If the save was successful.
+    ---@param handle EntityHandle # The entity to save on
+    ---@param name string # The name to save as
+    ---@param stack Stack # The stack to save
+    ---@return boolean # If the save was successful
     ---@luadoc-ignore
     function StackClass.__save(handle, name, stack)
         return Storage.SaveTableCustom(handle, name, stack, "Stack")
@@ -41,9 +44,9 @@ if pcall(require, "alyxlib.storage") then
     ---
     ---Helper function for loading the `stack`.
     ---
-    ---@param handle EntityHandle # Entity to load from.
-    ---@param name string # Name to load.
-    ---@return Stack|nil
+    ---@param handle EntityHandle # Entity to load from
+    ---@param name string # Name to load
+    ---@return Stack|nil # The loaded stack
     ---@luadoc-ignore
     function StackClass.__load(handle, name)
         local stack = Storage.LoadTableCustom(handle, name, "Stack")
@@ -55,13 +58,13 @@ if pcall(require, "alyxlib.storage") then
     CBaseEntity.SaveStack = Storage.SaveStack
 
     ---
-    ---Load a Stack.
+    ---Loads a Stack.
     ---
     ---@generic T
-    ---@param handle EntityHandle # Entity to load from.
-    ---@param name string # Name the Stack was saved as.
-    ---@param default? T # Optional default value.
-    ---@return Stack|T
+    ---@param handle EntityHandle # Entity to load from
+    ---@param name string # Name the Stack was saved as
+    ---@param default? T # Optional default value
+    ---@return Stack|T # The loaded stack
     ---@luadoc-ignore
     Storage.LoadStack = function(handle, name, default)
         local stack = StackClass.__load(handle, name)
@@ -75,19 +78,19 @@ end
 
 
 ---
----Push values to the stack.
+---Pushes values to the stack.
 ---
----@param ... any
+---@param ... any # Any number of values
 function StackClass:Push(...)
-    for _, value in ipairs({...}) do
-        table.insert(self.items, 1, value)
+    for i = 1, select("#", ...) do
+        table.insert(self.items, 1, select(i, ...))
     end
 end
 
 ---
----Pop a number of items from the stack.
+---Pops values from the stack.
 ---
----@param count? number # Default is 1
+---@param count? number # Number of items to pop
 ---@return ...
 function StackClass:Pop(count)
     count = min(count or 1, #self.items)
@@ -99,9 +102,9 @@ function StackClass:Pop(count)
 end
 
 ---
----Peek at a number of items at the top of the stack without removing them.
+---Peeks at a number of items on the top of the stack without removing them.
 ---
----@param count? number # Default is 1
+---@param count? number # Number of items to peek
 ---@return ...
 function StackClass:Top(count)
     count = min(count or 1, #self.items)
@@ -113,9 +116,9 @@ function StackClass:Top(count)
 end
 
 ---
----Peek at a number of items at the bottom of the stack without removing them.
+---Peeks at a number of items on the bottom of the stack without removing them.
 ---
----@param count? number # Default is 1
+---@param count? number # Number of items to peek
 ---@return ...
 function StackClass:Bottom(count)
     count = min(count or 1, #self.items)
@@ -127,9 +130,9 @@ function StackClass:Bottom(count)
 end
 
 ---
----Remove a value from the stack regardless of its position.
+---Removes a value from the stack regardless of its position.
 ---
----@param value any
+---@param value any # The value to remove
 function StackClass:Remove(value)
     for index, val in ipairs(self.items) do
         if value == val then
@@ -140,11 +143,12 @@ function StackClass:Remove(value)
 end
 
 ---
----Move an existing value to the top of the stack.
+---Moves an existing value to the top of the stack.
+---
 ---Only the first occurance will be moved.
 ---
----@param value any # The value to move.
----@return boolean # True if value was found and moved.
+---@param value any # The value to move
+---@return boolean # True if value was found and moved
 function StackClass:MoveToTop(value)
     for index, val in ipairs(self.items) do
         if value == val then
@@ -157,11 +161,12 @@ function StackClass:MoveToTop(value)
 end
 
 ---
----Move an existing value to the bottom of the stack.
+---Moves an existing value to the bottom of the stack.
+---
 ---Only the first occurance will be moved.
 ---
----@param value any # The value to move.
----@return boolean # True if value was found and moved.
+---@param value any # The value to move
+---@return boolean # True if value was found and moved
 function StackClass:MoveToBottom(value)
     for index, val in ipairs(self.items) do
         if value == val then
@@ -174,25 +179,26 @@ function StackClass:MoveToBottom(value)
 end
 
 ---
----Get if this stack contains a value.
+---Gets if this stack contains a value.
 ---
----@param value any
----@return boolean
+---@param value any # The value to search for
+---@return boolean # True if the value is in the stack
 function StackClass:Contains(value)
     return vlua.find(self.items, value) ~= nil
 end
 
 ---
----Return the number of items in the stack.
+---Returns the number of items in the stack.
 ---
----@return integer
+---@return integer # The number of items
 function StackClass:Length()
     return #self.items
 end
 
 ---
----Get if the stack is empty.
+---Gets if the stack is empty.
 ---
+---@return boolean # True if the stack is empty
 function StackClass:IsEmpty()
     return #self.items == 0
 end
@@ -213,7 +219,8 @@ end
 
 
 ---
----Create a new `Stack` object.
+---Creates a new [Stack](lua://Stack) object.
+---
 ---First value is at the top.
 ---
 ---E.g.

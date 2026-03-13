@@ -1,20 +1,20 @@
 --[[
-    v2.7.1
+    v2.8.0
     https://github.com/FrostSource/alyxlib
 
     Provides base entity extension methods.
 
-    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
     
     require "alyxlib.extensions.entity"
 ]]
 
-local version = "v2.7.1"
+local version = "v2.8.0"
 
 ---
----Get the entities parented to this entity. Including children of children.
+---Gets the entities parented to this entity. Including children of children.
 ---
----This is a memory safe version of GetChildren() which causes a memory leak when called.
+---This is a memory safe version of [GetChildren](lua://CBaseEntity.GetChildren) which causes a memory leak when called.  
 ---If you need to get children often you should use this function instead.
 ---
 ---@return EntityHandle[]
@@ -27,14 +27,14 @@ function CBaseEntity:GetChildrenMemSafe()
 end
 
 ---
----Returns a `function` that iterates over all children of this entity.
+---Returns a `function` that iterates over all children of this entity.  
 ---The `function` returns the next child every time it is called until no more children exist,
 ---in which case `nil` is returned.
 ---
 ---Useful in `for` loops:
 ---
 ---     for child in thisEntity:IterateChildren() do
----         print(Debug.EntStr(child))
+---         print(entstr(child))
 ---     end
 ---
 ---This function is memory safe.
@@ -60,14 +60,14 @@ function CBaseEntity:IterateChildren()
 end
 
 ---
----Returns a `function` that iterates over all children of this entity in **breadth-first order**.
+---Returns a `function` that iterates over all children of this entity in **breadth-first order**.  
 ---The `function` returns the next child every time it is called until no more children exist,
 ---in which case `nil` is returned.
 ---
 ---Useful in `for` loops:
 ---
 ---     for child in thisEntity:IterateChildrenBreadthFirst() do
----         print(Debug.EntStr(child))
+---         print(entstr(child))
 ---     end
 ---
 ---Unlike [IterateChildren](lua://CBaseEntity.IterateChildren), this visits all immediate children first,
@@ -104,7 +104,7 @@ end
 
 
 ---
----Get the top level entities parented to this entity. Not children of children.
+---Gets the top level entities parented to this entity. *Not* children of children.
 ---
 ---This function is memory safe.
 ---
@@ -121,6 +121,8 @@ end
 
 ---
 ---Get the first child in the hierarchy that has targetname or classname.
+---
+---This function is memory safe.
 ---
 ---@param name string # The name or classname to look for, supports wildcard '*'
 ---@return EntityHandle?
@@ -166,25 +168,25 @@ end
 
 
 ---
----Send an input to this entity.
+---Sends an input to this entity.
 ---
----@param action string # Input name.
----@param value? any # Parameter override for the input.
----@param delay? number # Delay in seconds.
----@param activator? EntityHandle
----@param caller? EntityHandle
+---@param action string # Input name
+---@param value? any # Parameter override for the input
+---@param delay? number # Delay in seconds
+---@param activator? EntityHandle # IO activator
+---@param caller? EntityHandle # IO caller
 function CBaseEntity:EntFire(action, value, delay, activator, caller)
     DoEntFireByInstanceHandle(self, action, value and tostring(value) or "", delay or 0, activator or nil, caller or nil)
 end
 
 ---
----Get the first child in this entity's hierarchy with a given `classname`.
+---Gets the first child in this entity's hierarchy with a given `classname`.  
 ---Searches using **breadth-first traversal**, so it finds the closest matching child first.
 ---
 ---This function is memory safe.
 ---
----@param classname string # Classname to search for.
----@return EntityHandle? # The first matching child found, or `nil` if none exists.
+---@param classname string # Classname to search for
+---@return EntityHandle? # The first matching child found, or `nil` if none exists
 function CBaseEntity:GetFirstChildWithClassname(classname)
     for child in self:IterateChildrenBreadthFirst() do
         if child:GetClassname() == classname then
@@ -196,13 +198,13 @@ function CBaseEntity:GetFirstChildWithClassname(classname)
 end
 
 ---
----Get the first child in this entity's hierarchy with a given `name`.
+---Get the first child in this entity's hierarchy with a given `name`.  
 ---Searches using **breadth-first traversal**, so it finds the closest matching child first.
 ---
 ---This function is memory safe.
 ---
----@param name string # Targetname to search for.
----@return EntityHandle? # The first matching child found, or `nil` if none exists.
+---@param name string # Targetname to search for
+---@return EntityHandle? # The first matching child found, or `nil` if none exists
 function CBaseEntity:GetFirstChildWithName(name)
     for child in self:IterateChildrenBreadthFirst() do
         if child:GetName() == name then
@@ -214,34 +216,34 @@ function CBaseEntity:GetFirstChildWithName(name)
 end
 
 ---
----Set entity pitch, yaw, roll from a `QAngle`.
+---Sets entity pitch, yaw, roll from a `QAngle`.
 ---
----@param qangle QAngle # The rotation to set (pitch, yaw, roll).
+---@param qangle QAngle # The QAngle rotation to set
 function CBaseEntity:SetQAngle(qangle)
     self:SetAngles(qangle.x, qangle.y, qangle.z)
 end
 
 ---
----Set entity local pitch, yaw, roll from a `QAngle`.
+---Sets entity local pitch, yaw, roll from a `QAngle`.
 ---
----@param qangle QAngle # The rotation to set (pitch, yaw, roll).
+---@param qangle QAngle # The QAngle rotation to set
 function CBaseEntity:SetLocalQAngle(qangle)
     self:SetLocalAngles(qangle.x, qangle.y, qangle.z)
 end
 
 ---
----Set entity pitch, yaw or roll. Supply `nil` for any parameter to leave it unchanged.
+---Sets entity pitch, yaw or roll. Supply `nil` for any parameter to leave it unchanged.
 ---
----@param pitch? number # Pitch angle, or nil to leave unchanged.
----@param yaw? number # Pitch angle, or nil to leave unchanged.
----@param roll? number # Pitch angle, or nil to leave unchanged.
+---@param pitch? number # Pitch angle
+---@param yaw? number # Yaw angle
+---@param roll? number # Roll angle
 function CBaseEntity:SetAngle(pitch, yaw, roll)
     local angles = self:GetAngles()
     self:SetAngles(pitch or angles.x, yaw or angles.y, roll or angles.z)
 end
 
 ---
----Resets local origin and angle to [0,0,0].
+---Resets local origin and angles to (0, 0, 0).
 ---
 function CBaseEntity:ResetLocal()
     self:SetLocalOrigin(Vector())
@@ -249,46 +251,46 @@ function CBaseEntity:ResetLocal()
 end
 
 ---
----Get the bounding size of the entity.
+---Gets the bounding size of the entity.
 ---
----@return Vector # Bounding size of the entity as a Vector.
+---@return Vector # Bounding size of the entity as a Vector
 function CBaseEntity:GetSize()
     return self:GetBoundingMaxs() - self:GetBoundingMins()
 end
 
 ---
----Get the biggest bounding box axis of the entity.
----This will be `size.x`, `size.y` or `size.z`.
+---Gets the biggest bounding box axis of the entity.  
+---This will be either `size.x`, `size.y` or `size.z`.
 ---
----@return number # The largest bounding value.
+---@return number # The largest bounding value
 function CBaseEntity:GetBiggestBounding()
     local size = self:GetSize()
     return math.max(size.x, size.y, size.z)
 end
 
 ---
----Get the radius of the entity's bounding box.
+---Gets the radius of the entity's bounding box.  
 ---This is half the size of the bounding box along its largest axis.
 ---
----@return number # The bounding radius value.
+---@return number # The bounding radius value
 function CBaseEntity:GetRadius()
     return self:GetSize():Length() * 0.5
 end
 
 ---
----Get the volume of the entity bounds in cubic inches.
+---Gets the volume of the entity bounds in cubic inches.
 ---
----@return number # The volume of the entity bounds.
+---@return number # The volume of the entity bounds
 function CBaseEntity:GetVolume()
     local size = self:GetSize() * self:GetAbsScale()
     return size.x * size.y * size.z
 end
 
 ---
----Get each corner of the entity's bounding box.
+---Gets each corner of the entity's bounding box.
 ---
----@param rotated? boolean # If true, corners are rotated by the entity's angles.
----@return Vector[] # List of 8 corner positions.
+---@param rotated? boolean # If `true`, corners are rotated by the entity's angles
+---@return Vector[] # List of 8 corner positions
 function CBaseEntity:GetBoundingCorners(rotated)
     local bounds = self:GetBounds()
     local origin = self:GetOrigin()
@@ -314,12 +316,12 @@ function CBaseEntity:GetBoundingCorners(rotated)
 end
 
 ---
----Check if entity is within the given worldspace bounds.
+---Checks if entity is within the given worldspace bounds.
 ---
----@param mins Vector # Worldspace minimum vector for the bounds.
----@param maxs Vector # Worldspace minimum vector for the bounds.
----@param checkEntityBounds? boolean # If true the entity bounding box will be used for the check instead of its origin.
----@return boolean # True if the entity is within the bounds, false otherwise.
+---@param mins Vector # Worldspace minimum vector for the bounds
+---@param maxs Vector # Worldspace maximum vector for the bounds
+---@param checkEntityBounds? boolean # If `true` the entity bounding box will be used for the check instead of its origin
+---@return boolean # `true` if the entity is within the bounds, `false` otherwise.
 function CBaseEntity:IsWithinBounds(mins, maxs, checkEntityBounds)
     local selfMins, selfMaxs
     if checkEntityBounds then
@@ -339,32 +341,34 @@ function CBaseEntity:IsWithinBounds(mins, maxs, checkEntityBounds)
 end
 
 ---
----Send the `DisablePickup` input to the entity.
+---Sends the `DisablePickup` input to the entity.
 ---
 function CBaseEntity:DisablePickup()
     DoEntFireByInstanceHandle(self, "DisablePickup", "", 0, self, self)
 end
 
 ---
----Send the `EnablePickup` input to the entity.
+---Sends the `EnablePickup` input to the entity.
 ---
 function CBaseEntity:EnablePickup()
     DoEntFireByInstanceHandle(self, "EnablePickup", "", 0, self, self)
 end
 
 ---
----Delay some code using this entity.
+---Delays some code, using this entity as the context.
 ---
----@param func fun() # The function to delay.
----@param delay? number # Optional delay in seconds (default 0).
+---@param func fun() # The function to delay
+---@param delay? number # Delay in seconds (default 0)
 function CBaseEntity:Delay(func, delay)
     self:SetContextThink(DoUniqueString("delay"), function() func() end, delay or 0)
 end
 
 ---
----Get all parents in the hierarchy upwards.
+---Gets all parents in the hierarchy upwards, from immediate parent up to the root.
 ---
----@return EntityHandle[] # List of parent entities, from immediate parent up to the root.
+---@see CBaseEntity.GetMoveParent # The immediate parent
+---@see CBaseEntity.GetRootMoveParent # The root parent
+---@return EntityHandle[] # List of parent entities
 function CBaseEntity:GetParents()
     local parents = {}
     local parent = self:GetMoveParent()
@@ -376,9 +380,9 @@ function CBaseEntity:GetParents()
 end
 
 ---
----Set if the prop is allowed to be dropped. Only works for physics based props.
+---Sets if the prop is not allowed to be dropped. Only works for physics based props.
 ---
----@param enabled boolean # True if the prop can't be dropped, false for can be dropped.
+---@param enabled boolean # `true` if the prop is not allowed to be dropped
 function CBaseEntity:DoNotDrop(enabled)
     if enabled then
         self:Attribute_SetIntValue("DoNotDrop", 1)
@@ -388,20 +392,21 @@ function CBaseEntity:DoNotDrop(enabled)
 end
 
 ---
----Get all criteria on this entity as a table.
+---Gets all criteria for this entity as a table.
 ---
----@return CriteriaTable # A table of criteria key-value pairs.
+---@return CriteriaTable # Criteria key-value pairs
 function CBaseEntity:GetCriteria()
     local c = {}
     self:GatherCriteria(c)
     return c
 end
+
 ---
----Get all entities owned by this entity.
+---Gets all entities owned by this entity.
 ---
 ---**Note:** This searches all entities in the map and should be used sparingly.
 ---
----@return EntityHandle[] # List of owned entities.
+---@return EntityHandle[] # List of owned entities
 function CBaseEntity:GetOwnedEntities()
     local ents = {}
     local ent = Entities:First()
@@ -415,9 +420,9 @@ function CBaseEntity:GetOwnedEntities()
 end
 
 ---
----Set the alpha modulation of this entity, plus any children that support [SetRenderAlpha](lua://CBaseModelEntity.SetRenderAlpha).
+---Sets the alpha modulation of this entity, plus any children that support [SetRenderAlpha](lua://CBaseModelEntity.SetRenderAlpha).
 ---
----@param alpha integer # Alpha value (0 = fully transparent, 255 = fully opaque).
+---@param alpha integer # Alpha value (0 = fully transparent, 255 = fully opaque)
 function CBaseModelEntity:SetRenderAlphaAll(alpha)
     for _, child in ipairs(self:GetChildren()) do
         if child.SetRenderAlpha then
@@ -430,7 +435,7 @@ end
 ---
 ---Moves the entity so that its center is at the given position.
 ---
----@param position Vector # The new center position.
+---@param position Vector # The new center position
 function CBaseEntity:SetCenter(position)
     local center = self:GetCenter()
     local origin = self:GetOrigin()
@@ -443,10 +448,10 @@ end
 
 
 ---
----Set the entity's origin so that the specified attachment point aligns with the given world position.
+---Sets the entity's origin so that the specified attachment point aligns with the given world position.
 ---
----@param position Vector # The target world position for the attachment point.
----@param attachment string # The name of the attachment point to align.
+---@param position Vector # The target world position for the attachment point
+---@param attachment string # The name of the attachment point to align
 function CBaseAnimating:SetOriginByAttachment(position, attachment)
     local offset = self:GetAttachmentOrigin(self:ScriptLookupAttachment(attachment))
     local origin = self:GetOrigin()
@@ -457,7 +462,7 @@ function CBaseAnimating:SetOriginByAttachment(position, attachment)
 end
 
 ---
----Track a property function using a callback when a change is detected.
+---Tracks a property function and calls a callback when a change is detected.
 ---
 ---    -- Make entity fully opaque if alpha is ever detected below 255
 ---    thisEntity:TrackProperty(thisEntity.GetRenderAlpha, function(prevValue, newValue)
@@ -466,37 +471,41 @@ end
 ---        end
 ---    end)
 ---
----@param propertyFunction fun(handle: EntityHandle): any # Property function to track, e.g. GetRenderAlpha.
----@param onChangeFunction fun(prevValue: any, newValue: any) # Function to call when a change is detected.
----@param interval? number # Think interval, or smallest possible if nil.
----@param context? EntityHandle # Entity to run the thinker on, or this entity if nil.
+---@param propertyFunction fun(handle: EntityHandle): any # Property function to track
+---@param onChangeFunction fun(prevValue: any, newValue: any) # Function to call when a change is detected
+---@param interval? number # Think interval (default: 0)
+---@param context? EntityHandle # Entity to run the thinker on, or the calling entity if `nil`
+---@return string # The name of the think for stopping later
 function CBaseEntity:TrackProperty(propertyFunction, onChangeFunction, interval, context)
     interval = interval or 0
     context = context or self
     local value = propertyFunction(self)
-    context:SetContextThink(tostring(propertyFunction), function()
+    local name = tostring(propertyFunction)
+    context:SetContextThink(name, function()
         local newValue = propertyFunction(self)
         if newValue ~= value then
             onChangeFunction(value, newValue)
         end
         return interval
     end, interval)
+
+    return name
 end
 
 ---
----Untrack a property function which was set to be tracked using `CBaseEntity:TrackProperty`.
+---Untracks a property function which was set to be tracked using [TrackProperty](lua://CBaseEntity.TrackProperty).
 ---
----@param propertyFunction fun(handle: EntityHandle): any # Property function to untrack, e.g. GetRenderAlpha.
+---@param propertyFunction fun(handle: EntityHandle): any # Property function to untrack
 function CBaseEntity:UntrackProperty(propertyFunction)
     self:SetContextThink(tostring(propertyFunction), nil, 0)
 end
 
 ---
----Quickly start a think function on the entity with a random name and no delay.
+---Quickly starts a think function on the entity with a random name.
 ---
----@param func fun():number? # The think function.
----@param delay? number # Delay before starting the think.
----@return string # The name of the think for stopping later if desired.
+---@param func fun():number? # The think function
+---@param delay? number # Delay before starting the think (default: 0)
+---@return string # The name of the think for stopping later if desired
 function CBaseEntity:QuickThink(func, delay)
     local name = DoUniqueString("QuickThink")
     self:SetContextThink(name, func, delay or 0)
@@ -506,7 +515,7 @@ end
 ---
 ---Sets whether the entity is rendered or not.
 ---
----@param renderingEnabled boolean # If false the entity will become invisible.
+---@param renderingEnabled boolean # `true` to enable rendering, `false` to disable
 function CBaseEntity:SetRenderingEnabled(renderingEnabled)
     if renderingEnabled then
         self:RemoveEffects(0x020)
@@ -518,7 +527,7 @@ end
 ---
 ---Sets whether the entity casts a shadow or not.
 ---
----@param shadowEnabled boolean # If false the entity will not cast a dynamic shadow.
+---@param shadowEnabled boolean # `true` to enable shadow casting, `false` to disable
 function CBaseEntity:SetCastShadow(shadowEnabled)
     if shadowEnabled then
         self:RemoveEffects(0x010)
@@ -529,11 +538,13 @@ end
 
 ---
 ---Adds an I/O connection that will call the function on the passed entity when the specified output fires.
----This means the redirection is persistent after game loads.
 ---
----@param output string # The name of the output to redirect.
----@param func function # The function to redirect to.
----@param entity? EntityHandle # The entity to redirect to, defaults to the calling entity.
+---This is persistent after game loads.
+---
+---@see CEntityInstance.DisconnectRedirectedOutput # for disconnecting
+---@param output string # The name of the output to redirect
+---@param func function # The function to redirect to
+---@param entity? EntityHandle # The entity to redirect to, defaults to the calling entity
 function CEntityInstance:RedirectOutputFunc(output, func, entity)
     entity = entity or self
 
@@ -547,8 +558,8 @@ end
 ---
 ---Gets the position in front of the entity’s eyes at the specified distance.
 ---
----@param distance number # How far in front of the eyes to get the position.
----@return Vector # The world position in front of the eyes.
+---@param distance number # How far in front of the eyes
+---@return Vector # The world position in front of the eyes
 function CBaseEntity:DistanceFromEyes(distance)
     return self:EyePosition() + self:EyeAngles():Forward() * distance
 end
@@ -556,8 +567,8 @@ end
 ---
 ---Gets the world origin position of a named attachment point.
 ---
----@param name string # The name of the attachment.
----@return Vector # The world position of the attachment.
+---@param name string # The name of the attachment
+---@return Vector # The world position of the attachment
 function CBaseAnimating:GetAttachmentNameOrigin(name)
     return self:GetAttachmentOrigin(self:ScriptLookupAttachment(name))
 end
@@ -565,8 +576,8 @@ end
 ---
 ---Gets the world angles (rotation) of a named attachment point.
 ---
----@param name string # The name of the attachment.
----@return Vector # The world rotation angles of the attachment.
+---@param name string # The name of the attachment
+---@return Vector # The world rotation angles of the attachment
 function CBaseAnimating:GetAttachmentNameAngles(name)
     return self:GetAttachmentAngles(self:ScriptLookupAttachment(name))
 end
@@ -574,8 +585,8 @@ end
 ---
 ---Gets the forward direction vector of a named attachment.
 ---
----@param name string # The name of the attachment.
----@return Vector # The forward unit vector of the attachment in world space.
+---@param name string # The name of the attachment
+---@return Vector # The forward unit vector of the attachment in world space
 function CBaseAnimating:GetAttachmentNameForward(name)
     return self:GetAttachmentForward(self:ScriptLookupAttachment(name))
 end
@@ -590,7 +601,7 @@ end
 ---
 ---Sets the absolute world velocity of the entity.
 ---
----@param velocity Vector The target velocity in units/second.
+---@param velocity Vector The target velocity in units/second
 function CBaseEntity:SetAbsVelocity(velocity)
     local currentVelocity = GetPhysVelocity(self)
 
@@ -602,8 +613,8 @@ end
 ---
 ---Tests if the OBB of this entity intersects with the OBB of another entity.
 ---
----@param other EntityHandle # The other entity.
----@return boolean # True if the OBB of this entity intersects with the OBB of another entity.
+---@param other EntityHandle # The other entity
+---@return boolean # `true` if the OBB of this entity intersects with the OBB of the other entity
 function CBaseEntity:OBBvsOBB(other)
     return OBBvsOBB(
         GetEntityOBBData(self), self:GetOrigin(), self:GetAngles(),
@@ -616,8 +627,8 @@ end
 ---
 ---The AABB is defined by the entity's bounding mins/maxs and its current origin/angles.
 ---
----@param other EntityHandle # The other entity.
----@return boolean # True if the AABB of this entity intersects with the OBB of another entity.
+---@param other EntityHandle # The other entity
+---@return boolean # `true` if the AABB of this entity intersects with the OBB of the other entity
 function CBaseEntity:AABBvsOBB(other)
     local aMin, aMax = GetEntityAABB(self)
 
@@ -632,8 +643,8 @@ end
 ---
 ---The AABB is defined by the entity's bounding mins/maxs and its current origin/angles.
 ---
----@param other EntityHandle # The other entity.
----@return boolean # True if the AABB of this entity intersects with the AABB of another entity.
+---@param other EntityHandle # The other entity
+---@return boolean # `true` if the AABB of this entity intersects with the AABB of the other entity
 function CBaseEntity:AABBvsAABB(other)
     local aMin, aMax = GetEntityAABB(self)
     local bMin, bMax = GetEntityAABB(other)

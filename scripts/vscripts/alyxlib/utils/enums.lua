@@ -1,8 +1,12 @@
 --[[
-    v1.0.1
+    v1.0.2
     https://github.com/FrostSource/alyxlib
 
     Missing enumerations.
+
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
+    
+    require "alyxlib.utils.enums"
 ]]
 
 local version = "v1.0.1"

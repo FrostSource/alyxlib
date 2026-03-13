@@ -1,23 +1,23 @@
 --[[
-    v1.1.1
+    v1.2.0
     https://github.com/FrostSource/alyxlib
 
-    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
     
     require "alyxlib.debug.commands"
 ]]
 
-local version = "v1.1.1"
+local version = "v1.2.0"
 
 local alyxlibCommands = {}
 
 ---
 ---Registers a command for the AlyxLib library.
 ---
----@param name string # Name of the command that will be given in the console.
----@param func fun(_:string, ...:string) # Function to run when the command is called.
----@param helpText? string # Description of the command.
----@param flags? number # Flags for the command.
+---@param name string # Name of the command that will be given in the console
+---@param func fun(_:string, ...:string) # Function to run when the command is called
+---@param helpText? string # Description of the command
+---@param flags? number # Flags for the command
 function RegisterAlyxLibCommand(name, func, helpText, flags)
     helpText = helpText or "[No description]"
     Convars:RegisterCommand(name, func, helpText, flags or 0)
@@ -27,11 +27,14 @@ end
 ---
 ---Registers a new AlyxLib console variable.
 ---
----@param name string # Name of the convar that will be given in the console.
----@param defaultValue string|function # Default value of the convar or initializer function.
----@param helpText? string # Description of the convar.
----@param flags? integer # Flags for the convar.
----@param callback? fun(newVal:string, oldVal:string): any # Update function called after the value has been changed.
+---If `defaultValue` or `callback` is a function, the convar will be
+---created using `EasyConvars`.
+---
+---@param name string # Name of the convar that will be given in the console
+---@param defaultValue string|function # Default value of the convar or initializer function
+---@param helpText? string # Description of the convar
+---@param flags? integer # Flags for the convar
+---@param callback? fun(newVal:string, oldVal:string): any # Update function called after the value has been changed
 function RegisterAlyxLibConvar(name, defaultValue, helpText, flags, callback)
     helpText = helpText or "[No description]"
     flags = flags or 0
@@ -40,18 +43,23 @@ function RegisterAlyxLibConvar(name, defaultValue, helpText, flags, callback)
     else
         Convars:RegisterConvar(name, defaultValue, helpText, flags)
     end
-    alyxlibCommands[name] = "Default: "..tostring(defaultValue)..", "..helpText
+    alyxlibCommands[name] = helpText
+
+    ---@TODO Support initializer values
+    if type(defaultValue) ~= "function" then
+        alyxlibCommands[name] = alyxlibCommands[name] .. ", default: "..tostring(defaultValue)
+    end
 end
 
 ---
 ---Registers a new AlyxLib console variable.
 ---
----@param name string # Name of the convar that will be given in the console.
----@param defaultValue string # Default value of the convar.
----@param helpText? string # Description of the convar.
----@param flags? integer # Flags for the convar.
----@param postUpdate? fun(newVal:string, oldVal:string): any # Update function called after the value has been changed.
----@param persistent? boolean # Whether the convar should be persistent.
+---@param name string # Name of the convar that will be given in the console
+---@param defaultValue string # Default value of the convar
+---@param helpText? string # Description of the convar
+---@param flags? integer # Flags for the convar
+---@param postUpdate? fun(newVal:string, oldVal:string): any # Update function called after the value has been changed
+---@param persistent? boolean # Whether the convar should be persistent
 function RegisterAlyxLibEasyConvar(name, defaultValue, helpText, flags, postUpdate, persistent)
     helpText = helpText or "[No description]"
     EasyConvars:RegisterConvar(name, defaultValue, helpText, flags or 0, postUpdate)
@@ -485,14 +493,9 @@ end, "Prints context criteria for an entity except for values saved using storag
 ---
 RegisterAlyxLibCommand("healme", function (_, amount)
 
-    amount = tonumber(amount)
+    amount = tonumber(amount) or 10
 
-    if not amount then
-        warn("Must provide a health amount")
-        return
-    end
-
-    Player:SetHealth(amount)
+    Player:SetHealth(Player:GetHealth() + amount)
 end, "Heals the player by a given amount", 0)
 
 ---

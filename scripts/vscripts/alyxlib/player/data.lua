@@ -16,11 +16,9 @@ local version = "v1.0.0"
 ---
 ---Forces all persistent player data to save.
 ---
----[CBasePlayer.Items](lua://CBasePlayer.Items)\
----[CBasePlayer.CurrentlyEquipped](lua://CBasePlayer.CurrentlyEquipped)\
----[CBasePlayer.LeftHand.WristItem](lua://CPropVRHand.WristItem)\
----[CBasePlayer.RightHand.WristItem](lua://CPropVRHand.WristItem)
----
+---@see CBasePlayer.Items
+---@see CBasePlayer.CurrentlyEquipped
+---@see CPropVRHand.WristItem
 local function savePlayerData()
     Storage.SaveTable(Player, "PlayerItems", Player.Items)
 
@@ -92,7 +90,7 @@ local weaponOffsets = {
 ---
 ---@param classname string # The classname of the weapon
 ---@param hand CPropVRHand|number # The hand to get the offset for
----@return Vector # The default weapon offset, or `Vector()` if not found
+---@return Vector # The default weapon offset, or `(0, 0, 0)` if not found
 local function GetDefaultWeaponOffset(classname, hand)
     hand = hand or Player.PrimaryHand:GetHandID()
     if IsEntity(hand) then
@@ -103,14 +101,16 @@ local function GetDefaultWeaponOffset(classname, hand)
 end
 
 ---
----Sync the equipped weapon state of the player with the given weapon classname.
+---Syncs the equipped weapon state of the player with the given weapon classname.
 ---
 ---If no classname is given, the weapon classname will be determined from the player's criteria.
 ---
----@param classname? string # The classname of the weapon to sync.
----@param handle? EntityHandle # The entity handle of the weapon to sync.
----@return EntityHandle? weaponHandle # The entity handle of the weapon that was equipped.
----@return CPropVRHand? handHandle # The entity handle of the hand that the weapon was equipped to.
+---**This is used internally on weapon switch to determine equipped weapons.**
+---
+---@param classname? string # The classname of the weapon to sync
+---@param handle? EntityHandle # The entity handle of the weapon to sync
+---@return EntityHandle? weaponHandle # The entity handle of the weapon that was equipped
+---@return CPropVRHand? handHandle # The entity handle of the hand that the weapon was equipped to
 local function SyncEquippedWeaponState(classname, handle)
     if syncPaused then return end
 
@@ -228,9 +228,9 @@ local function SyncEquippedWeaponState(classname, handle)
 end
 
 ---
----Restore the previously equipped weapon state.
+---Restores the previously equipped weapon state.
 ---
----@param fireEvent? boolean # Forces the `weapon_switch` event to be fired when restoring.
+---@param fireEvent? boolean # `true` to force-fire the `weapon_switch` event
 local function RestorePreviouslyEquippedWeaponState(fireEvent)
     Player.CurrentlyEquipped = previouslyEquipped
     if fireEvent then
@@ -244,21 +244,21 @@ local function RestorePreviouslyEquippedWeaponState(fireEvent)
 end
 
 ---
----Pause weapon state synching. This will prevent the `weapon_switch` player event from firing.
+---Pauses weapon state synching. This will prevent the `weapon_switch` player event from firing.
 ---
 local function PauseWeaponStateSync()
     syncPaused = true
 end
 
 ---
----Resume weapon state synching. This will allow the `weapon_switch` player event to fire.
+---Resumes weapon state synching. This will allow the `weapon_switch` player event to fire.
 ---
 local function ResumeWeaponStateSync()
     syncPaused = false
 end
 
 ---
----Check if weapon state synching is paused.
+---Checks if weapon state synching is paused.
 ---
 local function WeaponStateSyncPaused()
     return syncPaused

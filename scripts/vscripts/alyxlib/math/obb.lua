@@ -4,7 +4,7 @@
 
     Functions for drawing and testing OBB intersections.
 
-    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
     
     require "alyxlib.math.obb"
 ]]
@@ -17,11 +17,11 @@ local insert = table.insert
 ---
 ---Projects an OBB onto an axis.
 ---
----@param centerLocal Vector # The center of the OBB in local space.
----@param half Vector # The half extents of the OBB in local space.
----@param origin Vector # The origin of the OBB in world space.
----@param angles QAngle # The angles of the OBB in world space.
----@param axis Vector # The axis to project on.
+---@param centerLocal Vector # The center of the OBB in local space
+---@param half Vector # The half extents of the OBB in local space
+---@param origin Vector # The origin of the OBB in world space
+---@param angles QAngle # The angles of the OBB in world space
+---@param axis Vector # The axis to project on
 local function projectOBB(centerLocal, half, origin, angles, axis)
     local f, r, u = angles:Forward(), angles:Left(), angles:Up()
     local centerWorld = origin + f*centerLocal.x + r*centerLocal.y + u*centerLocal.z
@@ -35,15 +35,15 @@ end
 ---OBB data table for use with obb.lua functions.
 ---
 ---@class OBBData
----@field center Vector # The center of the OBB in local space.
----@field half Vector # The half extents of the OBB in local space.
+---@field center Vector # The center of the OBB in local space
+---@field half Vector # The half extents of the OBB in local space
 
 ---
 ---Returns the center and half extents of an OBB in local space.
 ---
----@param mins Vector # The local space minimum corner.
----@param maxs Vector # The local space maximum corner.
----@return OBBData # The OBB data.
+---@param mins Vector # The local space minimum corner
+---@param maxs Vector # The local space maximum corner
+---@return OBBData # The OBB data
 function GetBoundingOBBData(mins, maxs)
     local center = (mins + maxs) * 0.5
     local half = (maxs - mins) * 0.5
@@ -56,8 +56,8 @@ end
 ---
 ---Returns the center and half extents of an entity's OBB in local space.
 ---
----@param entity EntityHandle # The entity.
----@return OBBData # The OBB data.
+---@param entity EntityHandle # The entity to get the OBB data for
+---@return OBBData # The OBB data
 function GetEntityOBBData(entity)
     local mins = entity:GetBoundingMins()
     local maxs = entity:GetBoundingMaxs()
@@ -67,9 +67,9 @@ end
 ---
 ---Returns the world space minimum and maximum corners of an entity's OBB.
 ---
----@param entity EntityHandle # The entity.
----@return Vector # The world space minimum corner.
----@return Vector # The world space maximum corner.
+---@param entity EntityHandle # The entity to get the AABB for
+---@return Vector # The world space minimum corner
+---@return Vector # The world space maximum corner
 function GetEntityAABB(entity)
     local data = GetEntityOBBData(entity)
     local origin = entity:GetOrigin()
@@ -104,11 +104,11 @@ end
 ---
 ---Tests if two AABBs intersect.
 ---
----@param aMin Vector # The minimum corner of the first AABB.
----@param aMax Vector # The maximum corner of the first AABB.
----@param bMin Vector # The minimum corner of the second AABB.
----@param bMax Vector # The maximum corner of the second AABB.
----@return boolean # True if the AABBs intersect.
+---@param aMin Vector # The minimum corner of the first AABB
+---@param aMax Vector # The maximum corner of the first AABB
+---@param bMin Vector # The minimum corner of the second AABB
+---@param bMax Vector # The maximum corner of the second AABB
+---@return boolean # `true` if the AABBs intersect, `false` otherwise
 function AABBvsAABB(aMin, aMax, bMin, bMax)
     return aMin.x <= bMax.x and aMax.x >= bMin.x and
            aMin.y <= bMax.y and aMax.y >= bMin.y and
@@ -118,13 +118,13 @@ end
 ---
 ---Tests if two OBBs intersect.
 ---
----@param obbDataA OBBData # The data of the first OBB.
----@param originA Vector # The world space origin of the first OBB.
----@param anglesA QAngle # The angles of the first OBB.
----@param obbDataB OBBData # The data of the second OBB.
----@param originB Vector # The world space origin of the second OBB.
----@param anglesB QAngle # The angles of the second OBB.
----@return boolean # True if the OBBs intersect.
+---@param obbDataA OBBData # The data of the first OBB
+---@param originA Vector # The world space origin of the first OBB
+---@param anglesA QAngle # The angles of the first OBB
+---@param obbDataB OBBData # The data of the second OBB
+---@param originB Vector # The world space origin of the second OBB
+---@param anglesB QAngle # The angles of the second OBB
+---@return boolean # `true` if the OBBs intersect, `false` otherwise
 function OBBvsOBB(obbDataA, originA, anglesA, obbDataB, originB, anglesB)
     local fA, rA, uA = anglesA:Forward(), anglesA:Left(), anglesA:Up()
     local fB, rB, uB = anglesB:Forward(), anglesB:Left(), anglesB:Up()
@@ -154,12 +154,12 @@ end
 ---
 ---Tests if an AABB and an OBB intersect.
 ---
----@param aabbMin Vector # The minimum corner of the AABB.
----@param aabbMax Vector # The maximum corner of the AABB.
----@param obbData OBBData # The data of the OBB.
----@param obbOrigin Vector # The world space origin of the OBB.
----@param obbAngles QAngle # The angles of the OBB.
----@return boolean # True if the AABB and OBB intersect.
+---@param aabbMin Vector # The minimum corner of the AABB
+---@param aabbMax Vector # The maximum corner of the AABB
+---@param obbData OBBData # The data of the OBB
+---@param obbOrigin Vector # The world space origin of the OBB
+---@param obbAngles QAngle # The angles of the OBB
+---@return boolean # `true` if the AABB and OBB intersect, `false` otherwise
 function AABBvsOBB(aabbMin, aabbMax, obbData, obbOrigin, obbAngles)
 
     local aCenter = (aabbMin + aabbMax) * 0.5
@@ -179,10 +179,10 @@ end
 ---
 ---Tests if a point is inside an AABB.
 ---
----@param aMin Vector # The minimum corner of the AABB.
----@param aMax Vector # The maximum corner of the AABB.
----@param point Vector # The point to test.
----@return boolean
+---@param aMin Vector # The minimum corner of the AABB
+---@param aMax Vector # The maximum corner of the AABB
+---@param point Vector # The point to test
+---@return boolean # `true` if the point is inside the AABB, `false` otherwise
 function PointInAABB(aMin, aMax, point)
     return point.x >= aMin.x and point.x <= aMax.x and
            point.y >= aMin.y and point.y <= aMax.y and
@@ -192,11 +192,11 @@ end
 ---
 ---Tests if a point is inside an OBB.
 ---
----@param obbData OBBData # The OBB data (center, half extents in local space).
----@param origin Vector # The world space origin of the OBB.
----@param angles QAngle # The world space orientation of the OBB.
----@param point Vector # The point to test.
----@return boolean
+---@param obbData OBBData # The OBB data (center, half extents in local space)
+---@param origin Vector # The world space origin of the OBB
+---@param angles QAngle # The world space orientation of the OBB
+---@param point Vector # The point to test
+---@return boolean # `true` if the point is inside the OBB, `false` otherwise
 function PointInOBB(obbData, origin, angles, point)
     local f, r, u = angles:Forward(), angles:Left(), angles:Up()
 
@@ -222,12 +222,12 @@ end
 ---
 ---Draws an OBB in the world.
 ---
----@param obbData OBBData # The data of the OBB.
----@param origin Vector # The world space origin of the OBB.
----@param angles QAngle # The angles of the OBB.
----@param color Vector # The color of the OBB.
----@param noDepthTest boolean # True if the OBB should be drawn above all geometry.
----@param seconds number # The number of seconds the OBB should be visible for.
+---@param obbData OBBData # The data of the OBB
+---@param origin Vector # The world space origin of the OBB
+---@param angles QAngle # The angles of the OBB
+---@param color Vector # The color of the OBB
+---@param noDepthTest boolean # True if the OBB should be drawn above all geometry
+---@param seconds number # The number of seconds the OBB should be visible for
 function DebugDrawOBB(obbData, origin, angles, color, noDepthTest, seconds)
 
     local f = angles:Forward()
@@ -273,10 +273,10 @@ end
 ---
 ---Draws an entity's OBB in the world.
 ---
----@param entity EntityHandle # The entity to draw the OBB for.
----@param color Vector # The color of the OBB in RGB.
----@param noDepthTest boolean # True if the OBB should be drawn above all geometry.
----@param seconds number # The number of seconds the OBB should be visible for.
+---@param entity EntityHandle # The entity to draw the OBB for
+---@param color Vector # The color of the OBB in RGB
+---@param noDepthTest boolean # True if the OBB should be drawn above all geometry
+---@param seconds number # The number of seconds the OBB should be visible for
 function DebugDrawEntityOBB(entity, color, noDepthTest, seconds)
     local obbData = GetEntityOBBData(entity)
     DebugDrawOBB(obbData, entity:GetOrigin(), entity:GetAngles(), color, noDepthTest, seconds)
@@ -287,10 +287,10 @@ end
 ---
 ---The AABB is defined by the entity's bounding mins/maxs and its current origin/angles.
 ---
----@param entity EntityHandle # The entity to draw the AABB for.
----@param color Vector # The color of the AABB in RGB.
----@param noDepthTest boolean # True if the AABB should be drawn above all geometry.
----@param seconds number # The number of seconds the AABB should be visible for.
+---@param entity EntityHandle # The entity to draw the AABB for
+---@param color Vector # The color of the AABB in RGB
+---@param noDepthTest boolean # True if the AABB should be drawn above all geometry
+---@param seconds number # The number of seconds the AABB should be visible for
 function DebugDrawEntityAABB(entity, color, noDepthTest, seconds)
     local mins, maxs = GetEntityAABB(entity)
     debugoverlay:Box(mins, maxs, color.x, color.y, color.z, 255, noDepthTest or false, seconds or 0)

@@ -1,12 +1,12 @@
 --[[
-    v1.2.0
+    v1.2.1
     https://github.com/FrostSource/alyxlib
 
     Provides a system for tracking simple hand poses and gestures.
 
-    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
     
-    require "alyxlib.input.gesture"
+    require "alyxlib.controls.gesture"
 ]]
 
 ---@TODO: Refine finger tracking positions, especially thumb.
@@ -28,24 +28,37 @@
 ---| "Peace"
 -- Custom gesture names can be appended here to improve writing.
 
+---
+---Gesture table.
+---
 ---@class GestureTable
----@field name GestureNames # Name of the gesture.
----@field index number|nil # [0-1] range of the index finger position.
----@field middle number|nil # [0-1] range of the middle finger position.
----@field ring number|nil # [0-1] range of the ring finger position.
----@field pinky number|nil # [0-1] range of the pinky finger position.
----@field thumb number|nil # [0-1] range of the thumb finger position.
+---@field name GestureNames # Gesture name
+---@field index number|nil # [0–1] range of the index finger position
+---@field middle number|nil # [0–1] range of the middle finger position
+---@field ring number|nil # [0–1] range of the ring finger position
+---@field pinky number|nil # [0–1] range of the pinky finger position
+---@field thumb number|nil # [0–1] range of the thumb finger position
 
+---
+---Provides a system for tracking simple hand poses and gestures.
+---
 Gesture = {}
 Gesture.__index = Gesture
-Gesture.version = "v1.2.0"
+
+---
+---Current version of the gesture system.
+---
+Gesture.version = "v1.2.1"
 
 ---
 ---If the gesture system should start automatically on player spawn.
----Set this to false soon after require to stop it.
+---This is false by default.
 ---
 Gesture.AutoStart = false
 
+---
+---If the gesture system should print debug messages.
+---
 Gesture.DebugEnabled = false
 
 ---
@@ -77,19 +90,22 @@ Gesture.PreviousGesture = {
     [1] = nil,
 }
 
+---
+---How close the fingers need to be to the gesture values for it to be considered active.
+---
 Gesture.DiscrepancyTolerance = 0.25
 
 ---
----Create a new gesture table.
----If finger position is nil then the finger isn't taken into consideration.
+---Creates a new gesture table.
+---If a finger position is `nil` then the finger isn't taken into consideration.
 ---
----@param name? string
----@param index number|nil
----@param middle number|nil
----@param ring number|nil
----@param pinky number|nil
----@param thumb number|nil
----@return GestureTable
+---@param name? string # Gesture name
+---@param index number|nil # [0–1] range of the index finger position
+---@param middle number|nil # [0–1] range of the middle finger position
+---@param ring number|nil # [0–1] range of the ring finger position
+---@param pinky number|nil # [0–1] range of the pinky finger position
+---@param thumb number|nil # [0–1] range of the thumb finger position
+---@return GestureTable # New gesture table
 local function getGestureTable(name, index, middle, ring, pinky, thumb)
     return
     {
@@ -120,16 +136,16 @@ local callbacks = {
 }
 
 ---
----Add a new gesture to watch for.
+---Adds a new gesture to watch for.
 ---
----If a finger position is nil then the finger isn't taken into consideration.
+---If a finger position is `nil`, that finger isn't considered.
 ---
----@param name string # Name of the gesture. If not unique it will overwrite the previous gesture with this name.
----@param index number|nil # [0-1] range of the index finger position.
----@param middle number|nil # [0-1] range of the middle finger position.
----@param ring number|nil # [0-1] range of the ring finger position.
----@param pinky number|nil # [0-1] range of the pinky finger position.
----@param thumb number|nil # [0-1] range of the thumb finger position.
+---@param name string # Gesture name; overwrites existing one if not unique
+---@param index number|nil # [0–1] range of the index finger position.
+---@param middle number|nil # [0–1] range of the middle finger position.
+---@param ring number|nil # [0–1] range of the ring finger position.
+---@param pinky number|nil # [0–1] range of the pinky finger position.
+---@param thumb number|nil # [0–1] range of the thumb finger position.
 function Gesture:AddGesture(name, index, middle, ring, pinky, thumb)
     Gesture.Gestures[name] = getGestureTable(name, index, middle, ring, pinky, thumb)
     callbacks[0].start[name] = {}
@@ -139,11 +155,11 @@ function Gesture:AddGesture(name, index, middle, ring, pinky, thumb)
 end
 
 ---
----Remove an existing gesture.
+---Removes an existing gesture.
 ---
 ---Any callbacks registered with the gesture will be unregistered.
 ---
----@param name string # Name of the gesture.
+---@param name string # Gesture name
 function Gesture:RemoveGesture(name)
     Gesture.Gestures[name] = nil
     callbacks[0].start[name] = nil
@@ -153,9 +169,9 @@ function Gesture:RemoveGesture(name)
 end
 
 ---
----Remove a list of gestures.
+---Removes a list of gestures.
 ---
----@param names GestureNames[]
+---@param names GestureNames[] # List of gesture names
 function Gesture:RemoveGestures(names)
     for _,name in ipairs(names) do
         self:RemoveGesture(name)
@@ -186,8 +202,8 @@ Gesture:AddGesture("Peace", 1, 1, 0, 0, nil)
 ---         do_something()
 ---     end
 ---
----@param hand CPropVRHand|0|1
----@return GestureNames
+---@param hand CPropVRHand|0|1 # The hand to get the gesture of
+---@return GestureNames # Gesture name
 function Gesture:GetGesture(hand)
     if type(hand) ~= "number" then
         hand = hand:GetHandID()
@@ -198,10 +214,10 @@ function Gesture:GetGesture(hand)
 end
 
 ---
----Gets the current [0-1] finger curl values of a given hand.
+---Gets the current [0–1] finger curl values of a given hand.
 ---
----@param hand CPropVRHand|0|1
----@return GestureTable
+---@param hand CPropVRHand|0|1 # The hand to get the gesture of
+---@return GestureTable # Gesture values
 function Gesture:GetGestureRaw(hand)
     if type(hand) ~= "number" then
         hand = hand:GetHandID()
@@ -210,14 +226,14 @@ function Gesture:GetGestureRaw(hand)
 end
 
 ---
----Register a callback for a specific gesture start/stop.
+---Registers a callback for a specific gesture start/stop.
 ---
----@param kind "start"|"stop" # If the callback is registered for gesture start or stop.
----@param hand CPropVRHand|-1|0|1 # The ID of the hand to register for (-1 means both).
----@param gesture GestureNames # Name of the gesture.
+---@param kind "start"|"stop" # Listen for the start or stop of the gesture
+---@param hand CPropVRHand|-1|0|1 # The hand to listen to
+---@param gesture GestureNames # The gesture to listen for
 ---@param duration unknown # Not implemented
----@param callback function # The function that will be called when conditions are met.
----@param context? any
+---@param callback function # The function to call when the gesture is triggered
+---@param context? any # Context to pass to the callback
 function Gesture:RegisterCallback(kind, hand, gesture, duration, callback, context)
 
     -- Quick way to register both hands.
@@ -234,9 +250,9 @@ function Gesture:RegisterCallback(kind, hand, gesture, duration, callback, conte
 end
 
 ---
----Unregister a callback function.
+---Unregisters a callback function.
 ---
----@param callback function
+---@param callback function # The function to unregister
 function Gesture:UnregisterCallback(callback)
     for _, kinds in pairs(callbacks) do
         for _, names in pairs(kinds) do
@@ -278,10 +294,10 @@ local pinky_min = 1.3178
 local gestures = Gesture.Gestures
 
 ---@class GESTURE_CALLBACK
----@field kind "start"|"stop" # If the gesture was started or stopped.
----@field name GestureNames # The name of the gesture performed.
----@field hand CPropVRHand # The hand the gesture was performed on.
----@field time number # Server time the gesture occurred.
+---@field kind "start"|"stop" # If the gesture was started or stopped
+---@field name GestureNames # The name of the gesture performed
+---@field hand CPropVRHand # The hand the gesture was performed on
+---@field time number # Server time the gesture occurred
 
 local function GestureThink()
     local hmd = Entities:GetLocalPlayer():GetHMDAvatar()--[[@as CPropHMDAvatar]]
@@ -411,7 +427,7 @@ local tracking_ent = nil
 ---
 ---Starts the gesture system.
 ---
----@param on EntityHandle? # Optional entity to do the tracking on. This is the player by default.
+---@param on EntityHandle? # Optional entity to do the tracking on
 function Gesture:Start(on)
     if on == nil then on = Entities:GetLocalPlayer() end
     tracking_ent = on

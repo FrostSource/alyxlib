@@ -1,80 +1,14 @@
 --[[
-    v2.3.1
+    v2.4.0
     https://github.com/FrostSource/alyxlib
 
-    If not using `vscripts/alyxlib/core.lua`, load this file at game start using the following line:
+    Provides object-oriented class and inheritance functionality.
+
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
     
-    ```lua
     require "alyxlib.class"
-    ```
-
-    ======================================== Entity Classes ========================================
-
-    NOTE: Entity classes are still early in development and documentation is sparse.
-    
-    The new `entity` function is designed to ease the creation of entity classes and all the trouble
-    that comes with complex entity scripts. Instead of defining functions and variables in the
-    private script scope we define them in a shared table class which is inherited by all entities
-    using this class.
-
-    The simplest example of the entity function is:
-
-    ```lua
-    ---Define the entity class, which returns both the class (base) and entity handle (self).
-    ---By "inheriting" EntityClass we get helpful code completion.
-    ---@class EntityName : EntityClass
-    local base, self = entity("EntityName")
-    ---This stops code executing a second time after a game load.
-    if self.Initiated then return end
-
-    ---A variable is defined for the class.
-    base.class_variable = 1
-
-    ---A function is defined for the class. This specific function is called automatically.
-    ---@param loaded boolean
-    function base:OnReady(loaded)
-        ---Reference a class variable, note that we use `self` instead of `base` here inside the function.
-        self.class_variable = self.class_variable + 1
-    end
-    ```
-
-    Entity scripts using this feature should *not* use `thisEntity` and instead use `self`.
-    It's important to remember to define your class functions on the `base` class. Functions
-    defined on `self` will not be inherited by other classes which inherit your class.
-
-    Thinking is simplified, allowing you to define a base class think which can be paused/resumed
-    and the state of which will be saved, meaning the think function will automatically resume
-    after a game load:
-
-    ```lua
-    function base:OnReady(loaded)
-        if not loaded then
-            self:ResumeThink()
-        end
-    end
-
-    function base:Think()
-        if Time() > 50 then
-            self:PauseThink()
-            return
-        end
-        return 0
-    end
-    ```
-
-    Like the think state, any fields defined in the `base`/`self` objects will be automatically loaded.
-    Currently these values still need to be saved manually but this is done easily with the new save function:
-
-    ```lua
-    base.value = 1
-
-    function base:ChangeValue()
-        self.value = self.value + 1
-        self:Save()
-    end
-    ```
 ]]
-local version = "v2.3.1"
+local version = "v2.4.0"
 
 require "alyxlib.storage"
 require "alyxlib.globals"
@@ -291,12 +225,17 @@ local function _inherit(base, self, fenv)
     end
 end
 
----Inherit an existing entity class which was defined using `entity` function.
+---
+---Inherits an existing entity class which was defined using the [entity](lua://entity) function.
+---
+---If no entity is provided, the entity calling the code will inherit the class.
+---If no calling entity is found, an error will be thrown.
+---
 ---@generic T
----@param script `T` # The script to inherit.
----@param entity? EntityHandle # Optional entity which will inherit the script. If not used, the entity running the code will inherit.
----@return T # Base class, the newly created class.
----@return T # Self instance, the entity inheriting `base`.
+---@param script `T` # The class/script to inherit
+---@param entity? EntityHandle # Entity which will inherit the class 
+---@return T # Inherited class
+---@return T # `self` instance of `entity`, the entity inheriting `script`
 ---@diagnostic disable-next-line:lowercase-global
 function inherit(script, entity)
     local fenv = entity or getfenv(2)
@@ -339,13 +278,13 @@ end
 ---The class is only created once so this can be called in entity attached scripts
 ---multiple times and all subsequent calls will return the already created class.
 ---
----@generic      T, T2
+---@generic T, T2
 ---@param name? `T` # Internal class name
----@param ...    string|table # Any inherit classes or scripts.
----@return any # Base class, the newly created class.
----@return T # Self instance, the entity inheriting `base`.
----@return table # Super class, the first inheritance of `base`.
----@return table # Private table
+---@param ...  string|table # Any classes or scripts inherit
+---@return any # The newly created class
+---@return T # `self` instance of entity inheriting the class, if called in an attached script
+---@return table # The first inherited class, if any
+---@return table # Private members table of the class **(unused)**
 ---@diagnostic disable-next-line: lowercase-global
 function entity(name, ...)
 
@@ -421,30 +360,34 @@ end
 
 --#region EntityClass Definition
 
+---
 ---The top-level entity class that provides base functionality.
+---
 ---@class EntityClass : CBaseEntity,CEntityInstance,CBaseModelEntity,CBasePlayer,CHL2_Player,CBaseAnimating,CBaseFlex,CBaseCombatCharacter,CAI_BaseNPC,CBaseTrigger,CEnvEntityMaker,CInfoWorldLayer,CLogicRelay,CMarkupVolumeTagged,CEnvProjectedTexture,CPhysicsProp,CSceneEntity,CPointClientUIWorldPanel,CPointTemplate,CPointWorldText,CPropHMDAvatar,CPropVRHand
----@field __inherits table # Table of inherited classes.
----@field __name string # Name of the class.
----@field __outputs table<string, function> # Map of output names to functions that will be connected on spawn.
----@field __game_events table<string, function> # Map of game events to functions that will be listened to on spawn.
----@field __player_events table<string, function> # Map of player events to functions that will be listened to on spawn.
----@field __rawget fun(self: EntityClass, key: string): any # Custom rawget function to get a value from meta.__values without checking inherits.
----@field Initiated boolean # If the class entity has been activated.
----@field IsThinking boolean # If the entity is currently thinking with `Think` function.
----@field OnActivate fun(self: EntityClass, activateType: ActivationType) # Called automatically on `Activate` if defined.
----@field OnReady fun(self: EntityClass, readyType: OnReadyType) # Called automatically after `Activate`, if defined, when EasyConvars and Player are initialized.
----@field OnSpawn fun(self: EntityClass, spawnkeys: CScriptKeyValues) # Called automatically on `Spawn` if defined.
----@field UpdateOnRemove fun(self: EntityClass) # Called before the entity is killed.
----@field OnBreak fun(self: EntityClass, inflictor: EntityHandle) # Called when a breakable entity is broken.
----@field OnTakeDamage fun(self: EntityClass, damageTable: OnTakeDamageTable) # Called when entity takes damage.
----@field Precache fun(self: EntityClass, context: CScriptPrecacheContext) # Called before Spawn for precaching.
+---@field __inherits table # Table of inherited classes
+---@field __name string # Name of the class
+---@field __outputs table<string, function> # Map of output names to functions that will be connected on spawn
+---@field __game_events table<string, function> # Map of game events to functions that will be listened to on spawn
+---@field __player_events table<string, function> # Map of player events to functions that will be listened to on spawn
+---@field __rawget fun(self: EntityClass, key: string): any # Custom rawget function to get a value from meta.__values without checking inherits
+---@field Initiated boolean # If the class entity has been activated
+---@field IsThinking boolean # If the entity is currently thinking with `Think` function
+---@field OnActivate fun(self: EntityClass, activateType: ActivationType) # Called automatically on `Activate` if defined
+---@field OnReady fun(self: EntityClass, readyType: OnReadyType) # Called automatically after `Activate`, if defined, when EasyConvars and Player are initialized
+---@field OnSpawn fun(self: EntityClass, spawnkeys: CScriptKeyValues) # Called automatically on `Spawn` if defined
+---@field UpdateOnRemove fun(self: EntityClass) # Called before the entity is killed
+---@field OnBreak fun(self: EntityClass, inflictor: EntityHandle) # Called when a breakable entity is broken
+---@field OnTakeDamage fun(self: EntityClass, damageTable: OnTakeDamageTable) # Called when entity takes damage
+---@field Precache fun(self: EntityClass, context: CScriptPrecacheContext) # Called before Spawn for precaching
 ---@field Think function # Entity think function.
 EntityClass = entity("EntityClass")
 
----Assign a new value to entity's field `name`.
+---
+---Assigns a new value to entity's field `name`.
 ---This also saves the field.
----@param name string
----@param value any
+---
+---@param name string # Name of the field
+---@param value any # Value to assign
 ---@deprecated # Values are automatically saved now.
 function EntityClass:Set(name, value)
     -- self[name] = value
@@ -453,9 +396,14 @@ function EntityClass:Set(name, value)
     self:Save(name, value)
 end
 
----Save a given entity field. Call with no arguments to save all data.
----@param name? string # Name of the field to save.
----@param value? any # Value to save. If not provided the value will be retrieved from the field with the same `name`.
+---
+---Manually saves a given entity field.
+---
+---If no `value` is provided, the value of the field with the same `name` will be saved.
+---If no `name` is provided, all fields will be saved.
+---
+---@param name? string # Name of the field to save
+---@param value? any # Value to save
 ---@luadoc-ignore
 function EntityClass:Save(name, value)
     if not IsValidEntity(self) then return end
@@ -478,7 +426,9 @@ end
 --     Warning("Trying to think on entity class with no think defined ["..self.__name.."]\n")
 -- end
 
----Resume the entity think function.
+---
+---Resumes the entity think function.
+---
 ---@luadoc-ignore
 function EntityClass:ResumeThink()
     if not self:IsNull() and type(self.Think) == "function" then
@@ -492,7 +442,9 @@ function EntityClass:ResumeThink()
     end
 end
 
----Pause the entity think function.
+---
+---Pauses the entity think function.
+---
 ---@luadoc-ignore
 function EntityClass:PauseThink()
     if not self:IsNull() then
@@ -501,21 +453,27 @@ function EntityClass:PauseThink()
     end
 end
 
----Define a function to redirected to `output` on spawn.
+---
+---Defines a function to redirected to IO `output` on spawn.
+---
 ---@param output string
 ---@param func fun(...):any
 function EntityClass:Output(output, func)
     self.__outputs[output] = func
 end
 
----Define a function for listening to a game event.
+---
+---Defines a function for listening to a game event.
+---
 ---@param gameEvent GameEventsAll
 ---@param func fun(self: EntityClass, event):any
 function EntityClass:GameEvent(gameEvent, func)
     self.__game_events[gameEvent] = func
 end
 
----Define a function for listening to a player event.
+---
+---Defines a function for listening to a player event.
+---
 ---@param playerEvent PLAYER_EVENTS_ALL
 ---@param func fun(self, event):any
 function EntityClass:PlayerEvent(playerEvent, func)
@@ -525,7 +483,9 @@ end
 --#endregion
 
 
+---
 ---Prints all classes that `ent` inherits.
+---
 ---@param ent EntityClass
 ---@param nest? string
 ---@diagnostic disable-next-line:lowercase-global
@@ -552,9 +512,11 @@ function printinherits(ent, nest)
     end
 end
 
----Get the original metatable that Valve assigns to the entity.
----@param ent EntityClass # The entity search.
----@return table? # Metatable originally assigned to `ent`.
+---
+---Gets the original metatable that Valve assigns to the entity.
+---
+---@param ent EntityClass # The entity search
+---@return table? # Metatable originally assigned to `ent`
 ---@diagnostic disable-next-line:lowercase-global
 function getvalvemeta(ent)
     local inherits = rawget(ent, "__inherits")
@@ -567,10 +529,14 @@ function getvalvemeta(ent)
     end
 end
 
----Get a list of all classes that `class` inherits.
----Does not include the Valve class; use getvalvemeta() for that.
----@param class EntityClass # The entity or class to search.
----@return EntityClass[] # List of class tables.
+---
+---Gets a list of all classes that `class` inherits.
+---
+---Does not include the Valve class - use [getvalvemeta](lua://getvalvemeta) for that.
+---
+---@see getvalvemeta
+---@param class EntityClass # The entity or class to search
+---@return EntityClass[] # List of class tables
 ---@diagnostic disable-next-line:lowercase-global
 function getinherits(class)
     local foundinherits = {}
@@ -587,10 +553,13 @@ function getinherits(class)
     return foundinherits
 end
 
----Get if an `EntityClass` instance inherits a given `class`.
----@param ent EntityClass|EntityHandle # Entity to check.
----@param class string|table # Name or class table to check.
----@return boolean # True if `ent` inherits `class`, false otherwise.
+---
+---Checks if an entity inherits a given `EntityClass`.
+---@param ent EntityClass|EntityHandle # Entity to check
+---@param class string|table # Name or class table to check
+---@return boolean # `true` if `ent` inherits `class`, `false` otherwise
+---@see getinherits
+---@see IsClassEntity
 ---@diagnostic disable-next-line:lowercase-global
 function isinstance(ent, class)
     if not IsEntity(ent, true) then return false end
@@ -617,10 +586,11 @@ function isinstance(ent, class)
 end
 
 ---
----Check if an entity is using the AlyxLib class system.
+---Checks if an entity is using the AlyxLib class system.
 ---
----@param ent EntityHandle # Entity to check.
----@return boolean # True if `ent` is a class entity, false otherwise.
+---@param ent EntityHandle # Entity to check
+---@return boolean # `true` if `ent` is a class entity, `false` otherwise
+---@see isinstance
 function IsClassEntity(ent)
     local name = rawget(ent, "__name")
     return type(name) == "string" and EntityClassNameMap[name] ~= nil
@@ -629,12 +599,11 @@ end
 ---
 ---Binds a class to an already spawned entity so it remains attached between game loads.
 ---
----@param entity EntityHandle # Entity to bind to.
----@param script string|table # Script, class, or class name to bind.
----@param activateType any
+---@param entity EntityHandle # Entity to bind to
+---@param script string|table # Script, class, or class name to bind
+---@param activateType? ActivationType
 local function doClassBind(entity, script, activateType)
     local scope = entity:GetOrCreatePrivateScriptScope()
-    print("inheriting", scope, script)
     inherit(script, scope)
     if activateType and type(scope.Activate) == "function" then
         scope.Activate(activateType)
@@ -644,8 +613,8 @@ end
 ---
 ---Binds a class to an already spawned entity so it remains attached between game loads.
 ---
----@param entity EntityHandle # Entity to bind to.
----@param script string # Script, class, or class name to bind.
+---@param entity EntityHandle # Entity to bind to
+---@param script string # Script, class, or class name to bind
 function BindClass(entity, script)
     doClassBind(entity, script, 0)
     entity:SetContext("BoundEntityClassScript", script, 0)

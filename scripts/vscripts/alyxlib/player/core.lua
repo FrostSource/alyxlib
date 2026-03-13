@@ -1,11 +1,11 @@
 --[[
-    v4.2.2
+    v4.3.0
     https://github.com/FrostSource/alyxlib
 
     Player script allows for more advanced player manipulation and easier
     entity access for player related entities by extending the player class.
 
-    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
 
     require "alyxlib.player.core"
 ]]
@@ -14,7 +14,7 @@ require "alyxlib.globals"
 require "alyxlib.extensions.entity"
 require "alyxlib.storage"
 
-local version = "v4.2.2"
+local version = "v4.3.0"
 
 -----------------------------
 -- Class extension members --
@@ -126,6 +126,7 @@ CBasePlayer.Items = {
         ---Ammo for the shotgun. This is number of shells.
         shotgun = 0,
         ---Ammo for the generic pistol. This is number of magazines, not bullets.
+        ---@TODO Try to track for individual generic pistols
         generic_pistol = 0,
     },
 
@@ -190,7 +191,9 @@ CPropVRHand.Opposite = nil
 -- Class extension functions --
 -------------------------------
 
----Force the player to drop an entity if held.
+---
+---Forces the player to drop an entity if held.
+---
 ---@param handle EntityHandle # Handle of the entity to drop
 function CBasePlayer:DropByHandle(handle)
     if IsValidEntity(handle) then
@@ -200,47 +203,61 @@ function CBasePlayer:DropByHandle(handle)
     end
 end
 
----Force the player to drop any item held in their left hand.
+---
+---Forces the player to drop any item held in their left hand.
+---
 function CBasePlayer:DropLeftHand()
     self:DropByHandle(self.LeftHand.ItemHeld)
 end
 Expose(CBasePlayer.DropLeftHand, "DropLeftHand", CBasePlayer)
 
----Force the player to drop any item held in their right hand.
+---
+---Forces the player to drop any item held in their right hand.
+---
 function CBasePlayer:DropRightHand()
     self:DropByHandle(self.RightHand.ItemHeld)
 end
 Expose(CBasePlayer.DropRightHand, "DropRightHand", CBasePlayer)
 
----Force the player to drop any item held in their primary hand.
+---
+---Forces the player to drop any item held in their primary hand.
+---
 function CBasePlayer:DropPrimaryHand()
     self:DropByHandle(self.PrimaryHand.ItemHeld)
 end
 Expose(CBasePlayer.DropPrimaryHand, "DropPrimaryHand", CBasePlayer)
 
----Force the player to drop any item held in their secondary/off hand.
+---
+---Forces the player to drop any item held in their secondary/off hand.
+---
 function CBasePlayer:DropSecondaryHand()
     self:DropByHandle(self.SecondaryHand.ItemHeld)
 end
 Expose(CBasePlayer.DropSecondaryHand, "DropSecondaryHand", CBasePlayer)
 
----Force the player to drop the caller entity if held.
----@param data IOParams
+---
+---Forces the player to drop the caller entity if held.
+---
+---@param data IOParams # The IOParams table
 function CBasePlayer:DropCaller(data)
     self:DropByHandle(data.caller)
 end
 Expose(CBasePlayer.DropCaller, "DropCaller", CBasePlayer)
 
----Force the player to drop the activator entity if held.
----@param data IOParams
+---
+---Forces the player to drop the activator entity if held.
+---
+---@param data IOParams # The IOParams table
 function CBasePlayer:DropActivator(data)
     self:DropByHandle(data.activator)
 end
 Expose(CBasePlayer.DropActivator, "DropActivator", CBasePlayer)
 
----Force the player to grab `handle` with `hand`.
----@param handle EntityHandle
----@param hand? CPropVRHand|0|1
+---
+---Forces the player to grab `handle` with `hand`.
+---
+---@param handle EntityHandle # Handle of the entity to grab
+---@param hand? CPropVRHand|0|1 # Hand to grab with
 function CBasePlayer:GrabByHandle(handle, hand)
     if IsEntity(handle, true) then
         if type(hand) ~= "number" then
@@ -260,21 +277,27 @@ function CBasePlayer:GrabByHandle(handle, hand)
     end
 end
 
+---
 ---Force the player to grab the caller entity.
----@param data IOParams
+---
+---@param data IOParams # The IOParams table
 function CBasePlayer:GrabCaller(data)
     self:GrabByHandle(data.caller)
 end
 Expose(CBasePlayer.GrabCaller, "GrabCaller", CBasePlayer)
 
+---
 ---Force the player to grab the activator entity.
----@param data IOParams
----@exposed GrabActivator
+---
+---@param data IOParams # The IOParams table
 function CBasePlayer:GrabActivator(data)
     self:GrabByHandle(data.activator)
 end
 Expose(CBasePlayer.GrabActivator, "GrabActivator", CBasePlayer)
 
+---
+---Movement types for the VR player.
+---
 ---@enum PlayerMoveType
 PlayerMoveType = {
     TeleportBlink = 0,
@@ -286,22 +309,40 @@ PlayerMoveType = {
 ---
 ---Get VR movement type.
 ---
----@return PlayerMoveType
+---@return PlayerMoveType # The VR movement type
 function CBasePlayer:GetMoveType()
+    return Convars:GetInt('hlvr_movetype_default') --[[@as PlayerMoveType]]
+end
+
+---
+---Get VR movement type.
+---
+---@return PlayerMoveType # The VR movement type
+function GetPlayerMoveType()
     return Convars:GetInt('hlvr_movetype_default') --[[@as PlayerMoveType]]
 end
 
 ---
 ---Sets the VR movement type.
 ---
----@param movetype PlayerMoveType
+---@param movetype PlayerMoveType # The VR movement type
 function CBasePlayer:SetMoveType(movetype)
     Convars:SetInt("vr_movetype_set", movetype)
 end
 
+---
+---Sets the VR movement type.
+---
+---@param movetype PlayerMoveType # The VR movement type
+function SetPlayerMoveType(movetype)
+    Convars:SetInt("vr_movetype_set", movetype)
+end
+
+---
 ---Returns the entity the player is looking at directly.
----@param maxDistance? number # Max distance the trace can search.
----@return EntityHandle?
+---
+---@param maxDistance? number # Max distance the trace can search
+---@return EntityHandle? # The entity the player is looking at
 function CBasePlayer:GetLookingAt(maxDistance)
     maxDistance = maxDistance or 2048
     ---@type TraceTableLine
@@ -316,9 +357,11 @@ function CBasePlayer:GetLookingAt(maxDistance)
     return nil
 end
 
+---
 ---Disables fall damage for the player.
----@TODO: Change to entity save.
+---
 function CBasePlayer:DisableFallDamage()
+    ---@TODO: Consider changing to SaveEntity.
     local name = Storage.LoadString(self, "FallDamageFilterName", DoUniqueString("__player_fall_damage_filter"))
     Storage.SaveString(self, "FallDamageFilterName", name)
     local filter = Entities:FindByName(nil, name) or SpawnEntityFromTableSynchronous("filter_damage_type",{
@@ -329,7 +372,9 @@ function CBasePlayer:DisableFallDamage()
 end
 Expose(CBasePlayer.DisableFallDamage, "DisableFallDamage", CBasePlayer)
 
+---
 ---Enables fall damage for the player.
+---
 function CBasePlayer:EnableFallDamage()
     --Killing the filter is not necessary but may be helpful.
     local name = Storage.LoadString(self, "FallDamageFilterName", "")
@@ -341,11 +386,13 @@ function CBasePlayer:EnableFallDamage()
 end
 Expose(CBasePlayer.EnableFallDamage, "EnableFallDamage", CBasePlayer)
 
+---
 ---Adds resources to the player.
----@param pistol_ammo? number
----@param rapidfire_ammo? number
----@param shotgun_ammo? number
----@param resin? number
+---
+---@param pistol_ammo? number # Amount of pistol ammo
+---@param rapidfire_ammo? number # Amount of rapidfire ammo
+---@param shotgun_ammo? number # Amount of shotgun ammo
+---@param resin? number # Amount of resin
 function CBasePlayer:AddResources(pistol_ammo, rapidfire_ammo, shotgun_ammo, resin)
     pistol_ammo = pistol_ammo or 0
     rapidfire_ammo = rapidfire_ammo or 0
@@ -361,11 +408,15 @@ function CBasePlayer:AddResources(pistol_ammo, rapidfire_ammo, shotgun_ammo, res
     )
 end
 
+---
 ---Sets resources for the player.
----@param pistol_ammo? number
----@param rapidfire_ammo? number
----@param shotgun_ammo? number
----@param resin? number
+---
+---**This might give inaccurate amounts for omitted values.**
+---
+---@param pistol_ammo? number # Amount of pistol ammo
+---@param rapidfire_ammo? number # Amount of rapidfire ammo
+---@param shotgun_ammo? number # Amount of shotgun ammo
+---@param resin? number # Amount of resin
 function CBasePlayer:SetResources(pistol_ammo, rapidfire_ammo, shotgun_ammo, resin)
     -- Number value is different in-game (setresources uses bullets)
     SendToServerConsole("hlvr_setresources "..
@@ -383,14 +434,18 @@ function CBasePlayer:SetResources(pistol_ammo, rapidfire_ammo, shotgun_ammo, res
     )
 end
 
----Set the items that player has manually.
----This is purely for scripting and does not modify the actual items the player has in game.
----Use `Player:AddResources` to modify in-game items.
----@param energygun_ammo? integer
----@param generic_pistol_ammo? integer
----@param rapidfire_ammo? integer
----@param shotgun_ammo? integer
----@param resin? integer
+---
+---Manually sets the items that player has.
+---
+---**This is purely for scripting and does not modify the actual items the player has in-game.**
+---
+---Use [Player:AddResources](lua://CBasePlayer.AddResources) to modify in-game items.
+---
+---@param energygun_ammo? integer # Amount of pistol ammo
+---@param generic_pistol_ammo? integer # Amount of generic pistol ammo
+---@param rapidfire_ammo? integer # Amount of rapidfire ammo
+---@param shotgun_ammo? integer # Amount of shotgun ammo
+---@param resin? integer # Amount of resin
 function CBasePlayer:SetItems(
     energygun_ammo,
     generic_pistol_ammo,
@@ -410,30 +465,30 @@ end
 
 
 ---
----Add pistol ammo to the player.
+---Adds pistol ammo to the player.
 ---
----@param amount number
+---@param amount number # Amount of pistol ammo
 function CBasePlayer:AddPistolAmmo(amount)
     self:AddResources(amount, nil, nil, nil)
 end
 ---
----Add shotgun ammo to the player.
+---Adds shotgun ammo to the player.
 ---
----@param amount number
+---@param amount number # Amount of shotgun ammo
 function CBasePlayer:AddShotgunAmmo(amount)
     self:AddResources(nil, nil, amount, nil)
 end
 ---
----Add rapidfire ammo to the player.
+---Adds rapidfire ammo to the player.
 ---
----@param amount number
+---@param amount number # Amount of rapidfire ammo
 function CBasePlayer:AddRapidfireAmmo(amount)
     self:AddResources(nil, amount, nil, nil)
 end
 ---
----Add resin to the player.
+---Adds resin to the player.
 ---
----@param amount number
+---@param amount number # Amount of resin
 function CBasePlayer:AddResin(amount)
     self:AddResources(nil, nil, nil, amount)
 end
@@ -441,22 +496,21 @@ end
 ---
 ---Gets the items currently held or in wrist pockets.
 ---
----@return EntityHandle[]
+---@return EntityHandle[] # List of items
 function CBasePlayer:GetImmediateItems()
-    return {
-        self.LeftHand.WristItem,
-        self.RightHand.WristItem,
-        self.LeftHand.ItemHeld,
-        self.RightHand.ItemHeld
-    }
+    local lh, rh = self.LeftHand, self.RightHand
+    local items = {}
+    if lh and lh.WristItem then items[#items+1] = lh.WristItem end
+    if rh and rh.WristItem then items[#items+1] = rh.WristItem end
+    if lh and lh.ItemHeld then items[#items+1] = lh.ItemHeld end
+    if rh and rh.ItemHeld then items[#items+1] = rh.ItemHeld end
+    return items
 end
 
 ---
----Gets the grenades currently held or in wrist pockets.
+---Gets the grenades currently held and in wrist pockets.
 ---
----Use `#Player:GetGrenades()` to get number of grenades player has access to.
----
----@return EntityHandle[]
+---@return EntityHandle[] # List of grenades
 function CBasePlayer:GetGrenades()
     local grenades = {}
     local immediate_items = self:GetImmediateItems()
@@ -469,9 +523,7 @@ function CBasePlayer:GetGrenades()
 end
 
 ---
----Gets the health pens currently held or in wrist pockets.
----
----Use `#Player:GetHealthPens()` to get number of health pens player has access to.
+---Gets the health pens currently held and in wrist pockets.
 ---
 ---@return EntityHandle[]
 function CBasePlayer:GetHealthPens()
@@ -488,9 +540,9 @@ end
 ---
 ---Marges an existing prop with a given hand.
 ---
----@param hand CPropVRHand|0|1 # The hand handle or index.
----@param prop EntityHandle|string # The prop handle or targetname.
----@param hide_hand boolean # If the hand should turn invisible after merging.
+---@param hand CPropVRHand|0|1 # The hand handle or ID
+---@param prop EntityHandle|string # The prop handle or targetname
+---@param hide_hand boolean # If the hand should turn invisible after merging
 function CBasePlayer:MergePropWithHand(hand, prop, hide_hand)
     if type(hand) == "number" then
         hand = self.Hands[hand+1]
@@ -499,9 +551,10 @@ function CBasePlayer:MergePropWithHand(hand, prop, hide_hand)
 end
 
 ---
----Return if the player has a gun equipped.
+---Checks if the player has a gun equipped.
+---`hlvr_multitool` is not considered a "gun"
 ---
----@return boolean
+---@return boolean # `true` if the player has a gun equipped
 function CBasePlayer:HasWeaponEquipped()
     return self.CurrentlyEquipped == PLAYER_WEAPON_ENERGYGUN
         or self.CurrentlyEquipped == PLAYER_WEAPON_SHOTGUN
@@ -512,9 +565,9 @@ end
 ---
 ---Get the amount of ammo stored in the backpack for the currently equipped weapon.
 ---
----This is not accurate if ammo was given through special means like info_hlvr_equip_player.
+---**This is not accurate if ammo was given through special means like `info_hlvr_equip_player`.**
 ---
----@return number # The amount of ammo, or 0 if no weapon equipped
+---@return number # The amount of ammo, or `0` if no weapon equipped
 function CBasePlayer:GetCurrentWeaponReserves()
     local currentlyEquipped = self.CurrentlyEquipped
     if currentlyEquipped == PLAYER_WEAPON_ENERGYGUN then
@@ -529,8 +582,10 @@ function CBasePlayer:GetCurrentWeaponReserves()
     return 0
 end
 
----Player has item holder equipped.
----@return boolean
+---
+---Checks if the player has an item (wrist) holder equipped.
+---
+---@return boolean # `true` if the player has an item holder
 function CBasePlayer:HasItemHolder()
     for _, hand in ipairs(self.Hands) do
         if hand:GetFirstChildWithClassname("hlvr_hand_item_holder") then
@@ -544,8 +599,10 @@ function CBasePlayer:HasItemHolder()
     return false
 end
 
----Player has grabbity gloves equipped.
----@return boolean
+---
+---Checks if the player has grabbity gloves equipped.
+---
+---@return boolean # `true` if the player has grabbity gloves
 function CBasePlayer:HasGrabbityGloves()
     return self.PrimaryHand:GetGrabbityGlove() ~= nil
 end
@@ -554,11 +611,14 @@ function CBasePlayer:GetFlashlight()
     return self.SecondaryHand:GetFirstChildWithClassname("hlvr_flashlight_attachment")
 end
 
----Get the first entity the flashlight is pointed at (if the flashlight exists).
+---
+---Gets the first entity the flashlight is pointed at.
+---
 ---If flashlight does not exist, both returns will be `nil`.
----@param maxDistance number # Max tracing distance, default is 2048.
----@return EntityHandle|nil # The entity that was hit, or nil.
----@return Vector|nil # The position the trace hit, regardless of entity found.
+---
+---@param maxDistance? number # Max tracing distance (default: 2048)
+---@return EntityHandle|nil # The entity that was hit
+---@return Vector|nil # The position the trace hit, regardless of entity found
 function CBasePlayer:GetFlashlightPointedAt(maxDistance)
     local flashlight = self:GetFlashlight()
     if flashlight then
@@ -576,10 +636,14 @@ function CBasePlayer:GetFlashlightPointedAt(maxDistance)
     end
 end
 
----Gets the current resin from the player.
----This is can be more accurate than `Player.Items.resin`
----Calling this will update `Player.Items.resin`
----@return number
+---
+---Gets the current resin count the player has.
+---
+---This is can be more accurate than `Player.Items.resin`.
+---
+---Calling this will update `Player.Items.resin`.
+---
+---@return number # The current resin count
 function CBasePlayer:GetResin()
     local t = ({}) --[[@as CriteriaTable]]
     self:GatherCriteria(t)
@@ -590,16 +654,19 @@ function CBasePlayer:GetResin()
     return r
 end
 
----Gets if player is holding an entity in either hand.	
----@param entity EntityHandle
----@return boolean	
+---
+---Gets if player is holding a given entity in either hand.	
+---
+---@param entity EntityHandle # The entity to check
+---@return boolean # `true` if the player is holding the entity
 function CBasePlayer:IsHolding(entity)
     return self.PrimaryHand.ItemHeld == entity or self.SecondaryHand.ItemHeld == entity
 end
 
----Get the entity handle of the currently equipped weapon/item.
----If nothing is equipped this will return the primary hand entity.
----@return EntityHandle|nil
+---
+---Gets the entity handle of the currently equipped weapon, including `hlvr_multitool`.
+---
+---@return EntityHandle|nil # The equipped weapon, or `nil` if no weapon equipped
 function CBasePlayer:GetWeapon()
     if self.CurrentlyEquipped == PLAYER_WEAPON_ENERGYGUN then
         return self.Items.weapons.energygun
@@ -622,11 +689,10 @@ function CBasePlayer:GetWeapon()
 end
 
 ---
----Get the current upgrades for the player's pistol.
+---Gets the current upgrades for the player's pistol.
 ---
----@param weapon? EntityHandle # Optional weapon to check instead of the player's weapon.
----@return PlayerPistolUpgrades[]
----@overload fun(self: CBasePlayer): PlayerPistolUpgrades[]
+---@param weapon? EntityHandle # Optional weapon to check instead of the player's weapon
+---@return PlayerPistolUpgrades[] # List of upgrades
 function CBasePlayer:GetPistolUpgrades(weapon)
     local pistol = weapon or self.Items.weapons.energygun
 
@@ -652,11 +718,10 @@ function CBasePlayer:GetPistolUpgrades(weapon)
 end
 
 ---
----Get the current upgrades for the player's rapidfire.
+---Gets the current upgrades for the player's rapidfire.
 ---
----@param weapon? EntityHandle # Optional weapon to check instead of the player's weapon.
----@return PlayerRapidfireUpgrades[]
----@overload fun(self: CBasePlayer): PlayerRapidfireUpgrades[]
+---@param weapon? EntityHandle # Optional weapon to check instead of the player's weapon
+---@return PlayerRapidfireUpgrades[] # List of upgrades
 function CBasePlayer:GetRapidfireUpgrades(weapon)
     local rapidfire = weapon or self.Items.weapons.rapidfire
 
@@ -680,13 +745,12 @@ function CBasePlayer:GetRapidfireUpgrades(weapon)
 end
 
 ---
----Get the current upgrades for the player's shotgun.
+---Gets the current upgrades for the player's shotgun.
 ---
 ---**This will NOT return "shotgun_upgrade_quick_fire" because there is no known way to detect this!**
 ---
----@param weapon? EntityHandle # Optional weapon to check instead of the player's weapon.
----@return PlayerShotgunUpgrades[]
----@overload fun(self: CBasePlayer): PlayerShotgunUpgrades[]
+---@param weapon? EntityHandle # Optional weapon to check instead of the player's weapon
+---@return PlayerShotgunUpgrades[] # List of upgrades
 function CBasePlayer:GetShotgunUpgrades(weapon)
     local shotgun = weapon or self.Items.weapons.shotgun
 
@@ -710,10 +774,10 @@ function CBasePlayer:GetShotgunUpgrades(weapon)
 end
 
 ---
----Check if the player has a specific weapon upgrade.
+---Checks if the player has a specific weapon upgrade.
 ---
----@param upgrade PlayerPistolUpgrades|PlayerRapidfireUpgrades|PlayerShotgunUpgrades
----@return boolean
+---@param upgrade PlayerPistolUpgrades|PlayerRapidfireUpgrades|PlayerShotgunUpgrades # Upgrade to check
+---@return boolean # `true` if the player has the upgrade
 function CBasePlayer:HasWeaponUpgrade(upgrade)
     if vlua.find(self:GetPistolUpgrades(), upgrade) then
         return true
@@ -726,9 +790,9 @@ function CBasePlayer:HasWeaponUpgrade(upgrade)
 end
 
 ---
----Get the forward vector of the player in world space coordinates (z is zeroed).
+---Gets the forward vector of the player in world space coordinates (z is zeroed).
 ---
----@return Vector
+---@return Vector # Forward vector
 function CBasePlayer:GetWorldForward()
     local f = self:GetForwardVector()
     f.z = 0
@@ -743,11 +807,11 @@ local specialAttachmentsOrder = {
 }
 
 ---
----Update player weapon inventory, both removing and setting.
+---Updates player weapon inventory, both removing and setting.
 ---
----@param removes? (string|EntityHandle)[] # List of classnames or handles to remove.
----@param set? string|EntityHandle # Classname or handle to set as active weapon.
----@return EntityHandle? # The handle of the newly set weapon if given and found.
+---@param removes? (string|EntityHandle)[] # List of classnames or handles to remove
+---@param set? string|EntityHandle # Classname or handle to set as active weapon
+---@return EntityHandle? # The handle of the newly set weapon if given and found
 function CBasePlayer:UpdateWeapons(removes, set)
     local hand = Player.PrimaryHand
 
@@ -804,9 +868,9 @@ function CBasePlayer:UpdateWeapons(removes, set)
 end
 
 ---
----Remove weapons from the player inventory.
+---Removes weapons from the player inventory.
 ---
----@param weapons (string|EntityHandle)[] # List of classnames or handles to remove.
+---@param weapons (string|EntityHandle)[] # List of classnames or handles to remove
 ---@overload fun(self: CBasePlayer, weapon: string|EntityHandle)
 function CBasePlayer:RemoveWeapons(weapons)
     if weapons == nil or (type(weapons) == "table" and #weapons == 0) then
@@ -819,10 +883,10 @@ function CBasePlayer:RemoveWeapons(weapons)
 end
 
 ---
----Set the weapon that the player is holding.
+---Sets the weapon that the player is holding.
 ---
----@param weapon string|EntityHandle # Classname or handle to set as active weapon.
----@return EntityHandle? # The handle of the newly set weapon if found.
+---@param weapon string|EntityHandle # Classname or handle to set as active weapon
+---@return EntityHandle? # The handle of the newly set weapon if found
 function CBasePlayer:SetWeapon(weapon)
     return self:UpdateWeapons(nil, weapon)
 end
@@ -889,7 +953,7 @@ end
 ---
 ---Returns [Player.Items.weapons](lua://CBasePlayer.Items) flattened into a single array.
 ---
----@return EntityHandle[]
+---@return EntityHandle[] # List of weapon handles
 function CBasePlayer:GetWeapons()
 
     local weapons = Player.Items.weapons
@@ -903,19 +967,20 @@ function CBasePlayer:GetWeapons()
 end
 
 ---
----Get the invisible player backpack.
+---Gets the invisible player backpack.
+---
 ---This is will return the backpack even if it has been disabled with a `info_hlvr_equip_player`.
 ---
----@return EntityHandle?
+---@return EntityHandle? # The backpack entity
 function CBasePlayer:GetBackpack()
     return Entities:FindByClassname(nil, "player_backpack")
 end
 
 ---
----Enable or disable player movement. Including teleport movement.
+---Enables or disables player movement, including teleport movement.
 ---
----@param enabled boolean # True if movement should be enabled.
----@param delay? number # Optional delay for movement state will be changed
+---@param enabled boolean # `true` if movement should be enabled.
+---@param delay? number # Delay before movement state will be changed (default: 0)
 function CBasePlayer:SetMovementEnabled(enabled, delay)
     Player:EntFire("EnableTeleport", enabled and "1" or "0", delay or 0)
 end
@@ -923,7 +988,7 @@ end
 ---
 ---Sets the forward vector of the HMD anchor while keeping the position the same relative to the player.
 ---
----Normally if the player is off-center when changing the forward vector the player may appear to move too.
+---Normally if the player is off-center from their playspace, changing the forward vector can move the player too.
 ---
 ---@param forward Vector # Normalized forward vector
 function CBasePlayer:SetAnchorForwardAroundPlayer(forward)
@@ -937,9 +1002,9 @@ end
 ---
 ---Sets the angle of the HMD anchor while keeping the position the same relative to the player.
 ---
----Normally if the player is off-center when changing the angle the player may appear to move too.
+---Normally if the player is off-center from their playspace, changing the angle can move the player too.
 ---
----@param angles QAngle # New angle of the anchor
+---@param angles QAngle # New angle for the anchor
 function CBasePlayer:SetAnchorAnglesAroundPlayer(angles)
     local oldPos = self:GetAbsOrigin()
     local relativePos = self.HMDAnchor:TransformPointWorldToEntity(oldPos)
@@ -951,9 +1016,10 @@ end
 ---
 ---Sets the origin of the HMD anchor while keeping the position the same relative to the player.
 ---
----This essentially moves the player by moving the anchor and can be used in instances where setting the player origin does not work.
+---This essentially moves the player by moving the anchor and can be used in instances where
+---setting the player origin does not work.
 ---
----@param pos Vector
+---@param pos Vector # New origin
 function CBasePlayer:SetAnchorOriginAroundPlayer(pos)
     self.HMDAnchor:SetAbsOrigin(pos + (self.HMDAnchor:GetAbsOrigin() - self:GetAbsOrigin()))
 end
@@ -961,7 +1027,7 @@ end
 ---
 ---Sets the enabled state of the cough handpose attached to the HMD avatar.
 ---
----@param enabled boolean # True if the cough handpose should be enabled
+---@param enabled boolean # `true` if the cough handpose should be enabled
 function CBasePlayer:SetCoughHandEnabled(enabled)
     if not self.HMDAvatar then
         return

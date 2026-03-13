@@ -1,16 +1,19 @@
 --[[
-    v1.1.0
+    v1.2.0
     https://github.com/FrostSource/alyxlib
 
     Adds functions and console commands to help debugging outside VR mode.
 
-    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
 
     require "alyxlib.debug.novr"
 ]]
 
-local version = "v1.1.0"
+local version = "v1.2.0"
 
+---
+---Provides functions to help debugging outside VR mode.
+---
 ---@class NoVR
 NoVR = {}
 
@@ -19,6 +22,9 @@ NoVR.AutoStartInToolsMode = false
 
 --#region Interactions
 
+---
+---NoVR interaction data.
+---
 ---@class NoVrInteractClass
 ---@field class string
 ---@field hold? boolean
@@ -77,7 +83,7 @@ local interactClasses =
 }
 
 ---
----Add an interaction class for the NoVR player to interact with.
+---Adds an interaction class for the NoVR player to interact with.
 ---
 ---@param title string # Text to show in-game on the entity
 ---@param class string # Class to interact with
@@ -417,7 +423,7 @@ end, "", 0)
 local novrBindings = {}
 
 ---
----Unbind all keys bound by [NoVR:BindKey](lua://NoVR.BindKey)
+---Unbinds all keys bound by [NoVR:BindKey](lua://NoVR.BindKey)
 ---
 function NoVR:UnbindKeys()
     -- for _, binding in ipairs(novrBindings) do
@@ -429,9 +435,9 @@ function NoVR:UnbindKeys()
 end
 
 ---
----Bind a keyboard key to a callback function.
+---Binds a keyboard key to a callback function.
 ---
----@param key KeyboardKey
+---@param key KeyboardKey # Key to bind
 ---@param callback fun()|string # Callback function or command string
 ---@param name? string # Optional name for the callback command
 function NoVR:BindKey(key, callback, name)

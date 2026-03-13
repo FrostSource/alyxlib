@@ -5,6 +5,9 @@
 
 let panelReady = false;
 
+/** @type {Category} */
+let settingsCategory = null;
+
 /**
  * Fires a Panorama output with the given name and arguments.
  * The output is routed to the panel's input 'RunScriptCode'.
@@ -24,12 +27,12 @@ function FireOutput(outputName, ...args) {
 }
 
 /**
- * Maps category id to category object.
+ * List of all categories.
  * @type {Category[]}
  */
 let categories = [];
 
-const numberOfVisibleCategories = 5;
+let numberOfVisibleCategories = 5;
 
 let categoryBarCycleIndex = 0;
 
@@ -136,7 +139,10 @@ class Category
         this.panel.AddClass("scroll");
         this.content = $.CreatePanel("Panel", this.panel, `${this.id}_content`);
         this.content.AddClass("content");
+    }
 
+    AddToCategoryBar()
+    {
         // Create category button
         this.button = CreateDebugMenuButton($("#CategoryBar"), () => SetCategoryVisible(this.id), "CategoryButton", `${this.id}_button`);
         
@@ -174,17 +180,21 @@ class Category
         if (visible)
         {
             this.panel.AddClass("Visible");
-            this.button.AddClass("Selected");
+            if (this.button != null)
+                this.button.AddClass("Selected");
         }
         else
         {
             this.panel.RemoveClass("Visible");
-            this.button.RemoveClass("Selected");
+            if (this.button != null)
+                this.button.RemoveClass("Selected");
         }
     }
 
     SetBarButtonVisible(visible)
     {
+        if (this.button == null) return;
+
         if (visible)
             this.button.visible = true;
         else
@@ -479,7 +489,7 @@ class SubMenuSlider
 
         // This only works in VR
         TurnButtonIntoDebugMenuButton(this.panel, () => {
-            const pos = GetAffordancePosition();
+            const pos = GetAffordancePositionInMenuSpace();
             if (pos !== null) {
                 // Slider does not have actualxoffset or actuallayoutwidth THANKS AGAIN VALVE
                 // These magic numbers are estimates of where the slider is in relation to the parent panel
@@ -821,6 +831,9 @@ class SubMenuLabel
  */
 function SetCategoryVisible(id)
 {
+    // Hide settings if available
+    if (settingsCategory) settingsCategory.SetVisible(false);
+
     for (const category of categories)
     {
         if (category.id == id)
@@ -862,6 +875,10 @@ function CycleCategories(direction)
  */
 function UpdateCategoryBarVisibility()
 {
+    const bgPanel = $("#background_panel");
+    const width = bgPanel.actuallayoutwidth;
+    numberOfVisibleCategories = Math.max(1, Math.floor(width / 190));
+
     const selectedIndex = categories.indexOf(currentlySelectedCategory);
     if (selectedIndex < categoryBarCycleIndex) {
         categoryBarCycleIndex = selectedIndex;
@@ -893,14 +910,19 @@ function CreateCategory(id, name)
 {
     let category = new Category(id, name);
 
-    categories.push(category);
+    if (id === "settings") {
+        settingsCategory = category;
+    } else {
+        category.AddToCategoryBar();
+        categories.push(category);
+    }
 
     // Restore selected tab on refresh
     if ($.GetContextPanel().currentlySelectedCategory) {
         if ($.GetContextPanel().currentlySelectedCategory == category.id) {
             SetCategoryVisible(category.id);
         }
-    } else if (currentlySelectedCategory == null) {
+    } else if (currentlySelectedCategory == null && category !== settingsCategory) {
         SetCategoryVisible(category.id)
     }
     
@@ -916,6 +938,8 @@ function CreateCategory(id, name)
  */
 function GetCategory(id)
 {
+    if (id === "settings") return settingsCategory;
+
     for (const category of categories)
     {
         if (category.id == id) return category;
@@ -938,6 +962,33 @@ function StartPanelDrag()
     FireOutput("_DebugMenuDrag");
 }
 
+function ShowSettings()
+{
+    if (settingsCategory) {
+        SetCategoryVisible();
+        settingsCategory.SetVisible(true);
+        currentlySelectedCategory = settingsCategory;
+    }
+}
+
+function OpenDialog(text)
+{
+    const dialog = $('#modal_background');
+    const label = $('#dialog_label');
+    const contentContainer = $('#ContentContainer');
+    label.text = text;
+    dialog.visible = true;
+    contentContainer.style.blur = "gaussian( 5 )";
+}
+
+function CloseDialog()
+{
+    const dialog = $('#modal_background');
+    const contentContainer = $('#ContentContainer');
+    dialog.visible = false;
+    contentContainer.style.blur = "none";
+}
+
 /**
  * Gets the position of the left or right 'affordance' circle for the VR finger interacting with the menu.
  * @returns {{x:number,y:number}?}
@@ -947,10 +998,27 @@ function GetAffordancePosition() {
     if (left.visible)
         return { x: left.actualxoffset, y: left.actualyoffset };
 
-    const right = $('#vr_affordance_left');
+    const right = $('#vr_affordance_right');
     if (right.visible)
         return { x: right.actualxoffset, y: right.actualyoffset };
 
+    return null;
+}
+
+/**
+ * Gets the position of the left or right 'affordance' circle for the VR finger interacting with the menu,
+ * normalized to the menu container.
+ * @returns {{x:number,y:number}?}
+ */
+function GetAffordancePositionInMenuSpace() {
+    const affordancePosition = GetAffordancePosition();
+    if (affordancePosition) {
+        let bgPanel = $("#background_panel");
+        return {
+            x: affordancePosition.x - bgPanel.actualxoffset,
+            y: affordancePosition.y - bgPanel.actualyoffset
+        };
+    }
     return null;
 }
 
@@ -1005,12 +1073,43 @@ function ClickHoveredButton()
 }
 
 /**
- * Sets the height of the menu container.
- * @param {number} height 
+ * Sets the width and height of the menu container.
+ * @param {number?} width
+ * @param {number?} height 
  */
-function SetContainerHeight(height)
-{
-    $('#CategoriesContainer').style.minHeight = `${height}px`;
+function SetContainerSize(width, height) {
+    // Clear container clip so larger sizes don't get clipped before the schedule
+    const container = $("#affordance_container");
+    container.style.clip = "rect(0px, 100%, 100%, 0px)";
+
+    const bgPanel = $("#background_panel");
+
+    if (width) {
+        bgPanel.style.width = `${width}px`;
+        $.Schedule(0.1, ()=> { UpdateCategoryBarVisibility(); });
+    }
+    if (height) {
+        bgPanel.style.height = `${height}px`;
+        $('#CategoriesContainer').style.minHeight = `${height - 111}px`;
+    }
+
+    // Wait for element update and any animations
+    // 0.6s is the duration of the opening animation
+    $.Schedule(0.61, ()=> {
+        let bgWidth = bgPanel.actuallayoutwidth;
+        let bgHeight = bgPanel.actuallayoutheight;
+        let containerWidth = container.actuallayoutwidth;
+        let containerHeight = container.actuallayoutheight;
+        
+        // Calculate centered x position within container
+        let x = (containerWidth - bgWidth) / 2;
+        // Calculate the bottom y position
+        let y = (containerHeight - bgHeight);
+        
+        const clipRect = "rect(" + y + "px, " + (x + bgWidth) + "px, " + (y + bgHeight) + "px, " + x + "px)";
+        
+        container.style.clip = clipRect;
+    });
 }
 
 /**
@@ -1180,9 +1279,16 @@ function ParseCommand(command, args)
             break;
         }
 
-        case "setheight": {
-            const height = parseInt(args[0]);
-            SetContainerHeight(height);
+        case "setsize": {
+            const width = parseInt(args[0]);
+            const height = parseInt(args[1]);
+            SetContainerSize(width, height);
+            break;
+        }
+
+        case "showdialog": {
+            const text = args[0];
+            OpenDialog(text);
             break;
         }
     }
@@ -1244,6 +1350,7 @@ function ScrollHelperClick() {
 {
     // Modify preset layout buttons to work with controller trigger
     TurnButtonIntoDebugMenuButton($("#CloseMenuButton"));
+    TurnButtonIntoDebugMenuButton($("#SettingsButton"));
     TurnButtonIntoDebugMenuButton($("#TitleBar"));
     TurnButtonIntoDebugMenuButton($("#CycleCategoryLeftButton"));
     TurnButtonIntoDebugMenuButton($("#CycleCategoryRightButton"));
