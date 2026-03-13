@@ -154,7 +154,7 @@ end
 ---@param workshopID string # The workshop ID of the addon
 ---@return boolean # `true` if the addon is enabled, `false` otherwise
 function IsAddonEnabled(workshopID)
-    return vlua.find(GetEnabledAddons(), workshopID)
+    return vlua.find(GetEnabledAddons(), workshopID) ~= nil
 end
 
 ---
