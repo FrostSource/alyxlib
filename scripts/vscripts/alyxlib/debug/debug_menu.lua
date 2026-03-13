@@ -500,8 +500,8 @@ function DebugMenu:ShowMenu()
     self.panel = SpawnEntityFromTableSynchronous("point_clientui_world_panel", {
         targetname = "alyxlib_debug_menu",
         dialog_layout_name = "file://{resources}/layout/custom_game/alyxlib_debug_menu.xml",
-        width = 30,
-        height = 30,
+        width = MAX_WIDTH,
+        height = MAX_HEIGHT,
         panel_dpi = DPI,
         ignore_input = 0,
         lit = 0,
