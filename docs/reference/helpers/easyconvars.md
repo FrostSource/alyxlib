@@ -19,7 +19,7 @@ EasyConvars.version = value
 ```
 
 **Default value**
-  `"v2.0.0"`
+  `"v2.1.0"`
 
 ### registered
 
@@ -52,16 +52,16 @@ EasyConvars:Register(ctype, name, defaultValue, onUpdate, helpText, flags)
 
 - **`ctype`**  
   `EasyConvarsType`  
-  Type of the convar.
+  Type of the convar
 - **`name`**  
   `string`  
   Name of the convar
 - **`defaultValue`**  
   `any`, `function`  
-  Will be converted to a string. If given a function, the value will be determined on player spawn.
+  Will be converted to a string. If given a function, the value will be determined on player spawn
 - **`onUpdate`** *(optional)*  
   `(function`  
-  Optional callback function.
+  Optional callback function
 - **`helpText`** *(optional)*  
   `string`  
   Description of the convar
@@ -115,7 +115,7 @@ EasyConvars:Save(name)
 
 - **`name`**  
   `string`  
-  The name of the convar to save.
+  The name of the convar to save
 
 ### Load
 
@@ -131,11 +131,11 @@ EasyConvars:Load(name)
 
 - **`name`**  
   `string`  
-  The name of the convar to load.
+  The name of the convar to load
 
 **Returns**
 - **`boolean`**
-Returns true if the convar was loaded successfully.
+`true` if the convar was loaded successfully
 
 ### SetPersistent
 
@@ -151,10 +151,10 @@ EasyConvars:SetPersistent(name, persistent)
 
 - **`name`**  
   `string`  
-  The name of the convar.
+  The name of the convar
 - **`persistent`**  
   `boolean`  
-  Whether the convar should be persistent.
+  `true` if the convar should be persistent
 
 ### RegisterConvar
 
@@ -288,7 +288,7 @@ EasyConvars:GetStr(name)
 
 **Returns**
 - **`string?`**
-The value of the convar as a string or nil if convar does not exist
+The value of the convar as a string or `nil` if convar does not exist
 
 ### GetBool
 
@@ -306,7 +306,7 @@ EasyConvars:GetBool(name)
 
 **Returns**
 - **`boolean?`**
-The value of the convar as a boolean or nil if convar does not exist
+The value of the convar as a boolean or `nil` if convar does not exist
 
 ### GetFloat
 
@@ -324,7 +324,7 @@ EasyConvars:GetFloat(name)
 
 **Returns**
 - **`number?`**
-The value of the convar as a number or nil if convar does not exist
+The value of the convar as a number or `nil` if convar does not exist
 
 ### GetInt
 
@@ -342,7 +342,7 @@ EasyConvars:GetInt(name)
 
 **Returns**
 - **`integer?`**
-The value of the convar as a truncated number or nil if convar does not exist
+The value of the convar as a truncated number or `nil` if convar does not exist
 
 ### SetStr
 
@@ -431,7 +431,7 @@ EasyConvars:SetRaw(name, value)
 
 ### WasChangedByUser
 
-Get if the convar was changed by the user in the console.
+Gets if the convar was changed by the user in the console or via CFG.
 
 ```lua
 EasyConvars:WasChangedByUser(name)
@@ -447,8 +447,8 @@ EasyConvars:WasChangedByUser(name)
 
 Forces the convar to be considered changed by the user.
 
-This can be useful if you want to stop a convar from initializing because you're setting its value early.
-Or if you're setting the value by some unusual means for the user.
+This can be useful if you want to stop a convar from initializing because you're setting its value early
+or if you're setting the value by some unusual means for the user.
 
 ```lua
 EasyConvars:SetWasChanged(name, wasChanged)
@@ -458,8 +458,10 @@ EasyConvars:SetWasChanged(name, wasChanged)
 
 - **`name`**  
   `string`  
+  Name of the convar
 - **`wasChanged`**  
   `boolean`  
+  `true` to mark the convar as changed by the user
 
 ### SetIfUnchanged
 
@@ -475,11 +477,15 @@ EasyConvars:SetIfUnchanged(name, value)
   `string`  
 - **`value`**  
   `any`  
-  The value to set. Will be converted to a string representation.
+  The value to set - will be converted to a string representation
 
 ### SetPostInitializer
+!!! danger "This method is deprecated."
 
-Sets the function to be called after all convars have been initialized.
+
+Adds a function to be called after all convars have been initialized.
+
+**Deprecated: Use [AddPostInitializer](lua://EasyConvars.AddPostInitializer) instead**
 
 ```lua
 EasyConvars:SetPostInitializer(func)
@@ -489,6 +495,7 @@ EasyConvars:SetPostInitializer(func)
 
 - **`func`**  
   `function`  
+  The function to call
 
 ## Types
 
@@ -498,17 +505,17 @@ Data of a registered convar.
 
 | Field | Type | Description |
 | ---- | ---- | ----------- |
-| type | `EasyConvarsType` | Type of the convar. |
+| type | `EasyConvarsType` | Type of the convar |
 | name | `string` | Name of the convar |
-| desc? | `string` | Description of the convar/command. Is displayed below the current value when called without a parameter. |
-| value | `string` | Raw value of the convar. |
-| prevValue | `string` | Previous raw value of the convar. |
-| callback? | `function` | Optional callback function whenever the convar is changed. |
-| initializer? | `function` | Optional initializer function which will set the default value on player spawn. |
-| persistent | `boolean` | If the value is saved to player on change. |
-| wasChangedByUser | `boolean` | Whether the value was changed by the user. |
-| displayFunc? | `function` | The function called when the convar is called without any parameters. By default it just prints the value. |
-| defaultValue? | `string` | The default value of the convar given by the registration. Not the value set in cfg or launch options. |
+| desc? | `string` | Description of the convar/command. Is displayed below the current value when called without a parameter |
+| value | `string` | Raw value of the convar |
+| prevValue | `string` | Previous raw value of the convar |
+| callback? | `function` | Optional callback function whenever the convar is changed |
+| initializer? | `function` | Optional initializer function which will set the default value on player spawn |
+| persistent | `boolean` | If the value is saved to player on change |
+| wasChangedByUser | `boolean` | Whether the value was changed by the user |
+| displayFunc? | `function` | The function called when the convar is called without any parameters. By default it just prints the value |
+| defaultValue? | `string` | The default value of the convar given by the registration. Not the value set in cfg or launch options |
 
 ## Aliases
 

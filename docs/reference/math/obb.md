@@ -16,14 +16,14 @@ GetBoundingOBBData(mins, maxs)
 
 - **`mins`**  
   `Vector`  
-  The local space minimum corner.
+  The local space minimum corner
 - **`maxs`**  
   `Vector`  
-  The local space maximum corner.
+  The local space maximum corner
 
 **Returns**
 - **`OBBData`**
-The OBB data.
+The OBB data
 
 ### GetEntityOBBData
 
@@ -37,11 +37,11 @@ GetEntityOBBData(entity)
 
 - **`entity`**  
   `EntityHandle`  
-  The entity.
+  The entity to get the OBB data for
 
 **Returns**
 - **`OBBData`**
-The OBB data.
+The OBB data
 
 ### GetEntityAABB
 
@@ -55,17 +55,17 @@ GetEntityAABB(entity)
 
 - **`entity`**  
   `EntityHandle`  
-  The entity.
+  The entity to get the AABB for
 
 **Returns**
 
 - **`Vector`**  
     
-The world space minimum corner.
+The world space minimum corner
 
 - **`Vector`**  
     
-The world space maximum corner.
+The world space maximum corner
 
 ### AABBvsAABB
 
@@ -79,20 +79,20 @@ AABBvsAABB(aMin, aMax, bMin, bMax)
 
 - **`aMin`**  
   `Vector`  
-  The minimum corner of the first AABB.
+  The minimum corner of the first AABB
 - **`aMax`**  
   `Vector`  
-  The maximum corner of the first AABB.
+  The maximum corner of the first AABB
 - **`bMin`**  
   `Vector`  
-  The minimum corner of the second AABB.
+  The minimum corner of the second AABB
 - **`bMax`**  
   `Vector`  
-  The maximum corner of the second AABB.
+  The maximum corner of the second AABB
 
 **Returns**
 - **`boolean`**
-True if the AABBs intersect.
+`true` if the AABBs intersect, `false` otherwise
 
 ### OBBvsOBB
 
@@ -106,26 +106,26 @@ OBBvsOBB(obbDataA, originA, anglesA, obbDataB, originB, anglesB)
 
 - **`obbDataA`**  
   `OBBData`  
-  The data of the first OBB.
+  The data of the first OBB
 - **`originA`**  
   `Vector`  
-  The world space origin of the first OBB.
+  The world space origin of the first OBB
 - **`anglesA`**  
   `QAngle`  
-  The angles of the first OBB.
+  The angles of the first OBB
 - **`obbDataB`**  
   `OBBData`  
-  The data of the second OBB.
+  The data of the second OBB
 - **`originB`**  
   `Vector`  
-  The world space origin of the second OBB.
+  The world space origin of the second OBB
 - **`anglesB`**  
   `QAngle`  
-  The angles of the second OBB.
+  The angles of the second OBB
 
 **Returns**
 - **`boolean`**
-True if the OBBs intersect.
+`true` if the OBBs intersect, `false` otherwise
 
 ### AABBvsOBB
 
@@ -139,23 +139,23 @@ AABBvsOBB(aabbMin, aabbMax, obbData, obbOrigin, obbAngles)
 
 - **`aabbMin`**  
   `Vector`  
-  The minimum corner of the AABB.
+  The minimum corner of the AABB
 - **`aabbMax`**  
   `Vector`  
-  The maximum corner of the AABB.
+  The maximum corner of the AABB
 - **`obbData`**  
   `OBBData`  
-  The data of the OBB.
+  The data of the OBB
 - **`obbOrigin`**  
   `Vector`  
-  The world space origin of the OBB.
+  The world space origin of the OBB
 - **`obbAngles`**  
   `QAngle`  
-  The angles of the OBB.
+  The angles of the OBB
 
 **Returns**
 - **`boolean`**
-True if the AABB and OBB intersect.
+`true` if the AABB and OBB intersect, `false` otherwise
 
 ### PointInAABB
 
@@ -169,16 +169,17 @@ PointInAABB(aMin, aMax, point)
 
 - **`aMin`**  
   `Vector`  
-  The minimum corner of the AABB.
+  The minimum corner of the AABB
 - **`aMax`**  
   `Vector`  
-  The maximum corner of the AABB.
+  The maximum corner of the AABB
 - **`point`**  
   `Vector`  
-  The point to test.
+  The point to test
 
 **Returns**
 - **`boolean`**
+`true` if the point is inside the AABB, `false` otherwise
 
 ### PointInOBB
 
@@ -192,19 +193,20 @@ PointInOBB(obbData, origin, angles, point)
 
 - **`obbData`**  
   `OBBData`  
-  The OBB data (center, half extents in local space).
+  The OBB data (center, half extents in local space)
 - **`origin`**  
   `Vector`  
-  The world space origin of the OBB.
+  The world space origin of the OBB
 - **`angles`**  
   `QAngle`  
-  The world space orientation of the OBB.
+  The world space orientation of the OBB
 - **`point`**  
   `Vector`  
-  The point to test.
+  The point to test
 
 **Returns**
 - **`boolean`**
+`true` if the point is inside the OBB, `false` otherwise
 
 ### DebugDrawOBB
 
@@ -218,22 +220,22 @@ DebugDrawOBB(obbData, origin, angles, color, noDepthTest, seconds)
 
 - **`obbData`**  
   `OBBData`  
-  The data of the OBB.
+  The data of the OBB
 - **`origin`**  
   `Vector`  
-  The world space origin of the OBB.
+  The world space origin of the OBB
 - **`angles`**  
   `QAngle`  
-  The angles of the OBB.
+  The angles of the OBB
 - **`color`**  
   `Vector`  
-  The color of the OBB.
+  The color of the OBB
 - **`noDepthTest`**  
   `boolean`  
-  True if the OBB should be drawn above all geometry.
+  True if the OBB should be drawn above all geometry
 - **`seconds`**  
   `number`  
-  The number of seconds the OBB should be visible for.
+  The number of seconds the OBB should be visible for
 
 ### DebugDrawEntityOBB
 
@@ -247,16 +249,16 @@ DebugDrawEntityOBB(entity, color, noDepthTest, seconds)
 
 - **`entity`**  
   `EntityHandle`  
-  The entity to draw the OBB for.
+  The entity to draw the OBB for
 - **`color`**  
   `Vector`  
-  The color of the OBB in RGB.
+  The color of the OBB in RGB
 - **`noDepthTest`**  
   `boolean`  
-  True if the OBB should be drawn above all geometry.
+  True if the OBB should be drawn above all geometry
 - **`seconds`**  
   `number`  
-  The number of seconds the OBB should be visible for.
+  The number of seconds the OBB should be visible for
 
 ### DebugDrawEntityAABB
 
@@ -272,13 +274,13 @@ DebugDrawEntityAABB(entity, color, noDepthTest, seconds)
 
 - **`entity`**  
   `EntityHandle`  
-  The entity to draw the AABB for.
+  The entity to draw the AABB for
 - **`color`**  
   `Vector`  
-  The color of the AABB in RGB.
+  The color of the AABB in RGB
 - **`noDepthTest`**  
   `boolean`  
-  True if the AABB should be drawn above all geometry.
+  True if the AABB should be drawn above all geometry
 - **`seconds`**  
   `number`  
-  The number of seconds the AABB should be visible for.
+  The number of seconds the AABB should be visible for

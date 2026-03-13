@@ -24,7 +24,7 @@ Entities:FindBestMatching(name, class, position, radius)
 **Parameters**
 
 - **`name`**  
-  `string`  
+  `string`, `""`  
   The unique name of the entity (if available, "" if not)
 - **`class`**  
   `string`  
@@ -50,6 +50,7 @@ Entities:All()
 
 **Returns**
 - **`EntityHandle[]`**
+List of all entities
 
 ### Random
 
@@ -61,12 +62,13 @@ Entities:Random()
 
 **Returns**
 - **`EntityHandle`**
+A random entity
 
 ### FindInPrefab
 
-Find an entity within the same prefab as another entity.
+Finds a named entity within the same name-fixed-up prefab as another entity.
 
-Will have issues in nested prefabs.
+Might have issues in nested prefabs.
 
 ```lua
 Entities:FindInPrefab(entity, name)
@@ -76,24 +78,26 @@ Entities:FindInPrefab(entity, name)
 
 - **`entity`**  
   `EntityHandle`  
+  A known entity in the prefab
 - **`name`**  
   `string`  
+  The name to search for
 
 **Returns**
 
 - **`EntityHandle?`**  
     
-The found entity, nil if not found.
+The found entity, or `nil` if not found
 
 - **`string`**  
     
-Prefab part of the name.
+Prefab part of the name
 
 ### FindInPrefab
 
-Find an entity within the same prefab as this entity.
+Finds a named entity within the same name-fixed-up prefab as this entity.
 
-Will have issues in nested prefabs.
+Might have issues in nested prefabs.
 
 ```lua
 CEntityInstance:FindInPrefab(name)
@@ -103,19 +107,21 @@ CEntityInstance:FindInPrefab(name)
 
 - **`name`**  
   `string`  
+  The name to search for
 
 **Returns**
 
 - **`EntityHandle?`**  
     
+The found entity, or `nil` if not found
 
 - **`string`**  
     
-Prefab part of the name.
+Prefab part of the name
 
 ### FindAllInCone
 
-Find all entities with a cone.
+Finds all entities with a cone.
 
 ```lua
 Entities:FindAllInCone(origin, direction, maxDistance, maxAngle, checkEntityBounds)
@@ -125,27 +131,27 @@ Entities:FindAllInCone(origin, direction, maxDistance, maxAngle, checkEntityBoun
 
 - **`origin`**  
   `Vector`  
-  Origin of the cone in worldspace.
+  Origin of the cone in worldspace
 - **`direction`**  
   `Vector`  
-  Normalized direction vector.
+  Normalized direction vector
 - **`maxDistance`**  
   `number`  
-  Max distance the cone will extend towards `direction`.
+  Max distance the cone will extend towards `direction`
 - **`maxAngle`**  
   `number`  
-  Field-of-view in degrees that the cone can see, [0-180].
+  Field-of-view in degrees that the cone can see, [0-180]
 - **`checkEntityBounds`**  
   `boolean`  
-  If true the entity bounding box will be tested as well as the origin.
+  If true the entity bounding box will be tested as well as the origin
 
 **Returns**
 - **`EntityHandle[]`**
-List of entities found within the cone.
+List of entities found within the cone
 
 ### FindAllInBounds
 
-Find all entities within `mins` and `maxs` bounding box.
+Finds all entities within `mins` and `maxs` bounding box.
 
 ```lua
 Entities:FindAllInBounds(mins, maxs, checkEntityBounds)
@@ -155,21 +161,21 @@ Entities:FindAllInBounds(mins, maxs, checkEntityBounds)
 
 - **`mins`**  
   `Vector`  
-  Mins vector in world-space.
+  Mins vector in world-space
 - **`maxs`**  
   `Vector`  
-  Maxs vector in world-space.
+  Maxs vector in world-space
 - **`checkEntityBounds`** *(optional)*  
   `boolean`  
-  If true the entity bounding boxes will be used for the check instead of the origin.
+  `true` if the bounding boxes should be used for the check instead of their origin
 
 **Returns**
 - **`EntityHandle[]`**
-List of entities found.
+List of entities found
 
 ### FindAllInBox
 
-Find all entities within an `origin` centered box.
+Finds all entities within an `origin` centered box.
 
 ```lua
 Entities:FindAllInBox(width, length, height)
@@ -179,21 +185,21 @@ Entities:FindAllInBox(width, length, height)
 
 - **`width`**  
   `number`  
-  Size of the box on the X axis.
+  Size of the box on the X axis
 - **`length`**  
   `number`  
-  Size of the box on the Y axis.
+  Size of the box on the Y axis
 - **`height`**  
   `number`  
-  Size of the box on the Z axis.
+  Size of the box on the Z axis
 
 **Returns**
 - **`EntityHandle[]`**
-List of entities found.
+List of entities found
 
 ### FindAllInCube
 
-Find all entities within an `origin` centered cube of a given `size.`
+Finds all entities within an `origin` centered cube of a given `size.`
 
 ```lua
 Entities:FindAllInCube(origin, size)
@@ -203,18 +209,18 @@ Entities:FindAllInCube(origin, size)
 
 - **`origin`**  
   `Vector`  
-  World space cube position.
+  World space cube position
 - **`size`**  
   `number`  
-  Size of the cube in all directions.
+  Size of the cube in all directions
 
 **Returns**
 - **`EntityHandle[]`**
-List of entities found.
+List of entities found
 
 ### FindNearest
 
-Find the nearest entity to a world position.
+Finds the nearest entity to a world position.
 
 ```lua
 Entities:FindNearest(origin, maxRadius)
@@ -224,14 +230,14 @@ Entities:FindNearest(origin, maxRadius)
 
 - **`origin`**  
   `Vector`  
-  Position to check from.
+  Position to check from
 - **`maxRadius`**  
   `number`  
-  Maximum radius to check from `origin`.
+  Maximum radius to check from `origin`
 
 **Returns**
 - **`EntityHandle?`**
-The nearest entity found, or nil if none found.
+The nearest entity found, or nil if none found
 
 ### FindAllByClassnameList
 
@@ -245,9 +251,11 @@ Entities:FindAllByClassnameList(classes)
 
 - **`classes`**  
   `string[]`  
+  List of classnames
 
 **Returns**
 - **`EntityHandle[]`**
+List of entities
 
 ### FindAllByClassnameListWithin
 
@@ -261,13 +269,17 @@ Entities:FindAllByClassnameListWithin(classes, origin, maxRadius)
 
 - **`classes`**  
   `string[]`  
+  List of classnames
 - **`origin`**  
   `Vector`  
+  Position to check from
 - **`maxRadius`**  
   `number`  
+  Maximum radius to check from `origin`
 
 **Returns**
 - **`EntityHandle[]`**
+List of entities
 
 ### FindByClassnameListNearest
 
@@ -281,13 +293,17 @@ Entities:FindByClassnameListNearest(classes, origin, maxRadius)
 
 - **`classes`**  
   `string[]`  
+  List of classnames
 - **`origin`**  
   `Vector`  
+  Position to check from
 - **`maxRadius`**  
   `number`  
+  Maximum radius to check from `origin`
 
 **Returns**
 - **`EntityHandle?`**
+The nearest entity found, or `nil` if none found
 
 ### FindAllNPCs
 
@@ -299,6 +315,7 @@ Entities:FindAllNPCs()
 
 **Returns**
 - **`CAI_BaseNPC[]`**
+List of NPC entities
 
 ### IterateAllNPCs
 
@@ -323,7 +340,7 @@ Iterator
 
 ### FindAllByModelWithin
 
-Find all entities by model name within a radius.
+Finds all entities by model name within a radius.
 
 ```lua
 Entities:FindAllByModelWithin(modelName, origin, maxRadius)
@@ -333,17 +350,21 @@ Entities:FindAllByModelWithin(modelName, origin, maxRadius)
 
 - **`modelName`**  
   `string`  
+  Model name
 - **`origin`**  
   `Vector`  
+  Position to check from
 - **`maxRadius`**  
   `number`  
+  Maximum radius to check from `origin`
 
 **Returns**
 - **`EntityHandle[]`**
+List of entities
 
 ### FindByModelNearest
 
-Find the entity by model name nearest to a point.
+Finds the entity by model name nearest to a point.
 
 ```lua
 Entities:FindByModelNearest(modelName, origin, maxRadius)
@@ -353,17 +374,21 @@ Entities:FindByModelNearest(modelName, origin, maxRadius)
 
 - **`modelName`**  
   `string`  
+  Model name
 - **`origin`**  
   `Vector`  
+  Position to check from
 - **`maxRadius`**  
   `number`  
+  Maximum radius to check from `origin`
 
 **Returns**
 - **`EntityHandle?`**
+The nearest entity found, or `nil` if none found
 
 ### FindByModelPattern
 
-Find the first entity whose model name contains `namePattern`.
+Finds the first entity whose model name contains `namePattern`.
 
 This works by searching every entity in the map and may incur a performance hit in large maps if used often.
 
@@ -375,13 +400,15 @@ Entities:FindByModelPattern(namePattern)
 
 - **`namePattern`**  
   `string`  
+  Pattern to search for
 
 **Returns**
 - **`EntityHandle?`**
+The found entity, or `nil` if not found
 
 ### FindAllByModelPattern
 
-Find all entities whose model name contains `namePattern`.
+Finds all entities whose model name contains `namePattern`.
 
 This works by searching every entity in the map and may incur a performance hit in large maps if used often.
 
@@ -393,6 +420,8 @@ Entities:FindAllByModelPattern(namePattern)
 
 - **`namePattern`**  
   `string`  
+  Pattern to search for
 
 **Returns**
 - **`EntityHandle[]`**
+List of entities

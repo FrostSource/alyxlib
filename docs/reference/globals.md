@@ -31,7 +31,7 @@ RegisterAlyxLibAddon(name, version, workshopID, shortName, minAlyxLibVersion, ma
   The ID of the addon on the Steam workshop
 - **`shortName`** *(optional)*  
   `string`  
-  Short unique name of the addon without spaces, e.g. "myaddon". Defaults to `name` without spaces and converted to lowercase\
+  Short unique name of the addon without spaces, e.g. "myaddon". Defaults to `name` without spaces and converted to lowercase
 - **`minAlyxLibVersion`** *(optional)*  
   `string`  
   Minimum AlyxLib version that this addon works with, defaults to "v1.0.0"
@@ -91,17 +91,17 @@ CompareVersions(v1, v2)
 
 - **`v1`**  
   `string`  
-  The first version string to compare. May include leading "v" and whitespace, and may have missing `minor` or `patch` components.
+  The first version string to compare. May include leading "v" and whitespace, and may have missing `minor` or `patch` components
 - **`v2`**  
   `string`  
-  The second version string to compare. Similar format and rules to `v1`.
+  The second version string to compare. Similar format and rules to `v1`
 
 **Returns**
 - **`-1|0|1`**
 
 ### GetScriptFile
 
-Get the file name of the current script without folders or extension. E.g. `util.util`
+Gets the file name of the current script without folders or extension. E.g. `util.util`
 
 ```lua
 GetScriptFile(sep, level)
@@ -111,17 +111,18 @@ GetScriptFile(sep, level)
 
 - **`sep`** *(optional)*  
   `string`  
-  Separator character, default is '.'
+  Separator character (default: `.`)
 - **`level`** *(optional)*  
-  `(integer|function)?`  
+  `integer`, `function`  
   Function level, [View documents](command:extension.lua.doc?["en-us/51/manual.html/pdf-debug.getinfo"])
 
 **Returns**
 - **`string`**
+File name
 
 ### GetEnabledAddons
 
-Get the list of enabled addons from the `default_enabled_addons_list` Convar.
+Gets the list of enabled addons from the `default_enabled_addons_list` convar.
 
 ```lua
 GetEnabledAddons()
@@ -129,6 +130,7 @@ GetEnabledAddons()
 
 **Returns**
 - **`string[]`**
+List of enabled addons
 
 ### IsAddonEnabled
 
@@ -150,7 +152,7 @@ IsAddonEnabled(workshopID)
 
 ### IsEntity
 
-Get if the given `handle` value is an entity, regardless of if it's still alive.
+Checks if the given `handle` value is an entity, regardless of if it's still alive.
 
 A common usage is replacing the often used entity check:
 
@@ -167,57 +169,58 @@ With:
     ```
 
 ```lua
-IsEntity(handle, checkValidity)
+IsEntity(value, checkValidity)
 ```
 
 **Parameters**
 
-- **`handle`**  
+- **`value`**  
   `EntityHandle`, `any`  
+  The value to check
 - **`checkValidity`** *(optional)*  
   `boolean`  
-  Optionally check validity with IsValidEntity.
+  Optionally check validity with [IsValidEntity](lua://IsValidEntity)
 
 **Returns**
 - **`boolean`**
 
 ### AddOutput
 
-Add an output to a given entity `handle`.
+Adds an output to a given `entity`.
 
 ```lua
-AddOutput(handle, output, target, input, parameter, delay, activator, caller, fireOnce)
+AddOutput(entity, output, target, input, parameter, delay, activator, caller, fireOnce)
 ```
 
 **Parameters**
 
-- **`handle`**  
+- **`entity`**  
   `EntityHandle`, `string`  
-  The entity to add the `output` to.
+  The entity to add the `output` to
 - **`output`**  
   `string`  
-  The output name to add.
+  The output name to add
 - **`target`**  
   `EntityHandle`, `string`  
-  The entity the output should target, either handle or targetname.
+  The entity the output should target, either handle or targetname
 - **`input`**  
   `string`  
-  The input name on `target`.
+  The input name on `target`
 - **`parameter`** *(optional)*  
   `string`  
-  The parameter override for `input`.
+  The parameter override for `input` (default: `""`)
 - **`delay`** *(optional)*  
   `number`  
-  Delay for the output in seconds.
+  Delay for the output in seconds (default: `0`)
 - **`activator`** *(optional)*  
   `EntityHandle`  
-  Activator for the output.
+  Activator for the output (default: `nil`)
 - **`caller`** *(optional)*  
   `EntityHandle`  
-  Caller for the output.
+  Caller for the output (default: `nil`)
 - **`fireOnce`** *(optional)*  
   `boolean`  
-  If the output should only fire once.
+  If the output should only fire once (default: `false`)
 
 ### module_exists
 
@@ -231,9 +234,11 @@ module_exists(name)
 
 - **`name`** *(optional)*  
   `string`  
+  Name of the module
 
 **Returns**
 - **`boolean`**
+`true` if the module exists, `false` otherwise
 
 ### ifrequire
 
@@ -251,15 +256,18 @@ ifrequire(modname, callback)
 
 - **`modname`**  
   `string`  
+  Name of the module/script
 - **`callback`**  
   `function?`  
+  Callback function
 
 **Returns**
-- **`unknown`**
+- **`unknown|nil`**
+The value returned by the module, or `nil` if the module fails to load
 
 ### IncludeScript
 
-Execute a script file. Included in the current scope by default.
+Executes a script file. Included in the current scope by default.
 
 ```lua
 IncludeScript(scriptFileName, scope)
@@ -269,15 +277,18 @@ IncludeScript(scriptFileName, scope)
 
 - **`scriptFileName`**  
   `string`  
+  Name of the script
 - **`scope`** *(optional)*  
   `ScriptScope`  
+  Scope to include the script in
 
 **Returns**
 - **`boolean`**
+`true` if the script was successfully included, `false` otherwise
 
 ### IsVREnabled
 
-Gets if the game was started in VR mode.
+Checks if the game was started in VR mode.
 
 ```lua
 IsVREnabled()
@@ -285,6 +296,7 @@ IsVREnabled()
 
 **Returns**
 - **`boolean`**
+`true` if the game was started in VR mode, `false` otherwise
 
 ### prints
 
@@ -434,17 +446,17 @@ Expose(func, name, scope)
 
 - **`func`**  
   `function`  
-  The function to expose.
+  The function to expose
 - **`name`** *(optional)*  
   `string`  
-  Optionally the name of the function for faster processing.
+  Optionally the name of the function for faster processing
 - **`scope`** *(optional)*  
   `table`  
-  Optionally the explicit scope to put the exposed function in.
+  Optionally the explicit scope to put the exposed function in
 
 ### IsVector
 
-Get if a value is a `Vector`
+Checks if a value is a [Vector](lua://Vector).
 
 ```lua
 IsVector(value)
@@ -454,13 +466,15 @@ IsVector(value)
 
 - **`value`**  
   `any`  
+  Value to check
 
 **Returns**
 - **`boolean`**
+`true` if the value is a [Vector](lua://Vector), `false` otherwise
 
 ### IsQAngle
 
-Get if a value is a `QAngle`
+Checks if a value is a [QAngle](lua://QAngle).
 
 ```lua
 IsQAngle(value)
@@ -470,9 +484,11 @@ IsQAngle(value)
 
 - **`value`**  
   `any`  
+  Value to check
 
 **Returns**
 - **`boolean`**
+`true` if the value is a [QAngle](lua://QAngle), `false` otherwise
 
 ### DeepCopyTable
 
@@ -491,15 +507,17 @@ DeepCopyTable(tbl)
 
 - **`tbl`**  
   `table`  
+  Table to copy
 
 **Returns**
 - **`table`**
+A copy of `tbl`
 
 ### TableRemove
 
 Searches for `value` in `tbl` and sets the associated key to `nil`, returning the key if found.
 
-If your table is an array you should use `ArrayRemove` instead.
+If your table is an array you should use [ArrayRemove](lua://ArrayRemove) instead.
 
 ```lua
 TableRemove(tbl, value)
@@ -509,11 +527,14 @@ TableRemove(tbl, value)
 
 - **`tbl`**  
   `table`  
+  Table to search
 - **`value`**  
   `any`  
+  Value to search for
 
 **Returns**
 - **`any`**
+The key of `value` if found, `nil` otherwise
 
 ### TableRandom
 
@@ -527,21 +548,21 @@ TableRandom(tbl)
 
 - **`tbl`**  
   `table`  
-  Table to get a random pair from.
+  Table to get a random pair from
 
 **Returns**
 
 - **`any`**  
    *`key`*  
-Random key selected.
+Random key selected
 
 - **`any`**  
    *`value`*  
-Value linked to the random key.
+Value linked to the random key
 
 ### TableKeys
 
-Returns all the keys of a table as a new ordered array.
+Returns all keys of a table as a new ordered array.
 
 ```lua
 TableKeys(tbl)
@@ -551,13 +572,15 @@ TableKeys(tbl)
 
 - **`tbl`**  
   `table<K,any>`  
+  Table to get keys from
 
 **Returns**
 - **`K[]`**
+List of keys
 
 ### TableValues
 
-Returns all the value of a table as a new ordered array.
+Returns all values in a table as a new ordered array.
 
 ```lua
 TableValues(tbl)
@@ -567,9 +590,11 @@ TableValues(tbl)
 
 - **`tbl`**  
   `table<any,V>`  
+  Table to get values from
 
 **Returns**
 - **`V[]`**
+List of values
 
 ### TableSize
 
@@ -583,11 +608,11 @@ TableSize(tbl)
 
 - **`tbl`**  
   `table`  
-  The table to count.
+  The table to count
 
 **Returns**
 - **`number`**
-The size of the table.
+The size of the table
 
 ### TablePluck
 
@@ -601,32 +626,35 @@ TablePluck(tbl, key)
 
 - **`tbl`**  
   `table[]`  
-  List of tables.
+  List of tables
 - **`key`**  
   `any`  
-  Key to get values from.
+  Key to get values from
 
 **Returns**
 - **`any[]`**
-List of values found for the key.
+List of values found for `key`
 
 ### TableFindKey
 
-Returns the index of the first value that matches the predicate.
+Returns the key of the first value that matches the predicate.
 
 ```lua
-TableFindKey(list, predicate)
+TableFindKey(tbl, predicate)
 ```
 
 **Parameters**
 
-- **`list`**  
+- **`tbl`**  
   `table`  
+  Table to search
 - **`predicate`**  
   `function`  
+  Predicate function
 
 **Returns**
 - **`any`**
+Key of the first value that matches the predicate
 
 ### ArrayRandom
 
@@ -640,23 +668,23 @@ ArrayRandom(array, min, max)
 
 - **`array`**  
   `T[]`  
-  Array to get a value from.
+  Array to get a value from
 - **`min`** *(optional)*  
   `integer`  
-  Optional minimum bound.
+  Optional minimum bound
 - **`max`** *(optional)*  
   `integer`  
-  Optional maximum bound.
+  Optional maximum bound
 
 **Returns**
 
 - **`T`**  
    *`one`*  
-The random value.
+The random value
 
 - **`integer`**  
    *`two`*  
-The random index.
+The random index
 
 ### ArrayShuffle
 
@@ -670,6 +698,7 @@ ArrayShuffle(array)
 
 - **`array`**  
   `any[]`  
+  Array to shuffle
 
 ### ArrayRemove
 
@@ -685,14 +714,14 @@ ArrayRemove(array, pos)
 
 - **`array`**  
   `T`  
-  The array to remove from.
+  The array to remove from
 - **`pos`**  
   `integer`  
-  Position to remove at.
+  Position to remove at
 
 **Returns**
 - **`T`**
-The same array passed in.
+The same array passed in
 
 ### ArrayRemoveVal
 
@@ -734,11 +763,11 @@ ArrayAppend(array1, array2)
   Base array
 - **`array2`**  
   `T2[]`  
-  Array which will be appended onto the base array.
+  Array which will be appended onto the base array
 
 **Returns**
 - **`T1[]|T2[]`**
-The new appended array.
+The new appended array
 
 ### ArrayAppends
 
@@ -758,7 +787,7 @@ ArrayAppends(array)
 
 **Returns**
 - **`T[]`**
-The new appended array.
+The new appended array
 
 ### TraceLineExt
 
@@ -774,9 +803,11 @@ TraceLineExt(parameters)
 
 - **`parameters`**  
   `TraceTableLineExt`  
+  Trace parameters
 
 **Returns**
 - **`boolean`**
+`true` if the trace was successful
 
 ### TraceLineWorld
 
@@ -790,9 +821,11 @@ TraceLineWorld(parameters)
 
 - **`parameters`**  
   `TraceTableLine`  
+  Trace parameters
 
 **Returns**
 - **`TraceTableLine`**
+Trace parameters with results
 
 ### TraceLineEntity
 
@@ -806,9 +839,11 @@ TraceLineEntity(parameters)
 
 - **`parameters`**  
   `TraceTableLine`  
+  Trace parameters
 
 **Returns**
 - **`TraceTableLine`**
+Trace parameters with results
 
 ### TraceLineSimple
 
@@ -822,19 +857,24 @@ TraceLineSimple(startpos, endpos, ignore, mask)
 
 - **`startpos`**  
   `Vector`  
+  Start position
 - **`endpos`**  
   `Vector`  
+  End position
 - **`ignore`** *(optional)*  
   `EntityHandle`  
+  Entity to ignore
 - **`mask`** *(optional)*  
   `integer`  
+  Trace mask
 
 **Returns**
 - **`TraceTableLine`**
+Trace table with results
 
 ### IsWorld
 
-Get if an entity is the world entity.
+Checks if an entity is the world entity.
 
 ```lua
 IsWorld(entity)
@@ -844,13 +884,15 @@ IsWorld(entity)
 
 - **`entity`**  
   `EntityHandle`  
+  Entity to check
 
 **Returns**
 - **`boolean`**
+`true` if the entity is the world entity, `false` otherwise
 
 ### GetWorld
 
-Get the world entity.
+Gets the world entity.
 
 ```lua
 GetWorld()
@@ -858,10 +900,11 @@ GetWorld()
 
 **Returns**
 - **`EntityHandle`**
+World entity
 
 ### IsPhysicsObject
 
-Get if an entity is a physical entity.
+Checks if an entity is a physical entity.
 
 ```lua
 IsPhysicsObject(entity)
@@ -871,13 +914,15 @@ IsPhysicsObject(entity)
 
 - **`entity`**  
   `EntityHandle`  
+  Entity to check
 
 **Returns**
 - **`boolean`**
+`true` if the entity is a physical entity, `false` otherwise
 
 ### haskey
 
-Get if a table has a key (this essentially the same as tbl[key] ~= nil).
+Checks if a table has a key (this essentially the same as tbl[key] ~= nil).
 
 ```lua
 haskey(tbl, key)
@@ -887,15 +932,18 @@ haskey(tbl, key)
 
 - **`tbl`**  
   `table`  
+  Table to check
 - **`key`**  
   `any`  
+  Key to look for
 
 **Returns**
 - **`boolean`**
+`true` if the table has the key, `false` otherwise
 
 ### truthy
 
-Check if a value is truthy or falsy.
+Checks if a value is truthy or falsy.
 
 **falsy == `nil`|`false`|`0`|`""`|`{}`**
 
@@ -907,15 +955,15 @@ truthy(value)
 
 - **`value`**  
   `any`  
-  The value to be checked.
+  The value to be checked
 
 **Returns**
 - **`boolean`**
-Returns true if the value is truthy, false otherwise.
+`true` if the value is truthy, `false` otherwise
 
 ### SearchEntity
 
-Search an entity for a key using a search pattern. E.g. "getclass" will find "GetClassname"
+Searches an entity for a key using a search pattern. E.g. "getclass" will find "GetClassname"
 
 Works with `class.lua` EntityClass entities.
 
@@ -927,18 +975,20 @@ SearchEntity(entity, searchPattern)
 
 - **`entity`**  
   `EntityHandle`, `EntityClass`  
+  The entity to search
 - **`searchPattern`**  
   `string`  
+  The name pattern to search for
 
 **Returns**
 
 - **`string?`**  
    *`key`*  
-The full name of the first key matching `searchPattern`.
+The full name of the first key matching `searchPattern`
 
 - **`any?`**  
    *`value`*  
-The value of the key found.
+The value of the key found
 
 ### LerpAngle
 
@@ -952,19 +1002,24 @@ LerpAngle(t, angle_start, angle_end)
 
 - **`t`**  
   `number`  
-  The interpolation parameter, where 0 returns angle_start and 1 returns angle_end.
+  The interpolation parameter, where `0` returns `angle_start` and `1` returns `angle_end`
 - **`angle_start`**  
   `number`  
-  The starting angle in degrees.
+  The starting angle in degrees
 - **`angle_end`**  
   `number`  
-  The ending angle in degrees.
+  The ending angle in degrees
 
 **Returns**
 - **`number`**
-The interpolated angle.
+The interpolated angle
 
 ### CalcClosestPointOnEntityOBBAdjusted
+
+Calculates the closest point on an entity's OBB to a position.
+
+This is a modified version of the original function that fixes
+off-center models not calculating correctly.
 
 ```lua
 CalcClosestPointOnEntityOBBAdjusted(entity, position)
@@ -973,7 +1028,15 @@ CalcClosestPointOnEntityOBBAdjusted(entity, position)
 **Parameters**
 
 - **`entity`**  
+  `EntityHandle`  
+  The entity to calculate the closest point on
 - **`position`**  
+  `Vector`  
+  The position to calculate the closest point to
+
+**Returns**
+- **`Vector`**
+The closest point on the entity's OBB to the position
 
 ### DefaultTable
 
@@ -987,14 +1050,14 @@ DefaultTable(tbl, default)
 
 - **`tbl`**  
   `T`  
-  The table to which the default value will be assigned.
+  The table to which the default value will be assigned
 - **`default`**  
   `any`  
-  The default value to be returned for invalid keys.
+  The default value to be returned for invalid keys
 
 **Returns**
 - **`T`**
-The table with the default value assigned.
+The table with the default value assigned
 
 ### Wrap
 
@@ -1008,17 +1071,17 @@ Wrap(value, min, max)
 
 - **`value`**  
   `number`  
-  The value to be wrapped.
+  The value to be wrapped
 - **`min`**  
   `number`  
-  The minimum value of the range.
+  The minimum value of the range
 - **`max`**  
   `number`  
-  The maximum value of the range.
+  The maximum value of the range
 
 **Returns**
 - **`number`**
-The wrapped value within the specified range.
+The wrapped value within the specified range
 
 ### CreateToggleBehavior
 
@@ -1054,18 +1117,18 @@ CreateToggleBehavior(on, off)
 
 - **`on`** *(optional)*  
   `function`  
-  Function called when the condition is true.
+  Function called when the condition is true
 - **`off`** *(optional)*  
   `function`  
-  Function called when the condition is false.
+  Function called when the condition is false
 
 **Returns**
 - **`function`**
-The created toggle function.
+The created toggle function
 
 ### CalcClosestCornerOnEntityAABB
 
-Compute the closest corner relative to a vector on the AABB of an entity.
+Computes the closest corner relative to a vector on the AABB of an entity.
 
 ```lua
 CalcClosestCornerOnEntityAABB(entity, position)
@@ -1075,8 +1138,10 @@ CalcClosestCornerOnEntityAABB(entity, position)
 
 - **`entity`**  
   `EntityHandle`  
+  The entity to calculate the closest corner on
 - **`position`**  
   `Vector`  
+  The vector to calculate the closest corner to
 
 ### SetPhysVelocity
 
@@ -1107,13 +1172,13 @@ RandomChance(chance, onTrue, onFalse)
 
 - **`chance`**  
   `number`  
-  The percentage chance of success (0-100).
+  The percentage chance of success (0-100)
 - **`onTrue`** *(optional)*  
   `any`  
-  Value to return if the chance succeeds (default: true).
+  Value to return if the chance succeeds (default: `true`)
 - **`onFalse`** *(optional)*  
   `any`  
-  Value to return if the chance fails (default: false).
+  Value to return if the chance fails (default: `false`)
 
 **Returns**
 - **`boolean|any`**
@@ -1140,9 +1205,9 @@ A registered AlyxLib addon.
 
 | Field | Type | Description |
 | ---- | ---- | ----------- |
-| ignore | `(EntityHandle|EntityHandle[])?` | Entity or array of entities to ignore. |
-| ignoreclass | `(string|string[])?` | Class or array of classes to ignore. |
-| ignorename | `(string|string[])?` | Name or array of names to ignore. |
-| timeout | `integer?` | Maxmimum number of traces before returning regardless of parameters. |
-| traces | `integer` | Number of traces done. |
-| dontignore | `EntityHandle` | A single entity to always hit, ignoring if it exists in `ignore`. |
+| ignore | `(EntityHandle|EntityHandle[])?` | Entity or array of entities to ignore |
+| ignoreclass | `(string|string[])?` | Class or array of classes to ignore |
+| ignorename | `(string|string[])?` | Name or array of names to ignore |
+| timeout | `integer?` | Maxmimum number of traces before returning regardless of parameters |
+| traces | `integer` | Number of traces done |
+| dontignore | `EntityHandle` | A single entity to always hit, ignoring if it exists in `ignore` |

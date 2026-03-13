@@ -11,7 +11,7 @@ Gesture.version = value
 ```
 
 **Default value**
-  `"v1.2.0"`
+  `"v1.2.1"`
 
 ### AutoStart
 
@@ -77,9 +77,9 @@ Gesture.DicrepancyTolerance = value
 
 ### AddGesture
 
-Add a new gesture to watch for.
+Adds a new gesture to watch for.
 
-If a finger position is nil then the finger isn't taken into consideration.
+If a finger position is `nil`, that finger isn't considered.
 
 ```lua
 Gesture:AddGesture(name, index, middle, ring, pinky, thumb)
@@ -89,26 +89,26 @@ Gesture:AddGesture(name, index, middle, ring, pinky, thumb)
 
 - **`name`**  
   `string`  
-  Name of the gesture. If not unique it will overwrite the previous gesture with this name.
+  Gesture name; overwrites existing one if not unique
 - **`index`**  
   `number`, `nil`  
-  [0-1] range of the index finger position.
+  [0–1] range of the index finger position.
 - **`middle`**  
   `number`, `nil`  
-  [0-1] range of the middle finger position.
+  [0–1] range of the middle finger position.
 - **`ring`**  
   `number`, `nil`  
-  [0-1] range of the ring finger position.
+  [0–1] range of the ring finger position.
 - **`pinky`**  
   `number`, `nil`  
-  [0-1] range of the pinky finger position.
+  [0–1] range of the pinky finger position.
 - **`thumb`**  
   `number`, `nil`  
-  [0-1] range of the thumb finger position.
+  [0–1] range of the thumb finger position.
 
 ### RemoveGesture
 
-Remove an existing gesture.
+Removes an existing gesture.
 
 Any callbacks registered with the gesture will be unregistered.
 
@@ -120,11 +120,11 @@ Gesture:RemoveGesture(name)
 
 - **`name`**  
   `string`  
-  Name of the gesture.
+  Gesture name
 
 ### RemoveGestures
 
-Remove a list of gestures.
+Removes a list of gestures.
 
 ```lua
 Gesture:RemoveGestures(names)
@@ -134,6 +134,7 @@ Gesture:RemoveGestures(names)
 
 - **`names`**  
   `GestureNames[]`  
+  List of gesture names
 
 ### GetGesture
 
@@ -157,13 +158,15 @@ Gesture:GetGesture(hand)
 
 - **`hand`**  
   `CPropVRHand`, `0`, `1`  
+  The hand to get the gesture of
 
 **Returns**
 - **`GestureNames`**
+Gesture name
 
 ### GetGestureRaw
 
-Gets the current [0-1] finger curl values of a given hand.
+Gets the current [0–1] finger curl values of a given hand.
 
 ```lua
 Gesture:GetGestureRaw(hand)
@@ -173,13 +176,15 @@ Gesture:GetGestureRaw(hand)
 
 - **`hand`**  
   `CPropVRHand`, `0`, `1`  
+  The hand to get the gesture of
 
 **Returns**
 - **`GestureTable`**
+Gesture values
 
 ### RegisterCallback
 
-Register a callback for a specific gesture start/stop.
+Registers a callback for a specific gesture start/stop.
 
 ```lua
 Gesture:RegisterCallback(kind, hand, gesture, duration, callback, context)
@@ -189,24 +194,25 @@ Gesture:RegisterCallback(kind, hand, gesture, duration, callback, context)
 
 - **`kind`**  
   `"start"`, `"stop"`  
-  If the callback is registered for gesture start or stop.
+  Listen for the start or stop of the gesture
 - **`hand`**  
   `CPropVRHand`, `-1`, `0`, `1`  
-  The ID of the hand to register for (-1 means both).
+  The hand to listen to
 - **`gesture`**  
   `GestureNames`  
-  Name of the gesture.
+  The gesture to listen for
 - **`duration`**  
   Not implemented
 - **`callback`**  
   `function`  
-  The function that will be called when conditions are met.
+  The function to call when the gesture is triggered
 - **`context`** *(optional)*  
   `any`  
+  Context to pass to the callback
 
 ### UnregisterCallback
 
-Unregister a callback function.
+Unregisters a callback function.
 
 ```lua
 Gesture:UnregisterCallback(callback)
@@ -216,6 +222,7 @@ Gesture:UnregisterCallback(callback)
 
 - **`callback`**  
   `function`  
+  The function to unregister
 
 ### Start
 
@@ -229,7 +236,7 @@ Gesture:Start(on)
 
 - **`on`**  
   `EntityHandle?`  
-  Optional entity to do the tracking on. This is the player by default.
+  Optional entity to do the tracking on
 
 ### Stop
 
@@ -243,23 +250,25 @@ Gesture:Stop()
 
 ### GestureTable
 
+Gesture table.
+
 | Field | Type | Description |
 | ---- | ---- | ----------- |
-| name | `GestureNames` | Name of the gesture. |
-| index | `number|nil` | [0-1] range of the index finger position. |
-| middle | `number|nil` | [0-1] range of the middle finger position. |
-| ring | `number|nil` | [0-1] range of the ring finger position. |
-| pinky | `number|nil` | [0-1] range of the pinky finger position. |
-| thumb | `number|nil` | [0-1] range of the thumb finger position. |
+| name | `GestureNames` | Gesture name |
+| index | `number|nil` | [0–1] range of the index finger position |
+| middle | `number|nil` | [0–1] range of the middle finger position |
+| ring | `number|nil` | [0–1] range of the ring finger position |
+| pinky | `number|nil` | [0–1] range of the pinky finger position |
+| thumb | `number|nil` | [0–1] range of the thumb finger position |
 
 ### GESTURE_CALLBACK
 
 | Field | Type | Description |
 | ---- | ---- | ----------- |
-| kind | `"start"|"stop"` | If the gesture was started or stopped. |
-| name | `GestureNames` | The name of the gesture performed. |
-| hand | `CPropVRHand` | The hand the gesture was performed on. |
-| time | `number` | Server time the gesture occurred. |
+| kind | `"start"|"stop"` | If the gesture was started or stopped |
+| name | `GestureNames` | The name of the gesture performed |
+| hand | `CPropVRHand` | The hand the gesture was performed on |
+| time | `number` | Server time the gesture occurred |
 
 ## Aliases
 

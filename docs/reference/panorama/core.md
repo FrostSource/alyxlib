@@ -25,14 +25,14 @@ Panorama:InitPanel(panelEntity, customId)
 
 - **`panelEntity`**  
   `EntityHandle`  
-  The entity to initialize.
+  The entity to initialize
 - **`customId`** *(optional)*  
   `string`  
-  If nil the id will be generated automatically.
+  The custom id to use, otherwise a unique id will be generated
 
 ### Send
 
-Send data to a panorama panel.
+Sends data to a panorama panel.
 
 ```lua
 Panorama:Send(panelEntity)
@@ -42,7 +42,7 @@ Panorama:Send(panelEntity)
 
 - **`panelEntity`**  
   `EntityHandle`  
-  The entity to send data to.
+  The entity to send data to
 
 ### ToJSON
 
@@ -64,7 +64,7 @@ The JSON string
 
 ### GetId
 
-Get the panorama id from an entity if it has one.
+Gets the panorama id from an entity if it has one.
 
 ```lua
 Panorama:GetId(entityPanel)
@@ -74,6 +74,8 @@ Panorama:GetId(entityPanel)
 
 - **`entityPanel`**  
   `EntityHandle`  
+  The entity to get the id from
 
 **Returns**
 - **`string?`**
+The panorama id

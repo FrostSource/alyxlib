@@ -21,7 +21,7 @@ Input.version = value
 ```
 
 **Default value**
-  `"v4.0.2"`
+  `"v4.1.0"`
 
 ### AutoStart
 
@@ -56,9 +56,11 @@ Input:GetButtonDescription(button)
 
 - **`button`**  
   `DigitalInputAction`  
+  The button to get the description of
 
 **Returns**
 - **`string`**
+The description string
 
 ### GetAnalogDescription
 
@@ -73,9 +75,11 @@ Input:GetAnalogDescription(analog)
 
 - **`analog`**  
   `DigitalInputAction`  
+  The analog action to get the description of
 
 **Returns**
 - **`string`**
+The description string
 
 ### GetControllerTypeDescription
 
@@ -89,9 +93,11 @@ Input:GetControllerTypeDescription(controllerType)
 
 - **`controllerType`**  
   `ControllerType`  
+  The controller type
 
 **Returns**
 - **`string`**
+The description string
 
 ### GetHandName
 
@@ -105,13 +111,14 @@ Input:GetHandName(hand, use_operant)
 
 - **`hand`**  
   `CPropVRHand`, `0`, `1`  
-- **`use_operant`**  
-  `boolean?`  
-  If true, will return primary/secondary instead of left/right
+  The hand entity or ID
+- **`use_operant`** *(optional)*  
+  `boolean`  
+  If true, name will use primary/secondary instead of right/left
 
 ### ListenToButton
 
-Register a callback for a specific button press/release.
+Listens to a specific digital input press/release.
 
 ```lua
 Input:ListenToButton(kind, hand, button, presses, callback, context)
@@ -121,26 +128,36 @@ Input:ListenToButton(kind, hand, button, presses, callback, context)
 
 - **`kind`**  
   `string`, `'"press"'`, `'"release"'`  
-  The kind of button interaction.
+  The kind of button interaction
 - **`hand`**  
   `CPropVRHand`, `InputHandBoth`, `InputHandKind`, `-1`  
-  The type of hand to listen on, or the hand itself.
+  The type of hand to listen on, or the hand itself
 - **`button`**  
   `NamedDigitalInputAction`, `DigitalInputAction`  
-  The button to check.
+  The button to listen to
 - **`presses`**  
   `integer`, `nil`  
-  Number of times the button must be pressed in quick succession. E.g. 2 for double click. Only applicable for `kind` press.
+  Number of times the button must be pressed in quick succession. E.g. 2 for double click. Only applicable for `kind` press
 - **`callback`**  
   `function`, `function`  
-  The function that will be called when conditions are met.
+  The function that will be called when the button is pressed
 - **`context`** *(optional)*  
   `T`  
-  Optional context passed into the callback as the first value. Is also used when unregistering.
+  Optional context passed into the callback as the first value
+
+**Returns**
+
+- **`integer`**  
+    
+The callback ID
+
+- **`integer|nil`**  
+    
+The second callback ID, if `hand` is `InputHandBoth`
 
 ### ListenToAnalog
 
-Listen to a specific analog value reaching a certain value.
+Listens to a specific analog action reaching a certain value.
 
 ```lua
 Input:ListenToAnalog(kind, hand, analogAction, analogValue, callback, context)
@@ -150,22 +167,32 @@ Input:ListenToAnalog(kind, hand, analogAction, analogValue, callback, context)
 
 - **`kind`**  
   `"up"`, `"down"`  
-  `up` means listen for the value moving above `analogValue`, `down` means listen for it moving below.
+  `up` means listen for the value moving above `analogValue`, `down` means listen for it moving below
 - **`hand`**  
   `CPropVRHand`, `InputHandKind`  
-  The hand entity or kind of hand to listen to.
+  The hand entity or kind of hand to listen on
 - **`analogAction`**  
   `AnalogInputAction`  
-  The specific analog action to listen for.
+  The specific analog action to listen for
 - **`analogValue`**  
   `AnalogValueType`  
-  The value(s) to listen for.
+  The value(s) to listen for
 - **`callback`**  
   `function`  
-  The function that will be called when conditions are met.
+  The function that will be called when conditions are met
 - **`context`** *(optional)*  
   `any`  
-  Optional context passed into the callback as the first value. Is also used when unregistering.
+  Optional context passed into the callback as the first value
+
+**Returns**
+
+- **`integer`**  
+    
+The callback ID
+
+- **`integer|nil`**  
+    
+The second callback ID, if `hand` is `InputHandBoth`
 
 ### ModifyAnalogCallback
 
@@ -179,17 +206,17 @@ Input:ModifyAnalogCallback(id, analogAction, analogValue)
 
 - **`id`**  
   `integer`  
-  The ID of the analog event you want to modify.
+  The ID of the analog event you want to modify
 - **`analogAction`** *(optional)*  
   `AnalogInputAction`  
-  The new action to listen for, or nil to leave unchanged.
+  The new action to listen for, or `nil` to leave unchanged
 - **`analogValue`**  
   `AnalogValueType`  
-  The new value to listen for, or nil to leave unchanged.
+  The new value to listen for, or `nil` to leave unchanged
 
 **Returns**
 - **`boolean`**
-True if the ID was found, false otherwise.
+True if the ID was found, false otherwise
 
 ### StopListening
 
@@ -203,7 +230,7 @@ Input:StopListening(id)
 
 - **`id`**  
   `number`  
-  The number returned by ListenToButton.
+  The ID of the listener
 
 ### StopListeningCallbackContext
 
@@ -217,10 +244,10 @@ Input:StopListeningCallbackContext(callback, context)
 
 - **`callback`**  
   `function`  
-  The callback function that's listening.
+  The callback function
 - **`context`** *(optional)*  
   `any`  
-  The context that was given.
+  The context that was given
 
 ### StopListeningByContext
 
@@ -234,7 +261,7 @@ Input:StopListeningByContext(context)
 
 - **`context`**  
   `any`  
-  The number returned by ListenToButton.
+  The context that was given
 
 ### Start
 
@@ -248,7 +275,7 @@ Input:Start(on)
 
 - **`on`**  
   `EntityHandle?`  
-  Optional entity to do the tracking on. This is the player by default.
+  Optional entity to do the tracking on. This is the player by default
 
 ### Stop
 
@@ -262,30 +289,37 @@ Input:Stop()
 
 ### InputPressCallback
 
+A callback for when a button is pressed.
+
 | Field | Type | Description |
 | ---- | ---- | ----------- |
-| kind | `"press"` | The kind of event. |
-| press_time | `number` | The server time at which the button was pressed. |
-| hand | `CPropVRHand` | EntityHandle for the hand that pressed the button. |
-| button | `DigitalInputAction` | The ID of the button that was pressed. |
+| kind | `"press"` | The kind of action event |
+| press_time | `number` | The server time at which the button was pressed |
+| hand | `CPropVRHand` | EntityHandle for the hand that pressed the button |
+| button | `DigitalInputAction` | The ID of the button that was pressed |
 
 ### InputReleaseCallback
 
+A callback for when a button is released.
+
 | Field | Type | Description |
 | ---- | ---- | ----------- |
-| kind | `"release"` | The kind of event. |
-| release_time | `number` | The server time at which the button was released. |
-| hand | `CPropVRHand` | EntityHandle for the hand that released the button. |
-| button | `DigitalInputAction` | The ID of the button that was pressed. |
-| held_time | `number` | Seconds the button was held for prior to being released. |
+| kind | `"release"` | The kind of action event |
+| release_time | `number` | The server time at which the button was released |
+| hand | `CPropVRHand` | EntityHandle for the hand that released the button |
+| button | `DigitalInputAction` | The ID of the button that was pressed |
+| held_time | `number` | Seconds the button was held for prior to being released |
 
 ### InputAnalogCallback
 
+A callback for when an analog action is moved.
+
 | Field | Type | Description |
 | ---- | ---- | ----------- |
-| value | `Vector` | The vector value of the analog action at the time of detection. |
-| hand | `CPropVRHand` | EntityHandle for the hand that moved the analog action. |
-| analog | `AnalogInputAction` | The ID of the analog action that was moved. |
+| kind | `"up"|"down"` | The kind of analog event |
+| value | `Vector` | The vector value of the analog action at the time of detection |
+| hand | `CPropVRHand` | EntityHandle for the hand that moved the analog action |
+| analog | `AnalogInputAction` | The ID of the analog action that was moved |
 
 ## Aliases
 

@@ -6,9 +6,9 @@
 
 ### GetChildrenMemSafe
 
-Get the entities parented to this entity. Including children of children.
+Gets the entities parented to this entity. Including children of children.
 
-This is a memory safe version of GetChildren() which causes a memory leak when called.
+This is a memory safe version of [GetChildren](lua://CBaseEntity.GetChildren) which causes a memory leak when called.
 If you need to get children often you should use this function instead.
 
 ```lua
@@ -29,7 +29,7 @@ Useful in `for` loops:
 ??? example
     ```lua
     for child in thisEntity:IterateChildren() do
-        print(Debug.EntStr(child))
+        print(entstr(child))
     end
     ```
 
@@ -54,7 +54,7 @@ Useful in `for` loops:
 ??? example
     ```lua
     for child in thisEntity:IterateChildrenBreadthFirst() do
-        print(Debug.EntStr(child))
+        print(entstr(child))
     end
     ```
 
@@ -73,7 +73,7 @@ The new iterator function
 
 ### GetTopChildren
 
-Get the top level entities parented to this entity. Not children of children.
+Gets the top level entities parented to this entity. *Not* children of children.
 
 This function is memory safe.
 
@@ -86,7 +86,7 @@ CBaseEntity:GetTopChildren()
 
 ### EntFire
 
-Send an input to this entity.
+Sends an input to this entity.
 
 ```lua
 CBaseEntity:EntFire(action, value, delay, activator, caller)
@@ -96,21 +96,23 @@ CBaseEntity:EntFire(action, value, delay, activator, caller)
 
 - **`action`**  
   `string`  
-  Input name.
+  Input name
 - **`value`** *(optional)*  
   `any`  
-  Parameter override for the input.
+  Parameter override for the input
 - **`delay`** *(optional)*  
   `number`  
-  Delay in seconds.
+  Delay in seconds
 - **`activator`** *(optional)*  
   `EntityHandle`  
+  IO activator
 - **`caller`** *(optional)*  
   `EntityHandle`  
+  IO caller
 
 ### GetFirstChildWithClassname
 
-Get the first child in this entity's hierarchy with a given `classname`.
+Gets the first child in this entity's hierarchy with a given `classname`.
 Searches using **breadth-first traversal**, so it finds the closest matching child first.
 
 This function is memory safe.
@@ -123,11 +125,11 @@ CBaseEntity:GetFirstChildWithClassname(classname)
 
 - **`classname`**  
   `string`  
-  Classname to search for.
+  Classname to search for
 
 **Returns**
 - **`EntityHandle?`**
-The first matching child found, or `nil` if none exists.
+The first matching child found, or `nil` if none exists
 
 ### GetFirstChildWithName
 
@@ -144,15 +146,15 @@ CBaseEntity:GetFirstChildWithName(name)
 
 - **`name`**  
   `string`  
-  Targetname to search for.
+  Targetname to search for
 
 **Returns**
 - **`EntityHandle?`**
-The first matching child found, or `nil` if none exists.
+The first matching child found, or `nil` if none exists
 
 ### SetQAngle
 
-Set entity pitch, yaw, roll from a `QAngle`.
+Sets entity pitch, yaw, roll from a `QAngle`.
 
 ```lua
 CBaseEntity:SetQAngle(qangle)
@@ -162,11 +164,11 @@ CBaseEntity:SetQAngle(qangle)
 
 - **`qangle`**  
   `QAngle`  
-  The rotation to set (pitch, yaw, roll).
+  The QAngle rotation to set
 
 ### SetLocalQAngle
 
-Set entity local pitch, yaw, roll from a `QAngle`.
+Sets entity local pitch, yaw, roll from a `QAngle`.
 
 ```lua
 CBaseEntity:SetLocalQAngle(qangle)
@@ -176,11 +178,11 @@ CBaseEntity:SetLocalQAngle(qangle)
 
 - **`qangle`**  
   `QAngle`  
-  The rotation to set (pitch, yaw, roll).
+  The QAngle rotation to set
 
 ### SetAngle
 
-Set entity pitch, yaw or roll. Supply `nil` for any parameter to leave it unchanged.
+Sets entity pitch, yaw or roll. Supply `nil` for any parameter to leave it unchanged.
 
 ```lua
 CBaseEntity:SetAngle(pitch, yaw, roll)
@@ -190,17 +192,17 @@ CBaseEntity:SetAngle(pitch, yaw, roll)
 
 - **`pitch`** *(optional)*  
   `number`  
-  Pitch angle, or nil to leave unchanged.
+  Pitch angle
 - **`yaw`** *(optional)*  
   `number`  
-  Pitch angle, or nil to leave unchanged.
+  Yaw angle
 - **`roll`** *(optional)*  
   `number`  
-  Pitch angle, or nil to leave unchanged.
+  Roll angle
 
 ### ResetLocal
 
-Resets local origin and angle to [0,0,0].
+Resets local origin and angles to (0, 0, 0).
 
 ```lua
 CBaseEntity:ResetLocal()
@@ -208,7 +210,7 @@ CBaseEntity:ResetLocal()
 
 ### GetSize
 
-Get the bounding size of the entity.
+Gets the bounding size of the entity.
 
 ```lua
 CBaseEntity:GetSize()
@@ -216,12 +218,12 @@ CBaseEntity:GetSize()
 
 **Returns**
 - **`Vector`**
-Bounding size of the entity as a Vector.
+Bounding size of the entity as a Vector
 
 ### GetBiggestBounding
 
-Get the biggest bounding box axis of the entity.
-This will be `size.x`, `size.y` or `size.z`.
+Gets the biggest bounding box axis of the entity.
+This will be either `size.x`, `size.y` or `size.z`.
 
 ```lua
 CBaseEntity:GetBiggestBounding()
@@ -229,11 +231,11 @@ CBaseEntity:GetBiggestBounding()
 
 **Returns**
 - **`number`**
-The largest bounding value.
+The largest bounding value
 
 ### GetRadius
 
-Get the radius of the entity's bounding box.
+Gets the radius of the entity's bounding box.
 This is half the size of the bounding box along its largest axis.
 
 ```lua
@@ -242,11 +244,11 @@ CBaseEntity:GetRadius()
 
 **Returns**
 - **`number`**
-The bounding radius value.
+The bounding radius value
 
 ### GetVolume
 
-Get the volume of the entity bounds in cubic inches.
+Gets the volume of the entity bounds in cubic inches.
 
 ```lua
 CBaseEntity:GetVolume()
@@ -254,11 +256,11 @@ CBaseEntity:GetVolume()
 
 **Returns**
 - **`number`**
-The volume of the entity bounds.
+The volume of the entity bounds
 
 ### GetBoundingCorners
 
-Get each corner of the entity's bounding box.
+Gets each corner of the entity's bounding box.
 
 ```lua
 CBaseEntity:GetBoundingCorners(rotated)
@@ -268,15 +270,15 @@ CBaseEntity:GetBoundingCorners(rotated)
 
 - **`rotated`** *(optional)*  
   `boolean`  
-  If true, corners are rotated by the entity's angles.
+  If `true`, corners are rotated by the entity's angles
 
 **Returns**
 - **`Vector[]`**
-List of 8 corner positions.
+List of 8 corner positions
 
 ### IsWithinBounds
 
-Check if entity is within the given worldspace bounds.
+Checks if entity is within the given worldspace bounds.
 
 ```lua
 CBaseEntity:IsWithinBounds(mins, maxs, checkEntityBounds)
@@ -286,21 +288,21 @@ CBaseEntity:IsWithinBounds(mins, maxs, checkEntityBounds)
 
 - **`mins`**  
   `Vector`  
-  Worldspace minimum vector for the bounds.
+  Worldspace minimum vector for the bounds
 - **`maxs`**  
   `Vector`  
-  Worldspace minimum vector for the bounds.
+  Worldspace maximum vector for the bounds
 - **`checkEntityBounds`** *(optional)*  
   `boolean`  
-  If true the entity bounding box will be used for the check instead of its origin.
+  If `true` the entity bounding box will be used for the check instead of its origin
 
 **Returns**
 - **`boolean`**
-True if the entity is within the bounds, false otherwise.
+`true` if the entity is within the bounds, `false` otherwise.
 
 ### DisablePickup
 
-Send the `DisablePickup` input to the entity.
+Sends the `DisablePickup` input to the entity.
 
 ```lua
 CBaseEntity:DisablePickup()
@@ -308,7 +310,7 @@ CBaseEntity:DisablePickup()
 
 ### EnablePickup
 
-Send the `EnablePickup` input to the entity.
+Sends the `EnablePickup` input to the entity.
 
 ```lua
 CBaseEntity:EnablePickup()
@@ -316,7 +318,7 @@ CBaseEntity:EnablePickup()
 
 ### Delay
 
-Delay some code using this entity.
+Delays some code, using this entity as the context.
 
 ```lua
 CBaseEntity:Delay(func, delay)
@@ -326,14 +328,14 @@ CBaseEntity:Delay(func, delay)
 
 - **`func`**  
   `function`  
-  The function to delay.
+  The function to delay
 - **`delay`** *(optional)*  
   `number`  
-  Optional delay in seconds (default 0).
+  Delay in seconds (default 0)
 
 ### GetParents
 
-Get all parents in the hierarchy upwards.
+Gets all parents in the hierarchy upwards, from immediate parent up to the root.
 
 ```lua
 CBaseEntity:GetParents()
@@ -341,11 +343,11 @@ CBaseEntity:GetParents()
 
 **Returns**
 - **`EntityHandle[]`**
-List of parent entities, from immediate parent up to the root.
+List of parent entities
 
 ### DoNotDrop
 
-Set if the prop is allowed to be dropped. Only works for physics based props.
+Sets if the prop is not allowed to be dropped. Only works for physics based props.
 
 ```lua
 CBaseEntity:DoNotDrop(enabled)
@@ -355,11 +357,11 @@ CBaseEntity:DoNotDrop(enabled)
 
 - **`enabled`**  
   `boolean`  
-  True if the prop can't be dropped, false for can be dropped.
+  `true` if the prop is not allowed to be dropped
 
 ### GetCriteria
 
-Get all criteria on this entity as a table.
+Gets all criteria for this entity as a table.
 
 ```lua
 CBaseEntity:GetCriteria()
@@ -367,11 +369,11 @@ CBaseEntity:GetCriteria()
 
 **Returns**
 - **`CriteriaTable`**
-A table of criteria key-value pairs.
+Criteria key-value pairs
 
 ### GetOwnedEntities
 
-Get all entities owned by this entity.
+Gets all entities owned by this entity.
 
 **Note:** This searches all entities in the map and should be used sparingly.
 
@@ -381,11 +383,11 @@ CBaseEntity:GetOwnedEntities()
 
 **Returns**
 - **`EntityHandle[]`**
-List of owned entities.
+List of owned entities
 
 ### SetRenderAlphaAll
 
-Set the alpha modulation of this entity, plus any children that support [SetRenderAlpha](lua://CBaseModelEntity.SetRenderAlpha).
+Sets the alpha modulation of this entity, plus any children that support [SetRenderAlpha](lua://CBaseModelEntity.SetRenderAlpha).
 
 ```lua
 CBaseModelEntity:SetRenderAlphaAll(alpha)
@@ -395,7 +397,7 @@ CBaseModelEntity:SetRenderAlphaAll(alpha)
 
 - **`alpha`**  
   `integer`  
-  Alpha value (0 = fully transparent, 255 = fully opaque).
+  Alpha value (0 = fully transparent, 255 = fully opaque)
 
 ### SetCenter
 
@@ -409,11 +411,11 @@ CBaseEntity:SetCenter(position)
 
 - **`position`**  
   `Vector`  
-  The new center position.
+  The new center position
 
 ### SetOriginByAttachment
 
-Set the entity's origin so that the specified attachment point aligns with the given world position.
+Sets the entity's origin so that the specified attachment point aligns with the given world position.
 
 ```lua
 CBaseAnimating:SetOriginByAttachment(position, attachment)
@@ -423,14 +425,14 @@ CBaseAnimating:SetOriginByAttachment(position, attachment)
 
 - **`position`**  
   `Vector`  
-  The target world position for the attachment point.
+  The target world position for the attachment point
 - **`attachment`**  
   `string`  
-  The name of the attachment point to align.
+  The name of the attachment point to align
 
 ### TrackProperty
 
-Track a property function using a callback when a change is detected.
+Tracks a property function and calls a callback when a change is detected.
 
 
     -- Make entity fully opaque if alpha is ever detected below 255
@@ -448,20 +450,24 @@ CBaseEntity:TrackProperty(propertyFunction, onChangeFunction, interval, context)
 
 - **`propertyFunction`**  
   `function`  
-  Property function to track, e.g. GetRenderAlpha.
+  Property function to track
 - **`onChangeFunction`**  
   `function`  
-  Function to call when a change is detected.
+  Function to call when a change is detected
 - **`interval`** *(optional)*  
   `number`  
-  Think interval, or smallest possible if nil.
+  Think interval (default: 0)
 - **`context`** *(optional)*  
   `EntityHandle`  
-  Entity to run the thinker on, or this entity if nil.
+  Entity to run the thinker on, or the calling entity if `nil`
+
+**Returns**
+- **`string`**
+The name of the think for stopping later
 
 ### UntrackProperty
 
-Untrack a property function which was set to be tracked using `CBaseEntity:TrackProperty`.
+Untracks a property function which was set to be tracked using [TrackProperty](lua://CBaseEntity.TrackProperty).
 
 ```lua
 CBaseEntity:UntrackProperty(propertyFunction)
@@ -471,11 +477,11 @@ CBaseEntity:UntrackProperty(propertyFunction)
 
 - **`propertyFunction`**  
   `function`  
-  Property function to untrack, e.g. GetRenderAlpha.
+  Property function to untrack
 
 ### QuickThink
 
-Quickly start a think function on the entity with a random name and no delay.
+Quickly starts a think function on the entity with a random name.
 
 ```lua
 CBaseEntity:QuickThink(func, delay)
@@ -485,14 +491,14 @@ CBaseEntity:QuickThink(func, delay)
 
 - **`func`**  
   `function`  
-  The think function.
+  The think function
 - **`delay`** *(optional)*  
   `number`  
-  Delay before starting the think.
+  Delay before starting the think (default: 0)
 
 **Returns**
 - **`string`**
-The name of the think for stopping later if desired.
+The name of the think for stopping later if desired
 
 ### SetRenderingEnabled
 
@@ -506,7 +512,7 @@ CBaseEntity:SetRenderingEnabled(renderingEnabled)
 
 - **`renderingEnabled`**  
   `boolean`  
-  If false the entity will become invisible.
+  `true` to enable rendering, `false` to disable
 
 ### SetCastShadow
 
@@ -520,7 +526,7 @@ CBaseEntity:SetCastShadow(shadowEnabled)
 
 - **`shadowEnabled`**  
   `boolean`  
-  If false the entity will not cast a dynamic shadow.
+  `true` to enable shadow casting, `false` to disable
 
 ### DistanceFromEyes
 
@@ -534,11 +540,11 @@ CBaseEntity:DistanceFromEyes(distance)
 
 - **`distance`**  
   `number`  
-  How far in front of the eyes to get the position.
+  How far in front of the eyes
 
 **Returns**
 - **`Vector`**
-The world position in front of the eyes.
+The world position in front of the eyes
 
 ### GetAttachmentNameOrigin
 
@@ -552,11 +558,11 @@ CBaseAnimating:GetAttachmentNameOrigin(name)
 
 - **`name`**  
   `string`  
-  The name of the attachment.
+  The name of the attachment
 
 **Returns**
 - **`Vector`**
-The world position of the attachment.
+The world position of the attachment
 
 ### GetAttachmentNameAngles
 
@@ -570,11 +576,11 @@ CBaseAnimating:GetAttachmentNameAngles(name)
 
 - **`name`**  
   `string`  
-  The name of the attachment.
+  The name of the attachment
 
 **Returns**
 - **`Vector`**
-The world rotation angles of the attachment.
+The world rotation angles of the attachment
 
 ### GetAttachmentNameForward
 
@@ -588,11 +594,11 @@ CBaseAnimating:GetAttachmentNameForward(name)
 
 - **`name`**  
   `string`  
-  The name of the attachment.
+  The name of the attachment
 
 **Returns**
 - **`Vector`**
-The forward unit vector of the attachment in world space.
+The forward unit vector of the attachment in world space
 
 ### ClearParent
 
@@ -614,7 +620,7 @@ CBaseEntity:SetAbsVelocity(velocity)
 
 - **`velocity`**  
   `Vector`  
-  The target velocity in units/second.
+  The target velocity in units/second
 
 ### OBBvsOBB
 
@@ -628,11 +634,11 @@ CBaseEntity:OBBvsOBB(other)
 
 - **`other`**  
   `EntityHandle`  
-  The other entity.
+  The other entity
 
 **Returns**
 - **`boolean`**
-True if the OBB of this entity intersects with the OBB of another entity.
+`true` if the OBB of this entity intersects with the OBB of the other entity
 
 ### AABBvsOBB
 
@@ -648,11 +654,11 @@ CBaseEntity:AABBvsOBB(other)
 
 - **`other`**  
   `EntityHandle`  
-  The other entity.
+  The other entity
 
 **Returns**
 - **`boolean`**
-True if the AABB of this entity intersects with the OBB of another entity.
+`true` if the AABB of this entity intersects with the OBB of the other entity
 
 ### AABBvsAABB
 
@@ -668,8 +674,8 @@ CBaseEntity:AABBvsAABB(other)
 
 - **`other`**  
   `EntityHandle`  
-  The other entity.
+  The other entity
 
 **Returns**
 - **`boolean`**
-True if the AABB of this entity intersects with the AABB of another entity.
+`true` if the AABB of this entity intersects with the AABB of the other entity

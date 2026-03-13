@@ -6,7 +6,7 @@
 
 ### Push
 
-Push values to the stack.
+Pushes values to the stack.
 
 ```lua
 Stack:Push(...)
@@ -18,7 +18,7 @@ Stack:Push(...)
 
 ### Pop
 
-Pop a number of items from the stack.
+Pops values from the stack.
 
 ```lua
 Stack:Pop(count)
@@ -28,14 +28,14 @@ Stack:Pop(count)
 
 - **`count`** *(optional)*  
   `number`  
-  Default is 1
+  Number of items to pop
 
 **Returns**
 - **`...`**
 
 ### Top
 
-Peek at a number of items at the top of the stack without removing them.
+Peeks at a number of items on the top of the stack without removing them.
 
 ```lua
 Stack:Top(count)
@@ -45,14 +45,14 @@ Stack:Top(count)
 
 - **`count`** *(optional)*  
   `number`  
-  Default is 1
+  Number of items to peek
 
 **Returns**
 - **`...`**
 
 ### Bottom
 
-Peek at a number of items at the bottom of the stack without removing them.
+Peeks at a number of items on the bottom of the stack without removing them.
 
 ```lua
 Stack:Bottom(count)
@@ -62,14 +62,14 @@ Stack:Bottom(count)
 
 - **`count`** *(optional)*  
   `number`  
-  Default is 1
+  Number of items to peek
 
 **Returns**
 - **`...`**
 
 ### Remove
 
-Remove a value from the stack regardless of its position.
+Removes a value from the stack regardless of its position.
 
 ```lua
 Stack:Remove(value)
@@ -79,10 +79,12 @@ Stack:Remove(value)
 
 - **`value`**  
   `any`  
+  The value to remove
 
 ### MoveToTop
 
-Move an existing value to the top of the stack.
+Moves an existing value to the top of the stack.
+
 Only the first occurance will be moved.
 
 ```lua
@@ -93,15 +95,16 @@ Stack:MoveToTop(value)
 
 - **`value`**  
   `any`  
-  The value to move.
+  The value to move
 
 **Returns**
 - **`boolean`**
-True if value was found and moved.
+True if value was found and moved
 
 ### MoveToBottom
 
-Move an existing value to the bottom of the stack.
+Moves an existing value to the bottom of the stack.
+
 Only the first occurance will be moved.
 
 ```lua
@@ -112,15 +115,15 @@ Stack:MoveToBottom(value)
 
 - **`value`**  
   `any`  
-  The value to move.
+  The value to move
 
 **Returns**
 - **`boolean`**
-True if value was found and moved.
+True if value was found and moved
 
 ### Contains
 
-Get if this stack contains a value.
+Gets if this stack contains a value.
 
 ```lua
 Stack:Contains(value)
@@ -130,13 +133,15 @@ Stack:Contains(value)
 
 - **`value`**  
   `any`  
+  The value to search for
 
 **Returns**
 - **`boolean`**
+True if the value is in the stack
 
 ### Length
 
-Return the number of items in the stack.
+Returns the number of items in the stack.
 
 ```lua
 Stack:Length()
@@ -144,14 +149,19 @@ Stack:Length()
 
 **Returns**
 - **`integer`**
+The number of items
 
 ### IsEmpty
 
-Get if the stack is empty.
+Gets if the stack is empty.
 
 ```lua
 Stack:IsEmpty()
 ```
+
+**Returns**
+- **`boolean`**
+True if the stack is empty
 
 ### pairs
 
@@ -176,7 +186,8 @@ Stack:pairs()
 
 ### Stack
 
-Create a new `Stack` object.
+Creates a new [Stack](lua://Stack) object.
+
 First value is at the top.
 
 E.g.
@@ -204,3 +215,5 @@ Stack(...)
 ## Types
 
 ### Stack
+
+Stack data structure.

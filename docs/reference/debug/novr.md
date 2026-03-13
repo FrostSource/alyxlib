@@ -17,7 +17,7 @@ NoVR.AutoStartInToolsMode = value
 
 ### AddInteraction
 
-Add an interaction class for the NoVR player to interact with.
+Adds an interaction class for the NoVR player to interact with.
 
 ```lua
 NoVR:AddInteraction(title, class, mustBeHeld, input, output)
@@ -66,7 +66,7 @@ NoVR:DisableAllDebugging()
 
 ### UnbindKeys
 
-Unbind all keys bound by [NoVR:BindKey](lua://NoVR.BindKey)
+Unbinds all keys bound by [NoVR:BindKey](lua://NoVR.BindKey)
 
 ```lua
 NoVR:UnbindKeys()
@@ -74,7 +74,7 @@ NoVR:UnbindKeys()
 
 ### BindKey
 
-Bind a keyboard key to a callback function.
+Binds a keyboard key to a callback function.
 
 ```lua
 NoVR:BindKey(key, callback, name)
@@ -84,6 +84,7 @@ NoVR:BindKey(key, callback, name)
 
 - **`key`**  
   `KeyboardKey`  
+  Key to bind
 - **`callback`**  
   `function`, `string`  
   Callback function or command string
@@ -94,6 +95,8 @@ NoVR:BindKey(key, callback, name)
 ## Types
 
 ### NoVrInteractClass
+
+NoVR interaction data.
 
 | Field | Type | Description |
 | ---- | ---- | ----------- |

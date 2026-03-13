@@ -11,13 +11,13 @@ Storage.version = value
 ```
 
 **Default value**
-  `"v3.2.0"`
+  `"v3.3.0"`
 
 ## Methods
 
 ### RegisterType
 
-Register a class table type with a name.
+Registers a class table type with a name.
 
 ```lua
 Storage:RegisterType(name, T)
@@ -27,14 +27,14 @@ Storage:RegisterType(name, T)
 
 - **`name`**  
   `string`  
-  Name that the type will be saved as.
+  Name that the type will be saved as
 - **`T`**  
   `table`  
-  Class table.
+  Class table
 
 ### UnregisterType
 
-Unregister a class type.
+Unregisters a class type.
 
 ```lua
 Storage:UnregisterType(name, T)
@@ -44,14 +44,14 @@ Storage:UnregisterType(name, T)
 
 - **`name`**  
   `string`  
-  Name to unregister.
+  Name to unregister
 - **`T`**  
   `table`  
-  Class to unregister.
+  Class to unregister
 
 ### Join
 
-Join a list of values by the hidden separator.
+Joins a list of values by the hidden separator.
 
 ```lua
 Storage:Join(...)
@@ -63,11 +63,12 @@ Storage:Join(...)
 
 **Returns**
 - **`string`**
-Joined string.
+Joined string
 
 ### SaveType
 
 Helper function for saving the type correctly.
+
 No failsafes are provided in this function, you must be sure you are saving correctly.
 
 ```lua
@@ -78,17 +79,17 @@ Storage:SaveType(handle, name, T)
 
 - **`handle`**  
   `EntityHandle`  
-  Entity to save on.
+  Entity to save on
 - **`name`**  
   `string`  
-  Name prefix to save as.
+  Name prefix to save as
 - **`T`**  
   `string`  
-  String name of `T`.
+  String name of `T`
 
 ### SaveString
 
-Save a string.
+Saves a string.
 
 ```lua
 Storage:SaveString(handle, name, value)
@@ -98,21 +99,21 @@ Storage:SaveString(handle, name, value)
 
 - **`handle`**  
   `EntityHandle`  
-  Entity to save on.
+  Entity to save on
 - **`name`**  
   `string`  
-  Name to save as.
+  Name to save as
 - **`value`**  
   `string`, `nil`  
-  String to save.
+  String to save
 
 **Returns**
 - **`boolean`**
-If the save was successful.
+If the save was successful
 
 ### SaveNumber
 
-Save a number.
+Saves a number.
 
 ```lua
 Storage:SaveNumber(handle, name, value)
@@ -122,21 +123,21 @@ Storage:SaveNumber(handle, name, value)
 
 - **`handle`**  
   `EntityHandle`  
-  Entity to save on.
+  Entity to save on
 - **`name`**  
   `string`  
-  Name to save as.
+  Name to save as
 - **`value`**  
-  `number`  
-  Number to save.
+  `number`, `nil`  
+  Number to save
 
 **Returns**
 - **`boolean`**
-If the save was successful.
+If the save was successful
 
 ### SaveBoolean
 
-Save a boolean.
+Saves a boolean.
 
 ```lua
 Storage:SaveBoolean(handle, name, bool)
@@ -146,21 +147,21 @@ Storage:SaveBoolean(handle, name, bool)
 
 - **`handle`**  
   `EntityHandle`  
-  Entity to save on.
+  Entity to save on
 - **`name`**  
   `string`  
-  Name to save as.
+  Name to save as
 - **`bool`**  
-  `boolean`  
-  Boolean to save.
+  `boolean`, `nil`  
+  Boolean to save
 
 **Returns**
 - **`boolean`**
-If the save was successful.
+If the save was successful
 
 ### SaveVector
 
-Save a Vector.
+Saves a Vector.
 
 ```lua
 Storage:SaveVector(handle, name, vector)
@@ -170,21 +171,21 @@ Storage:SaveVector(handle, name, vector)
 
 - **`handle`**  
   `EntityHandle`  
-  Entity to save on.
+  Entity to save on
 - **`name`**  
   `string`  
-  Name to save as.
+  Name to save as
 - **`vector`**  
-  `Vector`  
-  Vector to save.
+  `Vector`, `nil`  
+  Vector to save
 
 **Returns**
 - **`boolean`**
-If the save was successful.
+If the save was successful
 
 ### SaveQAngle
 
-Save a QAngle.
+Saves a QAngle.
 
 ```lua
 Storage:SaveQAngle(handle, name, qangle)
@@ -194,21 +195,21 @@ Storage:SaveQAngle(handle, name, qangle)
 
 - **`handle`**  
   `EntityHandle`  
-  Entity to save on.
+  Entity to save on
 - **`name`**  
   `string`  
-  Name to save as.
+  Name to save as
 - **`qangle`**  
-  `QAngle`  
-  QAngle to save.
+  `QAngle`, `nil`  
+  QAngle to save
 
 **Returns**
 - **`boolean`**
-If the save was successful.
+If the save was successful
 
 ### SaveTableCustom
 
-Save a table with a custom type.
+Saves a table with a custom type.
 Should be used with custom save functions.
 
 If trying to save a normal table use `Storage.SaveTable`.
@@ -221,27 +222,27 @@ Storage:SaveTableCustom(handle, name, tbl, T, save_meta)
 
 - **`handle`**  
   `EntityHandle`  
-  Entity to save on.
+  Entity to save on
 - **`name`**  
   `string`  
-  Name to save as.
+  Name to save as
 - **`tbl`**  
   `table<any,any>`  
-  Table to save.
+  Table to save
 - **`T`**  
   `string`  
-  Type to save as.
+  Type to save as
 - **`save_meta`** *(optional)*  
   `boolean`  
-  If keys starting with '__' should be saved.
+  If keys starting with '__' should be saved
 
 **Returns**
 - **`boolean`**
-If the save was successful.
+If the save was successful
 
 ### SaveTable
 
-Save a table.
+Saves a table.
 
 May be ordered, unordered or mixed.
 
@@ -255,21 +256,21 @@ Storage:SaveTable(handle, name, tbl)
 
 - **`handle`**  
   `EntityHandle`  
-  Entity to save on.
+  Entity to save on
 - **`name`**  
   `string`  
-  Name to save as.
+  Name to save as
 - **`tbl`**  
   `table<any,any>`  
-  Table to save.
+  Table to save
 
 **Returns**
 - **`boolean`**
-If the save was successful.
+If the save was successful
 
 ### SaveEntity
 
-Save an entity reference.
+Saves an entity reference.
 
 Entity handles change between game sessions so this function
 modifies the passed entity to make sure it can keep track of it.
@@ -282,21 +283,21 @@ Storage:SaveEntity(handle, name, entity)
 
 - **`handle`**  
   `EntityHandle`  
-  Entity to save on.
+  Entity to save on
 - **`name`**  
   `string`  
-  Name to save as.
+  Name to save as
 - **`entity`**  
   `EntityHandle`, `nil`  
-  Entity to save.
+  Entity to save
 
 **Returns**
 - **`boolean`**
-If the save was successful.
+If the save was successful
 
 ### Save
 
-Save a value.
+Saves a value.
 
 Uses type inference to save the value.
 If you are experiencing errors consider saving with one of the explicit type saves.
@@ -309,21 +310,21 @@ Storage:Save(handle, name, value)
 
 - **`handle`**  
   `EntityHandle`  
-  Entity to save on.
+  Entity to save on
 - **`name`**  
   `string`  
-  Name to save as.
+  Name to save as
 - **`value`**  
   `any`  
-  Value to save.
+  Value to save
 
 **Returns**
 - **`boolean`**
-If the save was successful.
+If the save was successful
 
 ### LoadString
 
-Load a string.
+Loads a string.
 
 ```lua
 Storage:LoadString(handle, name, default)
@@ -333,21 +334,21 @@ Storage:LoadString(handle, name, default)
 
 - **`handle`**  
   `EntityHandle`  
-  Entity to load from.
+  Entity to load from
 - **`name`**  
   `string`  
-  Name the string was saved as.
+  Name the string was saved as
 - **`default`** *(optional)*  
   `T`  
-  Optional default value.
+  Optional default value
 
 **Returns**
 - **`string|T`**
-Saved string or `default`.
+Saved string or `default`
 
 ### LoadNumber
 
-Load a number.
+Loads a number.
 
 ```lua
 Storage:LoadNumber(handle, name, default)
@@ -357,21 +358,21 @@ Storage:LoadNumber(handle, name, default)
 
 - **`handle`**  
   `EntityHandle`  
-  Entity to load from.
+  Entity to load from
 - **`name`**  
   `string`  
-  Name the number was saved as.
+  Name the number was saved as
 - **`default`** *(optional)*  
   `T`  
-  Optional default value.
+  Optional default value
 
 **Returns**
 - **`number|T`**
-Saved number or `default`.
+Saved number or `default`
 
 ### LoadBoolean
 
-Load a boolean value.
+Loads a boolean value.
 
 ```lua
 Storage:LoadBoolean(handle, name, default)
@@ -381,21 +382,21 @@ Storage:LoadBoolean(handle, name, default)
 
 - **`handle`**  
   `EntityHandle`  
-  Entity to load from.
+  Entity to load from
 - **`name`**  
   `string`  
-  Name the boolean was saved as.
+  Name the boolean was saved as
 - **`default`** *(optional)*  
   `T`  
-  Optional default value.
+  Optional default value
 
 **Returns**
 - **`boolean|T`**
-Saved boolean or `default`.
+Saved boolean or `default`
 
 ### LoadVector
 
-Load a Vector.
+Loads a Vector.
 
 ```lua
 Storage:LoadVector(handle, name, default)
@@ -405,21 +406,21 @@ Storage:LoadVector(handle, name, default)
 
 - **`handle`**  
   `EntityHandle`  
-  Entity to load from.
+  Entity to load from
 - **`name`**  
   `string`  
-  Name the Vector was saved as.
+  Name the Vector was saved as
 - **`default`** *(optional)*  
   `T`  
-  Optional default value.
+  Optional default value
 
 **Returns**
 - **`Vector|T`**
-Saved Vector or `default`.
+Saved Vector or `default`
 
 ### LoadQAngle
 
-Load a QAngle.
+Loads a QAngle.
 
 ```lua
 Storage:LoadQAngle(handle, name, default)
@@ -429,21 +430,21 @@ Storage:LoadQAngle(handle, name, default)
 
 - **`handle`**  
   `EntityHandle`  
-  Entity to load from.
+  Entity to load from
 - **`name`**  
   `string`  
-  Name the QAngle was saved as.
+  Name the QAngle was saved as
 - **`default`** *(optional)*  
   `T`  
-  Optional default value.
+  Optional default value
 
 **Returns**
 - **`QAngle|T`**
-Saved QAngle or `default`.
+Saved QAngle or `default`
 
 ### LoadTableCustom
 
-Load a table with a custom type.
+Loads a table with a custom type.
 Should be used with custom load functions.
 
 If trying to load a normal table use `Storage.LoadTable`.
@@ -456,24 +457,24 @@ Storage:LoadTableCustom(handle, name, T, default)
 
 - **`handle`**  
   `EntityHandle`  
-  Entity to load from.
+  Entity to load from
 - **`name`**  
   `string`  
-  Name the table was saved as.
+  Name the table was saved as
 - **`T`**  
   `string`  
-  Type to save as.
+  Type to save as
 - **`default`** *(optional)*  
   `T`  
-  Optional default value.
+  Optional default value
 
 **Returns**
 - **`table|T`**
-Saved table or `default`.
+Saved table or `default`
 
 ### LoadTable
 
-Load a table with a custom type.
+Loads a table with a custom type.
 
 ```lua
 Storage:LoadTable(handle, name, default)
@@ -483,21 +484,21 @@ Storage:LoadTable(handle, name, default)
 
 - **`handle`**  
   `EntityHandle`  
-  Entity to load from.
+  Entity to load from
 - **`name`**  
   `string`  
-  Name the table was saved as.
+  Name the table was saved as
 - **`default`** *(optional)*  
   `T`  
-  Optional default value.
+  Optional default value
 
 **Returns**
 - **`table|T`**
-Saved table or `default`.
+Saved table or `default`
 
 ### LoadEntity
 
-Load an entity.
+Loads an entity.
 
 ```lua
 Storage:LoadEntity(handle, name, default)
@@ -507,21 +508,21 @@ Storage:LoadEntity(handle, name, default)
 
 - **`handle`**  
   `EntityHandle`  
-  Entity to load from.
+  Entity to load from
 - **`name`**  
   `string`  
-  Name to save as.
+  Name to save as
 - **`default`** *(optional)*  
   `T`  
-  Optional default value.
+  Optional default value
 
 **Returns**
 - **`EntityHandle|T`**
-Saved entity or `default`.
+Saved entity or `default`
 
 ### Load
 
-Load a value.
+Loads a value.
 
 ```lua
 Storage:Load(handle, name, default)
@@ -531,21 +532,21 @@ Storage:Load(handle, name, default)
 
 - **`handle`**  
   `EntityHandle`  
-  Entity to load from.
+  Entity to load from
 - **`name`**  
   `string`  
-  Name the value was saved as.
+  Name the value was saved as
 - **`default`** *(optional)*  
   `any`  
-  Optional default value.
+  Optional default value
 
 **Returns**
 - **`any`**
-Saved value or `default`.
+Saved value or `default`
 
 ### LoadAll
 
-Load all values saved to an entity.
+Loads all values saved to an entity.
 
 ```lua
 Storage:LoadAll(handle, direct)
@@ -555,11 +556,11 @@ Storage:LoadAll(handle, direct)
 
 - **`handle`**  
   `EntityHandle`  
-  Entity to load from.
+  Entity to load from
 - **`direct`** *(optional)*  
   `boolean`  
-  Optionally load values directly into `handle` instead of a new table.
+  Optionally load values directly into `handle` instead of a new table
 
 **Returns**
 - **`table`**
-Table of loaded values (or `handle` if `direct` is true).
+Table of loaded values (or `handle` if `direct` is true)

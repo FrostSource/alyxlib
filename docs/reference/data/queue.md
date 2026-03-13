@@ -6,7 +6,7 @@
 
 ### Enqueue
 
-Add values to the queue in the order they appear.
+Adds values to the queue in the order they are provided.
 
 ```lua
 Queue:Enqueue(...)
@@ -18,7 +18,9 @@ Queue:Enqueue(...)
 
 ### Dequeue
 
-Get a number of values in reverse order of the queue.
+Removes and returns one or more items from the front of the queue.
+
+If `count` is omitted, a single item will is dequeued.
 
 ```lua
 Queue:Dequeue(count)
@@ -28,14 +30,15 @@ Queue:Dequeue(count)
 
 - **`count`** *(optional)*  
   `number`  
-  Default is 1
+  Number of items to dequeue
 
 **Returns**
 - **`...`**
+The dequeued items in the original insertion order
 
 ### Front
 
-Peek at a number of items at the front of the queue without removing them.
+Peeks at a number of items at the front of the queue without removing them.
 
 ```lua
 Queue:Front(count)
@@ -45,14 +48,15 @@ Queue:Front(count)
 
 - **`count`** *(optional)*  
   `number`  
-  Default is 1
+  Number of items to peek at
 
 **Returns**
 - **`...`**
+The peeked items
 
 ### Back
 
-Peek at a number of items at the back of the queue without removing them.
+Peeks at a number of items at the back of the queue without removing them.
 
 ```lua
 Queue:Back(count)
@@ -62,14 +66,15 @@ Queue:Back(count)
 
 - **`count`** *(optional)*  
   `number`  
-  Default is 1
+  Number of items to peek at
 
 **Returns**
 - **`...`**
+The peeked items
 
 ### Remove
 
-Remove a value from the queue regardless of its position.
+Removes a value from the queue regardless of its position.
 
 ```lua
 Queue:Remove(value)
@@ -79,11 +84,13 @@ Queue:Remove(value)
 
 - **`value`**  
   `any`  
+  The value to remove
 
 ### MoveToBack
 
-Move an existing value to the front of the queue.
-Only the first occurance will be moved.
+Moves an existing value to the back of the queue.
+
+Only the furthest back occurance will be moved.
 
 ```lua
 Queue:MoveToBack(value)
@@ -93,16 +100,17 @@ Queue:MoveToBack(value)
 
 - **`value`**  
   `any`  
-  The value to move.
+  The value to move
 
 **Returns**
 - **`boolean`**
-True if value was found and moved.
+True if value was found and moved
 
 ### MoveToFront
 
-Move an existing value to the bottom of the stack.
-Only the first occurance will be moved.
+Moves an existing value to the front of the queue.
+
+Only the furthest back occurance will be moved.
 
 ```lua
 Queue:MoveToFront(value)
@@ -112,15 +120,15 @@ Queue:MoveToFront(value)
 
 - **`value`**  
   `any`  
-  The value to move.
+  The value to move
 
 **Returns**
 - **`boolean`**
-True if value was found and moved.
+True if value was found and moved
 
 ### Contains
 
-Get if this queue contains a value.
+Gets if this queue contains a value.
 
 ```lua
 Queue:Contains(value)
@@ -130,13 +138,15 @@ Queue:Contains(value)
 
 - **`value`**  
   `any`  
+  The value to search for
 
 **Returns**
 - **`boolean`**
+True if the value is in the queue
 
 ### Length
 
-Return the number of items in the queue.
+Returns the number of items in the queue.
 
 ```lua
 Queue:Length()
@@ -144,14 +154,19 @@ Queue:Length()
 
 **Returns**
 - **`integer`**
+The number of items
 
 ### IsEmpty
 
-Get if the stack is empty.
+Gets if the stack is empty.
 
 ```lua
 Queue:IsEmpty()
 ```
+
+**Returns**
+- **`boolean`**
+True if the stack is empty
 
 ### pairs
 
@@ -176,7 +191,8 @@ Queue:pairs()
 
 ### Queue
 
-Create a new `Queue` object.
+Create a new [Queue](lua://Queue) instance.
+
 Last value is at the front of the queue.
 
 E.g.
@@ -200,7 +216,10 @@ Queue(...)
 
 **Returns**
 - **`Queue`**
+The new queue
 
 ## Types
 
 ### Queue
+
+Queue data structure.

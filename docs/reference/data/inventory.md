@@ -6,7 +6,10 @@
 
 ### Add
 
-Add a number of values to a key.
+Increases value amount to a key.
+
+If the key does not exist, it will be created.
+If no value is provided, it will default to 1.
 
 ```lua
 Inventory:Add(key, value)
@@ -16,17 +19,18 @@ Inventory:Add(key, value)
 
 - **`key`**  
   `any`  
+  The key to increment
 - **`value`** *(optional)*  
   `integer`  
-  Default is 1.
+  Value to increment by
 
 **Returns**
 - **`number`**
-The value of the key after adding.
+Value of the key after increment
 
 ### Remove
 
-Remove a number of values from a key.
+Decreases the value of a key.
 
 ```lua
 Inventory:Remove(key, value)
@@ -36,17 +40,19 @@ Inventory:Remove(key, value)
 
 - **`key`**  
   `any`  
+  The key to decrement
 - **`value`** *(optional)*  
   `integer`  
-  Default is 1.
+  Value to decrement by
 
 **Returns**
 - **`number`**
-The value of the key after removal.
+Value of the key after decrement
 
 ### Get
 
-Get the value associated with a key. This is *not* the same as `inv.items[key]`.
+Gets the value associated with a key.
+If the key does not exist, 0 is returned.
 
 ```lua
 Inventory:Get(key)
@@ -56,13 +62,15 @@ Inventory:Get(key)
 
 - **`key`**  
   `any`  
+  The key to get
 
 **Returns**
 - **`integer`**
+Value of the key
 
 ### Highest
 
-Get the key with the highest value and its value.
+Gets the key with the highest value and its value.
 
 ```lua
 Inventory:Highest()
@@ -72,15 +80,15 @@ Inventory:Highest()
 
 - **`any`**  
     
-The key with the highest value.
+The key with the highest value
 
 - **`integer`**  
     
-The value associated with the key.
+The value associated with the key
 
 ### Lowest
 
-Get the key with the lowest value and its value.
+Gets the key with the lowest value and its value.
 
 ```lua
 Inventory:Lowest()
@@ -90,15 +98,15 @@ Inventory:Lowest()
 
 - **`any`**  
     
-The key with the lowest value.
+The key with the lowest value
 
 - **`integer`**  
     
-The value associated with the key.
+The value associated with the key
 
 ### Contains
 
-Get if the inventory contains a key with a value greater than 0.
+Gets if the inventory contains `key` with a value greater than 0.
 
 ```lua
 Inventory:Contains(key)
@@ -114,7 +122,7 @@ Inventory:Contains(key)
 
 ### Length
 
-Return the number of items in the inventory.
+Returns the number of items in the inventory.
 
 ```lua
 Inventory:Length()
@@ -124,15 +132,15 @@ Inventory:Length()
 
 - **`integer`**  
    *`key_sum`*  
-Total number of keys in the inventory.
+Total number of keys in the inventory
 
 - **`integer`**  
    *`value_sum`*  
-Total number of values assigned to all keys.
+Total number of values assigned to all keys
 
 ### IsEmpty
 
-Get if the inventory is empty.
+Gets if the inventory is empty.
 
 ```lua
 Inventory:IsEmpty()
@@ -140,6 +148,7 @@ Inventory:IsEmpty()
 
 **Returns**
 - **`boolean`**
+True if the inventory is empty
 
 ### pairs
 
@@ -161,20 +170,24 @@ Inventory:pairs()
 
 ### Inventory
 
-Create a new `Inventory` object.
+Creates a new [Inventory](lua://Inventory) object.
 
 ```lua
-Inventory(starting_inventory)
+Inventory(startingInventory)
 ```
 
 **Parameters**
 
-- **`starting_inventory`** *(optional)*  
+- **`startingInventory`** *(optional)*  
   `table<any,integer>`  
+  Starting inventory
 
 **Returns**
 - **`Inventory`**
+The new [Inventory](lua://Inventory)
 
 ## Types
 
 ### Inventory
+
+Inventory data structure.

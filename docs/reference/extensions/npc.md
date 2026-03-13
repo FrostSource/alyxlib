@@ -6,7 +6,7 @@
 
 ### StartSchedule
 
-Create and start a new schedule for this NPC.
+Creates and starts a new schedule for this NPC.
 
 ```lua
 CAI_BaseNPC:StartSchedule(state, type, interruptability, reacquire, goal)
@@ -16,23 +16,23 @@ CAI_BaseNPC:StartSchedule(state, type, interruptability, reacquire, goal)
 
 - **`state`**  
   `ScheduleState`  
-  The NPC state that should be set.
+  The NPC state that should be set
 - **`type`**  
   `ScheduleType`  
-  The type of schedule to perform.
+  The type of schedule to perform
 - **`interruptability`**  
   `ScheduleInterruptability`  
-  What should interrupt the NPC from the schedule.
+  What should interrupt the NPC from the schedule
 - **`reacquire`**  
   `boolean`  
-  If the NPC should reacquire the schedule after being interrupted.
+  If the NPC should reacquire the schedule after being interrupted
 - **`goal`**  
   `EntityHandle`, `Vector`  
-  Worldspace position or entity goal (entity origin will be used).
+  Worldspace position or entity goal (entity origin will be used)
 
 **Returns**
 - **`EntityHandle`**
-The schedule entity.
+The new `aiscripted_schedule`
 
 ### StopSchedule
 
@@ -46,14 +46,14 @@ CAI_BaseNPC:StopSchedule(schedule, dontKill)
 
 - **`schedule`**  
   `EntityHandle`  
-  The previously created schedule.
+  The previously created schedule
 - **`dontKill`** *(optional)*  
   `boolean`  
-  If true the schedule will not be killed at the same time.
+  If true the schedule will not be killed at the same time
 
 ### SetState
 
-Set state of the NPC.
+Sets the state of the NPC by creating a new schedule.
 
 ```lua
 CAI_BaseNPC:SetState(state)
@@ -63,10 +63,11 @@ CAI_BaseNPC:SetState(state)
 
 - **`state`**  
   `ScheduleState`  
+  The NPC state that should be set
 
 ### HasEnemyTarget
 
-Get if this NPC has an enemy target.
+Gets if this NPC has an enemy target.
 
 This function only works with entities that have `enemy` or `distancetoenemy` criteria.
 
@@ -76,13 +77,13 @@ CAI_BaseNPC:HasEnemyTarget()
 
 **Returns**
 - **`boolean`**
-True if the NPC has an enemy target.
+True if the NPC has an enemy target
 
 ### EstimateEnemyTarget
 
-Estimate the enemy that this NPC is fighting using its criteria values.
+Estimates the enemy that this NPC is fighting using its criteria values
 
-This function only works with entities that have `enemy` criteria; "npc_combine_s", "npc_zombine", "npc_zombie_blind".
+This function only works with entities that have `enemy` criteria, e.g. "npc_combine_s", "npc_zombine", "npc_zombie_blind".
 
 ```lua
 CAI_BaseNPC:EstimateEnemyTarget(distanceTolerance)
@@ -92,15 +93,15 @@ CAI_BaseNPC:EstimateEnemyTarget(distanceTolerance)
 
 - **`distanceTolerance`** *(optional)*  
   `number`  
-  Discrepancy allowed when comparing distance to enemy. Default 1
+  Discrepancy allowed when comparing distance to enemy; default is `1`
 
 **Returns**
 - **`EntityHandle?`**
-Estimated enemy target.
+Estimated enemy target
 
 ### SetRelationship
 
-Set the relationship of this NPC with a targetname or classname.
+Sets the relationship of this NPC with another entity.
 
 ```lua
 CAI_BaseNPC:SetRelationship(target, disposition, priority)
@@ -116,11 +117,11 @@ CAI_BaseNPC:SetRelationship(target, disposition, priority)
   Type of relationship with `target`.
 - **`priority`** *(optional)*  
   `number`  
-  How much the Subject(s) should Like/Hate/Fear the Target(s). Higher priority = stronger feeling. Default is 0.
+  How much the Subject(s) should Like/Hate/Fear the Target(s). Higher priority = stronger feeling; default is 0.
 
 ### IsCreature
 
-Get if this NPC is a creature, e.g. combine, headcrab, player
+Checks if this NPC is a creature, e.g. combine, headcrab, player
 
 Will return false for all other class types, such as npc_turret and npc_manhack.
 
@@ -130,10 +131,11 @@ CAI_BaseNPC:IsCreature()
 
 **Returns**
 - **`boolean`**
+True if this NPC is a creature
 
 ### IsCombine
 
-Get if this NPC is a combine creature.
+Checks if this NPC is a Combine creature.
 
 ```lua
 CAI_BaseNPC:IsCombine()
@@ -141,10 +143,11 @@ CAI_BaseNPC:IsCombine()
 
 **Returns**
 - **`boolean`**
+True if this NPC is Combine
 
 ### IsXen
 
-Get if this NPC is a Xen creature.
+Checks if this NPC is a Xen creature.
 
 ```lua
 CAI_BaseNPC:IsXen()
@@ -152,10 +155,11 @@ CAI_BaseNPC:IsXen()
 
 **Returns**
 - **`boolean`**
+True if this NPC is Xen
 
 ### GetSquadMembers
 
-Get all members of the same squad as this NPC, including this NPC.
+Gets all members of the same squad as this NPC, including this NPC.
 
 ```lua
 CAI_BaseNPC:GetSquadMembers()
@@ -163,10 +167,13 @@ CAI_BaseNPC:GetSquadMembers()
 
 **Returns**
 - **`CAI_BaseNPC[]`**
+List of NPC members
 
 ## Aliases
 
 ### RelationshipDisposition
+
+Relationship disposition types.
 
 | Value | Description |
 | ----- | ----------- |

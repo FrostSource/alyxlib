@@ -6,9 +6,11 @@
 
 ### SyncEquippedWeaponState
 
-Sync the equipped weapon state of the player with the given weapon classname.
+Syncs the equipped weapon state of the player with the given weapon classname.
 
 If no classname is given, the weapon classname will be determined from the player's criteria.
+
+**This is used internally on weapon switch to determine equipped weapons.**
 
 ```lua
 SyncEquippedWeaponState(classname, handle)
@@ -18,24 +20,24 @@ SyncEquippedWeaponState(classname, handle)
 
 - **`classname`** *(optional)*  
   `string`  
-  The classname of the weapon to sync.
+  The classname of the weapon to sync
 - **`handle`** *(optional)*  
   `EntityHandle`  
-  The entity handle of the weapon to sync.
+  The entity handle of the weapon to sync
 
 **Returns**
 
 - **`EntityHandle?`**  
    *`weaponHandle`*  
-The entity handle of the weapon that was equipped.
+The entity handle of the weapon that was equipped
 
 - **`CPropVRHand?`**  
    *`handHandle`*  
-The entity handle of the hand that the weapon was equipped to.
+The entity handle of the hand that the weapon was equipped to
 
 ### RestorePreviouslyEquippedWeaponState
 
-Restore the previously equipped weapon state.
+Restores the previously equipped weapon state.
 
 ```lua
 RestorePreviouslyEquippedWeaponState(fireEvent)
@@ -45,11 +47,11 @@ RestorePreviouslyEquippedWeaponState(fireEvent)
 
 - **`fireEvent`** *(optional)*  
   `boolean`  
-  Forces the `weapon_switch` event to be fired when restoring.
+  `true` to force-fire the `weapon_switch` event
 
 ### PauseWeaponStateSync
 
-Pause weapon state synching. This will prevent the `weapon_switch` player event from firing.
+Pauses weapon state synching. This will prevent the `weapon_switch` player event from firing.
 
 ```lua
 PauseWeaponStateSync()
@@ -57,7 +59,7 @@ PauseWeaponStateSync()
 
 ### ResumeWeaponStateSync
 
-Resume weapon state synching. This will allow the `weapon_switch` player event to fire.
+Resumes weapon state synching. This will allow the `weapon_switch` player event to fire.
 
 ```lua
 ResumeWeaponStateSync()
@@ -65,7 +67,7 @@ ResumeWeaponStateSync()
 
 ### WeaponStateSyncPaused
 
-Check if weapon state synching is paused.
+Checks if weapon state synching is paused.
 
 ```lua
 WeaponStateSyncPaused()
@@ -90,4 +92,4 @@ GetDefaultWeaponOffset(classname, hand)
 
 **Returns**
 - **`Vector`**
-The default weapon offset, or `Vector()` if not found
+The default weapon offset, or `(0, 0, 0)` if not found

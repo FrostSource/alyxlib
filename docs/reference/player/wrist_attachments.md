@@ -12,7 +12,7 @@
 
 ### Add
 
-Add a new entity as a wrist attachment.
+Adds a new entity as a wrist attachment.
 
 ```lua
 WristAttachments:Add(entity, hand, length, priority, offset, angles)
@@ -22,26 +22,26 @@ WristAttachments:Add(entity, hand, length, priority, offset, angles)
 
 - **`entity`**  
   `EntityHandle`  
-  The entity which will become a wrist attachment.
+  The entity which will become a wrist attachment
 - **`hand`** *(optional)*  
   `WristAttachmentHandType`  
-  The hand type to attach to initially.
+  The hand type to attach to initially
 - **`length`**  
   `number`  
-  Physical length of the entity to make sure it will not overlap with other wrist attachments.
+  Physical length of the entity to make sure it will not overlap with other wrist attachments
 - **`priority`**  
   `number?`  
-  Priority for the entity when there are other wrist attacments. Lower number is higher priority. Cannot specify a value lower than 0.
+  Priority for the entity when there are other wrist attacments - lower number is higher priority, cannot specify a value lower than 0
 - **`offset`**  
   `Vector?`  
-  Optional offset for the entity (x component is ignored).
+  Optional origin offset for the entity (x component is ignored)
 - **`angles`**  
   `QAngle?`  
-  Optional angles for the entity.
+  Optional angles offset for the entity
 
 ### SetHand
 
-Set the hand that the entity should be attached to.
+Sets the hand that the entity should be attached to.
 
 ```lua
 WristAttachments:SetHand(entity, hand, offset, angles)
@@ -51,20 +51,20 @@ WristAttachments:SetHand(entity, hand, offset, angles)
 
 - **`entity`**  
   `EntityHandle`  
-  The entity to change data for.
+  The entity to change data for
 - **`hand`**  
   `WristAttachmentHandType`  
-  The type of hand to attach to.
-- **`offset`**  
+  The type of hand to attach to
+- **`offset`** *(optional)*  
   `Vector`  
-  Optional offset for the entity (x component is ignored).
-- **`angles`**  
+  Optional origin offset for the entity (x component is ignored)
+- **`angles`** *(optional)*  
   `QAngle`  
-  Optional angles for the entity.
+  Optional angles offset for the entity
 
 ### GetHand
 
-Get the hand that the entity is attached to.
+Gets the hand that the entity is attached to.
 
 ```lua
 WristAttachments:GetHand(entity)
@@ -74,13 +74,15 @@ WristAttachments:GetHand(entity)
 
 - **`entity`**  
   `EntityHandle`  
+  The entity to get the hand for
 
 **Returns**
 - **`CPropVRHand?`**
+The hand that the entity is attached to
 
 ### GetEntityAttachment
 
-Get the attachment data related to an attach entity.
+Gets the attachment data related to an attach entity.
 
 ```lua
 WristAttachments:GetEntityAttachment(entity)
@@ -90,15 +92,15 @@ WristAttachments:GetEntityAttachment(entity)
 
 - **`entity`**  
   `EntityHandle`  
-  The entity to get the data for.
+  The entity to get the data for
 
 **Returns**
 - **`WristAttachmentData?`**
-The attachment data for the entity, if it is attached.
+The attachment data for the entity, or `nil` if not found
 
 ### IsEntityAttached
 
-Get if an entity is attached to a wrist using this system.
+Checks if an entity is attached to a wrist using this system.
 
 ```lua
 WristAttachments:IsEntityAttached(entity)
@@ -108,13 +110,18 @@ WristAttachments:IsEntityAttached(entity)
 
 - **`entity`**  
   `EntityHandle`  
-  The entity to check.
+  The entity to check
 
 **Returns**
 - **`boolean`**
-True if attached, false otherwise.
+`true` if attached, `false` otherwise.
 
 ### Update
+
+Updates the attachments.
+
+This is called automatically when an attachment is added or removed
+or when the player's primary hand changes.
 
 ```lua
 WristAttachments:Update()

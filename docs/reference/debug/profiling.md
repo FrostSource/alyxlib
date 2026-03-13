@@ -28,7 +28,7 @@ Returns the result of `func`
 
 ### GetMean
 
-Get the mean (average) profiled time in seconds.
+Gets the mean (average) profiled time in seconds.
 
 ```lua
 Profiler:GetMean()
@@ -36,10 +36,11 @@ Profiler:GetMean()
 
 **Returns**
 - **`number`**
+The mean profiled time
 
 ### GetMedian
 
-Get the median profiled time in seconds.
+Gets the median profiled time in seconds.
 
 ```lua
 Profiler:GetMedian()
@@ -47,10 +48,11 @@ Profiler:GetMedian()
 
 **Returns**
 - **`number`**
+The median profiled time
 
 ### GetStandardDeviation
 
-Calculate the standard deviation of the measurements.
+Calculates the standard deviation of the measurements.
 
 The standard deviation is used to determine how spread out the measurements are.
 The higher the value, the more the measurements deviate from the mean, indicating greater variability.
@@ -63,6 +65,7 @@ Profiler:GetStandardDeviation()
 
 **Returns**
 - **`number`**
+The standard deviation
 
 ## Functions
 
@@ -87,4 +90,4 @@ Profiler(useRunningTotal)
 
 ### Profiler
 
-Profiler class
+Profiler class.

@@ -17,7 +17,7 @@
 !!! danger "This method is deprecated."
 
 
-Assign a new value to entity's field `name`.
+Assigns a new value to entity's field `name`.
 This also saves the field.
 
 ```lua
@@ -28,12 +28,17 @@ EntityClass:Set(name, value)
 
 - **`name`**  
   `string`  
+  Name of the field
 - **`value`**  
   `any`  
+  Value to assign
 
 ### Save
 
-Save a given entity field. Call with no arguments to save all data.
+Manually saves a given entity field.
+
+If no `value` is provided, the value of the field with the same `name` will be saved.
+If no `name` is provided, all fields will be saved.
 
 ```lua
 EntityClass:Save(name, value)
@@ -43,10 +48,10 @@ EntityClass:Save(name, value)
 
 - **`name`** *(optional)*  
   `string`  
-  Name of the field to save.
+  Name of the field to save
 - **`value`** *(optional)*  
   `any`  
-  Value to save. If not provided the value will be retrieved from the field with the same `name`.
+  Value to save
 
 ### Think
 
@@ -56,7 +61,7 @@ EntityClass:Think()
 
 ### ResumeThink
 
-Resume the entity think function.
+Resumes the entity think function.
 
 ```lua
 EntityClass:ResumeThink()
@@ -64,7 +69,7 @@ EntityClass:ResumeThink()
 
 ### PauseThink
 
-Pause the entity think function.
+Pauses the entity think function.
 
 ```lua
 EntityClass:PauseThink()
@@ -72,7 +77,7 @@ EntityClass:PauseThink()
 
 ### Output
 
-Define a function to redirected to `output` on spawn.
+Defines a function to redirected to IO `output` on spawn.
 
 ```lua
 EntityClass:Output(output, func)
@@ -87,7 +92,7 @@ EntityClass:Output(output, func)
 
 ### GameEvent
 
-Define a function for listening to a game event.
+Defines a function for listening to a game event.
 
 ```lua
 EntityClass:GameEvent(gameEvent, func)
@@ -102,7 +107,7 @@ EntityClass:GameEvent(gameEvent, func)
 
 ### PlayerEvent
 
-Define a function for listening to a player event.
+Defines a function for listening to a player event.
 
 ```lua
 EntityClass:PlayerEvent(playerEvent, func)
@@ -119,7 +124,10 @@ EntityClass:PlayerEvent(playerEvent, func)
 
 ### inherit
 
-Inherit an existing entity class which was defined using `entity` function.
+Inherits an existing entity class which was defined using the [entity](lua://entity) function.
+
+If no entity is provided, the entity calling the code will inherit the class.
+If no calling entity is found, an error will be thrown.
 
 ```lua
 inherit(script, entity)
@@ -129,20 +137,20 @@ inherit(script, entity)
 
 - **`script`**  
   `T`  
-  The script to inherit.
+  The class/script to inherit
 - **`entity`** *(optional)*  
   `EntityHandle`  
-  Optional entity which will inherit the script. If not used, the entity running the code will inherit.
+  Entity which will inherit the class
 
 **Returns**
 
 - **`T`**  
     
-Base class, the newly created class.
+Inherited class
 
 - **`T`**  
     
-Self instance, the entity inheriting `base`.
+`self` instance of `entity`, the entity inheriting `script`
 
 ### entity
 
@@ -168,19 +176,19 @@ entity(name)
 
 - **`any`**  
     
-Base class, the newly created class.
+The newly created class
 
 - **`T`**  
     
-Self instance, the entity inheriting `base`.
+`self` instance of entity inheriting the class, if called in an attached script
 
 - **`table`**  
     
-Super class, the first inheritance of `base`.
+The first inherited class, if any
 
 - **`table`**  
     
-Private table
+Private members table of the class **(unused)**
 
 ### printinherits
 
@@ -199,7 +207,7 @@ printinherits(ent, nest)
 
 ### getvalvemeta
 
-Get the original metatable that Valve assigns to the entity.
+Gets the original metatable that Valve assigns to the entity.
 
 ```lua
 getvalvemeta(ent)
@@ -209,16 +217,17 @@ getvalvemeta(ent)
 
 - **`ent`**  
   `EntityClass`  
-  The entity search.
+  The entity search
 
 **Returns**
 - **`table?`**
-Metatable originally assigned to `ent`.
+Metatable originally assigned to `ent`
 
 ### getinherits
 
-Get a list of all classes that `class` inherits.
-Does not include the Valve class; use getvalvemeta() for that.
+Gets a list of all classes that `class` inherits.
+
+Does not include the Valve class - use [getvalvemeta](lua://getvalvemeta) for that.
 
 ```lua
 getinherits(class)
@@ -228,15 +237,15 @@ getinherits(class)
 
 - **`class`**  
   `EntityClass`  
-  The entity or class to search.
+  The entity or class to search
 
 **Returns**
 - **`EntityClass[]`**
-List of class tables.
+List of class tables
 
 ### isinstance
 
-Get if an `EntityClass` instance inherits a given `class`.
+Checks if an entity inherits a given `EntityClass`.
 
 ```lua
 isinstance(ent, class)
@@ -246,18 +255,18 @@ isinstance(ent, class)
 
 - **`ent`**  
   `EntityClass`, `EntityHandle`  
-  Entity to check.
+  Entity to check
 - **`class`**  
   `string`, `table`  
-  Name or class table to check.
+  Name or class table to check
 
 **Returns**
 - **`boolean`**
-True if `ent` inherits `class`, false otherwise.
+`true` if `ent` inherits `class`, `false` otherwise
 
 ### IsClassEntity
 
-Check if an entity is using the AlyxLib class system.
+Checks if an entity is using the AlyxLib class system.
 
 ```lua
 IsClassEntity(ent)
@@ -267,11 +276,11 @@ IsClassEntity(ent)
 
 - **`ent`**  
   `EntityHandle`  
-  Entity to check.
+  Entity to check
 
 **Returns**
 - **`boolean`**
-True if `ent` is a class entity, false otherwise.
+`true` if `ent` is a class entity, `false` otherwise
 
 ## Types
 
@@ -283,21 +292,21 @@ The top-level entity class that provides base functionality.
 
 | Field | Type | Description |
 | ---- | ---- | ----------- |
-| __inherits | `table` | Table of inherited classes. |
-| __name | `string` | Name of the class. |
-| __outputs | `table<string,` | function> # Map of output names to functions that will be connected on spawn. |
-| __game_events | `table<string,` | function> # Map of game events to functions that will be listened to on spawn. |
-| __player_events | `table<string,` | function> # Map of player events to functions that will be listened to on spawn. |
-| __rawget | `function` | Custom rawget function to get a value from meta.__values without checking inherits. |
-| Initiated | `boolean` | If the class entity has been activated. |
-| IsThinking | `boolean` | If the entity is currently thinking with `Think` function. |
-| OnActivate | `function` | Called automatically on `Activate` if defined. |
-| OnReady | `function` | Called automatically after `Activate`, if defined, when EasyConvars and Player are initialized. |
-| OnSpawn | `function` | Called automatically on `Spawn` if defined. |
-| UpdateOnRemove | `function` | Called before the entity is killed. |
-| OnBreak | `function` | Called when a breakable entity is broken. |
-| OnTakeDamage | `function` | Called when entity takes damage. |
-| Precache | `function` | Called before Spawn for precaching. |
+| __inherits | `table` | Table of inherited classes |
+| __name | `string` | Name of the class |
+| __outputs | `table<string,` | function> # Map of output names to functions that will be connected on spawn |
+| __game_events | `table<string,` | function> # Map of game events to functions that will be listened to on spawn |
+| __player_events | `table<string,` | function> # Map of player events to functions that will be listened to on spawn |
+| __rawget | `function` | Custom rawget function to get a value from meta.__values without checking inherits |
+| Initiated | `boolean` | If the class entity has been activated |
+| IsThinking | `boolean` | If the entity is currently thinking with `Think` function |
+| OnActivate | `function` | Called automatically on `Activate` if defined |
+| OnReady | `function` | Called automatically after `Activate`, if defined, when EasyConvars and Player are initialized |
+| OnSpawn | `function` | Called automatically on `Spawn` if defined |
+| UpdateOnRemove | `function` | Called before the entity is killed |
+| OnBreak | `function` | Called when a breakable entity is broken |
+| OnTakeDamage | `function` | Called when entity takes damage |
+| Precache | `function` | Called before Spawn for precaching |
 | Think | `function` | Entity think function. |
 
 ## Aliases

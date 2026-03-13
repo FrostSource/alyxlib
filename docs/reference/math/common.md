@@ -6,7 +6,7 @@
 
 ### sign
 
-Get the sign of a number.
+Gets the sign of a number.
 
 ```lua
 math:sign(x)
@@ -16,15 +16,15 @@ math:sign(x)
 
 - **`x`**  
   `number`  
-  The input number.
+  The input number
 
 **Returns**
-- **`1|0|-1`**
-Returns 1 if the number is positive, -1 if the number is negative, or 0 if the number is zero.
+- **`-1|0|1`**
+Sign of the number: -1 for negative, 1 for positive, 0 if zero
 
 ### trunc
 
-Truncates a number to the specified number of decimal places.
+Truncates a number to a given number of decimal places.
 
 ```lua
 math:trunc(number, places)
@@ -34,18 +34,18 @@ math:trunc(number, places)
 
 - **`number`**  
   `number`  
-  The input number.The input number.
+  The number to truncate
 - **`places`** *(optional)*  
   `integer`  
-  The number of decimal places to keep.
+  Decimal places to truncate to (default: 0)
 
 **Returns**
 - **`number`**
-The input number truncated to the specified decimal places.
+The truncated number
 
 ### round
 
-Rounds a number to the specified number of decimal places.
+Rounds a number to a given number of decimal places.
 
 ```lua
 math:round(number, decimals)
@@ -55,14 +55,14 @@ math:round(number, decimals)
 
 - **`number`**  
   `number`  
-  The input number to be rounded.
+  The number to be rounded
 - **`decimals`** *(optional)*  
   `integer`  
-  The number of decimal places to round to. If not provided, the number will be rounded to the nearest whole number.
+  Decimal places to round to (default: 0)
 
 **Returns**
 - **`number`**
-The input number rounded to the specified decimal places or nearest whole number.
+The rounded number
 
 ### isclose
 
@@ -97,20 +97,20 @@ math:isclose(a, b, rel_tol, abs_tol)
 
 - **`a`**  
   `number`  
-  The first number to compare.
+  The first number to compare
 - **`b`**  
   `number`  
-  The second number to compare.
+  The second number to compare
 - **`rel_tol`** *(optional)*  
   `number`  
-  The relative tolerance (optional). Defines the maximum allowed relative difference between `a` and `b` as a percentage of the larger of the two values.
+  Defines the maximum allowed relative difference between `a` and `b` as a percentage of the larger of the two values
 - **`abs_tol`** *(optional)*  
   `number`  
-  The absolute tolerance (optional). Defines the maximum allowed fixed difference between `a` and `b`, regardless of their magnitudes.
+  Defines the maximum allowed fixed difference between `a` and `b`, regardless of their magnitudes
 
 **Returns**
 - **`boolean`**
-Returns `true` if the numbers are considered close based on the specified tolerances; otherwise, returns `false`.
+`true` if the numbers are considered close based on the specified tolerances, `false` otherwise
 
 ### has_frac
 
@@ -124,11 +124,11 @@ math:has_frac(number)
 
 - **`number`**  
   `number`  
-  The number to check for fractional part.
+  The number to check
 
 **Returns**
 - **`boolean`**
-True if the number has a fractional part, false otherwise.
+`true` if the number has a fractional part, `false` otherwise.
 
 ### get_frac
 
@@ -142,8 +142,8 @@ math:get_frac(number)
 
 - **`number`**  
   `number`  
-  The number to get the fractional part of.
+  The number to get the fractional part of
 
 **Returns**
 - **`number`**
-The fractional part of the number.
+The fractional part of the number

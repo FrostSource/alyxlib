@@ -6,7 +6,7 @@
 
 ### ListenToPlayerEvent
 
-Register a callback function with for a player event.
+Registers a callback function with a player event.
 
 ```lua
 ListenToPlayerEvent(event, callback, context)
@@ -22,7 +22,7 @@ ListenToPlayerEvent(event, callback, context)
   The function that will be called when the event is fired
 - **`context`** *(optional)*  
   `table`  
-  Optional: The context to pass to the function as `self`. If omitted the context will not passed to the callback.
+  The context to pass to first argument of `callback` - if omitted, the context will not passed to the callback
 
 **Returns**
 - **`integer`** *`eventID`*
@@ -30,7 +30,7 @@ ID used to unregister
 
 ### StopListeningToPlayerEvent
 
-Unregisters a callback with a name.
+Unregisters a player event callback.
 
 ```lua
 StopListeningToPlayerEvent(eventID)
@@ -39,11 +39,12 @@ StopListeningToPlayerEvent(eventID)
 **Parameters**
 
 - **`eventID`**  
-  `integer`  
+  `integer`, `nil`  
+  ID returned from [ListenToPlayerEvent](lua://ListenToPlayerEvent)
 
 ### ListenToEntityPickup
 
-Listen to the pickup of a specific entity.
+Listens to the pickup of a specific entity.
 
 ```lua
 ListenToEntityPickup(entity, callback, context)
@@ -59,7 +60,7 @@ ListenToEntityPickup(entity, callback, context)
   The function that will be called when the entity is picked up
 - **`context`** *(optional)*  
   `any`  
-  Optional context passed into the callback as the first value
+  Context passed into the callback as the first value
 
 **Returns**
 - **`integer`**
@@ -67,7 +68,7 @@ ID used to unregister
 
 ### StopListeningToEntityPickup
 
-Stop listening to an entity pickup
+Stops listening to an entity pickup.
 
 ```lua
 StopListeningToEntityPickup(eventID)
@@ -83,14 +84,12 @@ StopListeningToEntityPickup(eventID)
 
 ### PlayerEventPlayerActivate
 
-> **Inherits from:** `GameEventPlayerActivate`
-
-The player event that fires after the player spawned and activated.
+> **Inherits from:** `GameEventBase`
 
 | Field | Type | Description |
 | ---- | ---- | ----------- |
-| player | `CBasePlayer` | The entity handle of the player. |
-| type | `"spawn"|"load"|"transition"` | Type of player activate. |
+| player | `CBasePlayer` | The entity handle of the player |
+| type | `"spawn"|"load"|"transition"` | Type of player activate |
 
 ### PlayerEventVRPlayerReady
 
@@ -106,10 +105,10 @@ The player event that fires after the player spawned and activated.
 
 | Field | Type | Description |
 | ---- | ---- | ----------- |
-| item | `EntityHandle` | The entity handle of the item that was picked up. |
-| item_class | `string` | Classname of the entity that was picked up. |
-| hand | `CPropVRHand` | The entity handle of the hand that picked up the item. |
-| otherhand | `CPropVRHand` | The entity handle of the opposite hand. |
+| item | `EntityHandle` | The entity handle of the item that was picked up |
+| item_class | `string` | Classname of the entity that was picked up |
+| hand | `CPropVRHand` | The entity handle of the hand that picked up the item |
+| otherhand | `CPropVRHand` | The entity handle of the opposite hand |
 
 ### PlayerEventItemReleased
 
@@ -117,10 +116,10 @@ The player event that fires after the player spawned and activated.
 
 | Field | Type | Description |
 | ---- | ---- | ----------- |
-| item | `EntityHandle` | The entity handle of the item that was dropped. |
-| item_class | `string` | Classname of the entity that was dropped. |
-| hand | `CPropVRHand` | The entity handle of the hand that dropped the item. |
-| otherhand | `CPropVRHand` | The entity handle of the opposite hand. |
+| item | `EntityHandle` | The entity handle of the item that was dropped |
+| item_class | `string` | Classname of the entity that was dropped |
+| hand | `CPropVRHand` | The entity handle of the hand that dropped the item |
+| otherhand | `CPropVRHand` | The entity handle of the opposite hand |
 
 ### PlayerEventPrimaryHandChanged
 
@@ -136,8 +135,8 @@ The player event that fires after the player spawned and activated.
 
 | Field | Type | Description |
 | ---- | ---- | ----------- |
-| ammotype | `"Pistol"|"SMG1"|"Buckshot"|"AlyxGun"` | Type of ammo that was stored. |
-| ammo_amount | `0|1|2|3|4` | Amount of ammo stored for the given type (1 clip, 2 shells). |
+| ammotype | `"Pistol"|"SMG1"|"Buckshot"|"AlyxGun"` | Type of ammo that was stored |
+| ammo_amount | `integer` | Amount of ammo stored for the given type, e.g. 1 clip, 2 shells |
 
 ### PlayerEventPlayerRetrievedBackpackClip
 
@@ -145,8 +144,8 @@ The player event that fires after the player spawned and activated.
 
 | Field | Type | Description |
 | ---- | ---- | ----------- |
-| ammotype | `"Pistol"|"SMG1"|"Buckshot"|"AlyxGun"` | Type of ammo that was retrieved. |
-| ammo_amount | `integer` | Amount of ammo retrieved for the given type (1 clip, 2 shells). |
+| ammotype | `"Pistol"|"SMG1"|"Buckshot"|"AlyxGun"` | Type of ammo that was retrieved |
+| ammo_amount | `integer` | Amount of ammo retrieved for the given type, e.g. 1 clip, 2 shells |
 
 ### PlayerEventPlayerStoredItemInItemholder
 
@@ -154,9 +153,9 @@ The player event that fires after the player spawned and activated.
 
 | Field | Type | Description |
 | ---- | ---- | ----------- |
-| item | `EntityHandle` | The entity handle of the item that stored. |
-| item_class | `string` | Classname of the entity that was stored. |
-| hand | `CPropVRHand` | Hand that the entity was stored in. |
+| item | `EntityHandle` | The entity handle of the item that stored |
+| item_class | `string` | Classname of the entity that was stored |
+| hand | `CPropVRHand` | Hand that the entity was stored in |
 
 ### PlayerEventPlayerRemovedItemFromItemholder
 
@@ -164,9 +163,9 @@ The player event that fires after the player spawned and activated.
 
 | Field | Type | Description |
 | ---- | ---- | ----------- |
-| item | `EntityHandle` | The entity handle of the item that removed. |
-| item_class | `string` | Classname of the entity that was removed. |
-| hand | `CPropVRHand` | Hand that the entity was removed form. |
+| item | `EntityHandle` | The entity handle of the item that removed |
+| item_class | `string` | Classname of the entity that was removed |
+| hand | `CPropVRHand` | Hand that the entity was removed from |
 
 ### PlayerEventPlayerDropResinInBackpack
 
@@ -174,7 +173,7 @@ The player event that fires after the player spawned and activated.
 
 | Field | Type | Description |
 | ---- | ---- | ----------- |
-| resin_ent | `EntityHandle?` | The resin entity being dropped into the backpack. |
+| resin_ent | `EntityHandle?` | The resin entity being dropped into the backpack |
 
 ### PlayerEventWeaponSwitch
 
@@ -182,9 +181,9 @@ The player event that fires after the player spawned and activated.
 
 | Field | Type | Description |
 | ---- | ---- | ----------- |
-| item | `EntityHandle|nil` | The handle of the weapon being switched to or nil if no weapon. |
-| item_class | `string` | Classname of the entity that was switched to. |
-| hand | `CPropVRHand` | Hand that the entity was switched to. |
+| item | `EntityHandle|nil` | The handle of the weapon being switched to or nil if no weapon |
+| item_class | `string` | Classname of the entity that was switched to |
+| hand | `CPropVRHand` | Hand that the entity was switched to |
 
 ## Aliases
 

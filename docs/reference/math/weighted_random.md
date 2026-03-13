@@ -6,11 +6,11 @@
 
 ### Add
 
-Add a table value with an associated weight.
+Adds a table value with an associated weight.
 
 If `tbl` already has a weight key then `weight` parameter can be omitted.
 
-**Note:** The table `tbl` is not cloned, the given reference is used.
+**Note:** The table `tbl` is not cloned, the given reference is inserted into the list.
 
 ```lua
 WeightedRandom:Add(tbl, weight)
@@ -20,14 +20,14 @@ WeightedRandom:Add(tbl, weight)
 
 - **`tbl`**  
   `table`  
-  Table of values that will be returned.
+  Table of values that will be returned
 - **`weight`** *(optional)*  
   `number`  
-  Weight for this table.
+  Weight for this table
 
 ### TotalWeight
 
-Get the sum of all weights in the WeightedRandom.
+Gets the sum of all weights in the WeightedRandom.
 
 ```lua
 WeightedRandom:TotalWeight()
@@ -35,11 +35,11 @@ WeightedRandom:TotalWeight()
 
 **Returns**
 - **`number`**
-The sum of all weights.
+The sum of all weights
 
 ### Random
 
-Pick a random table from the list of weighted tables.
+Picks a random table from the list of weighted tables.
 
 ```lua
 WeightedRandom:Random()
@@ -47,13 +47,13 @@ WeightedRandom:Random()
 
 **Returns**
 - **`WeightedRandomItem|table`**
-The chosen table.
+The randomly selected table
 
 ## Functions
 
 ### WeightedRandom
 
-Create a new WeightedRandom object with given weights.
+Creates a new WeightedRandom instance with given weights.
 
 E.g.
 
@@ -68,8 +68,6 @@ E.g.
     })
     ```
 
-Params:
-
 ```lua
 WeightedRandom(weights)
 ```
@@ -78,11 +76,11 @@ WeightedRandom(weights)
 
 - **`weights`**  
   `WeightedRandomItem[]`  
-  List of weighted tables.
+  List of weighted tables
 
 **Returns**
 - **`WeightedRandom`**
-WeightedRandom object.
+The new WeightedRandom instance
 
 ## Types
 

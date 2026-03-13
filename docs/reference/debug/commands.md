@@ -16,20 +16,23 @@ RegisterAlyxLibCommand(name, func, helpText, flags)
 
 - **`name`**  
   `string`  
-  Name of the command that will be given in the console.
+  Name of the command that will be given in the console
 - **`func`**  
   `function`  
-  Function to run when the command is called.
+  Function to run when the command is called
 - **`helpText`** *(optional)*  
   `string`  
-  Description of the command.
+  Description of the command
 - **`flags`** *(optional)*  
   `number`  
-  Flags for the command.
+  Flags for the command
 
 ### RegisterAlyxLibConvar
 
 Registers a new AlyxLib console variable.
+
+If `defaultValue` or `callback` is a function, the convar will be
+created using `EasyConvars`.
 
 ```lua
 RegisterAlyxLibConvar(name, defaultValue, helpText, flags, callback)
@@ -39,19 +42,19 @@ RegisterAlyxLibConvar(name, defaultValue, helpText, flags, callback)
 
 - **`name`**  
   `string`  
-  Name of the convar that will be given in the console.
+  Name of the convar that will be given in the console
 - **`defaultValue`**  
   `string`, `function`  
-  Default value of the convar or initializer function.
+  Default value of the convar or initializer function
 - **`helpText`** *(optional)*  
   `string`  
-  Description of the convar.
+  Description of the convar
 - **`flags`** *(optional)*  
   `integer`  
-  Flags for the convar.
+  Flags for the convar
 - **`callback`** *(optional)*  
   `function`  
-  Update function called after the value has been changed.
+  Update function called after the value has been changed
 
 ### RegisterAlyxLibEasyConvar
 
@@ -65,19 +68,19 @@ RegisterAlyxLibEasyConvar(name, defaultValue, helpText, flags, postUpdate, persi
 
 - **`name`**  
   `string`  
-  Name of the convar that will be given in the console.
+  Name of the convar that will be given in the console
 - **`defaultValue`**  
   `string`  
-  Default value of the convar.
+  Default value of the convar
 - **`helpText`** *(optional)*  
   `string`  
-  Description of the convar.
+  Description of the convar
 - **`flags`** *(optional)*  
   `integer`  
-  Flags for the convar.
+  Flags for the convar
 - **`postUpdate`** *(optional)*  
   `function`  
-  Update function called after the value has been changed.
+  Update function called after the value has been changed
 - **`persistent`** *(optional)*  
   `boolean`  
-  Whether the convar should be persistent.
+  Whether the convar should be persistent

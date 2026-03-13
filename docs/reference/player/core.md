@@ -226,7 +226,7 @@ CPropVRHand.Opposite = value
 
 ### DropByHandle
 
-Force the player to drop an entity if held.
+Forces the player to drop an entity if held.
 
 ```lua
 CBasePlayer:DropByHandle(handle)
@@ -240,7 +240,7 @@ CBasePlayer:DropByHandle(handle)
 
 ### DropLeftHand
 
-Force the player to drop any item held in their left hand.
+Forces the player to drop any item held in their left hand.
 
 ```lua
 CBasePlayer:DropLeftHand()
@@ -248,7 +248,7 @@ CBasePlayer:DropLeftHand()
 
 ### DropRightHand
 
-Force the player to drop any item held in their right hand.
+Forces the player to drop any item held in their right hand.
 
 ```lua
 CBasePlayer:DropRightHand()
@@ -256,7 +256,7 @@ CBasePlayer:DropRightHand()
 
 ### DropPrimaryHand
 
-Force the player to drop any item held in their primary hand.
+Forces the player to drop any item held in their primary hand.
 
 ```lua
 CBasePlayer:DropPrimaryHand()
@@ -264,7 +264,7 @@ CBasePlayer:DropPrimaryHand()
 
 ### DropSecondaryHand
 
-Force the player to drop any item held in their secondary/off hand.
+Forces the player to drop any item held in their secondary/off hand.
 
 ```lua
 CBasePlayer:DropSecondaryHand()
@@ -272,7 +272,7 @@ CBasePlayer:DropSecondaryHand()
 
 ### DropCaller
 
-Force the player to drop the caller entity if held.
+Forces the player to drop the caller entity if held.
 
 ```lua
 CBasePlayer:DropCaller(data)
@@ -282,10 +282,11 @@ CBasePlayer:DropCaller(data)
 
 - **`data`**  
   `IOParams`  
+  The IOParams table
 
 ### DropActivator
 
-Force the player to drop the activator entity if held.
+Forces the player to drop the activator entity if held.
 
 ```lua
 CBasePlayer:DropActivator(data)
@@ -295,10 +296,11 @@ CBasePlayer:DropActivator(data)
 
 - **`data`**  
   `IOParams`  
+  The IOParams table
 
 ### GrabByHandle
 
-Force the player to grab `handle` with `hand`.
+Forces the player to grab `handle` with `hand`.
 
 ```lua
 CBasePlayer:GrabByHandle(handle, hand)
@@ -308,8 +310,10 @@ CBasePlayer:GrabByHandle(handle, hand)
 
 - **`handle`**  
   `EntityHandle`  
+  Handle of the entity to grab
 - **`hand`** *(optional)*  
   `CPropVRHand`, `0`, `1`  
+  Hand to grab with
 
 ### GrabCaller
 
@@ -323,6 +327,7 @@ CBasePlayer:GrabCaller(data)
 
 - **`data`**  
   `IOParams`  
+  The IOParams table
 
 ### GrabActivator
 
@@ -336,6 +341,7 @@ CBasePlayer:GrabActivator(data)
 
 - **`data`**  
   `IOParams`  
+  The IOParams table
 
 ### GetMoveType
 
@@ -347,6 +353,7 @@ CBasePlayer:GetMoveType()
 
 **Returns**
 - **`PlayerMoveType`**
+The VR movement type
 
 ### SetMoveType
 
@@ -360,6 +367,7 @@ CBasePlayer:SetMoveType(movetype)
 
 - **`movetype`**  
   `PlayerMoveType`  
+  The VR movement type
 
 ### GetLookingAt
 
@@ -373,10 +381,11 @@ CBasePlayer:GetLookingAt(maxDistance)
 
 - **`maxDistance`** *(optional)*  
   `number`  
-  Max distance the trace can search.
+  Max distance the trace can search
 
 **Returns**
 - **`EntityHandle?`**
+The entity the player is looking at
 
 ### DisableFallDamage
 
@@ -406,16 +415,22 @@ CBasePlayer:AddResources(pistol_ammo, rapidfire_ammo, shotgun_ammo, resin)
 
 - **`pistol_ammo`** *(optional)*  
   `number`  
+  Amount of pistol ammo
 - **`rapidfire_ammo`** *(optional)*  
   `number`  
+  Amount of rapidfire ammo
 - **`shotgun_ammo`** *(optional)*  
   `number`  
+  Amount of shotgun ammo
 - **`resin`** *(optional)*  
   `number`  
+  Amount of resin
 
 ### SetResources
 
 Sets resources for the player.
+
+**This might give inaccurate amounts for omitted values.**
 
 ```lua
 CBasePlayer:SetResources(pistol_ammo, rapidfire_ammo, shotgun_ammo, resin)
@@ -425,18 +440,24 @@ CBasePlayer:SetResources(pistol_ammo, rapidfire_ammo, shotgun_ammo, resin)
 
 - **`pistol_ammo`** *(optional)*  
   `number`  
+  Amount of pistol ammo
 - **`rapidfire_ammo`** *(optional)*  
   `number`  
+  Amount of rapidfire ammo
 - **`shotgun_ammo`** *(optional)*  
   `number`  
+  Amount of shotgun ammo
 - **`resin`** *(optional)*  
   `number`  
+  Amount of resin
 
 ### SetItems
 
-Set the items that player has manually.
-This is purely for scripting and does not modify the actual items the player has in game.
-Use `Player:AddResources` to modify in-game items.
+Manually sets the items that player has.
+
+**This is purely for scripting and does not modify the actual items the player has in-game.**
+
+Use [Player:AddResources](lua://CBasePlayer.AddResources) to modify in-game items.
 
 ```lua
 CBasePlayer:SetItems(energygun_ammo, generic_pistol_ammo, rapidfire_ammo, shotgun_ammo, resin)
@@ -446,18 +467,23 @@ CBasePlayer:SetItems(energygun_ammo, generic_pistol_ammo, rapidfire_ammo, shotgu
 
 - **`energygun_ammo`** *(optional)*  
   `integer`  
+  Amount of pistol ammo
 - **`generic_pistol_ammo`** *(optional)*  
   `integer`  
+  Amount of generic pistol ammo
 - **`rapidfire_ammo`** *(optional)*  
   `integer`  
+  Amount of rapidfire ammo
 - **`shotgun_ammo`** *(optional)*  
   `integer`  
+  Amount of shotgun ammo
 - **`resin`** *(optional)*  
   `integer`  
+  Amount of resin
 
 ### AddPistolAmmo
 
-Add pistol ammo to the player.
+Adds pistol ammo to the player.
 
 ```lua
 CBasePlayer:AddPistolAmmo(amount)
@@ -467,10 +493,11 @@ CBasePlayer:AddPistolAmmo(amount)
 
 - **`amount`**  
   `number`  
+  Amount of pistol ammo
 
 ### AddShotgunAmmo
 
-Add shotgun ammo to the player.
+Adds shotgun ammo to the player.
 
 ```lua
 CBasePlayer:AddShotgunAmmo(amount)
@@ -480,10 +507,11 @@ CBasePlayer:AddShotgunAmmo(amount)
 
 - **`amount`**  
   `number`  
+  Amount of shotgun ammo
 
 ### AddRapidfireAmmo
 
-Add rapidfire ammo to the player.
+Adds rapidfire ammo to the player.
 
 ```lua
 CBasePlayer:AddRapidfireAmmo(amount)
@@ -493,10 +521,11 @@ CBasePlayer:AddRapidfireAmmo(amount)
 
 - **`amount`**  
   `number`  
+  Amount of rapidfire ammo
 
 ### AddResin
 
-Add resin to the player.
+Adds resin to the player.
 
 ```lua
 CBasePlayer:AddResin(amount)
@@ -506,6 +535,7 @@ CBasePlayer:AddResin(amount)
 
 - **`amount`**  
   `number`  
+  Amount of resin
 
 ### GetImmediateItems
 
@@ -517,12 +547,11 @@ CBasePlayer:GetImmediateItems()
 
 **Returns**
 - **`EntityHandle[]`**
+List of items
 
 ### GetGrenades
 
-Gets the grenades currently held or in wrist pockets.
-
-Use `#Player:GetGrenades()` to get number of grenades player has access to.
+Gets the grenades currently held and in wrist pockets.
 
 ```lua
 CBasePlayer:GetGrenades()
@@ -530,12 +559,11 @@ CBasePlayer:GetGrenades()
 
 **Returns**
 - **`EntityHandle[]`**
+List of grenades
 
 ### GetHealthPens
 
-Gets the health pens currently held or in wrist pockets.
-
-Use `#Player:GetHealthPens()` to get number of health pens player has access to.
+Gets the health pens currently held and in wrist pockets.
 
 ```lua
 CBasePlayer:GetHealthPens()
@@ -556,17 +584,18 @@ CBasePlayer:MergePropWithHand(hand, prop, hide_hand)
 
 - **`hand`**  
   `CPropVRHand`, `0`, `1`  
-  The hand handle or index.
+  The hand handle or ID
 - **`prop`**  
   `EntityHandle`, `string`  
-  The prop handle or targetname.
+  The prop handle or targetname
 - **`hide_hand`**  
   `boolean`  
-  If the hand should turn invisible after merging.
+  If the hand should turn invisible after merging
 
 ### HasWeaponEquipped
 
-Return if the player has a gun equipped.
+Checks if the player has a gun equipped.
+`hlvr_multitool` is not considered a "gun"
 
 ```lua
 CBasePlayer:HasWeaponEquipped()
@@ -574,12 +603,13 @@ CBasePlayer:HasWeaponEquipped()
 
 **Returns**
 - **`boolean`**
+`true` if the player has a gun equipped
 
 ### GetCurrentWeaponReserves
 
 Get the amount of ammo stored in the backpack for the currently equipped weapon.
 
-This is not accurate if ammo was given through special means like info_hlvr_equip_player.
+**This is not accurate if ammo was given through special means like `info_hlvr_equip_player`.**
 
 ```lua
 CBasePlayer:GetCurrentWeaponReserves()
@@ -587,11 +617,11 @@ CBasePlayer:GetCurrentWeaponReserves()
 
 **Returns**
 - **`number`**
-The amount of ammo, or 0 if no weapon equipped
+The amount of ammo, or `0` if no weapon equipped
 
 ### HasItemHolder
 
-Player has item holder equipped.
+Checks if the player has an item (wrist) holder equipped.
 
 ```lua
 CBasePlayer:HasItemHolder()
@@ -599,10 +629,11 @@ CBasePlayer:HasItemHolder()
 
 **Returns**
 - **`boolean`**
+`true` if the player has an item holder
 
 ### HasGrabbityGloves
 
-Player has grabbity gloves equipped.
+Checks if the player has grabbity gloves equipped.
 
 ```lua
 CBasePlayer:HasGrabbityGloves()
@@ -610,6 +641,7 @@ CBasePlayer:HasGrabbityGloves()
 
 **Returns**
 - **`boolean`**
+`true` if the player has grabbity gloves
 
 ### GetFlashlight
 
@@ -619,7 +651,8 @@ CBasePlayer:GetFlashlight()
 
 ### GetFlashlightPointedAt
 
-Get the first entity the flashlight is pointed at (if the flashlight exists).
+Gets the first entity the flashlight is pointed at.
+
 If flashlight does not exist, both returns will be `nil`.
 
 ```lua
@@ -628,25 +661,27 @@ CBasePlayer:GetFlashlightPointedAt(maxDistance)
 
 **Parameters**
 
-- **`maxDistance`**  
+- **`maxDistance`** *(optional)*  
   `number`  
-  Max tracing distance, default is 2048.
+  Max tracing distance (default: 2048)
 
 **Returns**
 
 - **`EntityHandle|nil`**  
     
-The entity that was hit, or nil.
+The entity that was hit
 
 - **`Vector|nil`**  
     
-The position the trace hit, regardless of entity found.
+The position the trace hit, regardless of entity found
 
 ### GetResin
 
-Gets the current resin from the player.
-This is can be more accurate than `Player.Items.resin`
-Calling this will update `Player.Items.resin`
+Gets the current resin count the player has.
+
+This is can be more accurate than `Player.Items.resin`.
+
+Calling this will update `Player.Items.resin`.
 
 ```lua
 CBasePlayer:GetResin()
@@ -654,10 +689,11 @@ CBasePlayer:GetResin()
 
 **Returns**
 - **`number`**
+The current resin count
 
 ### IsHolding
 
-Gets if player is holding an entity in either hand.
+Gets if player is holding a given entity in either hand.
 
 ```lua
 CBasePlayer:IsHolding(entity)
@@ -667,14 +703,15 @@ CBasePlayer:IsHolding(entity)
 
 - **`entity`**  
   `EntityHandle`  
+  The entity to check
 
 **Returns**
 - **`boolean`**
+`true` if the player is holding the entity
 
 ### GetWeapon
 
-Get the entity handle of the currently equipped weapon/item.
-If nothing is equipped this will return the primary hand entity.
+Gets the entity handle of the currently equipped weapon, including `hlvr_multitool`.
 
 ```lua
 CBasePlayer:GetWeapon()
@@ -682,10 +719,11 @@ CBasePlayer:GetWeapon()
 
 **Returns**
 - **`EntityHandle|nil`**
+The equipped weapon, or `nil` if no weapon equipped
 
 ### GetPistolUpgrades
 
-Get the current upgrades for the player's pistol.
+Gets the current upgrades for the player's pistol.
 
 ```lua
 CBasePlayer:GetPistolUpgrades(weapon)
@@ -695,14 +733,15 @@ CBasePlayer:GetPistolUpgrades(weapon)
 
 - **`weapon`** *(optional)*  
   `EntityHandle`  
-  Optional weapon to check instead of the player's weapon.
+  Optional weapon to check instead of the player's weapon
 
 **Returns**
 - **`PlayerPistolUpgrades[]`**
+List of upgrades
 
 ### GetRapidfireUpgrades
 
-Get the current upgrades for the player's rapidfire.
+Gets the current upgrades for the player's rapidfire.
 
 ```lua
 CBasePlayer:GetRapidfireUpgrades(weapon)
@@ -712,14 +751,15 @@ CBasePlayer:GetRapidfireUpgrades(weapon)
 
 - **`weapon`** *(optional)*  
   `EntityHandle`  
-  Optional weapon to check instead of the player's weapon.
+  Optional weapon to check instead of the player's weapon
 
 **Returns**
 - **`PlayerRapidfireUpgrades[]`**
+List of upgrades
 
 ### GetShotgunUpgrades
 
-Get the current upgrades for the player's shotgun.
+Gets the current upgrades for the player's shotgun.
 
 **This will NOT return "shotgun_upgrade_quick_fire" because there is no known way to detect this!**
 
@@ -731,14 +771,15 @@ CBasePlayer:GetShotgunUpgrades(weapon)
 
 - **`weapon`** *(optional)*  
   `EntityHandle`  
-  Optional weapon to check instead of the player's weapon.
+  Optional weapon to check instead of the player's weapon
 
 **Returns**
 - **`PlayerShotgunUpgrades[]`**
+List of upgrades
 
 ### HasWeaponUpgrade
 
-Check if the player has a specific weapon upgrade.
+Checks if the player has a specific weapon upgrade.
 
 ```lua
 CBasePlayer:HasWeaponUpgrade(upgrade)
@@ -748,13 +789,15 @@ CBasePlayer:HasWeaponUpgrade(upgrade)
 
 - **`upgrade`**  
   `PlayerPistolUpgrades`, `PlayerRapidfireUpgrades`, `PlayerShotgunUpgrades`  
+  Upgrade to check
 
 **Returns**
 - **`boolean`**
+`true` if the player has the upgrade
 
 ### GetWorldForward
 
-Get the forward vector of the player in world space coordinates (z is zeroed).
+Gets the forward vector of the player in world space coordinates (z is zeroed).
 
 ```lua
 CBasePlayer:GetWorldForward()
@@ -762,10 +805,11 @@ CBasePlayer:GetWorldForward()
 
 **Returns**
 - **`Vector`**
+Forward vector
 
 ### UpdateWeapons
 
-Update player weapon inventory, both removing and setting.
+Updates player weapon inventory, both removing and setting.
 
 ```lua
 CBasePlayer:UpdateWeapons(removes, set)
@@ -775,18 +819,18 @@ CBasePlayer:UpdateWeapons(removes, set)
 
 - **`removes`** *(optional)*  
   `(string|EntityHandle)[]`  
-  List of classnames or handles to remove.
+  List of classnames or handles to remove
 - **`set`** *(optional)*  
   `string`, `EntityHandle`  
-  Classname or handle to set as active weapon.
+  Classname or handle to set as active weapon
 
 **Returns**
 - **`EntityHandle?`**
-The handle of the newly set weapon if given and found.
+The handle of the newly set weapon if given and found
 
 ### RemoveWeapons
 
-Remove weapons from the player inventory.
+Removes weapons from the player inventory.
 
 ```lua
 CBasePlayer:RemoveWeapons(weapons)
@@ -796,11 +840,11 @@ CBasePlayer:RemoveWeapons(weapons)
 
 - **`weapons`**  
   `(string|EntityHandle)[]`  
-  List of classnames or handles to remove.
+  List of classnames or handles to remove
 
 ### SetWeapon
 
-Set the weapon that the player is holding.
+Sets the weapon that the player is holding.
 
 ```lua
 CBasePlayer:SetWeapon(weapon)
@@ -810,11 +854,11 @@ CBasePlayer:SetWeapon(weapon)
 
 - **`weapon`**  
   `string`, `EntityHandle`  
-  Classname or handle to set as active weapon.
+  Classname or handle to set as active weapon
 
 **Returns**
 - **`EntityHandle?`**
-The handle of the newly set weapon if found.
+The handle of the newly set weapon if found
 
 ### UpdateWeaponsExistence
 
@@ -836,10 +880,12 @@ CBasePlayer:GetWeapons()
 
 **Returns**
 - **`EntityHandle[]`**
+List of weapon handles
 
 ### GetBackpack
 
-Get the invisible player backpack.
+Gets the invisible player backpack.
+
 This is will return the backpack even if it has been disabled with a `info_hlvr_equip_player`.
 
 ```lua
@@ -848,10 +894,11 @@ CBasePlayer:GetBackpack()
 
 **Returns**
 - **`EntityHandle?`**
+The backpack entity
 
 ### SetMovementEnabled
 
-Enable or disable player movement. Including teleport movement.
+Enables or disables player movement, including teleport movement.
 
 ```lua
 CBasePlayer:SetMovementEnabled(enabled, delay)
@@ -861,16 +908,16 @@ CBasePlayer:SetMovementEnabled(enabled, delay)
 
 - **`enabled`**  
   `boolean`  
-  True if movement should be enabled.
+  `true` if movement should be enabled.
 - **`delay`** *(optional)*  
   `number`  
-  Optional delay for movement state will be changed
+  Delay before movement state will be changed (default: 0)
 
 ### SetAnchorForwardAroundPlayer
 
 Sets the forward vector of the HMD anchor while keeping the position the same relative to the player.
 
-Normally if the player is off-center when changing the forward vector the player may appear to move too.
+Normally if the player is off-center from their playspace, changing the forward vector can move the player too.
 
 ```lua
 CBasePlayer:SetAnchorForwardAroundPlayer(forward)
@@ -886,7 +933,7 @@ CBasePlayer:SetAnchorForwardAroundPlayer(forward)
 
 Sets the angle of the HMD anchor while keeping the position the same relative to the player.
 
-Normally if the player is off-center when changing the angle the player may appear to move too.
+Normally if the player is off-center from their playspace, changing the angle can move the player too.
 
 ```lua
 CBasePlayer:SetAnchorAnglesAroundPlayer(angles)
@@ -896,13 +943,14 @@ CBasePlayer:SetAnchorAnglesAroundPlayer(angles)
 
 - **`angles`**  
   `QAngle`  
-  New angle of the anchor
+  New angle for the anchor
 
 ### SetAnchorOriginAroundPlayer
 
 Sets the origin of the HMD anchor while keeping the position the same relative to the player.
 
-This essentially moves the player by moving the anchor and can be used in instances where setting the player origin does not work.
+This essentially moves the player by moving the anchor and can be used in instances where
+setting the player origin does not work.
 
 ```lua
 CBasePlayer:SetAnchorOriginAroundPlayer(pos)
@@ -912,6 +960,7 @@ CBasePlayer:SetAnchorOriginAroundPlayer(pos)
 
 - **`pos`**  
   `Vector`  
+  New origin
 
 ### SetCoughHandEnabled
 
@@ -925,7 +974,7 @@ CBasePlayer:SetCoughHandEnabled(enabled)
 
 - **`enabled`**  
   `boolean`  
-  True if the cough handpose should be enabled
+  `true` if the cough handpose should be enabled
 
 ## Aliases
 

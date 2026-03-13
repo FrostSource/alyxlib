@@ -12,7 +12,7 @@
 
 ### GetHandIdFromTip
 
-Convert vr_tip_attachment from a game event [1,2] into a hand id [0,1] taking into account left handedness.
+Converts `vr_tip_attachment` from a game event (1,2) into a hand id (0,1) taking primary hand into account.
 
 ```lua
 Util:GetHandIdFromTip(vr_tip_attachment)
@@ -22,15 +22,17 @@ Util:GetHandIdFromTip(vr_tip_attachment)
 
 - **`vr_tip_attachment`**  
   `1`, `2`  
+  The `vr_tip_attachment` value from a game event
 
 **Returns**
 - **`0|1`**
+The hand id
 
 ### FindKeyFromValue
 !!! danger "This method is deprecated."
 
 
-Attempt to find a key in `tbl` pointing to `value`.
+Attempts to find a key in `tbl` pointing to `value`.
 
 ```lua
 Util:FindKeyFromValue(tbl, value)
@@ -40,16 +42,18 @@ Util:FindKeyFromValue(tbl, value)
 
 - **`tbl`**  
   `table`  
-  The table to search.
+  The table to search
 - **`value`**  
   `any`  
-  The value to search for.
+  The value to search for
 
 **Returns**
 - **`unknown|nil`**
-The key in `tbl` or nil if no `value` was found.
+The key in `tbl`, or `nil` if no `value` was found
 
 ### TableSize
+!!! danger "This method is deprecated."
+
 
 Returns the size of any table.
 
@@ -61,13 +65,15 @@ Util:TableSize(tbl)
 
 - **`tbl`**  
   `table`  
+  The table to get the size of
 
 **Returns**
 - **`integer`**
+The size of the table
 
 ### Delay
 
-Delay some code.
+Delays some code.
 
 ```lua
 Util:Delay(func, delay)
@@ -77,12 +83,15 @@ Util:Delay(func, delay)
 
 - **`func`**  
   `function`  
+  The function to delay
 - **`delay`** *(optional)*  
   `number`  
+  The delay in seconds (default: 0)
 
 ### QAngleFromVector
 
-Get a new `QAngle` from a `Vector`.
+Gets a new `QAngle` from a `Vector`.
+
 This simply transfers the raw values from one to the other.
 
 ```lua
@@ -93,13 +102,15 @@ Util:QAngleFromVector(vec)
 
 - **`vec`**  
   `Vector`  
+  The vector
 
 **Returns**
 - **`QAngle`**
+The new QAngle
 
 ### CreateConstraint
 
-Create a constraint between two entity handles.
+Creates a constraint between two entity handles.
 
 ```lua
 Util:CreateConstraint(entity1, entity2, class, properties)
@@ -109,23 +120,24 @@ Util:CreateConstraint(entity1, entity2, class, properties)
 
 - **`entity1`**  
   `EntityHandle`  
-  First entity to attach.
+  First entity to attach
 - **`entity2`**  
   `EntityHandle`, `nil`  
-  Second entity to attach. Set nil to attach to world.
+  Second entity to attach, or `nil` to attach to world
 - **`class`** *(optional)*  
   `string`  
-  Class of constraint, default is `phys_constraint`.
+  Class of constraint (default: `phys_constraint`)
 - **`properties`** *(optional)*  
   `table`  
-  Key/value property table.
+  Key/value property table for the constraint
 
 **Returns**
 - **`EntityHandle`**
+The created constraint
 
 ### CreateExplosion
 
-Create a damaging explosion effect at a position.
+Creates a damaging explosion effect at a position.
 
 ```lua
 Util:CreateExplosion(origin, explosionType, magnitude, radiusOverride, ignoredEntity, ignoredClass)
@@ -135,21 +147,26 @@ Util:CreateExplosion(origin, explosionType, magnitude, radiusOverride, ignoredEn
 
 - **`origin`**  
   `Vector`  
+  Worldspace position
 - **`explosionType`** *(optional)*  
   `ExplosionType`  
+  Explosion type (default: "")
 - **`magnitude`** *(optional)*  
   `number`  
+  Explosion magnitude (default: 100)
 - **`radiusOverride`** *(optional)*  
   `number`  
+  Radius override (default: 0)
 - **`ignoredEntity`** *(optional)*  
   `EntityHandle`, `string`  
-  If the entity passed does not have a unique name, all entities with that name will be ignored.
+  Targetname to ignore or entity handle with a name
 - **`ignoredClass`** *(optional)*  
   `string`  
+  Classname to ignore (default: "")
 
 ### Choose
 
-Choose and return a random argument.
+Chooses a random value from the provided arguments.
 
 ```lua
 Util:Choose(...)
@@ -161,10 +178,13 @@ Util:Choose(...)
 
 **Returns**
 - **`T`**
+Chosen value
 
 ### VectorFromString
 
 Turns a string of up to three numbers into a vector.
+
+Should have a format of "x y z"
 
 ```lua
 Util:VectorFromString(str)
@@ -174,10 +194,11 @@ Util:VectorFromString(str)
 
 - **`str`**  
   `string`  
-  Should have a format of "x y z"
+  String to parse
 
 **Returns**
 - **`Vector`**
+Parsed vector
 
 ## Aliases
 

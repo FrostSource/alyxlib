@@ -11,7 +11,7 @@ Debug.version = value
 ```
 
 **Default value**
-  `"v2.2.0"`
+  `"v2.3.0"`
 
 ## Methods
 
@@ -29,14 +29,14 @@ Debug:FindEntityByPattern(pattern, exact)
 
 - **`pattern`**  
   `string`  
-  The search pattern to look for.
+  The search pattern to look for
 - **`exact`**  
   `boolean?`  
-  If true the pattern must match exactly, otherwise wildcards will be used.
+  If true the pattern must match exactly, otherwise wildcards will be used
 
 **Returns**
 - **`EntityHandle?`**
-The found entity, or nil if not found.
+The found entity, or nil if not found
 
 ### FindAllEntitiesByPattern
 
@@ -52,13 +52,14 @@ Debug:FindAllEntitiesByPattern(pattern, exact)
 
 - **`pattern`**  
   `string`  
-  The search pattern to look for.
+  The search pattern to look for
 - **`exact`**  
   `boolean?`  
-  If true the pattern must match exactly, otherwise wildcards will be used.
+  If true the pattern must match exactly, otherwise wildcards will be used
 
 **Returns**
 - **`EntityHandle[]`**
+The found entities
 
 ### PrintEntityList
 
@@ -70,8 +71,8 @@ Also links children with their parents by displaying the index alongside the par
     Debug.PrintEntityList(ents, {"getclassname", "getname", "getname"})
     ```
 
-If no properties are supplied the default properties are used: GetClassname, GetName, GetModelName
-If an empty property table is supplied only the base values are shown: Index, Handle, Parent
+If no properties are supplied the default properties are used: GetClassname, GetName, GetModelName.
+If an empty property table is supplied only the base values are shown: Index, Handle, Parent.
 Property patterns do not need to be functions.
 
 ```lua
@@ -82,10 +83,10 @@ Debug:PrintEntityList(list, properties)
 
 - **`list`**  
   `EntityHandle[]`  
-  List of entities to print.
+  List of entities to print
 - **`properties`** *(optional)*  
   `string[]`  
-  List of property patterns to search for.
+  List of property patterns to search for
 
 ### PrintAllEntities
 
@@ -99,7 +100,7 @@ Debug:PrintAllEntities(properties)
 
 - **`properties`** *(optional)*  
   `string[]`  
-  List of property patterns to search for when displaying entity information.
+  List of property patterns to search for
 
 ### PrintDiffEntities
 
@@ -113,11 +114,11 @@ Debug:PrintDiffEntities(properties)
 
 - **`properties`** *(optional)*  
   `string[]`  
-  List of property patterns to search for when displaying entity information.
+  List of property patterns to search for
 
 ### PrintEntities
 
-Print entities matching a search string.
+Prints entities matching a search string.
 
 Searches name, classname and model name.
 
@@ -129,16 +130,16 @@ Debug:PrintEntities(search, exact, dont_include_parents, properties)
 
 - **`search`**  
   `string`  
-  Search string, may include `*`.
+  Search string, may include `*`
 - **`exact`**  
   `boolean`  
-  If the search should match exactly or part of the name.
+  If the search should match exactly or part of the name
 - **`dont_include_parents`**  
   `boolean`  
-  Parents won't be included in the results.
+  Parents won't be included in the results
 - **`properties`** *(optional)*  
   `string[]`  
-  List of property patterns to search for when displaying entity information.
+  List of property patterns to search for
 
 ### PrintAllEntitiesInSphere
 
@@ -152,13 +153,13 @@ Debug:PrintAllEntitiesInSphere(origin, radius, properties)
 
 - **`origin`**  
   `Vector`  
-  Position to search for entities at.
+  Position to search for entities at
 - **`radius`**  
   `number`  
-  Max radius to find entities within.
+  Max radius to find entities within
 - **`properties`** *(optional)*  
   `string[]`  
-  List of property patterns to search for when displaying entity information.
+  List of property patterns to search for
 
 ### PrintTable
 
@@ -200,7 +201,7 @@ Debug:PrintTableShallow(tbl)
 
 - **`tbl`**  
   `table`  
-  Table to print.
+  Table to print
 
 ### PrintList
 
@@ -214,10 +215,10 @@ Debug:PrintList(tbl, prefix)
 
 - **`tbl`**  
   `table`  
-  Table to print.
+  Table to print
 - **`prefix`** *(optional)*  
   `string`  
-  Optional prefix for each line.
+  Optional prefix for each line
 
 ### PrintSimpleTable
 
@@ -231,7 +232,7 @@ Debug:PrintSimpleTable(tbl)
 
 - **`tbl`**  
   `table`  
-  Table to print.
+  Table to print
 
 ### PrintValue
 
@@ -245,6 +246,7 @@ Debug:PrintValue(value)
 
 - **`value`**  
   `any`  
+  Value to print
 
 ### ShowEntity
 
@@ -258,10 +260,10 @@ Debug:ShowEntity(ent, duration)
 
 - **`ent`**  
   `EntityHandle`, `string`  
-  Handle or targetname of the entity(s) to find.
+  Handle or targetname of the entity(s) to find
 - **`duration`**  
   `number?`  
-  Number of seconds the debug should display for.
+  Number of seconds the debug should display for
 
 **Returns**
 - **`EntityHandle[]|EntityHandle?`**
@@ -292,6 +294,7 @@ Debug:PrintEntityBaseCriteria(ent)
 
 - **`ent`**  
   `EntityHandle`  
+  Entity to print
 
 ### GetClassname
 
@@ -307,13 +310,15 @@ Debug:GetClassname(ent)
 
 - **`ent`**  
   `EntityHandle`  
-  The entity to get the class name of.
+  The entity to get the class name of
 
 **Returns**
 - **`string`**
-The class name of the entity or "none" if not found.
+The class name of the entity or "none" if not found
 
 ### PrintMetaClasses
+
+Prints the table values of all built-in Valve classes.
 
 ```lua
 Debug:PrintMetaClasses()
@@ -322,6 +327,8 @@ Debug:PrintMetaClasses()
 ### PrintGraph
 
 Prints a visual ASCII graph showing the distribution of values between a min/max bound.
+
+Higher heights give more accurate results but can overflow the console making it hard to read.
 
 E.g.
 
@@ -359,16 +366,16 @@ Debug:PrintGraph(height, min_val, max_val, name_value_pairs)
 
 - **`height`**  
   `integer`  
-  Height of the actual graph in print rows. Heigher values give more accurate results but can overflow the console making it hard to read.
+  Height of the actual graph in print rows
 - **`min_val`** *(optional)*  
   `number`  
-  Minimum expected value for `name_value_pairs`. Default is `0`.
+  Minimum expected value for `name_value_pairs`; default is `0`
 - **`max_val`** *(optional)*  
   `number`  
-  Maxmimum expected value for `name_value_pairs`. Default is `1`.
+  Maxmimum expected value for `name_value_pairs`; default is `1`
 - **`name_value_pairs`**  
   `table<string,number>`  
-  Values to visualize on the graph.
+  Values to visualize on the graph
 
 ### PrintInheritance
 
@@ -382,6 +389,7 @@ Debug:PrintInheritance(ent)
 
 - **`ent`**  
   `EntityHandle`  
+  Entity to print the inheritance of
 
 ### SimpleVector
 
@@ -395,13 +403,15 @@ Debug:SimpleVector(vector)
 
 - **`vector`**  
   `Vector`, `QAngle`, `table`  
+  Object to print
 
 **Returns**
 - **`string`**
+Vector string
 
 ### Sphere
 
-Draw a simple sphere without worrying about all the properties.
+Draws a simple sphere without worrying about all the properties.
 
 ```lua
 Debug:Sphere(x, y, z, radius, time, color)
@@ -430,7 +440,7 @@ Debug:Sphere(x, y, z, radius, time, color)
 
 ### Line
 
-Draw a simple line without worrying about all the properties.
+Draws a simple line without worrying about all the properties.
 
 ```lua
 Debug:Line(startPos, endPos, time, color)
@@ -516,6 +526,7 @@ Debug:FindEntityByHandleString(tblpart, colon, hash)
 
 **Returns**
 - **`EntityHandle?`**
+The found entity, or nil if not found
 
 ### IsEntityHandleString
 
@@ -551,6 +562,7 @@ Debug:ToOrdinalString(n)
 
 **Returns**
 - **`string`**
+Ordinal string
 
 ### GetSourceLine
 
@@ -568,6 +580,7 @@ Debug:GetSourceLine(f)
 
 **Returns**
 - **`string`**
+Source
 
 ### Try
 
@@ -597,11 +610,11 @@ Debug:TableStr(tbl)
 
 - **`tbl`**  
   `table`  
-  The table to convert.
+  The table to convert
 
 **Returns**
 - **`string`**
-The string representation.
+The string representation
 
 ## Functions
 
@@ -624,3 +637,4 @@ entspawn(classname, spawnkeys)
 
 **Returns**
 - **`EntityHandle`**
+The spawned entity

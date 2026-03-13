@@ -11,7 +11,7 @@ DebugMenu.version = value
 ```
 
 **Default value**
-  `"v1.0.0"`
+  `"v1.1.0"`
 
 ### panel
 
@@ -81,7 +81,7 @@ DebugMenu:ClickHoveredButton()
 
 ### GetItem
 
-Get a debug menu item by id.
+Gets a debug menu item by id.
 
 ```lua
 DebugMenu:GetItem(id, categoryId)
@@ -102,7 +102,7 @@ The item if it exists
 
 ### GetCategory
 
-Get a debug menu category by id.
+Gets a debug menu category by id.
 
 ```lua
 DebugMenu:GetCategory(id)
@@ -126,7 +126,7 @@ The index of the category in the categories table
 
 ### AddCategory
 
-Add a category to the debug menu.
+Adds a category to the debug menu.
 
 ```lua
 DebugMenu:AddCategory(id, name)
@@ -143,7 +143,7 @@ DebugMenu:AddCategory(id, name)
 
 ### AddSeparator
 
-Add a separator line to a category.
+Adds a separator line to a category.
 
 ```lua
 DebugMenu:AddSeparator(categoryId, separatorId, text)
@@ -163,7 +163,7 @@ DebugMenu:AddSeparator(categoryId, separatorId, text)
 
 ### AddButton
 
-Add a button to a category.
+Adds a button to a category.
 
 ```lua
 DebugMenu:AddButton(categoryId, buttonId, text, command)
@@ -186,7 +186,7 @@ DebugMenu:AddButton(categoryId, buttonId, text, command)
 
 ### AddToggle
 
-Add a toggle to a category.
+Adds a toggle to a category.
 
 ```lua
 DebugMenu:AddToggle(categoryId, toggleId, text, convar, callback, startsOn)
@@ -215,7 +215,7 @@ DebugMenu:AddToggle(categoryId, toggleId, text, convar, callback, startsOn)
 
 ### AddLabel
 
-Add a center aligned label to a category.
+Adds a center aligned label to a category.
 
 ```lua
 DebugMenu:AddLabel(categoryId, labelId, text)
@@ -235,7 +235,7 @@ DebugMenu:AddLabel(categoryId, labelId, text)
 
 ### AddSlider
 
-Add value slider to a category.
+Adds value slider to a category.
 
 ```lua
 DebugMenu:AddSlider(categoryId, sliderId, text, convar, min, max, isPercentage, truncate, increment, callback, defaultValue)
@@ -279,7 +279,7 @@ DebugMenu:AddSlider(categoryId, sliderId, text, convar, min, max, isPercentage, 
 
 ### AddCycle
 
-Add a value cycler to a category.
+Adds a value cycler to a category.
 
 Cyclers allow users to choose from a set of values.
 
@@ -313,7 +313,7 @@ DebugMenu:AddCycle(categoryId, cycleId, title, convar, values, callback, default
 
 ### SetItemText
 
-Set the text of an item.
+Sets the text of an item.
 
 Only works on the following types:
 
@@ -354,10 +354,10 @@ DebugMenu:SetCategoryIndex(categoryId, index)
 
 - **`categoryId`**  
   `string`  
-  Id of the category to change.
+  Id of the category to change
 - **`index`**  
   `number`  
-  New index for the category.
+  New index for the category
 
 ### SendCategoryToPanel
 
@@ -445,9 +445,9 @@ A category of items in the debug menu.
 
 | Field | Type | Description |
 | ---- | ---- | ----------- |
-| id | `string` | The unique ID for this category. |
-| name | `string` | The display name for this category. |
-| items | `DebugMenuItem[]` | The items in this category. |
+| id | `string` | The unique ID for this category |
+| name | `string` | The display name for this category |
+| items | `DebugMenuItem[]` | The items in this category |
 
 ### DebugMenuItem
 
@@ -455,17 +455,17 @@ An item in the debug menu.
 
 | Field | Type | Description |
 | ---- | ---- | ----------- |
-| categoryId | `string` | The ID of the category this item is in. |
-| id | `string` | The unique ID for this item. |
-| text | `string` | The text to display for this item (if applicable). |
-| callback | `function` | The function to call when this item is clicked. |
+| categoryId | `string` | The ID of the category this item is in |
+| id | `string` | The unique ID for this item |
+| text | `string` | The text to display for this item (if applicable) |
+| callback | `function` | The function to call when this item is clicked |
 | type | `"button"|"toggle"|"separator"|"slider"|"cycle"` | Type of menu element this item is. |
-| default | `any|function` | The default value sent to the menu. If this is a function the return value will be used. |
-| min | `number` | Minimum value of this slider. |
-| max | `number` | Maxmimum value of this slider. |
-| isPercentage | `boolean` | If true, this slider displays its value as a percentage of min/max. |
-| convar | `string` | The console variable associated with this element. |
-| values | `{text:string,value:any}[]` | Text/value pairs for this cycler. |
-| truncate | `number` | The number of decimal places to truncate the slider value to (-1 for no truncating). |
-| increment | `number` | The increment value to snap the slider value to (0 for no snapping). |
-| condition? | `string|function` | The condition that must be met for this item to be visible. |
+| default | `any|function` | The default value sent to the menu. If this is a function the return value will be used |
+| min | `number` | Minimum value of this slider |
+| max | `number` | Maxmimum value of this slider |
+| isPercentage | `boolean` | If true, this slider displays its value as a percentage of min/max |
+| convar | `string` | The console variable associated with this element |
+| values | `{text:string,value:any}[]` | Text/value pairs for this cycler |
+| truncate | `number` | The number of decimal places to truncate the slider value to (-1 for no truncating) |
+| increment | `number` | The increment value to snap the slider value to (0 for no snapping) |
+| condition? | `string|function` | The condition that must be met for this item to be visible |

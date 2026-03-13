@@ -14,7 +14,7 @@ Vector:Perpendicular()
 
 **Returns**
 - **`Vector`**
-The perpendicular vector.
+The perpendicular vector
 
 ### IsParallelTo
 
@@ -28,15 +28,15 @@ Vector:IsParallelTo(vector)
 
 - **`vector`**  
   `Vector`  
-  The vector to compare with.
+  The vector to compare with
 
 **Returns**
 - **`boolean`**
-True if the vectors are parallel, false otherwise.
+True if the vectors are parallel, false otherwise
 
 ### Slerp
 
-Spherical linear interpolation between the calling vector and the target vector over t = [0, 1].
+Spherical linear interpolation between the calling vector and the target vector over `t = [0, 1]`.
 
 ```lua
 Vector:Slerp(target, t)
@@ -46,26 +46,27 @@ Vector:Slerp(target, t)
 
 - **`target`**  
   `Vector`  
-  The target vector to interpolate towards.
+  The target vector to interpolate towards
 - **`t`**  
   `number`  
-  The interpolation factor, ranging from 0 to 1.
+  The interpolation factor, ranging from 0 to 1
 
 **Returns**
 - **`Vector`**
-The resulting vector after spherical linear interpolation.
+The resulting vector after spherical linear interpolation
 
 ### LocalTranslate
 
 Translates a vector within a local coordinate system.
+
 This function computes a new vector by applying an offset relative to the local axes defined by the forward, right, and up direction vectors.
 
 
-                    - `offset.x`: Translation along the forward vector.
+                    - `offset.x`: Translation along the forward vector
 
-                    - `offset.y`: Translation along the right vector.
+                    - `offset.y`: Translation along the right vector
 
-                    - `offset.z`: Translation along the up vector.
+                    - `offset.z`: Translation along the up vector
 
 ```lua
 Vector:LocalTranslate(offset, forward, right, up)
@@ -75,20 +76,20 @@ Vector:LocalTranslate(offset, forward, right, up)
 
 - **`offset`**  
   `Vector`  
-  The translation offset vector. This defines how much to move along the forward, right, and up directions.
+  The translation offset vector. This defines how much to move along the forward, right, and up directions
 - **`forward`**  
   `Vector`  
-  The forward direction of the local coordinate system.
+  The forward direction of the local coordinate system
 - **`right`**  
   `Vector`  
-  The right direction of the local coordinate system.
+  The right direction of the local coordinate system
 - **`up`**  
   `Vector`  
-  The up direction of the local coordinate system.
+  The up direction of the local coordinate system
 
 **Returns**
 - **`Vector`**
-A new vector representing the translated position.
+A new vector representing the translated position
 
 ### AngleDiff
 
@@ -102,11 +103,11 @@ Vector:AngleDiff(vector)
 
 - **`vector`**  
   `Vector`  
-  The vector to calculate the angle difference with.
+  The vector to calculate the angle difference with
 
 **Returns**
 - **`number`**
-Angle difference in degrees.
+Angle difference in degrees
 
 ### SignedAngleDiff
 
@@ -120,14 +121,14 @@ Vector:SignedAngleDiff(vector, axis)
 
 - **`vector`**  
   `Vector`  
-  The vector to calculate the angle difference with.
+  The vector to calculate the angle difference with
 - **`axis`** *(optional)*  
   `Vector`  
-  The axis of rotation around which the angle difference is calculated.
+  The axis of rotation around which the angle difference is calculated
 
 **Returns**
 - **`number`**
-The signed angle difference in degrees.
+The signed angle difference in degrees
 
 ### Unpack
 
@@ -154,6 +155,7 @@ z component
 ### LengthSquared
 
 Returns the squared length (magnitude) of the vector.
+
 More efficient than calculating the actual length as it avoids using `sqrt()`.
 
 ```lua
@@ -175,14 +177,14 @@ Vector:IsSimilarTo(vector, tolerance)
 
 - **`vector`**  
   `Vector`  
-  The vector to compare against.
+  The vector to compare against
 - **`tolerance`** *(optional)*  
   `number`  
-  The tolerance within which the vectors are considered similar. Default is 1e-5. See [math.isclose](lua://math.isclose)
+  The tolerance within which the vectors are considered similar. Default is `1e-5`
 
 **Returns**
 - **`boolean`**
-Returns `true` if the vectors are similar within the tolerance, otherwise `false`.
+Returns `true` if the vectors are similar within the tolerance, otherwise `false`
 
 ### Clone
 
@@ -194,4 +196,4 @@ Vector:Clone()
 
 **Returns**
 - **`Vector`**
-A new vector with the same components as the original.
+A new vector with the same components as the original
