@@ -43,7 +43,12 @@ function RegisterAlyxLibConvar(name, defaultValue, helpText, flags, callback)
     else
         Convars:RegisterConvar(name, defaultValue, helpText, flags)
     end
-    alyxlibCommands[name] = "Default: "..tostring(defaultValue)..", "..helpText
+    alyxlibCommands[name] = helpText
+
+    ---@TODO Support initializer values
+    if type(defaultValue) ~= "function" then
+        alyxlibCommands[name] = alyxlibCommands[name] .. ", default: "..tostring(defaultValue)
+    end
 end
 
 ---
