@@ -22,14 +22,16 @@ local version = "v1.0.0"
 local function savePlayerData()
     Storage.SaveTable(Player, "PlayerItems", Player.Items)
 
-    -- Weapons aren't re-equipped on load so we need to save this
+    -- weapon_switch doesn't fire on load so we need to save this
     Storage.SaveString(Player, "PlayerCurrentlyEquipped", Player.CurrentlyEquipped)
 
     if Player and Player.LeftHand then
         Storage.SaveEntity(Player, "LeftWristItem", Player.LeftHand.WristItem)
+        Storage.SaveEntity(Player, "LeftHandItemHeld", Player.LeftHand.ItemHeld)
     end
     if Player and Player.RightHand then
         Storage.SaveEntity(Player, "RightWristItem", Player.RightHand.WristItem)
+        Storage.SaveEntity(Player, "RightHandItemHeld", Player.RightHand.ItemHeld)
     end
 end
 
@@ -43,9 +45,11 @@ local function loadPlayerData()
 
     if Player and Player.LeftHand then
         Player.LeftHand.WristItem = Storage.LoadEntity(Player, "LeftWristItem", Player.LeftHand.WristItem)
+        Player.LeftHand.ItemHeld = Storage.LoadEntity(Player, "LeftHandItemHeld", Player.LeftHand.ItemHeld)
     end
     if Player and Player.RightHand then
         Player.RightHand.WristItem = Storage.LoadEntity(Player, "RightWristItem", Player.RightHand.WristItem)
+        Player.RightHand.ItemHeld = Storage.LoadEntity(Player, "RightHandItemHeld", Player.RightHand.ItemHeld)
     end
 end
 

@@ -195,6 +195,9 @@ local function listenEventPlayerActivate(data)
                 end, 0.5)
             end
 
+            -- Load data again after vr entities have spawned
+            playerData.LoadPlayerData()
+
             -- Registered callback
             data.hmd_avatar = Player.HMDAvatar
             for id, event_data in pairs(registered_event_callbacks["vr_player_ready"]) do
