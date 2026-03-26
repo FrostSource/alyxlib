@@ -23,7 +23,9 @@ jobs:
             OLD_VERSION=$(git show origin/main:$file | head -n 10 | grep -oP 'v\d+\.\d+\.\d+' || true)
             NEW_VERSION=$(head -n 10 "$file" | grep -oP 'v\d+\.\d+\.\d+' || true)
 
-            if [ "$OLD_VERSION" = "$NEW_VERSION" ]; then
+            if [ -n "$OLD_VERSION" ] && [ -z "$NEW_VERSION" ]; then
+              ERROR_FILES="$ERROR_FILES\n- $file (version was removed; old version was $OLD_VERSION)"
+            elif [ -n "$OLD_VERSION" ] && [ -n "$NEW_VERSION" ] && [ "$OLD_VERSION" = "$NEW_VERSION" ]; then
               ERROR_FILES="$ERROR_FILES\n- $file (version not updated, still $NEW_VERSION)"
             fi
           done
@@ -33,7 +35,9 @@ jobs:
           OLD_ALYXLIB_VERSION=$(git show origin/main:$ALYX_INIT_FILE | grep -oP 'ALYXLIB_VERSION\s*=\s*"v\d+\.\d+\.\d+"' | grep -oP 'v\d+\.\d+\.\d+' || true)
           NEW_ALYXLIB_VERSION=$(grep -oP 'ALYXLIB_VERSION\s*=\s*"v\d+\.\d+\.\d+"' "$ALYX_INIT_FILE" | grep -oP 'v\d+\.\d+\.\d+' || true)
           
-          if [ "$OLD_ALYXLIB_VERSION" = "$NEW_ALYXLIB_VERSION" ]; then
+          if [ -z "$NEW_ALYXLIB_VERSION" ]; then
+            ERROR_FILES="$ERROR_FILES\n- $ALYX_INIT_FILE (ALYXLIB_VERSION missing)"
+          elif [ -n "$OLD_ALYXLIB_VERSION" ] && [ "$OLD_ALYXLIB_VERSION" = "$NEW_ALYXLIB_VERSION" ]; then
             ERROR_FILES="$ERROR_FILES\n- $ALYX_INIT_FILE (ALYXLIB_VERSION not updated, still $NEW_ALYXLIB_VERSION)"
           fi
 
