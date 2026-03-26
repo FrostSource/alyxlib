@@ -1,12 +1,16 @@
 --[[
-    v1.1.1
+    v1.2.0
     https://github.com/FrostSource/alyxlib
 
     Panorama core library.
+
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
+    
+    require "alyxlib.panorama.core"
 ]]
 
 Panorama = {}
-Panorama.version = "v1.1.1"
+Panorama.version = "v1.2.0"
 
 ---Filters text string to replace problematic characters.
 ---@param text string
@@ -18,13 +22,13 @@ local function FilterText(text)
 end
 
 ---
----Initializes a panorama panel with a unique id.
+---Initializes a panorama panel with a unique id.  
 ---This must be done every time the entity loads, even on save game loads.
 ---
 ---The entity can be initialized if it accepts the input "AddCSSClass".
 ---
----@param panelEntity EntityHandle # The entity to initialize.
----@param customId? string # If nil the id will be generated automatically.
+---@param panelEntity EntityHandle # The entity to initialize
+---@param customId? string # The custom id to use, otherwise a unique id will be generated
 function Panorama:InitPanel(panelEntity, customId)
     local id = customId
 
@@ -40,11 +44,27 @@ function Panorama:InitPanel(panelEntity, customId)
     DoEntFireByInstanceHandle(panelEntity, "AddCSSClass", id, 0, nil, nil)
 end
 
+---Flattens a nested ordered table into a single list.
+---@param tbl table # The table to flatten
+---@param out? table # Optional table to flatten into
+---@return table # The flattened table or `out`
+local function flattenOrderedTable(tbl, out)
+    out = out or {}
+    for _, value in ipairs(tbl) do
+        if type(value) == "table" then
+            flattenOrderedTable(value, out)
+        else
+            table.insert(out, value)
+        end
+    end
+    return out
+end
+
 ---
----Send data to a panorama panel.
+---Sends data to a panorama panel.
 ---
----@param panelEntity EntityHandle # The entity to send data to.
----@param ... any # The data to send. Each value will be converted to a string.
+---@param panelEntity EntityHandle # The entity to send data to
+---@param ... any # The data to send - each value will be converted to a string
 function Panorama:Send(panelEntity, ...)
     ---@diagnostic disable-next-line: undefined-field
     local id = panelEntity.__panoid
@@ -54,28 +74,38 @@ function Panorama:Send(panelEntity, ...)
     end
 
     local dataString = id .. "|"
-    local data = {...}
-    local i = 1
+    local n = select("#", ...)
 
     local flattenedData = {}
 
-    -- Flatten nested tables into data
-    for _, value in ipairs(data) do
-        if type(value) == "table" then
-            data = vlua.extend(flattenedData, value)
+    -- Flatten nested tables and convert to strings
+    for i = 1, n do
+        local value = select(i, ...)
+        if value == nil then
+            table.insert(flattenedData, "")
+        elseif type(value) == "table" then
+            flattenOrderedTable(value, flattenedData)
         else
-            table.insert(flattenedData, value)
+            table.insert(flattenedData, tostring(value))
         end
     end
     local dataLength = #flattenedData
 
     -- Put all values into a single pipe separated string
-    for index, value in ipairs(data) do
+    for index, value in ipairs(flattenedData) do
         dataString = dataString .. tostring(value)
         if index < dataLength then dataString = dataString .. "|" end
     end
 
     dataString = FilterText(dataString)
+
+    -- above 404 it will be clamped
+    -- above 462 it will be completely ignored
+    if #dataString > 404 then
+        warn("Panorama string length", #dataString, "exceeds 404 characters and may be truncated! Consider reducing the amount of data being sent or splitting it into multiple sends.")
+        ---@TODO split into multiple sends, need a way to buffer SendToConsole calls and ensure they are sent in order
+    end
+
     -- print("Sending to pano:", dataString)
     SendToConsole("@panorama_dispatch_event AddStyleToEachChild('"..dataString.."')")
 end
@@ -119,10 +149,10 @@ function Panorama:ToJSON(value)
 end
 
 ---
----Get the panorama id from an entity if it has one.
+---Gets the panorama id from an entity if it has one.
 ---
----@param entityPanel EntityHandle
----@return string?
+---@param entityPanel EntityHandle # The entity to get the id from
+---@return string? # The panorama id
 function Panorama:GetId(entityPanel)
 ---@diagnostic disable-next-line: undefined-field
     return entityPanel.__panoid

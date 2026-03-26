@@ -50,7 +50,7 @@ if IsServer() then
     addonTable = _G.SERVER_ADDONS
 else
     ---
-    ---All init scripts running on the server.
+    ---All init scripts running on the client.
     ---
     ---The key is the workshop ID of the addon, and the value is a boolean indicating if there is an init script for the addon.
     ---

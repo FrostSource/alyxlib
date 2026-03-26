@@ -1,127 +1,14 @@
 --[[
-    v3.2.0
+    v3.3.0
     https://github.com/FrostSource/alyxlib
 
     Helps with saving/loading values for persistency between game sessions.
     Data is saved on a specific entity and if the entity is killed the values
     cannot be retrieved during that game session.
 
-    If not using `vscripts/alyxlib/core.lua`, load this file at game start using the following line:
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
     
-    ```lua
     require "alyxlib.storage"
-    ```
-
-    ======================================== Usage ==========================================
-    
-    
-
-    Functions are accessed through the global 'Storage' table.
-    When using dot notation (Storage.SaveNumber) you must provide the entity handle to save on.
-    When using colon notation (Storage:SaveNumber) the script will find the best handle to save on (usually the player).
-
-    Examples of storing and retrieving the following local values that might be defined
-    at the top of the file:
-
-    ```lua
-    -- Getting the values to save
-    local origin = thisEntity:GetOrigin()
-    local hp     = thisEntity:GetHealth()
-    local name   = thisEntity:GetName()
-
-    -- Saving the values:
-
-    Storage:SaveVector("origin", origin)
-    Storage:SaveNumber("hp", hp)
-    Storage:SaveString("name", name)
-
-    -- Loading the values:
-
-    origin = Storage:LoadVector("origin")
-    hp     = Storage:LoadNumber("hp")
-    name   = Storage:LoadString("name")
-    ```
-
-    This script also provides functions Storage.Save/Storage.Load for general purpose
-    type inference storage. It is still recommended that you use the explicit type
-    functions to keep code easily understandable, but it can help with prototyping:
-
-    ```lua
-    Storage:Save("origin", origin)
-    Storage:Save("hp", hp)
-    Storage:Save("name", name)
-
-    origin = Storage:Load("origin", origin)
-    hp     = Storage:Load("hp", hp)
-    name   = Storage:Load("name", name)
-    ```
-
-    Entity versions of the functions exist to make saving to a specific entity easier:
-
-    ```lua
-    thisEntity:SaveNumber("hp", thisEntity:GetHealth())
-    thisEntity:SetHealth(thisEntity:LoadNumber("hp"))
-    ```
-
-    ======================================= Complex Tables ========================================
-
-    Since Lua allows tables to have keys and values to be virtually any value, `Storage.SaveTable`
-    attempts to save and restore both using their native Storage functions, and does so recursively
-    meaning nested tables can be saved.
-
-    An example of safely restoring a class instance (assuming the class has a `new` method)
-    where an instance is created and then the saved values are restored and added to the instance:
-
-    ```lua
-    vlua.tableadd(MyClass:new(), thisEntity:LoadTable("MyClass", {}))
-    ```
-
-    Alternatively if the class uses a metatable and you have access to it:
-
-    ```lua
-    setmetatable(thisEntity:LoadTable("MyClass", {}), MyClass)
-    ```
-
-    Functions for both key and value are currently not supported and will fail to save but will not
-    block the rest of the table from being saved. This means you can save whole class tables and
-    restore them with only the relevant saved data.
-
-    =================================== Delegate Save Functions ===================================
-
-    Tables can utilize __save/__load functions to handle their specific saving needs.
-    The table with these functions needs to be registered with the Storage module and any instances
-    must have an `__index` key pointing to the base table:
-
-    ```lua
-    MyClass.__index = MyClass
-    Storage.RegisterType("MyClass", MyClass)
-    ```
-
-    The functions may handle the data saving however they want but should generally use the base
-    Storage functions to keep things safe and consistent. The below template functions may be
-    copied to your script as a starting point.
-    See `data/stack.lua` for an example of these functions in action.
-
-    ```lua
-    ---@param handle EntityHandle # The entity to save on.
-    ---@param name string # The name to save as.
-    ---@param object MyClass # The object to save.
-    ---@return boolean # If the save was successful.
-    function MyClass.__save(handle, name, object)
-        return Storage.SaveTableCustom(handle, name, object, "MyClass")
-    end
-
-    ---@param handle EntityHandle # Entity to load from.
-    ---@param name string # Name to load.
-    ---@return MyClass|nil # The loaded value. nil on fail.
-    function MyClass.__load(handle, name)
-        local object = Storage.LoadTableCustom(handle, name, "MyClass")
-        if object == nil then return nil end
-        return setmetatable(object, MyClass)
-    end
-    ```
-
-    Storage.Save and Storage.Load will now invoke these functions when appropriate.
 
     =========================================== Notes =============================================
 
@@ -146,10 +33,10 @@ local function Warn(msg)
 end
 
 ---
----Resolve a given handle.
+---Resolves a given handle.
 ---
----@param handle EntityHandle # Handle to resolve.
----@return EntityHandle # Resolved save handle.
+---@param handle EntityHandle # Handle to resolve
+---@return EntityHandle # Resolved save handle
 local function resolveHandle(handle)
     -- Keep given handle if valid entity
     if handle ~= nil and handle ~= Storage and IsValidEntity(handle) then
@@ -171,7 +58,7 @@ end
 local separator = "::"
 
 Storage = {}
-Storage.version = "v3.2.0"
+Storage.version = "v3.3.0"
 ---Collection of type names associated with a class table.
 ---The table should have both __save() and __load() functions.
 ---@type table<string,table>
@@ -179,41 +66,42 @@ Storage.type_to_class = {}
 Storage.class_to_type = {}
 
 ---
----Register a class table type with a name.
+---Registers a class table type with a name.
 ---
----@param name string # Name that the type will be saved as.
----@param T table # Class table.
+---@param name string # Name that the type will be saved as
+---@param T table # Class table
 function Storage.RegisterType(name, T)
     Storage.type_to_class[name] = T
     Storage.class_to_type[T] = name
 end
 
 ---
----Unregister a class type.
+---Unregisters a class type.
 ---
----@param name string # Name to unregister.
----@param T table # Class to unregister.
+---@param name string # Name to unregister
+---@param T table # Class to unregister
 function Storage.UnregisterType(name, T)
     Storage.type_to_class[name] = nil
     Storage.class_to_type[T] = nil
 end
 
 ---
----Join a list of values by the hidden separator.
+---Joins a list of values by the hidden separator.
 ---
----@param ... any # Values to join.
----@return string # Joined string.
+---@param ... any # Values to join
+---@return string # Joined string
 function Storage.Join(...)
     return table.concat({...}, separator)
 end
 
 ---
 ---Helper function for saving the type correctly.
+---
 ---No failsafes are provided in this function, you must be sure you are saving correctly.
 ---
----@param handle EntityHandle # Entity to save on.
----@param name string # Name prefix to save as.
----@param T string # String name of `T`.
+---@param handle EntityHandle # Entity to save on
+---@param name string # Name prefix to save as
+---@param T string # String name of `T`
 function Storage.SaveType(handle, name, T)
     handle:SetContext(Storage.Join(name, "type"), T, 0)
 end
@@ -223,12 +111,12 @@ end
 ------------
 
 ---
----Save a string.
+---Saves a string.
 ---
----@param handle EntityHandle # Entity to save on.
----@param name string # Name to save as.
----@param value string|nil # String to save.
----@return boolean # If the save was successful.
+---@param handle EntityHandle # Entity to save on
+---@param name string # Name to save as
+---@param value string|nil # String to save
+---@return boolean # If the save was successful
 function Storage.SaveString(handle, name, value)
     handle = resolveHandle(handle)
     if not handle then
@@ -260,54 +148,75 @@ function Storage.SaveString(handle, name, value)
 end
 
 ---
----Save a number.
+---Saves a number.
 ---
----@param handle EntityHandle # Entity to save on.
----@param name string # Name to save as.
----@param value number # Number to save.
----@return boolean # If the save was successful.
+---@param handle EntityHandle # Entity to save on
+---@param name string # Name to save as
+---@param value number|nil # Number to save
+---@return boolean # If the save was successful
 function Storage.SaveNumber(handle, name, value)
     handle = resolveHandle(handle)
     if not handle then
         Warn("Invalid save handle ("..tostring(handle)..")!")
         return false
     end
+
+    if value == nil then
+        handle:SetContext(name, nil, 0)
+        handle:SetContext(name..separator.."type", nil, 0)
+        return true
+    end
+
     handle:SetContextNum(name, value, 0)
     handle:SetContext(name..separator.."type", "number", 0)
     return true
 end
 
 ---
----Save a boolean.
+---Saves a boolean.
 ---
----@param handle EntityHandle # Entity to save on.
----@param name string # Name to save as.
----@param bool boolean # Boolean to save.
----@return boolean # If the save was successful.
+---@param handle EntityHandle # Entity to save on
+---@param name string # Name to save as
+---@param bool boolean|nil # Boolean to save
+---@return boolean # If the save was successful
 function Storage.SaveBoolean(handle, name, bool)
     handle = resolveHandle(handle)
     if not handle then
         Warn("Invalid save handle ("..tostring(handle)..")!")
         return false
     end
+
+    if bool == nil then
+        handle:SetContext(name, nil, 0)
+        handle:SetContext(name..separator.."type", nil, 0)
+        return true
+    end
+
     handle:SetContextNum(name, bool and 1 or 0, 0)
     handle:SetContext(name..separator.."type", "boolean", 0)
     return true
 end
 
 ---
----Save a Vector.
+---Saves a Vector.
 ---
----@param handle EntityHandle # Entity to save on.
----@param name string # Name to save as.
----@param vector Vector # Vector to save.
----@return boolean # If the save was successful.
+---@param handle EntityHandle # Entity to save on
+---@param name string # Name to save as
+---@param vector Vector|nil # Vector to save
+---@return boolean # If the save was successful
 function Storage.SaveVector(handle, name, vector)
     handle = resolveHandle(handle)
     if not handle then
         Warn("Invalid save handle ("..tostring(handle)..")!")
         return false
     end
+
+    if vector == nil then
+        handle:SetContext(name, nil, 0)
+        handle:SetContext(name..separator.."type", nil, 0)
+        return true
+    end
+
     handle:SetContext(name, "", 0)
     handle:SetContext(name..separator.."type", "vector", 0)
     Storage.SaveNumber(handle, name..separator.."x", vector.x)
@@ -317,18 +226,25 @@ function Storage.SaveVector(handle, name, vector)
 end
 
 ---
----Save a QAngle.
+---Saves a QAngle.
 ---
----@param handle EntityHandle # Entity to save on.
----@param name string # Name to save as.
----@param qangle QAngle # QAngle to save.
----@return boolean # If the save was successful.
+---@param handle EntityHandle # Entity to save on
+---@param name string # Name to save as
+---@param qangle QAngle|nil # QAngle to save
+---@return boolean # If the save was successful
 function Storage.SaveQAngle(handle, name, qangle)
     handle = resolveHandle(handle)
     if not handle then
         Warn("Invalid save handle ("..tostring(handle)..")!")
         return false
     end
+
+    if qangle == nil then
+        handle:SetContext(name, nil, 0)
+        handle:SetContext(name..separator.."type", nil, 0)
+        return true
+    end
+
     handle:SetContext(name, "", 0)
     handle:SetContext(name..separator.."type", "qangle", 0)
     Storage.SaveNumber(handle, name..separator.."x", qangle.x)
@@ -338,17 +254,17 @@ function Storage.SaveQAngle(handle, name, qangle)
 end
 
 ---
----Save a table with a custom type.
+---Saves a table with a custom type.
 ---Should be used with custom save functions.
 ---
 ---If trying to save a normal table use `Storage.SaveTable`.
 ---
----@param handle EntityHandle # Entity to save on.
----@param name string # Name to save as.
----@param tbl table<any,any> # Table to save.
----@param T string # Type to save as.
----@param save_meta? boolean # If keys starting with '__' should be saved.
----@return boolean # If the save was successful.
+---@param handle EntityHandle # Entity to save on
+---@param name string # Name to save as
+---@param tbl table<any,any> # Table to save
+---@param T string # Type to save as
+---@param save_meta? boolean # If keys starting with '__' should be saved
+---@return boolean # If the save was successful
 function Storage.SaveTableCustom(handle, name, tbl, T, save_meta)
     handle = resolveHandle(handle)
     if not handle then
@@ -378,30 +294,30 @@ function Storage.SaveTableCustom(handle, name, tbl, T, save_meta)
 end
 
 ---
----Save a table.
+---Saves a table.
 ---
 ---May be ordered, unordered or mixed.
 ---
 ---May have nested tables.
 ---
----@param handle EntityHandle # Entity to save on.
----@param name string # Name to save as.
----@param tbl table<any,any> # Table to save.
----@return boolean # If the save was successful.
+---@param handle EntityHandle # Entity to save on
+---@param name string # Name to save as
+---@param tbl table<any,any> # Table to save
+---@return boolean # If the save was successful
 function Storage.SaveTable(handle, name, tbl)
     return Storage.SaveTableCustom(handle, name, tbl, "table")
 end
 
 ---
----Save an entity reference.
+---Saves an entity reference.
 ---
 ---Entity handles change between game sessions so this function
 ---modifies the passed entity to make sure it can keep track of it.
 ---
----@param handle EntityHandle # Entity to save on.
----@param name string # Name to save as.
----@param entity EntityHandle|nil # Entity to save.
----@return boolean # If the save was successful.
+---@param handle EntityHandle # Entity to save on
+---@param name string # Name to save as
+---@param entity EntityHandle|nil # Entity to save
+---@return boolean # If the save was successful
 function Storage.SaveEntity(handle, name, entity, useClassname)
     handle = resolveHandle(handle)
 
@@ -416,10 +332,10 @@ function Storage.SaveEntity(handle, name, entity, useClassname)
     end
 
     if entity == nil then
-        Storage.SaveString(handle, name..separator.."targetname", "")
-        Storage.SaveString(handle, name..separator.."classname", "")
-        handle:SetContext(name..separator.."unique", "", 0)
-        handle:SetContext(name..separator.."type", "entity", 0)
+        Storage.SaveString(handle, name..separator.."targetname", nil)
+        Storage.SaveString(handle, name..separator.."classname", nil)
+        handle:SetContext(name..separator.."unique", nil, 0)
+        handle:SetContext(name..separator.."type", nil, 0)
         return true
     elseif not entity or not IsValidEntity(entity) then
         return false
@@ -441,15 +357,15 @@ local _vector = getmetatable(Vector())
 local _qangle = getmetatable(QAngle())
 
 ---
----Save a value.
+---Saves a value.
 ---
 ---Uses type inference to save the value.
 ---If you are experiencing errors consider saving with one of the explicit type saves.
 ---
----@param handle EntityHandle # Entity to save on.
----@param name string # Name to save as.
----@param value any # Value to save.
----@return boolean # If the save was successful.
+---@param handle EntityHandle # Entity to save on
+---@param name string # Name to save as
+---@param value any # Value to save
+---@return boolean # If the save was successful
 function Storage.Save(handle, name, value)
     local t = type(value)
     if t=="function" then Warn("Functions are not supported for saving yet.") return false
@@ -478,16 +394,17 @@ end
 -------------
 
 ---
----Load a string.
+---Loads a string.
 ---
 ---@generic T
----@param handle EntityHandle # Entity to load from.
----@param name string # Name the string was saved as.
----@param default? T # Optional default value.
----@return string|T # Saved string or `default`.
+---@param handle EntityHandle # Entity to load from
+---@param name string # Name the string was saved as
+---@param default? T # Optional default value
+---@return string|T # Saved string or `default`
 function Storage.LoadString(handle, name, default)
     handle = resolveHandle(handle)
     local t = handle:GetContext(name..separator.."type")
+
     if t == "string" then
         local value = handle:GetContext(name)
         if value == nil then return default end
@@ -505,13 +422,13 @@ function Storage.LoadString(handle, name, default)
 end
 
 ---
----Load a number.
+---Loads a number.
 ---
 ---@generic T
----@param handle EntityHandle # Entity to load from.
----@param name string # Name the number was saved as.
----@param default? T # Optional default value.
----@return number|T # Saved number or `default`.
+---@param handle EntityHandle # Entity to load from
+---@param name string # Name the number was saved as
+---@param default? T # Optional default value
+---@return number|T # Saved number or `default`
 function Storage.LoadNumber(handle, name, default)
     handle = resolveHandle(handle)
     local t = handle:GetContext(name..separator.."type")
@@ -525,13 +442,13 @@ function Storage.LoadNumber(handle, name, default)
 end
 
 ---
----Load a boolean value.
+---Loads a boolean value.
 ---
 ---@generic T
----@param handle EntityHandle # Entity to load from.
----@param name string # Name the boolean was saved as.
----@param default? T # Optional default value.
----@return boolean|T # Saved boolean or `default`.
+---@param handle EntityHandle # Entity to load from
+---@param name string # Name the boolean was saved as
+---@param default? T # Optional default value
+---@return boolean|T # Saved boolean or `default`
 function Storage.LoadBoolean(handle, name, default)
     handle = resolveHandle(handle)
     local t = handle:GetContext(name..separator.."type")
@@ -544,13 +461,13 @@ function Storage.LoadBoolean(handle, name, default)
 end
 
 ---
----Load a Vector.
+---Loads a Vector.
 ---
 ---@generic T
----@param handle EntityHandle # Entity to load from.
----@param name string # Name the Vector was saved as.
----@param default? T # Optional default value.
----@return Vector|T # Saved Vector or `default`.
+---@param handle EntityHandle # Entity to load from
+---@param name string # Name the Vector was saved as
+---@param default? T # Optional default value
+---@return Vector|T # Saved Vector or `default`
 function Storage.LoadVector(handle, name, default)
     handle = resolveHandle(handle)
     local t = handle:GetContext(name..separator.."type")
@@ -566,13 +483,13 @@ function Storage.LoadVector(handle, name, default)
 end
 
 ---
----Load a QAngle.
+---Loads a QAngle.
 ---
 ---@generic T
----@param handle EntityHandle # Entity to load from.
----@param name string # Name the QAngle was saved as.
----@param default? T # Optional default value.
----@return QAngle|T # Saved QAngle or `default`.
+---@param handle EntityHandle # Entity to load from
+---@param name string # Name the QAngle was saved as
+---@param default? T # Optional default value
+---@return QAngle|T # Saved QAngle or `default`
 function Storage.LoadQAngle(handle, name, default)
     handle = resolveHandle(handle)
     local t = handle:GetContext(name..separator.."type")
@@ -588,17 +505,17 @@ function Storage.LoadQAngle(handle, name, default)
 end
 
 ---
----Load a table with a custom type.
+---Loads a table with a custom type.
 ---Should be used with custom load functions.
 ---
 ---If trying to load a normal table use `Storage.LoadTable`.
 ---
 ---@generic T
----@param handle EntityHandle # Entity to load from.
----@param name string # Name the table was saved as.
----@param T string # Type to save as.
----@param default? T # Optional default value.
----@return table|T # Saved table or `default`.
+---@param handle EntityHandle # Entity to load from
+---@param name string # Name the table was saved as
+---@param T string # Type to save as
+---@param default? T # Optional default value
+---@return table|T # Saved table or `default`
 function Storage.LoadTableCustom(handle, name, T, default)
     handle = resolveHandle(handle)
     local name_sep = name..separator
@@ -621,25 +538,25 @@ function Storage.LoadTableCustom(handle, name, T, default)
 end
 
 ---
----Load a table with a custom type.
+---Loads a table with a custom type.
 ---
 ---@generic T
----@param handle EntityHandle # Entity to load from.
----@param name string # Name the table was saved as.
----@param default? T # Optional default value.
----@return table|T # Saved table or `default`.
+---@param handle EntityHandle # Entity to load from
+---@param name string # Name the table was saved as
+---@param default? T # Optional default value
+---@return table|T # Saved table or `default`
 function Storage.LoadTable(handle, name, default)
     return Storage.LoadTableCustom(handle, name, "table", default)
 end
 
 ---
----Load an entity.
+---Loads an entity.
 ---
 ---@generic T
----@param handle EntityHandle # Entity to load from.
----@param name string # Name to save as.
----@param default? T # Optional default value.
----@return EntityHandle|T # Saved entity or `default`.
+---@param handle EntityHandle # Entity to load from
+---@param name string # Name to save as
+---@param default? T # Optional default value
+---@return EntityHandle|T # Saved entity or `default`
 function Storage.LoadEntity(handle, name, default)
     handle = resolveHandle(handle)
     local t = handle:GetContext(name..separator.."type")
@@ -677,12 +594,12 @@ function Storage.LoadEntity(handle, name, default)
 end
 
 ---
----Load a value.
+---Loads a value.
 ---
----@param handle EntityHandle # Entity to load from.
----@param name string # Name the value was saved as.
----@param default? any # Optional default value.
----@return any # Saved value or `default`.
+---@param handle EntityHandle # Entity to load from
+---@param name string # Name the value was saved as
+---@param default? any # Optional default value
+---@return any # Saved value or `default`
 function Storage.Load(handle, name, default)
     handle = resolveHandle(handle)
     local t = handle:GetContext(name..separator.."type")
@@ -709,10 +626,10 @@ function Storage.Load(handle, name, default)
     end
 end
 
----Load all values saved to an entity.
----@param handle EntityHandle # Entity to load from.
----@param direct? boolean # Optionally load values directly into `handle` instead of a new table.
----@return table # Table of loaded values (or `handle` if `direct` is true).
+---Loads all values saved to an entity.
+---@param handle EntityHandle # Entity to load from
+---@param direct? boolean # Optionally load values directly into `handle` instead of a new table
+---@return table # Table of loaded values (or `handle` if `direct` is true)
 function Storage.LoadAll(handle, direct)
     local tbl = direct and handle or {}
     handle = resolveHandle(handle)

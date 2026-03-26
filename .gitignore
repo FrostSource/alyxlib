@@ -1,9 +1,16 @@
 
+# Source Engine
 /_bakeresourcecache/
 *bakeresourcecache.vpk
+
+# Tooling
 __pycache__
 /release/
 /test_release/
 __test*
 *.bak
+
+# MkDocs
+.cache/
 check_lua_versions.sh
+serve_mobile.bat

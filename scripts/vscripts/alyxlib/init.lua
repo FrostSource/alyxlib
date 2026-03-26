@@ -1,5 +1,5 @@
 --[[
-    v1.2.2
+    v1.2.3
     https://github.com/FrostSource/alyxlib
 
     The main initializer script loads any standard libraries that it can find.
@@ -11,12 +11,12 @@
 ]]
 
 -- Version of this file
-local version = "v1.2.2"
+local version = "v1.2.3"
 
 ---ID of AlyxLib in the Steam workshop
 ALYXLIB_WORKSHOP_ID = "3329679071"
 ---The current version of AlyxLib as a whole
-ALYXLIB_VERSION = "v2.0.0"
+ALYXLIB_VERSION = "v3.0.0"
 
 print("Initializing AlyxLib system ".. ALYXLIB_VERSION .." ...")
 
@@ -61,6 +61,7 @@ alyxlib_require "alyxlib.extensions.npc"
 alyxlib_require "alyxlib.extensions.template"
 alyxlib_require "alyxlib.math.common"
 alyxlib_require "alyxlib.math.weighted_random"
+alyxlib_require "alyxlib.math.obb"
 alyxlib_require "alyxlib.data.queue"
 alyxlib_require "alyxlib.data.stack"
 alyxlib_require "alyxlib.data.inventory"
@@ -88,12 +89,14 @@ alyxlib_require "alyxlib.panorama.core"
 alyxlib_require "alyxlib.debug.common"
 alyxlib_require "alyxlib.debug.commands"
 alyxlib_require "alyxlib.debug.controller"
-if IsVREnabled() then
+if IsVREnabled() or IsFakeVREnabled() then
     alyxlib_require "alyxlib.debug.vr"
 else
     alyxlib_require "alyxlib.debug.novr"
 end
 alyxlib_require "alyxlib.debug.debug_menu"
+alyxlib_require "alyxlib.debug.debug_menu_cfg"
+alyxlib_require "alyxlib.debug.menus.debug_menu_alyxlib"
 
 -- Common third-party libraries
 

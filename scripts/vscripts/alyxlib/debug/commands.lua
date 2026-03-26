@@ -1,23 +1,23 @@
 --[[
-    v1.1.1
+    v1.2.0
     https://github.com/FrostSource/alyxlib
 
-    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
     
     require "alyxlib.debug.commands"
 ]]
 
-local version = "v1.1.1"
+local version = "v1.2.0"
 
 local alyxlibCommands = {}
 
 ---
 ---Registers a command for the AlyxLib library.
 ---
----@param name string # Name of the command that will be given in the console.
----@param func fun(_:string, ...:string) # Function to run when the command is called.
----@param helpText? string # Description of the command.
----@param flags? number # Flags for the command.
+---@param name string # Name of the command that will be given in the console
+---@param func fun(_:string, ...:string) # Function to run when the command is called
+---@param helpText? string # Description of the command
+---@param flags? number # Flags for the command
 function RegisterAlyxLibCommand(name, func, helpText, flags)
     helpText = helpText or "[No description]"
     Convars:RegisterCommand(name, func, helpText, flags or 0)
@@ -27,13 +27,47 @@ end
 ---
 ---Registers a new AlyxLib console variable.
 ---
----@param name string # Name of the convar that will be given in the console.
----@param defaultValue string # Default value of the convar.
----@param helpText? string # Description of the convar.
----@param flags? integer # Flags for the convar.
-function RegisterAlyxLibConvar(name, defaultValue, helpText, flags)
+---If `defaultValue` or `callback` is a function, the convar will be
+---created using `EasyConvars`.
+---
+---@param name string # Name of the convar that will be given in the console
+---@param defaultValue string|function # Default value of the convar or initializer function
+---@param helpText? string # Description of the convar
+---@param flags? integer # Flags for the convar
+---@param callback? fun(newVal:string, oldVal:string): any # Update function called after the value has been changed
+function RegisterAlyxLibConvar(name, defaultValue, helpText, flags, callback)
     helpText = helpText or "[No description]"
-    Convars:RegisterConvar(name, defaultValue, helpText, flags or 0)
+    flags = flags or 0
+    if callback or type(defaultValue) == "function" then
+        EasyConvars:RegisterConvar(name, defaultValue, helpText, flags, callback)
+    else
+        Convars:RegisterConvar(name, defaultValue, helpText, flags)
+    end
+    alyxlibCommands[name] = helpText
+
+    ---@TODO Support initializer values
+    if type(defaultValue) ~= "function" then
+        alyxlibCommands[name] = alyxlibCommands[name] .. ", default: "..tostring(defaultValue)
+    end
+end
+
+---
+---Registers a new AlyxLib console variable.
+---
+---@param name string # Name of the convar that will be given in the console
+---@param defaultValue string # Default value of the convar
+---@param helpText? string # Description of the convar
+---@param flags? integer # Flags for the convar
+---@param postUpdate? fun(newVal:string, oldVal:string): any # Update function called after the value has been changed
+---@param persistent? boolean # Whether the convar should be persistent
+function RegisterAlyxLibEasyConvar(name, defaultValue, helpText, flags, postUpdate, persistent)
+    helpText = helpText or "[No description]"
+    EasyConvars:RegisterConvar(name, defaultValue, helpText, flags or 0, postUpdate)
+
+    if persistent then
+        EasyConvars:SetPersistent(name, true)
+    end
+
     alyxlibCommands[name] = "Default: "..tostring(defaultValue)..", "..helpText
 end
 
@@ -365,6 +399,31 @@ RegisterAlyxLibCommand("print_ents", function (_, pattern, ...)
 end, "Prints all entities with class, name or model matching a pattern", 0)
 
 ---
+---Prints an entity by its index.
+---
+RegisterAlyxLibCommand("print_ent_by_index", function(_, index)
+
+    if index == nil then
+        warn("Must supply an index to search for, e.g. prints_ent_by_index 1")
+        return
+    end
+
+    local i = tonumber(index)
+    if i == nil then
+        warn("Index must be a number, e.g. prints_ent_by_index 1")
+        return
+    end
+
+    local ent = EntIndexToHScript(i)
+    if ent == nil then
+        warn("Could not find entity with index '"..index.."'")
+        return
+    end
+
+    print(Debug.EntStr(ent))
+end, "Prints the entity with the given index", 0)
+
+---
 ---Show the position of an entity relative to the player using debug drawing.
 ---
 RegisterAlyxLibCommand("ent_show", function (_, name)
@@ -398,7 +457,8 @@ RegisterAlyxLibCommand("sphere", function (_, x, y, z, r)
     z = tonumber(z) or 0
     r = tonumber(r) or 16
 
-    DebugDrawSphere(Vector(x, y, z), Vector(255, 255, 255), 255, r, false, 10)
+    DebugDrawSphere(Vector(x, y, z), Vector(255, 255, 255), 255, r, false, 15)
+    DebugDrawSphere(Vector(x, y, z), Vector(255, 255, 255), 255, r, true, 10)
 
 end, "Draws a debug sphere at 3D position with a radius", 0)
 
@@ -433,14 +493,9 @@ end, "Prints context criteria for an entity except for values saved using storag
 ---
 RegisterAlyxLibCommand("healme", function (_, amount)
 
-    amount = tonumber(amount)
+    amount = tonumber(amount) or 10
 
-    if not amount then
-        warn("Must provide a health amount")
-        return
-    end
-
-    Player:SetHealth(amount)
+    Player:SetHealth(Player:GetHealth() + amount)
 end, "Heals the player by a given amount", 0)
 
 ---
@@ -461,7 +516,7 @@ RegisterAlyxLibCommand("ent_find_by_address", function (_, tblpart, colon, hash)
         Msg("\tParent: " .. (tostring(foundEnt:GetMoveParent() or "[none]")) .."\n")
         Msg("\tModel: " .. foundEnt:GetModelName())
     else
-        Msg("Could not find any entity matching '" .. hash .. "'")
+        Msg("Could not find any entity matching '" .. tostring(hash) .. "'")
     end
 end, "Prints info for an entity by its table address", 0)
 
@@ -483,6 +538,21 @@ RegisterAlyxLibCommand("ent_rename", function(_, pattern, newName)
         ent:SetEntityName(newName)
     end
 end, "Renames the first entity found using a pattern to a new name", 0)
+
+---
+---Prints the children of an entity found using `pattern`.
+---
+RegisterAlyxLibCommand("ent_print_children", function(_, pattern)
+    local ent = Debug.FindEntityByPattern(pattern)
+    if not ent then
+        warn("Could not find entity with pattern '"..pattern.."'")
+        return
+    end
+
+    print(entstr(ent))
+
+    Debug.PrintEntityList(ent:GetChildrenMemSafe())
+end)
 
 local symbols = {"and","break","do","else","elseif","end","false","for","function","if","in","local","nil","not","or","repeat","return","then","true","until","while"}
 
@@ -572,5 +642,8 @@ local symbols = {"and","break","do","else","elseif","end","false","for","functio
     end, "Executes arbitrary Lua code on all entities with the given name", 0)
 
 -- end
+
+---Hidden convar state that can be retrieved by other scripts
+Convars:RegisterConvar("noclip_vr_enabled", "0", "True if noclip_vr is enabled (readonly)", FCVAR_HIDDEN)
 
 return version

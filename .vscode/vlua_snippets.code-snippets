@@ -48,7 +48,7 @@
 
 	"Hook: OnTakeDamage":{
 		"scope": "lua",
-		"prefix": ["Hook", "OnTakeDamage", "Snippet"],
+		"prefix": ["Hook", "OnTakeDamageTable", "Snippet"],
 		"body": [
 			"---@param damageTable TypeDamageTable",
 			"function OnTakeDamage(damageTable)",

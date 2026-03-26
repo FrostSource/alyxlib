@@ -5,6 +5,9 @@
 
 let panelReady = false;
 
+/** @type {Category} */
+let settingsCategory = null;
+
 /**
  * Fires a Panorama output with the given name and arguments.
  * The output is routed to the panel's input 'RunScriptCode'.
@@ -24,12 +27,12 @@ function FireOutput(outputName, ...args) {
 }
 
 /**
- * Maps category id to category object.
+ * List of all categories.
  * @type {Category[]}
  */
 let categories = [];
 
-const numberOfVisibleCategories = 5;
+let numberOfVisibleCategories = 5;
 
 let categoryBarCycleIndex = 0;
 
@@ -43,13 +46,17 @@ let currentlySelectedCategory = null;
  */
 let currentlyActiveButton = null;
 
-function TurnButtonIntoDebugMenuButton(button, callback)
+function TurnButtonIntoDebugMenuButton(button, callback, onmouseover, onmouseout)
 {
     if (button == null) return;
 
-    button.SetPanelEvent("onmouseover", () => currentlyActiveButton = button);
+    button.SetPanelEvent("onmouseover", () => {
+        currentlyActiveButton = button
+        if (onmouseover !== undefined) onmouseover();
+    });
     button.SetPanelEvent("onmouseout", () => {
         if (currentlyActiveButton == button) currentlyActiveButton = null;
+        if (onmouseout !== undefined) onmouseout();
     });
 
     if (callback !== null && callback !== undefined)
@@ -132,7 +139,10 @@ class Category
         this.panel.AddClass("scroll");
         this.content = $.CreatePanel("Panel", this.panel, `${this.id}_content`);
         this.content.AddClass("content");
+    }
 
+    AddToCategoryBar()
+    {
         // Create category button
         this.button = CreateDebugMenuButton($("#CategoryBar"), () => SetCategoryVisible(this.id), "CategoryButton", `${this.id}_button`);
         
@@ -170,17 +180,21 @@ class Category
         if (visible)
         {
             this.panel.AddClass("Visible");
-            this.button.AddClass("Selected");
+            if (this.button != null)
+                this.button.AddClass("Selected");
         }
         else
         {
             this.panel.RemoveClass("Visible");
-            this.button.RemoveClass("Selected");
+            if (this.button != null)
+                this.button.RemoveClass("Selected");
         }
     }
 
     SetBarButtonVisible(visible)
     {
+        if (this.button == null) return;
+
         if (visible)
             this.button.visible = true;
         else
@@ -285,16 +299,17 @@ class Category
      * Adds a new value cycler to this category.
      * @param {string} id String id for this cycle.
      * @param {string} convar Convar to tie this cycle to (currently unsued in JS).
-     * @param {SubMenuCycleItem[]} values Text/value pairs for this cycle.
-     * @param {string?} selectedValue Starting selected value.
+     * @param {string} title Title for this cycle.
+     * @param {string[]} values Text values for this cycle.
+     * @param {number?} selectedIndex Starting selected index [0-n].
      */
-    AddCycle(id, convar, values, selectedValue)
+    AddCycle(id, convar, title, values, selectedIndex)
     {
-        let cycle = new SubMenuCycle(`${this.id}_${id}`, convar, values, (index) => {
+        let cycle = new SubMenuCycle(`${this.id}_${id}`, convar, title, values, (index) => {
             FireOutput("_DebugMenuCallbackCycle", id, index + 1);
         });
         cycle.AddToPanel(this.content);
-        cycle.SetSelectedValueNoFire(selectedValue);
+        cycle.SetSelectedIndexNoFire(selectedIndex);
         this.items.push(cycle);
     }
 }
@@ -445,7 +460,7 @@ class SubMenuSlider
         this.text = text;
         this.min = min;
         this.max = max;
-        this.isPercentage = false;
+        this.isPercentage = isPercentage;
         this.callback = callback;
 
         this.truncate = truncate;
@@ -474,7 +489,7 @@ class SubMenuSlider
 
         // This only works in VR
         TurnButtonIntoDebugMenuButton(this.panel, () => {
-            const pos = GetAffordancePosition();
+            const pos = GetAffordancePositionInMenuSpace();
             if (pos !== null) {
                 // Slider does not have actualxoffset or actuallayoutwidth THANKS AGAIN VALVE
                 // These magic numbers are estimates of where the slider is in relation to the parent panel
@@ -523,8 +538,12 @@ class SubMenuSlider
         
         if (this.isPercentage)
             valueLabel.text = this.GetValueAsPercentage().toFixed(0);
-        else
-            valueLabel.text = this.value.toFixed(this.truncate);
+        else {
+            if (this.truncate > -1 && this.truncate < 20)
+                valueLabel.text = this.value.toFixed(this.truncate);
+            else
+                valueLabel.text = this.value;
+        }
     }
 
     /**
@@ -542,11 +561,11 @@ class SubMenuSlider
     }
 }
 
-/**
- * @typedef {Object} SubMenuCycleItem
- * @property {string} text
- * @property {string?} value
- */
+// /**
+//  * @typedef {Object} SubMenuCycleItem
+//  * @property {string} text
+//  * @property {string?} value
+//  */
 
 class SubMenuCycle
 {
@@ -554,14 +573,16 @@ class SubMenuCycle
      * 
      * @param {string} id 
      * @param {string} convar 
-     * @param {SubMenuCycleItem[]} values Maximum of 6 items
+     * @param {string} title Text show next to each value
+     * @param {string[]} values Maximum of 6 items
      * @param {function} callback 
      * @param {number} selectedIndex
      */
-    constructor(id, convar, values, callback, selectedIndex) {
+    constructor(id, convar, title, values, callback, selectedIndex) {
         this.id = id;
         this.convar = convar;
-        this.values = values;//values.slice(0, 6);
+        this.title = title;
+        this.values = values;
         this.callback = callback;
 
         /** @type {Panel} */
@@ -581,8 +602,11 @@ class SubMenuCycle
         const col = CreatePanel("Panel", btnRight, null, "cycle_button_right_col");
         for (let [index,item] of this.values.entries()) {
             /**@type {Label} */
-            const text = CreatePanel("Label", col, "item"+index, "cycle_label");
-            text.text = item.text;
+            const label = CreatePanel("Label", col, "item"+index, "cycle_label");
+            if (this.title && this.title != "")
+                label.text = `${this.title} : ${item}`;
+            else
+                label.text = item;
         }
         CreatePanel("Label", col, "custom", "cycle_label").text = "Custom";
         const dotRow = CreatePanel("Panel", col, null, "dot_row");
@@ -616,37 +640,18 @@ class SubMenuCycle
 
     /**
      * Sets the selected option without firing the callback.
-     * @param {number} index The index of the option to select, starting from 0.
+     * @param {number?} index The index of the option to select, starting from 0.
      */
     SetSelectedIndexNoFire(index) {
-        index = (index + this.values.length) % this.values.length;
-
-        for (let i = 0; i < this.values.length; i++) {
-            if (i == index) {
-                this.SetSelectedValueNoFire(this.values[i].value);
-                return;
-            }
-        }
-    }
-
-    /**
-     * Sets the selected option.
-     * @param {number} index The index of the option to select, starting from 0.
-     */
-    SetSelectedIndex(index) {
-        this.SetSelectedIndexNoFire(index);
-        this.callback(this.selectedIndex);
-    }
-
-    SetSelectedValueNoFire(value) {
         let foundValue = false;
-        
-        // Find the matching value index
+
+        if (typeof index === "number" && Number.isFinite(index))
+            index = (index + this.values.length) % this.values.length;
+
         for (let i = 0; i < this.values.length; i++) {
-            const _value = this.values[i].value;
             const item = this.panel.FindChildTraverse("item" + i);
             const dot = this.panel.FindChildTraverse("dot" + ((this.values.length-1) - i));
-            if (_value === value) {
+            if (i == index) {
                 item.visible = true;
                 dot.SetHasClass("cycle_dots_selected", true);
                 foundValue = true;
@@ -663,9 +668,32 @@ class SubMenuCycle
             custom.visible = false;
         } else {
             this.selectedIndex = -1;
-            custom.text = `Custom (${value})`;
+            // custom.text = `Custom (${value})`;
             custom.visible = true;
         }
+    }
+
+    /**
+     * Sets the selected option.
+     * @param {number} index The index of the option to select, starting from 0.
+     */
+    SetSelectedIndex(index) {
+        this.SetSelectedIndexNoFire(index);
+        this.callback(this.selectedIndex);
+    }
+
+    SetSelectedValueNoFire(value) {
+        // Find the matching value index
+        for (let i = 0; i < this.values.length; i++) {
+            const _value = this.values[i];
+            if (_value === value) {
+                this.SetSelectedIndexNoFire(i);
+                return;
+            }
+        }
+
+        // Custom value
+        this.SetSelectedIndexNoFire(undefined);
     }
 
     SetSelectedValue(value) {
@@ -782,7 +810,7 @@ class SubMenuLabel
      */
     AddToPanel(panel)
     {
-        this.panel = CreatePanel("Label", this.content, this.id, "custom_label");
+        this.panel = CreatePanel("Label", panel, this.id, "custom_label");
         this.panel.text = this.text;
     }
 
@@ -803,6 +831,9 @@ class SubMenuLabel
  */
 function SetCategoryVisible(id)
 {
+    // Hide settings if available
+    if (settingsCategory) settingsCategory.SetVisible(false);
+
     for (const category of categories)
     {
         if (category.id == id)
@@ -810,6 +841,7 @@ function SetCategoryVisible(id)
             // category.AddClass("Visible");
             category.SetVisible(true);
             currentlySelectedCategory = category;
+            $.GetContextPanel().currentlySelectedCategory = category.id;
         }
         else
         {
@@ -843,12 +875,22 @@ function CycleCategories(direction)
  */
 function UpdateCategoryBarVisibility()
 {
+    const bgPanel = $("#background_panel");
+    const width = bgPanel.actuallayoutwidth;
+    numberOfVisibleCategories = Math.max(1, Math.floor(width / 190));
+
     const selectedIndex = categories.indexOf(currentlySelectedCategory);
     if (selectedIndex < categoryBarCycleIndex) {
         categoryBarCycleIndex = selectedIndex;
     } else if (selectedIndex >= categoryBarCycleIndex + numberOfVisibleCategories) {
         categoryBarCycleIndex = selectedIndex - numberOfVisibleCategories + 1;
     }
+
+    const leftCategoryCount = categoryBarCycleIndex;
+    $("#CycleCategoryLeftButtonLabel").text = leftCategoryCount > 0 ? leftCategoryCount.toString() : "";
+    
+    const rightCategoryCount = Math.max(0, categories.length - categoryBarCycleIndex - numberOfVisibleCategories);
+    $("#CycleCategoryRightButtonLabel").text = rightCategoryCount > 0 ? rightCategoryCount.toString() : "";
 
     categories.forEach((category, index) => {
         const isVisible = index >= categoryBarCycleIndex && index < categoryBarCycleIndex + numberOfVisibleCategories;
@@ -868,10 +910,23 @@ function CreateCategory(id, name)
 {
     let category = new Category(id, name);
 
-    categories.push(category);
+    if (id === "settings") {
+        settingsCategory = category;
+    } else {
+        category.AddToCategoryBar();
+        categories.push(category);
+    }
 
-    if (currentlySelectedCategory == null)
-        SetCategoryVisible(category.id);
+    // Restore selected tab on refresh
+    if ($.GetContextPanel().currentlySelectedCategory) {
+        if ($.GetContextPanel().currentlySelectedCategory == category.id) {
+            SetCategoryVisible(category.id);
+        }
+    } else if (currentlySelectedCategory == null && category !== settingsCategory) {
+        SetCategoryVisible(category.id)
+    }
+    
+    UpdateCategoryBarVisibility();
 
     return category;
 }
@@ -883,6 +938,8 @@ function CreateCategory(id, name)
  */
 function GetCategory(id)
 {
+    if (id === "settings") return settingsCategory;
+
     for (const category of categories)
     {
         if (category.id == id) return category;
@@ -900,6 +957,38 @@ function CloseMenu()
     FireOutput("_CloseMenu");
 }
 
+function StartPanelDrag()
+{
+    FireOutput("_DebugMenuDrag");
+}
+
+function ShowSettings()
+{
+    if (settingsCategory) {
+        SetCategoryVisible();
+        settingsCategory.SetVisible(true);
+        currentlySelectedCategory = settingsCategory;
+    }
+}
+
+function OpenDialog(text)
+{
+    const dialog = $('#modal_background');
+    const label = $('#dialog_label');
+    const contentContainer = $('#ContentContainer');
+    label.text = text;
+    dialog.visible = true;
+    contentContainer.style.blur = "gaussian( 5 )";
+}
+
+function CloseDialog()
+{
+    const dialog = $('#modal_background');
+    const contentContainer = $('#ContentContainer');
+    dialog.visible = false;
+    contentContainer.style.blur = "none";
+}
+
 /**
  * Gets the position of the left or right 'affordance' circle for the VR finger interacting with the menu.
  * @returns {{x:number,y:number}?}
@@ -909,10 +998,27 @@ function GetAffordancePosition() {
     if (left.visible)
         return { x: left.actualxoffset, y: left.actualyoffset };
 
-    const right = $('#vr_affordance_left');
+    const right = $('#vr_affordance_right');
     if (right.visible)
         return { x: right.actualxoffset, y: right.actualyoffset };
 
+    return null;
+}
+
+/**
+ * Gets the position of the left or right 'affordance' circle for the VR finger interacting with the menu,
+ * normalized to the menu container.
+ * @returns {{x:number,y:number}?}
+ */
+function GetAffordancePositionInMenuSpace() {
+    const affordancePosition = GetAffordancePosition();
+    if (affordancePosition) {
+        let bgPanel = $("#background_panel");
+        return {
+            x: affordancePosition.x - bgPanel.actualxoffset,
+            y: affordancePosition.y - bgPanel.actualyoffset
+        };
+    }
     return null;
 }
 
@@ -964,6 +1070,46 @@ function ClickHoveredButton()
         // $.Msg(`Pressing ${button.id} : ${button.paneltype}`);
         $.DispatchEvent("Activated", button, "mouse");
     }
+}
+
+/**
+ * Sets the width and height of the menu container.
+ * @param {number?} width
+ * @param {number?} height 
+ */
+function SetContainerSize(width, height) {
+    // Clear container clip so larger sizes don't get clipped before the schedule
+    const container = $("#affordance_container");
+    container.style.clip = "rect(0px, 100%, 100%, 0px)";
+
+    const bgPanel = $("#background_panel");
+
+    if (width) {
+        bgPanel.style.width = `${width}px`;
+        $.Schedule(0.1, ()=> { UpdateCategoryBarVisibility(); });
+    }
+    if (height) {
+        bgPanel.style.height = `${height}px`;
+        $('#CategoriesContainer').style.minHeight = `${height - 111}px`;
+    }
+
+    // Wait for element update and any animations
+    // 0.6s is the duration of the opening animation
+    $.Schedule(0.61, ()=> {
+        let bgWidth = bgPanel.actuallayoutwidth;
+        let bgHeight = bgPanel.actuallayoutheight;
+        let containerWidth = container.actuallayoutwidth;
+        let containerHeight = container.actuallayoutheight;
+        
+        // Calculate centered x position within container
+        let x = (containerWidth - bgWidth) / 2;
+        // Calculate the bottom y position
+        let y = (containerHeight - bgHeight);
+        
+        const clipRect = "rect(" + y + "px, " + (x + bgWidth) + "px, " + (y + bgHeight) + "px, " + x + "px)";
+        
+        container.style.clip = clipRect;
+    });
 }
 
 /**
@@ -1072,18 +1218,11 @@ function ParseCommand(command, args)
 
             const id = args[1];
             const convar = args[2];
-            const currentValue = args[3];
-            const rawValues = args.slice(4);
-            /**@type {SubMenuCycleItem[]} */
-            const values = [];
-            for (let i = 0; i < rawValues.length; i+=2) {
-                values.push({
-                    text: rawValues[i],
-                    value: rawValues[i+1]
-                });
-            }
+            const title = args[3];
+            const currentIndex = parseInt(args[4])-1;
+            const rawValues = args.slice(5);
 
-            category.AddCycle(id, convar, values, currentValue);
+            category.AddCycle(id, convar, title, rawValues, currentIndex);
             break;
 
         case "setitemtext": {
@@ -1137,6 +1276,20 @@ function ParseCommand(command, args)
                 categories.splice(currentPos, 1);
                 categories.splice(index, 0, category);
             }
+            break;
+        }
+
+        case "setsize": {
+            const width = parseInt(args[0]);
+            const height = parseInt(args[1]);
+            SetContainerSize(width, height);
+            break;
+        }
+
+        case "showdialog": {
+            const text = args[0];
+            OpenDialog(text);
+            break;
         }
     }
 }
@@ -1154,6 +1307,7 @@ function ScrollHelperSchedule() {
         return;
     }
 
+    $.DispatchEvent(scrollHelperScheduleEvent, currentlySelectedCategory.panel);
     $.DispatchEvent(scrollHelperScheduleEvent, currentlySelectedCategory.panel);
     $.Schedule(scrollHelperSpeed, ScrollHelperSchedule);
 }
@@ -1196,24 +1350,26 @@ function ScrollHelperClick() {
 {
     // Modify preset layout buttons to work with controller trigger
     TurnButtonIntoDebugMenuButton($("#CloseMenuButton"));
+    TurnButtonIntoDebugMenuButton($("#SettingsButton"));
+    TurnButtonIntoDebugMenuButton($("#TitleBar"));
     TurnButtonIntoDebugMenuButton($("#CycleCategoryLeftButton"));
     TurnButtonIntoDebugMenuButton($("#CycleCategoryRightButton"));
-    TurnButtonIntoDebugMenuButton($("#ScrollHelperDown"));
-    TurnButtonIntoDebugMenuButton($("#ScrollHelperUp"));
-
-    // Tells Lua that the menu has been reloaded so it can repopulate the menu
-    // This helps with hot reloading panel changes
-    $.Schedule(0.1, () => FireOutput("_DebugMenuReloaded"));
-
     // Scroll helpers for sub-menus
     // Valve kindly didn't allow us to raytrace click panels like the main menu
     // so this is a work around for scrolling
-    $('#ScrollHelperDown').SetPanelEvent("onmouseover", () => StartScrollHelper("ScrollDown"));
-    $('#ScrollHelperDown').SetPanelEvent("onmouseout", () => StopScrollHelper());
-    $('#ScrollHelperDown').SetPanelEvent("onactivate", ScrollHelperClick);
-    $('#ScrollHelperUp').SetPanelEvent("onmouseover", () => StartScrollHelper("ScrollUp"));
-    $('#ScrollHelperUp').SetPanelEvent("onmouseout", () => StopScrollHelper());
-    $('#ScrollHelperUp').SetPanelEvent("onactivate", ScrollHelperClick);
+    TurnButtonIntoDebugMenuButton($("#ScrollHelperDown"), ScrollHelperClick, () => StartScrollHelper("ScrollDown"), () => StopScrollHelper());
+    TurnButtonIntoDebugMenuButton($("#ScrollHelperUp"), ScrollHelperClick, () => StartScrollHelper("ScrollUp"), () => StopScrollHelper());
+
+    // Tells Lua that the menu has been reloaded so it can repopulate the menu
+    // This helps with hot reloading panel changes
+    if ($.GetContextPanel().initialized) {
+        $.Msg("Refreshing debug menu due to hot reload");
+        $.Schedule(0.1, () => FireOutput("_DebugMenuReloaded"));
+    }
+
+    // Set so the panel doesn't refresh when it's first created
+    // Only when modified and recompiled
+    $.GetContextPanel().initialized = true;
 
     $.Schedule(1.0, () => panelReady = true);
 

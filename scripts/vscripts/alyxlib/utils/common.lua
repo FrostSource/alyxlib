@@ -1,14 +1,13 @@
 --[[
-    v3.1.0
+    v3.1.1
     https://github.com/FrostSource/alyxlib
 
-    This file contains utility functions to help reduce repetitive code and add general miscellaneous functionality.
+    This file contains utility functions to help reduce repetitive code
+    and add general miscellaneous functionality.
 
-    If not using `vscripts/alyxlib/core.lua`, load this file at game start using the following line:
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
     
-    ```lua
     require "alyxlib.utils.common"
-    ```
 ]]
 
 ---
@@ -16,13 +15,13 @@
 ---
 ---@class Util
 Util = {}
-Util.version = "v3.1.0"
+Util.version = "v3.1.1"
 
 ---
----Convert vr_tip_attachment from a game event [1,2] into a hand id [0,1] taking into account left handedness.
+---Converts `vr_tip_attachment` from a game event (1,2) into a hand id (0,1) taking primary hand into account.
 ---
----@param vr_tip_attachment 1|2
----@return 0|1
+---@param vr_tip_attachment 1|2 # The `vr_tip_attachment` value from a game event
+---@return 0|1 # The hand id
 function Util.GetHandIdFromTip(vr_tip_attachment)
     local handId = vr_tip_attachment - 1
     if not Convars:GetBool("hlvr_left_hand_primary") then
@@ -32,12 +31,13 @@ function Util.GetHandIdFromTip(vr_tip_attachment)
 end
 
 ---
----Attempt to find a key in `tbl` pointing to `value`.
+---Attempts to find a key in `tbl` pointing to `value`.
 ---
----@param tbl table # The table to search.
----@param value any # The value to search for.
----@return unknown|nil # The key in `tbl` or nil if no `value` was found.
----@deprecated # Functionally the same as `vlua.find`.
+---@param tbl table # The table to search
+---@param value any # The value to search for
+---@return unknown|nil # The key in `tbl`, or `nil` if no `value` was found
+---@deprecated # Functionally equivalent to [vlua.find](lua://vlua.find)
+---@see vlua.find # functionally equivalent
 function Util.FindKeyFromValue(tbl, value)
     for key, val in pairs(tbl) do
         if val == value then
@@ -48,12 +48,12 @@ function Util.FindKeyFromValue(tbl, value)
 end
 
 ---
----Attempt to find a key in `tbl` pointing to `value` by recursively searching nested tables.
+---Attempts to find a key in `tbl` pointing to `value` by recursively searching nested tables.
 ---
----@param tbl table # The table to search.
----@param value any # The value to search for.
----@param seen? table[] # List of tables that have already been searched.
----@return unknown|nil # The key in `tbl` or nil if no `value` was found.
+---@param tbl table # The table to search
+---@param value any # The value to search for
+---@param seen? table[] # List of tables that have already been searched
+---@return unknown|nil # The key in `tbl` or nil if no `value` was found
 local function _FindKeyFromValueDeep(tbl, value, seen)
     seen = seen or {}
     for key, val in pairs(tbl) do
@@ -69,18 +69,22 @@ local function _FindKeyFromValueDeep(tbl, value, seen)
 end
 
 ---
----Attempt to find a key in `tbl` pointing to `value` by recursively searching nested tables.
+---Attempts to find a key in `tbl` pointing to `value` by recursively searching nested tables.
 ---
----@param tbl table # The table to search.
----@param value any # The value to search for.
----@return unknown|nil # The key in `tbl` or nil if no `value` was found.
+---@param tbl table # The table to search
+---@param value any # The value to search for
+---@return unknown|nil # The key in `tbl`, or `nil` if no `value` was found.
 function Util.FindKeyFromValueDeep(tbl, value)
     return _FindKeyFromValueDeep(tbl, value)
 end
 
+---
 ---Returns the size of any table.
----@param tbl table
----@return integer
+---
+---@param tbl table # The table to get the size of
+---@return integer # The size of the table
+---@deprecated # Functionally equivalent to [TableSize](lua://TableSize)
+---@see TableSize # functionally equivalent
 function Util.TableSize(tbl)
     local count = 0
     for _, _ in pairs(tbl) do
@@ -90,30 +94,34 @@ function Util.TableSize(tbl)
 end
 
 ---
----Delay some code.
+---Delays some code.
 ---
----@param func function
----@param delay? number
+---@param func function # The function to delay
+---@param delay? number # The delay in seconds (default: 0)
+---@see CBaseEntity.Delay
 function Util.Delay(func, delay)
     GetListenServerHost():SetContextThink(DoUniqueString("delay"), func, delay or 0)
 end
 
 ---
----Get a new `QAngle` from a `Vector`.
+---Gets a new `QAngle` from a `Vector`.
+---
 ---This simply transfers the raw values from one to the other.
 ---
----@param vec Vector
----@return QAngle
+---@param vec Vector # The vector
+---@return QAngle # The new QAngle
 function Util.QAngleFromVector(vec)
     return QAngle(vec.x, vec.y, vec.z)
 end
 
----Create a constraint between two entity handles.
----@param entity1 EntityHandle # First entity to attach.
----@param entity2 EntityHandle|nil # Second entity to attach. Set nil to attach to world.
----@param class? string # Class of constraint, default is `phys_constraint`.
----@param properties? table # Key/value property table.
----@return EntityHandle
+---
+---Creates a constraint between two entity handles.
+---
+---@param entity1 EntityHandle # First entity to attach
+---@param entity2 EntityHandle|nil # Second entity to attach, or `nil` to attach to world
+---@param class? string # Class of constraint (default: `phys_constraint`)
+---@param properties? table # Key/value property table for the constraint
+---@return EntityHandle # The created constraint
 function Util.CreateConstraint(entity1, entity2, class, properties)
     -- Cache original names
     local name1 = entity1:GetName()
@@ -156,13 +164,15 @@ end
 ---|"none" # "None"
 ---|"custom" # "Custom"
 
----Create a damaging explosion effect at a position.
----@param origin Vector
----@param explosionType? ExplosionType
----@param magnitude? number
----@param radiusOverride? number
----@param ignoredEntity? EntityHandle|string # If the entity passed does not have a unique name, all entities with that name will be ignored.
----@param ignoredClass? string
+---
+---Creates a damaging explosion effect at a position.
+---
+---@param origin Vector # Worldspace position
+---@param explosionType? ExplosionType # Explosion type (default: "")
+---@param magnitude? number # Explosion magnitude (default: 100)
+---@param radiusOverride? number # Radius override (default: 0)
+---@param ignoredEntity? EntityHandle|string # Targetname to ignore or entity handle with a name
+---@param ignoredClass? string # Classname to ignore (default: "")
 function Util.CreateExplosion(origin, explosionType, magnitude, radiusOverride, ignoredEntity, ignoredClass)
 
     local name
@@ -185,10 +195,12 @@ function Util.CreateExplosion(origin, explosionType, magnitude, radiusOverride, 
     expl:EntFire("Kill", nil, 0.1)
 end
 
----Choose and return a random argument.
+---
+---Chooses a random value from the provided arguments.
+---
 ---@generic T
----@param ... T
----@return T
+---@param ... T # Values
+---@return T # Chosen value
 function Util.Choose(...)
     local args = {...}
     local numArgs = #args
@@ -201,9 +213,13 @@ function Util.Choose(...)
     end
 end
 
+---
 ---Turns a string of up to three numbers into a vector.
----@param str string # Should have a format of "x y z"
----@return Vector
+---
+---Should have a format of "x y z"
+---
+---@param str string # String to parse
+---@return Vector # Parsed vector
 function Util.VectorFromString(str)
     if type(str) ~= "string" then
         return Vector()

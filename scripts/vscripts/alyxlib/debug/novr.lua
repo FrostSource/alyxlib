@@ -1,16 +1,19 @@
 --[[
-    v1.1.0
+    v1.2.0
     https://github.com/FrostSource/alyxlib
 
     Adds functions and console commands to help debugging outside VR mode.
 
-    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
 
     require "alyxlib.debug.novr"
 ]]
 
-local version = "v1.1.0"
+local version = "v1.2.0"
 
+---
+---Provides functions to help debugging outside VR mode.
+---
 ---@class NoVR
 NoVR = {}
 
@@ -19,6 +22,9 @@ NoVR.AutoStartInToolsMode = false
 
 --#region Interactions
 
+---
+---NoVR interaction data.
+---
 ---@class NoVrInteractClass
 ---@field class string
 ---@field hold? boolean
@@ -77,7 +83,7 @@ local interactClasses =
 }
 
 ---
----Add an interaction class for the NoVR player to interact with.
+---Adds an interaction class for the NoVR player to interact with.
 ---
 ---@param title string # Text to show in-game on the entity
 ---@param class string # Class to interact with
@@ -100,7 +106,7 @@ local usePressTime = 0
 local HOLD_TIME = 0.8
 
 local DISTANCE_WEIGHT = 1
-local LOS_WIGHT = 1.3
+local LOS_WEIGHT = 1.3
 
 ---Get text that should show for an entity.
 ---@param data NoVrInteractClass
@@ -155,32 +161,40 @@ local function activateEntity(entity, data)
     debugoverlay:Text(getTextPosition(entity, data), 0, getText(data), 0, 50, 255, 50, 255, 2)
 end
 
+-- index is different for fakevr
+-- 5 for novr, 35 for fakevr
+local fakeUseButton = IsFakeVREnabled() and 35 or 5
+
 local function interactThink()
 
-    ---@type EntityHandle
-    local bestEnt = nil
     ---@type number
     local bestScore = 0
 
+    ---@type EntityHandle?
+    local bestEnt = nil
+
     ---@type NoVrInteractClass
-    local data = nil
+    local useData = nil
+
 
     for _, interactData in ipairs(interactClasses) do
-        -- local nearestEnt = Entities:FindByClassnameNearest(interactData.class, Player:EyePosition(), INTERACT_DISTANCE)
         local nearestEnts = Entities:FindAllByClassnameWithin(interactData.class, Player:EyePosition(), INTERACT_DISTANCE)
 
         for _, nearestEnt in ipairs(nearestEnts) do
 
             if nearestEnt then
-                local dist = VectorDistance(nearestEnt:GetOrigin(), Player:EyePosition())
-                local normalizedDist = 1 - (math.min(dist / INTERACT_DISTANCE, 1))
-                local dot = Player:EyeAngles():Forward():Dot((nearestEnt:GetAbsOrigin() - Player:EyePosition()):Normalized())
-                local score = (normalizedDist * DISTANCE_WEIGHT) + (dot * LOS_WIGHT) + (interactData.weight or 1)
-                -- debugoverlay:Text(nearestEnt:GetAbsOrigin(), 1, tostring(score) .. " " .. tostring(dot), 0, 255, 0, 0, 255, 0.1)
-                if score > bestScore then
-                    bestEnt = nearestEnt
-                    bestScore = score
-                    data = interactData
+                local owner = nearestEnt:GetMoveParent() and nearestEnt:GetMoveParent():GetOwner()
+                if nearestEnt:GetName() ~= "Conform Helper" and (not owner or (owner:GetClassname() ~= "info_hlvr_equip_player" and owner:GetClassname() ~= "player")) then
+                    local dist = VectorDistance(nearestEnt:GetOrigin(), Player:EyePosition())
+                    local normalizedDist = 1 - (math.min(dist / INTERACT_DISTANCE, 1))
+                    local dot = Player:EyeAngles():Forward():Dot((nearestEnt:GetAbsOrigin() - Player:EyePosition()):Normalized())
+                    local score = (normalizedDist * DISTANCE_WEIGHT) + (dot * LOS_WEIGHT) + (interactData.weight or 1)
+                    -- debugoverlay:Text(nearestEnt:GetAbsOrigin(), 1, tostring(score) .. " " .. tostring(dot), 0, 255, 0, 0, 255, 0.1)
+                    if score > bestScore then
+                        bestEnt = nearestEnt
+                        bestScore = score
+                        useData = interactData
+                    end
                 end
             end
 
@@ -189,24 +203,23 @@ local function interactThink()
     end
 
     if bestEnt then
-        local text = getText(data)
-        local pos = getTextPosition(bestEnt, data)
+        local text = getText(useData)
+        local pos = getTextPosition(bestEnt, useData)
 
         debugoverlay:Text(pos, 0, text, 0, 255, 255, 255, 255, 0.1)
 
-
-        if Player:IsVRControllerButtonPressed(5) then
+        if Player:IsVRControllerButtonPressed(fakeUseButton) then
             if not isUsePressed then
                 isUsePressed = true
                 usePressTime = Time()
 
-                if not data.hold then
-                    activateEntity(bestEnt, data)
+                if not useData.hold then
+                    activateEntity(bestEnt, useData)
                 end
             end
 
             if (Time() - usePressTime) > HOLD_TIME then
-                activateEntity(bestEnt, data)
+                activateEntity(bestEnt, useData)
                 usePressTime = math.huge
             end
         else
@@ -249,13 +262,15 @@ function NoVR:DisableAllDebugging()
     Player:SetContextThink("novrInteractThink", nil, 0)
 end
 
-ListenToPlayerEvent("novr_player", function (params)
-    cl_forwardspeed = Convars:GetFloat("cl_forwardspeed")
-    cl_backspeed = Convars:GetFloat("cl_backspeed")
-    cl_sidespeed = Convars:GetFloat("cl_sidespeed")
+ListenToPlayerEvent("player_activate", function (params)
+    if not IsVREnabled() then
+        cl_forwardspeed = Convars:GetFloat("cl_forwardspeed")
+        cl_backspeed = Convars:GetFloat("cl_backspeed")
+        cl_sidespeed = Convars:GetFloat("cl_sidespeed")
 
-    if NoVR.AutoStartInToolsMode and IsInToolsMode() then
-        NoVR:EnableAllDebugging()
+        if NoVR.AutoStartInToolsMode and IsInToolsMode() then
+            NoVR:EnableAllDebugging()
+        end
     end
 end)
 
@@ -408,7 +423,7 @@ end, "", 0)
 local novrBindings = {}
 
 ---
----Unbind all keys bound by [NoVR:BindKey](lua://NoVR.BindKey)
+---Unbinds all keys bound by [NoVR:BindKey](lua://NoVR.BindKey)
 ---
 function NoVR:UnbindKeys()
     -- for _, binding in ipairs(novrBindings) do
@@ -420,9 +435,9 @@ function NoVR:UnbindKeys()
 end
 
 ---
----Bind a keyboard key to a callback function.
+---Binds a keyboard key to a callback function.
 ---
----@param key KeyboardKey
+---@param key KeyboardKey # Key to bind
 ---@param callback fun()|string # Callback function or command string
 ---@param name? string # Optional name for the callback command
 function NoVR:BindKey(key, callback, name)
@@ -447,5 +462,54 @@ ListenToGameEvent("server_shutdown", function()
         NoVR:UnbindKeys()
     end
 end, nil)
+
+Convars:RegisterCommand("alyxlib_start_print_novr_button_presses", function (_)
+    local player = Entities:GetLocalPlayer()
+    if not player then
+        warn("Cannot print novr buttons while player does not exist!")
+        return
+    end
+
+    local buttonsPressed = {}
+
+    player:SetContextThink("DebugPrintNoVRButtonPresses", function()
+
+        local msgPrinted = false
+        for i = 0, 100 do
+            if player:IsVRControllerButtonPressed(i) then
+                if not buttonsPressed[i] then
+                    buttonsPressed[i] = true
+                    Msg("NoVR Button: ".. i .."" .. " Pressed\n")
+                    msgPrinted = true
+                end
+            else
+                if buttonsPressed[i] ~= nil then
+                    buttonsPressed[i] = nil
+                    Msg("NoVR Button: ".. i .."" .. " Released\n")
+                    msgPrinted = true
+                end
+            end
+        end
+
+        if msgPrinted then
+            Msg("\n")
+        end
+
+        return 0
+    end, 0)
+
+    Msg("Started printing NoVR button presses. Use alyxlib_stop_print_novr_button_presses to stop...\n")
+end, "", 0)
+
+Convars:RegisterCommand("alyxlib_stop_print_novr_button_presses", function (_)
+    local player = Entities:GetLocalPlayer()
+    if not player then
+        warn("Cannot stop printing novr buttons while player does not exist!")
+        return
+    end
+
+    player:SetContextThink("DebugPrintNoVRButtonPresses", nil, 0)
+    Msg("Stopped printing novr button presses...\n")
+end, "", 0)
 
 return version

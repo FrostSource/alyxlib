@@ -1,5 +1,5 @@
 --[[
-    v1.0.0
+    v1.0.1
     https://github.com/FrostSource/alyxlib
 
     This script searches for, and deletes, any extension fixed-up entities that appear to be duplicates.
@@ -9,7 +9,7 @@
 
     Duplicates are detected by checking for increments in the "ex*d_" fix-up name pattern the extensions give.
 
-    **This file is not loaded by default, load it with the following line:
+    **This file is not loaded by default, load it with the following line:**
 
     require("alyxlib.utils.extension_duplicate_fix")
 ]]

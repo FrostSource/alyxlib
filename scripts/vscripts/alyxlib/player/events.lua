@@ -1,11 +1,17 @@
 --[[
-    v2.2.0
+    v2.3.0
     https://github.com/FrostSource/alyxlib
 
+    Player event management and callbacks.
+
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
     
+    require "alyxlib.player.events"
 ]]
 
-local version = "v2.2.0"
+local version = "v2.3.0"
+
+local playerData = require "alyxlib.player.data"
 
 ---@class __PlayerRegisteredEventData
 ---@field callback function
@@ -32,24 +38,33 @@ local playerActivated = false
 
 ---@alias PLAYER_EVENTS_ALL "novr_player"|"player_activate"|"vr_player_ready"|"item_pickup"|"item_released"|"primary_hand_changed"|"player_drop_ammo_in_backpack"|"player_retrieved_backpack_clip"|"player_stored_item_in_itemholder"|"player_removed_item_from_itemholder"|"player_drop_resin_in_backpack"|"weapon_switch"
 
----Register a callback function with for a player event.
+---
+---Registers a callback function with a player event.
+---
 ---@param event PLAYER_EVENTS_ALL # Name of the event
 ---@param callback function # The function that will be called when the event is fired
----@param context? table # Optional: The context to pass to the function as `self`. If omitted the context will not passed to the callback.
+---@param context? table # The context to pass to first argument of `callback` - if omitted, the context will not passed to the callback
 ---@return integer eventID # ID used to unregister
 function ListenToPlayerEvent(event, callback, context)
+    assert(registered_event_callbacks[event], "Unknown player event "..event)
+
     if playerActivated and (event == "novr_player" or event == "player_activate" or event == "vr_player_ready") then
         warn("Player has already spawned so this event won't fire at "..Debug.GetSourceLine(3))
     end
+
     devprint2("Listening to player event", event, callback)
+
     registered_event_callbacks[event][registered_event_index] = { callback = callback, context = context}
     registered_event_index = registered_event_index + 1
     return registered_event_index - 1
 end
 
----Unregisters a callback with a name.
----@param eventID integer
+---
+---Unregisters a player event callback.
+---
+---@param eventID integer|nil # ID returned from [ListenToPlayerEvent](lua://ListenToPlayerEvent)
 function StopListeningToPlayerEvent(eventID)
+    if not eventID then return end
     for _, event in pairs(registered_event_callbacks) do
         event[eventID] = nil
     end
@@ -62,11 +77,11 @@ local entityPickupEvents = {}
 local entityPickupIndex = 1
 
 ---
----Listen to the pickup of a specific entity.
+---Listens to the pickup of a specific entity.
 ---
 ---@param entity EntityHandle # The entity to listen for
 ---@param callback function # The function that will be called when the entity is picked up
----@param context? any # Optional context passed into the callback as the first value
+---@param context? any # Context passed into the callback as the first value
 ---@return integer # ID used to unregister
 function ListenToEntityPickup(entity, callback, context)
     entityPickupEvents[entityPickupIndex] = {
@@ -79,7 +94,7 @@ function ListenToEntityPickup(entity, callback, context)
 end
 
 ---
----Stop listening to an entity pickup
+---Stops listening to an entity pickup.
 ---
 ---@param eventID integer # ID returned from [ListenToEntityPickup](lua://ListenToEntityPickup)
 function StopListeningToEntityPickup(eventID)
@@ -102,35 +117,7 @@ local player_weapon_to_ammotype =
     [PLAYER_WEAPON_GENERIC_PISTOL] = "AlyxGun",
 }
 
----
----Save the Player.Items table
----
-local function savePlayerData()
-    Storage.SaveTable(Player, "PlayerItems", Player.Items)
 
-    -- Weapons aren't re-equipped on load so we need to save this
-    Storage.SaveString(Player, "PlayerCurrentlyEquipped", Player.CurrentlyEquipped)
-
-    if Player and Player.LeftHand then
-        Storage.SaveEntity(Player, "LeftWristItem", Player.LeftHand.WristItem)
-    end
-    if Player and Player.RightHand then
-        Storage.SaveEntity(Player, "RightWristItem", Player.RightHand.WristItem)
-    end
-end
-
-local function loadPlayerData()
-    Player.Items = Storage.LoadTable(Player, "PlayerItems", Player.Items)
-
-    Player.CurrentlyEquipped = Storage.LoadString(Player, "PlayerCurrentlyEquipped", Player.CurrentlyEquipped)
-
-    if Player and Player.LeftHand then
-        Player.LeftHand.WristItem = Storage.LoadEntity(Player, "LeftWristItem", Player.LeftHand.WristItem)
-    end
-    if Player and Player.RightHand then
-        Player.RightHand.WristItem = Storage.LoadEntity(Player, "RightWristItem", Player.RightHand.WristItem)
-    end
-end
 
 ---Callback logic for every player event.
 ---@param eventName string # Name of the event, data.game_event_name
@@ -146,8 +133,8 @@ local function eventCallback(eventName, newdata)
 end
 
 ---@class PlayerEventPlayerActivate : GameEventBase
----@field player CBasePlayer # The entity handle of the player.
----@field type "spawn"|"load"|"transition" # Type of player activate.
+---@field player CBasePlayer # The entity handle of the player
+---@field type "spawn"|"load"|"transition" # Type of player activate
 
 ---@class PlayerEventVRPlayerReady : PlayerEventPlayerActivate
 ---@field hmd_avatar CPropHMDAvatar # The hmd avatar entity handle.
@@ -158,7 +145,7 @@ end
 local function listenEventPlayerActivate(data)
     playerActivated = true
     Player = GetListenServerHost()
-    loadPlayerData()
+    playerData.LoadPlayerData()
     local previous_map = Storage.LoadString(Player, "PlayerPreviousMap", "")
     Storage.SaveString(Player, "PlayerPreviousMap", GetMapName())
 
@@ -207,6 +194,9 @@ local function listenEventPlayerActivate(data)
                     Player.Items.resin_found = Player.Items.resin
                 end, 0.5)
             end
+
+            -- Load data again after vr entities have spawned
+            playerData.LoadPlayerData()
 
             -- Registered callback
             data.hmd_avatar = Player.HMDAvatar
@@ -262,10 +252,10 @@ ListenToGameEvent("physgun_pickup", function (params)
 end, nil)
 
 ---@class PlayerEventItemPickup : GameEventItemPickup
----@field item EntityHandle # The entity handle of the item that was picked up.
----@field item_class string # Classname of the entity that was picked up.
----@field hand CPropVRHand # The entity handle of the hand that picked up the item.
----@field otherhand CPropVRHand # The entity handle of the opposite hand.
+---@field item EntityHandle # The entity handle of the item that was picked up
+---@field item_class string # Classname of the entity that was picked up
+---@field hand CPropVRHand # The entity handle of the hand that picked up the item
+---@field otherhand CPropVRHand # The entity handle of the opposite hand
 
 ---Tracking player held items.
 ---@param data GameEventItemPickup
@@ -338,12 +328,11 @@ end
 ListenToGameEvent("item_pickup", listenEventItemPickup, nil)
 
 ---@class PlayerEventItemReleased : GameEventItemReleased
----@field item EntityHandle # The entity handle of the item that was dropped.
----@field item_class string # Classname of the entity that was dropped.
----@field hand CPropVRHand # The entity handle of the hand that dropped the item.
----@field otherhand CPropVRHand # The entity handle of the opposite hand.
+---@field item EntityHandle # The entity handle of the item that was dropped
+---@field item_class string # Classname of the entity that was dropped
+---@field hand CPropVRHand # The entity handle of the hand that dropped the item
+---@field otherhand CPropVRHand # The entity handle of the opposite hand
 
--- ---@type "item_hlvr_crafting_currency_small"|"item_hlvr_crafting_currency_large"|nil
 ---@type EntityHandle|nil
 local last_resin_dropped
 
@@ -407,9 +396,10 @@ end
 ListenToGameEvent("primary_hand_changed", listenEventPrimaryHandChanged, nil)
 
 -- Inherit from base instead of event to remove 'ammoType'
+
 ---@class PlayerEventPlayerDropAmmoInBackpack : GameEventBase
----@field ammotype "Pistol"|"SMG1"|"Buckshot"|"AlyxGun" # Type of ammo that was stored.
----@field ammo_amount 0|1|2|3|4 # Amount of ammo stored for the given type (1 clip, 2 shells).
+---@field ammotype "Pistol"|"SMG1"|"Buckshot"|"AlyxGun" # Type of ammo that was stored
+---@field ammo_amount integer # Amount of ammo stored for the given type, e.g. 1 clip, 2 shells
 
 ---Ammo tracking
 ---@param data GameEventPlayerDropAmmoInBackpack
@@ -472,7 +462,7 @@ local function listenEventPlayerDropAmmoInBackpack(data)
     else
         warn("Couldn't figure out ammo for "..tostring(ammotype))
     end
-    savePlayerData()
+    playerData.SavePlayerData()
 
     -- Registered callback
     local newdata = vlua.clone(data)--[[@as PlayerEventPlayerDropAmmoInBackpack]]
@@ -485,8 +475,8 @@ ListenToGameEvent("player_drop_ammo_in_backpack", listenEventPlayerDropAmmoInBac
 -- Inherit from base instead of event to remove 'ammoType'
 
 ---@class PlayerEventPlayerRetrievedBackpackClip : GameEventBase
----@field ammotype "Pistol"|"SMG1"|"Buckshot"|"AlyxGun" # Type of ammo that was retrieved.
----@field ammo_amount integer # Amount of ammo retrieved for the given type (1 clip, 2 shells).
+---@field ammotype "Pistol"|"SMG1"|"Buckshot"|"AlyxGun" # Type of ammo that was retrieved
+---@field ammo_amount integer # Amount of ammo retrieved for the given type, e.g. 1 clip, 2 shells
 
 ---Ammo tracking
 ---@param data GameEventPlayerRetrievedBackpackClip
@@ -521,7 +511,7 @@ local function listenEventPlayerRetrievedBackpackClip(data)
                 Player.Items.ammo.shotgun = Player.Items.ammo.shotgun - ammo_amount
             end
 
-            savePlayerData()
+            playerData.SavePlayerData()
 
             -- Registered callback
             newdata.ammo_amount = ammo_amount
@@ -535,7 +525,7 @@ local function listenEventPlayerRetrievedBackpackClip(data)
 
     -- Registered callback
     if do_callback then
-        savePlayerData()
+        playerData.SavePlayerData()
         newdata.ammo_amount = ammo_amount
         eventCallback(data.game_event_name, newdata)
     end
@@ -543,9 +533,9 @@ end
 ListenToGameEvent("player_retrieved_backpack_clip", listenEventPlayerRetrievedBackpackClip, nil)
 
 ---@class PlayerEventPlayerStoredItemInItemholder : GameEventPlayerStoredItemInItemholder
----@field item EntityHandle # The entity handle of the item that stored.
----@field item_class string # Classname of the entity that was stored.
----@field hand CPropVRHand  # Hand that the entity was stored in.
+---@field item EntityHandle # The entity handle of the item that stored
+---@field item_class string # Classname of the entity that was stored
+---@field hand CPropVRHand  # Hand that the entity was stored in
 
 ---Wrist tracking
 ---@param data GameEventPlayerStoredItemInItemholder
@@ -573,7 +563,7 @@ local function listenEventPlayerStoredItemInItemholder(data)
     -- elseif data.item == "item_healthvial" then
     --     Player.Items.healthpen = Player.Items.healthpen + 1
     -- end
-    savePlayerData()
+    playerData.SavePlayerData()
 
     -- Registered callback
     local newdata = vlua.clone(data)--[[@as PlayerEventPlayerStoredItemInItemholder]]
@@ -585,9 +575,9 @@ end
 ListenToGameEvent("player_stored_item_in_itemholder", listenEventPlayerStoredItemInItemholder, nil)
 
 ---@class PlayerEventPlayerRemovedItemFromItemholder : GameEventPlayerRemovedItemFromItemholder
----@field item EntityHandle # The entity handle of the item that removed.
----@field item_class string # Classname of the entity that was removed.
----@field hand CPropVRHand  # Hand that the entity was removed form.
+---@field item EntityHandle # The entity handle of the item that removed
+---@field item_class string # Classname of the entity that was removed
+---@field hand CPropVRHand  # Hand that the entity was removed from
 
 ---Tracking wrist items
 ---@param data GameEventPlayerRemovedItemFromItemholder
@@ -620,7 +610,7 @@ local function listenEventPlayerRemovedItemFromItemholder(data)
     -- elseif data.item == "item_healthvial" then
     --     Player.Items.healthpen = Player.Items.healthpen - 1
     -- end
-    savePlayerData()
+    playerData.SavePlayerData()
 
     -- Registered callback
     local newdata = vlua.clone(data)--[[@as PlayerEventPlayerRemovedItemFromItemholder]]
@@ -634,7 +624,7 @@ ListenToGameEvent("player_removed_item_from_itemholder", listenEventPlayerRemove
 -- No known way to track resin being taken out reliably.
 
 ---@class PlayerEventPlayerDropResinInBackpack : GameEventPlayerDropResinInBackpack
----@field resin_ent EntityHandle? # The resin entity being dropped into the backpack.
+---@field resin_ent EntityHandle? # The resin entity being dropped into the backpack
 
 ---Track resin
 ---@param data GameEventPlayerDropResinInBackpack
@@ -663,8 +653,9 @@ end
 ListenToGameEvent("player_drop_resin_in_backpack", listenEventPlayerDropResinInBackpack, nil)
 
 ---@class PlayerEventWeaponSwitch : GameEventWeaponSwitch
----@field item EntityHandle|nil # The handle of the weapon being switched to or nil if no weapon.
----@field item_class string # Classname of the entity that was switched to.
+---@field item EntityHandle|nil # The handle of the weapon being switched to or nil if no weapon
+---@field item_class string # Classname of the entity that was switched to
+---@field hand CPropVRHand  # Hand that the entity was switched to
 
 ---Track weapon equipped
 ---@param data GameEventWeaponSwitch
@@ -673,51 +664,26 @@ local function listenEventWeaponSwitch(data)
     -- Debug.PrintTable(data)
     -- print("\n")
 
-    Player.PreviouslyEquipped = Player.CurrentlyEquipped
+    if not playerData.WeaponStateSyncPaused() then
+        Player:Delay(function()
+            local weaponHandle, handHandle = playerData.SyncEquippedWeaponState(data.item)
 
-    ---@type EntityHandle
-    local weaponHandle = nil
+            -- Nil return means sync in paused
+            if not weaponHandle then return end
 
-    if data.item == "hand_use_controller" then
-        Player.CurrentlyEquipped = PLAYER_WEAPON_HAND
-    else
-        weaponHandle = Entities:FindBestMatching("", data.item, Player.PrimaryHand:GetPalmPosition(), 64)
-        if data.item == "hlvr_weapon_energygun" then
-            Player.CurrentlyEquipped = PLAYER_WEAPON_ENERGYGUN
-            Player.Items.weapons.energygun = weaponHandle
-        elseif data.item == "hlvr_weapon_rapidfire" then
-            Player.CurrentlyEquipped = PLAYER_WEAPON_RAPIDFIRE
-            Player.Items.weapons.rapidfire = weaponHandle
-        elseif data.item == "hlvr_weapon_shotgun" then
-            Player.CurrentlyEquipped = PLAYER_WEAPON_SHOTGUN
-            Player.Items.weapons.shotgun = weaponHandle
-        elseif data.item == "hlvr_multitool" then
-            Player.CurrentlyEquipped = PLAYER_WEAPON_MULTITOOL
-            Player.Items.weapons.multitool = weaponHandle
-        elseif data.item == "hlvr_weapon_generic_pistol" then
-            Player.CurrentlyEquipped = PLAYER_WEAPON_GENERIC_PISTOL
-
-            -- Add this custom pistol if this is the first time encountering it
-            if not vlua.find(Player.Items.weapons.genericpistols, weaponHandle) then
-                table.insert(Player.Items.weapons.genericpistols, weaponHandle)
+            -- Hand entity isn't returned, so nil it
+            if weaponHandle:GetClassname() == "hand_use_controller" then
+                weaponHandle = nil
             end
-        end
+
+            -- Registered callback
+            local newdata = vlua.clone(data)--[[@as PlayerEventWeaponSwitch]]
+            newdata.item = weaponHandle
+            newdata.item_class = data.item
+            newdata.hand = handHandle
+            eventCallback(data.game_event_name, newdata)
+        end, 0.01) -- smallest delay for hand_use_controller
     end
-
-    Player:UpdateWeaponsExistence()
-
-    -- This event can fire before the player has a hand
-    if Player.PrimaryHand then
-        Player.PrimaryHand.ItemHeld = weaponHandle
-    end
-
-    savePlayerData()
-
-    -- Registered callback
-    local newdata = vlua.clone(data)--[[@as PlayerEventWeaponSwitch]]
-    newdata.item = weaponHandle
-    newdata.item_class = data.item
-    eventCallback(data.game_event_name, newdata)
 end
 ListenToGameEvent("weapon_switch", listenEventWeaponSwitch, nil)
 

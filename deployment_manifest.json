@@ -82,16 +82,62 @@
 
     "panorama": [
       {
-        "type": "symlink",
-        "description": "Panorama Lua integration symlink",
+        "type": "hardlink",
+        "description": "Panorama Lua integration hardlink",
         "source": "{AlyxLib}/panorama/scripts/custom_game/panorama_lua.js",
         "destination": "{AddonContent}/panorama/scripts/custom_game/panorama_lua.js"
       },
       {
-        "type": "symlink",
-        "description": "Panorama code completion symlink",
+        "type": "hardlink",
+        "description": "Panorama code completion hardlink",
         "source": "{AlyxLib}/panorama/scripts/custom_game/panoramadoc.js",
         "destination": "{AddonContent}/panorama/scripts/custom_game/panoramadoc.js"
+      },
+      {
+        "type": "hardlink",
+        "description": "DebugMenu layout hardlink",
+        "source": "{AlyxLib}/panorama/layout/custom_game/alyxlib_debug_menu.xml",
+        "destination": "{AddonContent}/panorama/layout/custom_game/alyxlib_debug_menu.xml"
+      },
+      {
+        "type": "hardlink",
+        "description": "DebugMenu script hardlink",
+        "source": "{AlyxLib}/panorama/scripts/custom_game/alyxlib_debug_menu.js",
+        "destination": "{AddonContent}/panorama/scripts/custom_game/alyxlib_debug_menu.js"
+      },
+      {
+        "type": "hardlink",
+        "description": "DebugMenu styles hardlink",
+        "source": "{AlyxLib}/panorama/styles/custom_game/alyxlib_debug_menu.css",
+        "destination": "{AddonContent}/panorama/styles/custom_game/alyxlib_debug_menu.css"
+      }
+    ],
+
+    "upload_removal": [
+      {
+        "type": "delete",
+        "description": "Delete compiled panorama_lua.js",
+        "source": "{AddonGame}/panorama/scripts/custom_game/panorama_lua.vjs_c"
+      },
+      {
+        "type": "delete",
+        "description": "Delete compiled panoramadoc.js",
+        "source": "{AddonGame}/panorama/scripts/custom_game/panoramadoc.vjs_c"
+      },
+      {
+        "type": "delete",
+        "description": "Delete compiled alyxlib_debug_menu.xml",
+        "source": "{AddonGame}/panorama/layout/custom_game/alyxlib_debug_menu.vxml_c"
+      },
+      {
+        "type": "delete",
+        "description": "Delete compiled alyxlib_debug_menu.js",
+        "source": "{AddonGame}/panorama/scripts/custom_game/alyxlib_debug_menu.vjs_c"
+      },
+      {
+        "type": "delete",
+        "description": "Delete compiled alyxlib_debug_menu.css",
+        "source": "{AddonGame}/panorama/styles/custom_game/alyxlib_debug_menu.vcss_c"
       }
     ],
 

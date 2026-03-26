@@ -1,16 +1,16 @@
 --[[
-    v1.0.0
+    v1.0.1
     https://github.com/FrostSource/alyxlib
 
     Provides QAngle class extension methods.
 
-    If not using `vscripts/alyxlib/init.lua`, load this file at game start using the following line:
+    If not using `alyxlib/init.lua`, load this file at game start using the following line:
     
     require "alyxlib.extensions.qangle"
 ]]
 -- require "alyxlib.math.common"
 
-local version = "v1.0.0"
+local version = "v1.0.1"
 
 ---@class QAngle
 local meta = getmetatable(QAngle())
