@@ -15,7 +15,7 @@ jobs:
       - name: Check if modified .lua files have version updated
         run: |
           git fetch origin main
-          CHANGED_LUA=$(git diff --name-only origin/main...HEAD -- '*.lua')
+          CHANGED_LUA=$(git diff --name-only --diff-filter=ACMR origin/main...HEAD -- '*.lua')
           ERROR_FILES=""
           
           for file in $CHANGED_LUA; do
