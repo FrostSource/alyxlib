@@ -479,6 +479,22 @@ EasyConvars:SetIfUnchanged(name, value)
   `any`  
   The value to set - will be converted to a string representation
 
+### AddPostInitializer
+
+Adds a function to be called after all convars have been initialized.
+
+Useful for setting convars that are dependent on other convars.
+
+```lua
+EasyConvars:AddPostInitializer(func)
+```
+
+**Parameters**
+
+- **`func`**  
+  `function`  
+  The function to call
+
 ### SetPostInitializer
 !!! danger "This method is deprecated."
 

@@ -118,6 +118,48 @@ string:truncate(s, len, replacement)
 - **`string`**
 The truncated string
 
+### sliceleft
+
+Slices the string from the left, returning everything after the last occurrence of a specified character.
+
+```lua
+string:sliceleft(s, char)
+```
+
+**Parameters**
+
+- **`s`**  
+  `string`  
+  The string to slice
+- **`char`**  
+  `string`  
+  The character to trim the string at the last occurrence
+
+**Returns**
+- **`string`**
+The trimmed string
+
+### sliceright
+
+Slices the string from the right, returning everything before the first occurrence of a specified character.
+
+```lua
+string:sliceright(s, char)
+```
+
+**Parameters**
+
+- **`s`**  
+  `string`  
+  The string to slice
+- **`char`**  
+  `string`  
+  The character to trim the string at the last occurrence
+
+**Returns**
+- **`string`**
+The trimmed string
+
 ### trimleft
 
 Trims characters from the left side of a string.

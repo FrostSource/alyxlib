@@ -976,6 +976,34 @@ CBasePlayer:SetCoughHandEnabled(enabled)
   `boolean`  
   `true` if the cough handpose should be enabled
 
+## Functions
+
+### GetPlayerMoveType
+
+Get VR movement type.
+
+```lua
+GetPlayerMoveType()
+```
+
+**Returns**
+- **`PlayerMoveType`**
+The VR movement type
+
+### SetPlayerMoveType
+
+Sets the VR movement type.
+
+```lua
+SetPlayerMoveType(movetype)
+```
+
+**Parameters**
+
+- **`movetype`**  
+  `PlayerMoveType`  
+  The VR movement type
+
 ## Aliases
 
 ### PlayerPistolUpgrades

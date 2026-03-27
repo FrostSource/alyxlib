@@ -141,6 +141,23 @@ DebugMenu:AddCategory(id, name)
   `string`  
   The display name for this category
 
+### RemoveCategory
+
+Removes a category from the debug menu.
+
+This does not update the menu if it's already open;
+use [DebugMenu:Refresh()](lua://DebugMenu.Refresh) to update manually.
+
+```lua
+DebugMenu:RemoveCategory(id)
+```
+
+**Parameters**
+
+- **`id`**  
+  `string`  
+  The ID of the category to remove
+
 ### AddSeparator
 
 Adds a separator line to a category.
@@ -311,6 +328,20 @@ DebugMenu:AddCycle(categoryId, cycleId, title, convar, values, callback, default
   `any`, `function`  
   Value for this cycle to start with
 
+### ShowDialog
+
+Shows a dialog box with the specified text and a "CLOSE" button.
+
+```lua
+DebugMenu:ShowDialog(text)
+```
+
+**Parameters**
+
+- **`text`**  
+  `string`  
+  The text to display in the dialog
+
 ### SetItemText
 
 Sets the text of an item.
@@ -358,6 +389,25 @@ DebugMenu:SetCategoryIndex(categoryId, index)
 - **`index`**  
   `number`  
   New index for the category
+
+### SetSize
+
+Sets the size of the debug menu panel if it's open.
+
+This does not change any convars and is not persisted.
+
+```lua
+DebugMenu:SetSize(width, height)
+```
+
+**Parameters**
+
+- **`width`** *(optional)*  
+  `number`  
+  Width in "panel units"
+- **`height`** *(optional)*  
+  `number`  
+  Height in "panel units"
 
 ### SendCategoryToPanel
 
@@ -422,6 +472,18 @@ DebugMenu:SetItemVisibilityCondition(categoryId, itemId, condition)
 - **`condition`**  
   `string`, `function`  
   Convar name, function, or `nil` to remove the condition
+
+### GetLinkedConvars
+
+Gets a list of all convars linked to debug menu items.
+
+```lua
+DebugMenu:GetLinkedConvars()
+```
+
+**Returns**
+- **`DebugMenuDumpedCategory[]`**
+A list of all convars
 
 ### StartListeningForMenuActivation
 
