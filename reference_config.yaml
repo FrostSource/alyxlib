@@ -212,19 +212,23 @@ debug/debug_menu:
     - DebugMenu:GetItem
     - DebugMenu:GetCategory
     - DebugMenu:AddCategory
+    - DebugMenu:RemoveCategory
     - DebugMenu:AddSeparator
     - DebugMenu:AddButton
     - DebugMenu:AddToggle
     - DebugMenu:AddLabel
     - DebugMenu:AddSlider
     - DebugMenu:AddCycle
+    - DebugMenu:ShowDialog
     - DebugMenu:SetItemText
     - DebugMenu:SetCategoryIndex
+    - DebugMenu:SetSize
     - DebugMenu:SendCategoryToPanel
     - DebugMenu:SendCategoriesToPanel
     - DebugMenu:ClearMenu
     - DebugMenu:Refresh
     - DebugMenu:SetItemVisibilityCondition
+    - DebugMenu:GetLinkedConvars
     - DebugMenu:StartListeningForMenuActivation
     - DebugMenu:StopListeningForMenuActivation
 
@@ -347,6 +351,8 @@ extensions/string:
     - string.splitraw
     - string.split
     - string.truncate
+    - string.sliceleft
+    - string.sliceright
     - string.trimleft
     - string.trimright
     - string.capitalize
@@ -405,6 +411,7 @@ helpers/easyconvars:
     - EasyConvars:WasChangedByUser
     - EasyConvars:SetWasChanged
     - EasyConvars:SetIfUnchanged
+    - EasyConvars:AddPostInitializer
     - EasyConvars:SetPostInitializer
   types:
     - EasyConvarsRegisteredData
@@ -539,6 +546,9 @@ player/core:
     - CBasePlayer:SetAnchorAnglesAroundPlayer
     - CBasePlayer:SetAnchorOriginAroundPlayer
     - CBasePlayer:SetCoughHandEnabled
+  functions:
+    - GetPlayerMoveType
+    - SetPlayerMoveType
   globals:
     - PLAYER_WEAPON_HAND
     - PLAYER_WEAPON_ENERGYGUN
@@ -730,10 +740,12 @@ precache:
     AlyxLibGlobalPrecacheItem
   aliases:
     - AlyxLibGlobalPrecacheType
-  functions:
-    - GlobalPrecache
-    - GlobalPrecacheFlush
-    - _PrecacheGlobalItems
+  methods:
+    - GlobalPrecache:Add
+    - GlobalPrecache:IsPending
+    - GlobalPrecache:OnFinished
+    - GlobalPrecache:Flush
+    - GlobalPrecache:_PrecacheGlobalItems
 
 storage:
   fields:
