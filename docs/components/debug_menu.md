@@ -2,9 +2,6 @@ The **AlyxLib Debug Menu** is a customizable panorama panel that provides quick 
 
 ## Using The menu
 
-!!! info ""
-    **In its current release, the debug menu requires adding `-dev` to the *Half-Life: Alyx* launch parameters in Steam.**
-
 After loading into a map with AlyxLib enabled:
 
 - Press the **menu button** on your controller **three times in a row** to open the menu.
@@ -58,6 +55,9 @@ Add any of the following settings to the file.
 // The hand to attach the debug menu to, 0 = Secondary, 1 = Primary
 debug_menu_hand 1
 
+// The height of the debug menu, in range [10,30]
+debug_menu_width 15
+
 // The height of the debug menu, in range [7,30]
 debug_menu_height 14
 
@@ -70,6 +70,9 @@ debug_menu_lock 0
 
 // Set to 1 to enable the extras tab by default
 debug_menu_extras 0
+
+// Set to 1 to enable the cheats tab by default
+debug_menu_cheats 0
 
 // The below offset values can be found in the console after dragging
 // the menu to the desired position in-game
@@ -371,6 +374,17 @@ end)
 
 DebugMenu:SetItemVisibilityCondition("my_addon", "my_button", function()
     return Convars:GetInt("developer") > 0 and IsAddonEnabled("123456789")
+end)
+```
+
+### Dialog Popup
+
+A popup dialog is a box with text and a "CLOSE" button which can be used to bring important information to the player's attention.
+It blurs the background and blocks input until it's closed.
+
+```lua
+DebugMenu:AddButton("my_addon", "my_button", "My Button", nil, function(button)
+    DebugMenu:ShowDialog("This is a popup dialog!")
 end)
 ```
 
