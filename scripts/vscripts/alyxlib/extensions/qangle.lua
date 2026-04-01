@@ -63,4 +63,14 @@ function meta.__sub(a, b)
     end
 end
 
+---
+---Unpacks the x, y, z components as 3 return values.
+---
+---@return number # x component
+---@return number # y component
+---@return number # z component
+function meta:Unpack()
+    return self.x, self.y, self.z
+end
+
 return version
