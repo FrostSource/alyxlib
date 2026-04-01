@@ -660,7 +660,8 @@ end
 ---@param entity EntityHandle # The entity to check
 ---@return boolean # `true` if the player is holding the entity
 function CBasePlayer:IsHolding(entity)
-    return self.PrimaryHand.ItemHeld == entity or self.SecondaryHand.ItemHeld == entity
+    return (self.PrimaryHand and self.PrimaryHand.ItemHeld == entity)
+        or (self.SecondaryHand and self.SecondaryHand.ItemHeld == entity)
 end
 
 ---
