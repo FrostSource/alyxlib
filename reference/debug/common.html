@@ -1,0 +1,4539 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://github.com/FrostSource/alyxlib/reference/debug/common.html">
+      
+      
+        <link rel="prev" href="commands.html">
+      
+      
+        <link rel="next" href="debug_menu.html">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/alyxlib_logo-white.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Common - AlyxLib</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+        <script src="../../assets/external/unpkg.com/iframe-worker/shim.js"></script>
+      
+    
+    
+      
+        
+        
+        
+        <link rel="stylesheet" href="../../assets/external/fonts.googleapis.com/css.49ea35f2.css">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/exposed.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/alyxlib.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="cyan" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#debug-common" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../index.html" title="AlyxLib" class="md-header__button md-logo" aria-label="AlyxLib" data-md-component="logo">
+      
+  <img src="../../assets/alyxlib_logo-white.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AlyxLib
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Common
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="cyan" data-md-color-accent="indigo"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="cyan" data-md-color-accent="indigo"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="cyan" data-md-color-accent="indigo"  aria-label="Switch to system preference"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Switch to system preference" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/FrostSource/alyxlib" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    FrostSource/alyxlib
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../index.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../getting_started/app_installation.html" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Getting Started
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../components/alyxlib.html" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Components
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../console/index.html" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Console
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../addons.html" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Addons
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../class.html" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Reference
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../index.html" title="AlyxLib" class="md-nav__button md-logo" aria-label="AlyxLib" data-md-component="logo">
+      
+  <img src="../../assets/alyxlib_logo-white.svg" alt="logo">
+
+    </a>
+    AlyxLib
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/FrostSource/alyxlib" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    FrostSource/alyxlib
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../index.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Getting Started
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting_started/app_installation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    App Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting_started/python_installation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting_started/manual_installation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Manual Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting_started/developing.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Developing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting_started/uploading_to_workshop.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Uploading to the workshop
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Components
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Components
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/alyxlib.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AlyxLib
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/player.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Player
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/debug_menu.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Debug Menu
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/classes.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entity Classes
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/input.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Input
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/storage.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/panorama.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Panorama
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/global_precache.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Global Precache
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/debugging.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Debugging
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_10" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../components/entity_mods/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entity Mods
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_10" id="__nav_3_10_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Entity Mods
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../components/entity_mods/trigger_look_arbitrary.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    trigger_look_arbitrary
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../console/index.html" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Console
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Console
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../console/alyxlib.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    AlyxLib Commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../console/common.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Common Commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../console/vr.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    VR Commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../console/novr.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NoVR Commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../console/debug_menu.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Debug Menu
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../addons.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Addons
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Reference
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Reference
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../class.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Class
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../globals.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Globals
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../precache.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Precache
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../storage.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Storage
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_5" id="__nav_6_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Controls
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Controls
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../controls/gesture.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Gesture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../controls/haptics.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Haptics
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../controls/input.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Input
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_6" id="__nav_6_6_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Data
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../data/color.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Color
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../data/inventory.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Inventory
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../data/queue.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Queue
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../data/stack.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Stack
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_6_7" id="__nav_6_7_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Debug
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Debug
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="commands.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Commands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Common
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="common.html" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Common
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Properties
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Properties">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        version
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#findentitybypattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FindEntityByPattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#findallentitiesbypattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FindAllEntitiesByPattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printentitylist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintEntityList
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printallentities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintAllEntities
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printdiffentities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintDiffEntities
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printentities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintEntities
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printallentitiesinsphere" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintAllEntitiesInSphere
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printtable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintTable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printtableshallow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintTableShallow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printlist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintList
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printsimpletable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintSimpleTable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printvalue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintValue
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#showentity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShowEntity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printentitycriteria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintEntityCriteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printentitybasecriteria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintEntityBaseCriteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getclassname" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GetClassname
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printmetaclasses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintMetaClasses
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printgraph" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintGraph
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printinheritance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintInheritance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#simplevector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SimpleVector
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sphere" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sphere
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Line
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#entstr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EntStr
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dumpconvars" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DumpConvars
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#findentitybyhandlestring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FindEntityByHandleString
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#isentityhandlestring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IsEntityHandleString
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#toordinalstring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ToOrdinalString
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getsourceline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GetSourceLine
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#try" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Try
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tablestr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TableStr
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Functions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#entspawn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        entspawn
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="debug_menu.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Debug Menu
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="novr.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NoVR
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="profiling.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Profiling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_8" id="__nav_6_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Extensions
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Extensions
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../extensions/entities.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entities
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../extensions/entity.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Entity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../extensions/npc.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    NPC
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../extensions/string.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    String
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../extensions/template.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Template
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../extensions/vector.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Vector
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_9" id="__nav_6_9_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Helpers
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_9">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Helpers
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../helpers/animation.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Animation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../helpers/easyconvars.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    EasyConvars
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_10" id="__nav_6_10_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Math
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_10">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Math
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../math/common.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Common
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../math/obb.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    OBB
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../math/weighted_random.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Weighted Random
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_11" id="__nav_6_11_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Panorama
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_11">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Panorama
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../panorama/core.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_12" id="__nav_6_12_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Player
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_12">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Player
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../player/core.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../player/data.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../player/events.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Events
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../player/hands.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hands
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../player/wrist_attachments.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Wrist Attachments
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_6_13" id="__nav_6_13_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Utils
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_6_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6_13">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Utils
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../utils/common.html" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Common
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#properties" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Properties
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Properties">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#version" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        version
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methods
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Methods">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#findentitybypattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FindEntityByPattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#findallentitiesbypattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FindAllEntitiesByPattern
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printentitylist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintEntityList
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printallentities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintAllEntities
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printdiffentities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintDiffEntities
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printentities" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintEntities
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printallentitiesinsphere" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintAllEntitiesInSphere
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printtable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintTable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printtableshallow" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintTableShallow
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printlist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintList
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printsimpletable" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintSimpleTable
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printvalue" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintValue
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#showentity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ShowEntity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printentitycriteria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintEntityCriteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printentitybasecriteria" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintEntityBaseCriteria
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getclassname" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GetClassname
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printmetaclasses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintMetaClasses
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printgraph" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintGraph
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#printinheritance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        PrintInheritance
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#simplevector" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SimpleVector
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sphere" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sphere
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#line" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Line
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#entstr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        EntStr
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dumpconvars" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        DumpConvars
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#findentitybyhandlestring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        FindEntityByHandleString
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#isentityhandlestring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        IsEntityHandleString
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#toordinalstring" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ToOrdinalString
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#getsourceline" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        GetSourceLine
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#try" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Try
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#tablestr" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TableStr
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Functions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#entspawn" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        entspawn
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigation" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../../index.html" class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../class.html" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Reference
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="commands.html" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Debug
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="debug-common">Debug Common</h1>
+<blockquote>
+<p>scripts/vscripts/alyxlib/debug/common.lua</p>
+</blockquote>
+<h2 id="properties">Properties</h2>
+<h3 id="version">version</h3>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nv">Debug</span><span class="p">.</span><span class="py">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">value</span>
+</span></code></pre></div>
+<p><strong>Default value</strong>
+  <code>"v2.3.0"</code></p>
+<h2 id="methods">Methods</h2>
+<h3 id="findentitybypattern">FindEntityByPattern</h3>
+<p>Finds the first entity whose name, class or model matches <code>pattern</code>.</p>
+<p><code>pattern</code> can also be an entity handle string, e.g. <code>0x0026caf8</code></p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">FindEntityByPattern</span><span class="p">(</span><span class="nv">pattern</span><span class="p">,</span><span class="w"> </span><span class="nv">exact</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>pattern</code></strong><br />
+<code>string</code><br />
+  The search pattern to look for</li>
+<li><strong><code>exact</code></strong><br />
+<code>boolean?</code><br />
+  If true the pattern must match exactly, otherwise wildcards will be used</li>
+</ul>
+<p><strong>Returns</strong>
+- <strong><code>EntityHandle?</code></strong>
+The found entity, or nil if not found</p>
+<h3 id="findallentitiesbypattern">FindAllEntitiesByPattern</h3>
+<p>Finds all entities whose name, class or model match <code>pattern</code>.</p>
+<p><code>pattern</code> can also be an entity handle string, e.g. <code>0x0026caf8</code></p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">FindAllEntitiesByPattern</span><span class="p">(</span><span class="nv">pattern</span><span class="p">,</span><span class="w"> </span><span class="nv">exact</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>pattern</code></strong><br />
+<code>string</code><br />
+  The search pattern to look for</li>
+<li><strong><code>exact</code></strong><br />
+<code>boolean?</code><br />
+  If true the pattern must match exactly, otherwise wildcards will be used</li>
+</ul>
+<p><strong>Returns</strong>
+- <strong><code>EntityHandle[]</code></strong>
+The found entities</p>
+<h3 id="printentitylist">PrintEntityList</h3>
+<p>Prints a formated indexed list of entities with custom property information.
+Also links children with their parents by displaying the index alongside the parent for easy look-up.</p>
+<details class="example">
+<summary>Example</summary>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nv">Debug</span><span class="p">.</span><span class="nf">PrintEntityList</span><span class="p">(</span><span class="nv">ents</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="s2">&quot;getclassname&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;getname&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;getname&quot;</span><span class="p">})</span>
+</span></code></pre></div>
+</details>
+<p>If no properties are supplied the default properties are used: GetClassname, GetName, GetModelName.
+If an empty property table is supplied only the base values are shown: Index, Handle, Parent.
+Property patterns do not need to be functions.</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">PrintEntityList</span><span class="p">(</span><span class="nv">list</span><span class="p">,</span><span class="w"> </span><span class="nv">properties</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>list</code></strong><br />
+<code>EntityHandle[]</code><br />
+  List of entities to print</li>
+<li><strong><code>properties</code></strong> <em>(optional)</em><br />
+<code>string[]</code><br />
+  List of property patterns to search for</li>
+</ul>
+<h3 id="printallentities">PrintAllEntities</h3>
+<p>Prints information about all existing entities.</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">PrintAllEntities</span><span class="p">(</span><span class="nv">properties</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>properties</code></strong> <em>(optional)</em><br />
+<code>string[]</code><br />
+  List of property patterns to search for</li>
+</ul>
+<h3 id="printdiffentities">PrintDiffEntities</h3>
+<p>Prints information about any new entities since the last time <code>Debug.PrintAllEntities</code> was called.</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">PrintDiffEntities</span><span class="p">(</span><span class="nv">properties</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>properties</code></strong> <em>(optional)</em><br />
+<code>string[]</code><br />
+  List of property patterns to search for</li>
+</ul>
+<h3 id="printentities">PrintEntities</h3>
+<p>Prints entities matching a search string.</p>
+<p>Searches name, classname and model name.</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">PrintEntities</span><span class="p">(</span><span class="nv">search</span><span class="p">,</span><span class="w"> </span><span class="nv">exact</span><span class="p">,</span><span class="w"> </span><span class="nv">dont_include_parents</span><span class="p">,</span><span class="w"> </span><span class="nv">properties</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>search</code></strong><br />
+<code>string</code><br />
+  Search string, may include <code>*</code></li>
+<li><strong><code>exact</code></strong><br />
+<code>boolean</code><br />
+  If the search should match exactly or part of the name</li>
+<li><strong><code>dont_include_parents</code></strong><br />
+<code>boolean</code><br />
+  Parents won't be included in the results</li>
+<li><strong><code>properties</code></strong> <em>(optional)</em><br />
+<code>string[]</code><br />
+  List of property patterns to search for</li>
+</ul>
+<h3 id="printallentitiesinsphere">PrintAllEntitiesInSphere</h3>
+<p>Prints information about all entities within a sphere.</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">PrintAllEntitiesInSphere</span><span class="p">(</span><span class="nv">origin</span><span class="p">,</span><span class="w"> </span><span class="nv">radius</span><span class="p">,</span><span class="w"> </span><span class="nv">properties</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>origin</code></strong><br />
+<code>Vector</code><br />
+  Position to search for entities at</li>
+<li><strong><code>radius</code></strong><br />
+<code>number</code><br />
+  Max radius to find entities within</li>
+<li><strong><code>properties</code></strong> <em>(optional)</em><br />
+<code>string[]</code><br />
+  List of property patterns to search for</li>
+</ul>
+<h3 id="printtable">PrintTable</h3>
+<p>Prints the keys/values of a table and any tested tables.</p>
+<p>This is different from <code>DeepPrintTable</code> in that it will not print members of entity handles.</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">PrintTable</span><span class="p">(</span><span class="nv">tbl</span><span class="p">,</span><span class="w"> </span><span class="nv">prefix</span><span class="p">,</span><span class="w"> </span><span class="nv">ignore</span><span class="p">,</span><span class="w"> </span><span class="nv">meta</span><span class="p">,</span><span class="w"> </span><span class="nv">customIterator</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>tbl</code></strong><br />
+<code>table</code><br />
+  Table to print</li>
+<li><strong><code>prefix</code></strong> <em>(optional)</em><br />
+<code>string</code><br />
+  Optional prefix for each line</li>
+<li><strong><code>ignore</code></strong> <em>(optional)</em><br />
+<code>any[]</code><br />
+  Optional nested tables to ignore</li>
+<li><strong><code>meta</code></strong> <em>(optional)</em><br />
+<code>boolean</code><br />
+  If meta tables should be printed</li>
+<li><strong><code>customIterator</code></strong> <em>(optional)</em><br />
+<code>function</code><br />
+  Optional custom iterator to use (default=pairs)</li>
+</ul>
+<h3 id="printtableshallow">PrintTableShallow</h3>
+<p>Prints the keys/values of a table but not any tested tables.</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">PrintTableShallow</span><span class="p">(</span><span class="nv">tbl</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>tbl</code></strong><br />
+<code>table</code><br />
+  Table to print</li>
+</ul>
+<h3 id="printlist">PrintList</h3>
+<p>Prints an ordered table as a numbered list in the console.</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">PrintList</span><span class="p">(</span><span class="nv">tbl</span><span class="p">,</span><span class="w"> </span><span class="nv">prefix</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>tbl</code></strong><br />
+<code>table</code><br />
+  Table to print</li>
+<li><strong><code>prefix</code></strong> <em>(optional)</em><br />
+<code>string</code><br />
+  Optional prefix for each line</li>
+</ul>
+<h3 id="printsimpletable">PrintSimpleTable</h3>
+<p>Prints all the values in a table, one value per line, without any numbering or padding.</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">PrintSimpleTable</span><span class="p">(</span><span class="nv">tbl</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>tbl</code></strong><br />
+<code>table</code><br />
+  Table to print</li>
+</ul>
+<h3 id="printvalue">PrintValue</h3>
+<p>Prints a value and its type in an easy to read format.</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">PrintValue</span><span class="p">(</span><span class="nv">value</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>value</code></strong><br />
+<code>any</code><br />
+  Value to print</li>
+</ul>
+<h3 id="showentity">ShowEntity</h3>
+<p>Draws a debug line to an entity in game.</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">ShowEntity</span><span class="p">(</span><span class="nv">ent</span><span class="p">,</span><span class="w"> </span><span class="nv">duration</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>ent</code></strong><br />
+<code>EntityHandle</code>, <code>string</code><br />
+  Handle or targetname of the entity(s) to find</li>
+<li><strong><code>duration</code></strong><br />
+<code>number?</code><br />
+  Number of seconds the debug should display for</li>
+</ul>
+<p><strong>Returns</strong>
+- <strong><code>EntityHandle[]|EntityHandle?</code></strong>
+Entities found, or the entity given</p>
+<h3 id="printentitycriteria">PrintEntityCriteria</h3>
+<p>Prints all current context criteria for an entity.</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">PrintEntityCriteria</span><span class="p">(</span><span class="nv">ent</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>ent</code></strong><br />
+<code>EntityHandle</code>  </li>
+</ul>
+<h3 id="printentitybasecriteria">PrintEntityBaseCriteria</h3>
+<p>Prints current context criteria for an entity except for values saved using <code>storage.lua</code>.</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">PrintEntityBaseCriteria</span><span class="p">(</span><span class="nv">ent</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>ent</code></strong><br />
+<code>EntityHandle</code><br />
+  Entity to print</li>
+</ul>
+<h3 id="getclassname">GetClassname</h3>
+<p>Gets the class name of a vscript entity based on its metatable, e.g. <code>CBaseEntity</code>.</p>
+<p>If the entity is an EntityClass entity the original Valve class name will be returned instead of the EntityClass.</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">GetClassname</span><span class="p">(</span><span class="nv">ent</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>ent</code></strong><br />
+<code>EntityHandle</code><br />
+  The entity to get the class name of</li>
+</ul>
+<p><strong>Returns</strong>
+- <strong><code>string</code></strong>
+The class name of the entity or "none" if not found</p>
+<h3 id="printmetaclasses">PrintMetaClasses</h3>
+<p>Prints the table values of all built-in Valve classes.</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">PrintMetaClasses</span><span class="p">()</span>
+</span></code></pre></div>
+<h3 id="printgraph">PrintGraph</h3>
+<p>Prints a visual ASCII graph showing the distribution of values between a min/max bound.</p>
+<p>Higher heights give more accurate results but can overflow the console making it hard to read.</p>
+<p>E.g.</p>
+<details class="example">
+<summary>Example</summary>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="nv">Debug</span><span class="p">.</span><span class="nf">PrintGraph</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="p">{</span>
+</span><span id="__span-19-2"><a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="w">    </span><span class="nv">val1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">RandomFloat</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span>
+</span><span id="__span-19-3"><a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="w">    </span><span class="nv">val2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">RandomFloat</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span>
+</span><span id="__span-19-4"><a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="w">    </span><span class="nv">val3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">RandomFloat</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span>
+</span><span id="__span-19-5"><a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="p">})</span>
+</span></code></pre></div>
+</details>
+<details class="example">
+<summary>Example</summary>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="mi">1</span><span class="o">^</span><span class="w"> </span><span class="p">[]</span>
+</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="p">[]</span><span class="w">    </span><span class="p">[]</span>
+</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="p">[]</span><span class="w"> </span><span class="p">[]</span><span class="w"> </span><span class="p">[]</span>
+</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="p">[]</span><span class="w"> </span><span class="p">[]</span><span class="w"> </span><span class="p">[]</span>
+</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="p">[]</span><span class="w"> </span><span class="p">[]</span><span class="w"> </span><span class="p">[]</span>
+</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="mi">0</span><span class="w"> </span><span class="c1">----------&gt;</span>
+</span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="w">   </span><span class="nv">v</span><span class="w">  </span><span class="nv">v</span><span class="w">  </span><span class="nv">v</span>
+</span><span id="__span-20-8"><a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="w">   </span><span class="nv">a</span><span class="w">  </span><span class="nv">a</span><span class="w">  </span><span class="nv">a</span>
+</span><span id="__span-20-9"><a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a><span class="w">   </span><span class="nv">l</span><span class="w">  </span><span class="nv">l</span><span class="w">  </span><span class="nv">l</span>
+</span><span id="__span-20-10"><a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a><span class="w">   </span><span class="mi">3</span><span class="w">  </span><span class="mi">1</span><span class="w">  </span><span class="mi">2</span>
+</span><span id="__span-20-11"><a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a><span class="nv">val3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.96067351102829</span>
+</span><span id="__span-20-12"><a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a><span class="nv">val1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.5374761223793</span>
+</span><span id="__span-20-13"><a id="__codelineno-20-13" name="__codelineno-20-13" href="#__codelineno-20-13"></a><span class="nv">val2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.7315416932106</span>
+</span></code></pre></div>
+</details>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-21-1"><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">PrintGraph</span><span class="p">(</span><span class="nv">height</span><span class="p">,</span><span class="w"> </span><span class="nv">min_val</span><span class="p">,</span><span class="w"> </span><span class="nv">max_val</span><span class="p">,</span><span class="w"> </span><span class="nv">name_value_pairs</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>height</code></strong><br />
+<code>integer</code><br />
+  Height of the actual graph in print rows</li>
+<li><strong><code>min_val</code></strong> <em>(optional)</em><br />
+<code>number</code><br />
+  Minimum expected value for <code>name_value_pairs</code>; default is <code>0</code></li>
+<li><strong><code>max_val</code></strong> <em>(optional)</em><br />
+<code>number</code><br />
+  Maxmimum expected value for <code>name_value_pairs</code>; default is <code>1</code></li>
+<li><strong><code>name_value_pairs</code></strong><br />
+<code>table&lt;string,number&gt;</code><br />
+  Values to visualize on the graph</li>
+</ul>
+<h3 id="printinheritance">PrintInheritance</h3>
+<p>Prints a nested list of entity inheritance.</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-22-1"><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">PrintInheritance</span><span class="p">(</span><span class="nv">ent</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>ent</code></strong><br />
+<code>EntityHandle</code><br />
+  Entity to print the inheritance of</li>
+</ul>
+<h3 id="simplevector">SimpleVector</h3>
+<p>Returns a simplified vector string with decimal places truncated.</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-23-1"><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">SimpleVector</span><span class="p">(</span><span class="nv">vector</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>vector</code></strong><br />
+<code>Vector</code>, <code>QAngle</code>, <code>table</code><br />
+  Object to print</li>
+</ul>
+<p><strong>Returns</strong>
+- <strong><code>string</code></strong>
+Vector string</p>
+<h3 id="sphere">Sphere</h3>
+<p>Draws a simple sphere without worrying about all the properties.</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-24-1"><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">Sphere</span><span class="p">(</span><span class="nv">x</span><span class="p">,</span><span class="w"> </span><span class="nv">y</span><span class="p">,</span><span class="w"> </span><span class="nv">z</span><span class="p">,</span><span class="w"> </span><span class="nv">radius</span><span class="p">,</span><span class="w"> </span><span class="nv">time</span><span class="p">,</span><span class="w"> </span><span class="nv">color</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>x</code></strong><br />
+<code>number</code><br />
+  X position</li>
+<li><strong><code>y</code></strong><br />
+<code>number</code><br />
+  Y position</li>
+<li><strong><code>z</code></strong><br />
+<code>number</code><br />
+  Z position</li>
+<li><strong><code>radius</code></strong> <em>(optional)</em><br />
+<code>number</code><br />
+  Radius of the sphere</li>
+<li><strong><code>time</code></strong> <em>(optional)</em><br />
+<code>number</code><br />
+  Lifetime in seconds, default 10</li>
+<li><strong><code>color</code></strong> <em>(optional)</em><br />
+<code>Vector</code><br />
+  Color vector [Red, Green, Blue]</li>
+</ul>
+<h3 id="line">Line</h3>
+<p>Draws a simple line without worrying about all the properties.</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-25-1"><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">Line</span><span class="p">(</span><span class="nv">startPos</span><span class="p">,</span><span class="w"> </span><span class="nv">endPos</span><span class="p">,</span><span class="w"> </span><span class="nv">time</span><span class="p">,</span><span class="w"> </span><span class="nv">color</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>startPos</code></strong><br />
+<code>Vector</code><br />
+  Start position</li>
+<li><strong><code>endPos</code></strong><br />
+<code>Vector</code><br />
+  End position</li>
+<li><strong><code>time</code></strong> <em>(optional)</em><br />
+<code>number</code><br />
+  Lifetime in seconds, default 10</li>
+<li><strong><code>color</code></strong> <em>(optional)</em><br />
+<code>Vector</code><br />
+  Color vector [Red, Green, Blue]</li>
+</ul>
+<h3 id="entstr">EntStr</h3>
+<p>Returns a string made up of an entity's class and name in the format "[class, name]" for debugging purposes.</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-26-1"><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">EntStr</span><span class="p">(</span><span class="nv">ent</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>ent</code></strong><br />
+<code>EntityHandle</code>  </li>
+</ul>
+<p><strong>Returns</strong>
+- <strong><code>string</code></strong></p>
+<h3 id="dumpconvars">DumpConvars</h3>
+<p>Dumps a list of convars and their values to the console.</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-27-1"><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">DumpConvars</span><span class="p">(</span><span class="nv">convars</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>convars</code></strong><br />
+<code>string[]</code><br />
+  List of convar names to dump</li>
+</ul>
+<h3 id="findentitybyhandlestring">FindEntityByHandleString</h3>
+<p>Finds an entity by its handle as a string.</p>
+<p>Certain parts of the string can be omitted and the following are all valid:</p>
+<details class="example">
+<summary>Example</summary>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-28-1"><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="nv">Debug</span><span class="p">.</span><span class="nf">FindEntityByHandleString</span><span class="p">(</span><span class="s2">&quot;table&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;0x0012b03&quot;</span><span class="p">)</span>
+</span><span id="__span-28-2"><a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a><span class="nv">Debug</span><span class="p">.</span><span class="nf">FindEntityByHandleString</span><span class="p">(</span><span class="s2">&quot;table:&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;0x0012b03&quot;</span><span class="p">)</span>
+</span><span id="__span-28-3"><a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a><span class="nv">Debug</span><span class="p">.</span><span class="nf">FindEntityByHandleString</span><span class="p">(</span><span class="s2">&quot;table: 0x0012b03&quot;</span><span class="p">)</span>
+</span><span id="__span-28-4"><a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a><span class="nv">Debug</span><span class="p">.</span><span class="nf">FindEntityByHandleString</span><span class="p">(</span><span class="s2">&quot;table&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;0x0012b03&quot;</span><span class="p">)</span>
+</span><span id="__span-28-5"><a id="__codelineno-28-5" name="__codelineno-28-5" href="#__codelineno-28-5"></a><span class="nv">Debug</span><span class="p">.</span><span class="nf">FindEntityByHandleString</span><span class="p">(</span><span class="s2">&quot;0x0012b03&quot;</span><span class="p">)</span>
+</span></code></pre></div>
+</details>
+<p>Please note that omitting the colon is not allowed in a single string, i.e. "table 0x0012b03" will not work.</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-29-1"><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">FindEntityByHandleString</span><span class="p">(</span><span class="nv">tblpart</span><span class="p">,</span><span class="w"> </span><span class="nv">colon</span><span class="p">,</span><span class="w"> </span><span class="nv">hash</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>tblpart</code></strong><br />
+<code>string</code><br />
+  Entity table string</li>
+<li><strong><code>colon</code></strong> <em>(optional)</em><br />
+<code>string</code><br />
+  The colon part</li>
+<li><strong><code>hash</code></strong> <em>(optional)</em><br />
+<code>string</code><br />
+  The hash part</li>
+</ul>
+<p><strong>Returns</strong>
+- <strong><code>EntityHandle?</code></strong>
+The found entity, or nil if not found</p>
+<h3 id="isentityhandlestring">IsEntityHandleString</h3>
+<p>Gets whether the string is in the format of an entity handle.</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-30-1"><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">IsEntityHandleString</span><span class="p">(</span><span class="nv">handleString</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>handleString</code></strong><br />
+<code>string</code><br />
+  The handle string</li>
+</ul>
+<p><strong>Returns</strong>
+- <strong><code>string?</code></strong>
+The hash part or nil if not an entity handle</p>
+<h3 id="toordinalstring">ToOrdinalString</h3>
+<p>Converts a number to its ordinal string representation (e.g., 1 → "1st", 2 → "2nd", 3 → "3rd").</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-31-1"><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">ToOrdinalString</span><span class="p">(</span><span class="nv">n</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>n</code></strong><br />
+<code>integer</code><br />
+  Number to convert to ordinal representation</li>
+</ul>
+<p><strong>Returns</strong>
+- <strong><code>string</code></strong>
+Ordinal string</p>
+<h3 id="getsourceline">GetSourceLine</h3>
+<p>Get the script name and line number of a function or traceback level.</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-32-1"><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">GetSourceLine</span><span class="p">(</span><span class="nv">f</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>f</code></strong><br />
+<code>integer</code>, <code>function</code><br />
+  Level or function</li>
+</ul>
+<p><strong>Returns</strong>
+- <strong><code>string</code></strong>
+Source</p>
+<h3 id="try">Try</h3>
+<p>Safely calls a function while handling any errors.</p>
+<p>If an error occurs, a warning will be printed to the console.</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-33-1"><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">Try</span><span class="p">(</span><span class="nv">action</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>action</code></strong><br />
+<code>function</code><br />
+  The function to call</li>
+</ul>
+<h3 id="tablestr">TableStr</h3>
+<p>Converts a table to single line string representation.</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-34-1"><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a><span class="nv">Debug</span><span class="p">:</span><span class="nf">TableStr</span><span class="p">(</span><span class="nv">tbl</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>tbl</code></strong><br />
+<code>table</code><br />
+  The table to convert</li>
+</ul>
+<p><strong>Returns</strong>
+- <strong><code>string</code></strong>
+The string representation</p>
+<h2 id="functions">Functions</h2>
+<h3 id="entspawn">entspawn</h3>
+<p>Spawns an entity synchronously.</p>
+<div class="language-lua highlight"><pre><span></span><code><span id="__span-35-1"><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a><span class="nf">entspawn</span><span class="p">(</span><span class="nv">classname</span><span class="p">,</span><span class="w"> </span><span class="nv">spawnkeys</span><span class="p">)</span>
+</span></code></pre></div>
+<p><strong>Parameters</strong></p>
+<ul>
+<li><strong><code>classname</code></strong><br />
+<code>string</code><br />
+  The classname of the entity</li>
+<li><strong><code>spawnkeys</code></strong> <em>(optional)</em><br />
+<code>table</code>, <code>string</code><br />
+  The spawnkeys table or targetname</li>
+</ul>
+<p><strong>Returns</strong>
+- <strong><code>EntityHandle</code></strong>
+The spawned entity</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.tracking", "navigation.path", "navigation.indexes", "content.code.copy", "content.code.annotate", "navigation.top", "navigation.sections"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
