@@ -153,33 +153,43 @@ This will remove any AlyxLib related files that have not been modified in your a
 
 ### Using file removal on upload
 
-AlyxLib Installer comes with a feature for deleting files you don't want in your addon's `game` folder when you click `Remove For Upload`.
+Use the removal list editor to control which files in your addon's `game` folder are affected when you click `Remove For Upload`.
 
-These files can be defined in `Addon -> Manage Removal List`.
+Open the removal list editor from `Addon -> Manage Removal List`.
 
-File removal uses [glob patterns](https://www.malikbrowne.com/blog/a-beginners-guide-glob-patterns/) to match file paths.
+Each rule is a [glob pattern](https://www.malikbrowne.com/blog/a-beginners-guide-glob-patterns/) that matches one or more file paths.
 
-To add a new pattern, click `Add`. You can then enter a glob pattern in the empty field.
+For each rule, you can choose one of two actions:
 
-To remove a pattern, click the button with the trashcan icon next to it.
+- *Delete*: Permanently deletes matching files.
+- *Temp Move*: Temporarily removes matching files and restores them the next time you click `Install`.
+
+!!! note
+    Temporarily removed files are moved to the `.alyxlib` folder in your addon's content folder until AlyxLib is re-installed.
+
+You can also start a rule with `!` to exclude matching files from removal.
+
+To edit the list:
+
+1. Click `Add Rule`.
+2. Enter the glob pattern you want to match. Prefix the pattern with `!` if you want it to act as an exclusion rule instead.
+3. Click the colored switch to choose between *Delete* and *Temp Move*.
+4. Click the `x` button on that rule's row to remove that rule.
 
 ??? example "Image"
     ![image](../assets/aids/installer/installer-file_remove_editor.png)
 
-At any point you can click `View Files` to see a list of all files in your addon's `game` folder that match the patterns in the removal list.
+Click `View Files` to preview every file in your addon's `game` folder that matches the current rules.
 
 ??? example "Image"
     ![image](../assets/aids/installer/installer-file_remove_editor_list.png)
 
-When you're ready, click `Save` to save the removal list to your addon profile, or `Cancel` to discard the changes.
+Click `Save` to store the removal list in your addon profile, or `Cancel` to discard your changes.
 
-If any files match the patterns in the removal list, the installer will remind you of this with a note of how many below the `Remove For Upload` button. This note can be clicked to see a list of the files that will be removed.
+If any files match the current rules, the installer shows a note below `Remove For Upload` with the number of affected files. Click that note to see the full list.
 
 ??? example "Image"
     ![image](../assets/aids/installer/installer-file_remove_reminder.png)
-
-!!! warning ""
-    This feature might change from permanent deletion to temporary removal in a future update.
 
 
 ## Settings
