@@ -562,26 +562,29 @@ end
 ---@see IsClassEntity
 ---@diagnostic disable-next-line:lowercase-global
 function isinstance(ent, class)
-    if not IsEntity(ent, true) then return false end
+    if type(ent) ~= "table" then return false end
 
-    local inherits = rawget(ent, "__inherits")
-    if inherits then
-        for _, inherit in ipairs(inherits) do
-            if type(class) == "string" then
-                if inherit.__name == class then
-                    return true
-                end
-            else
-                if inherit == class then
-                    return true
-                end
-            end
-            -- Check recursively if no match
-            if isinstance(inherit, class) then
-                return true
-            end
+    if type(class) == "string" then
+        if rawget(ent, "__name") == class then
+            return true
+        end
+    else
+        if ent == class then
+            return true
         end
     end
+
+    local inherits = rawget(ent, "__inherits")
+    if not inherits then
+        return false
+    end
+
+    for _, inherit in ipairs(inherits) do
+        if isinstance(inherit, class) then
+            return true
+        end
+    end
+
     return false
 end
 
