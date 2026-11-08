@@ -129,11 +129,48 @@ AlyxLib has 6 configuration options:
 
 After choosing your desired options, click `Install` and wait for the installer to finish. If you chose **Panorama** you might see a command prompt window open for a moment as the installer compiles the files.
 
-### Preparing for upload
+### Uploading to the workshop
 
-When you're ready to upload your addon to the Steam workshop, it's important that you click `Remove For Upload` to temporarily remove AlyxLib files that can cause conflicts.
+Click `Upload` to pack your addon and upload it to the Steam workshop. AlyxLib files and anything on your [removal list](#using-file-removal-on-upload) are left out of the upload automatically, so nothing is removed from your addon and you don't need to click `Install` afterwards.
 
-After the installer has finished, you may upload your addon using the Half-Life Alyx tools.
+!!! note
+    Steam must be running and logged in to the account that owns the workshop item.
+
+**The first time you upload**, the installer will check if your addon has been uploaded before with the Half-Life Alyx tools. If it has, you'll be asked if you want to link your addon to that workshop item so future uploads update it.
+
+If your addon hasn't been uploaded before, or you choose `New Item`, you'll need to fill in the item's title, description, preview image, visibility and tags. AlyxLib will be added as a required item for you.
+
+**Every time you upload**, you'll be asked for change notes, which are shown on the item's workshop page. You'll also see how many files will be packed and their total size. Your addon will be packed and uploaded once you confirm.
+
+For a new item, the workshop item is created after you confirm the change notes. If your addon still has the init script `scripts/vscripts/mods/init/0000000000.lua`, the installer will offer to rename it to the new item's ID so AlyxLib can load your addon for players who subscribe.
+
+If the item's title, description, tags or other properties have been changed on the workshop page since your last upload, you can choose to keep the workshop's versions, replace them with yours, or open the item properties to choose for each one.
+
+!!! warning
+    New workshop items stay hidden from other players until you accept the [Steam Workshop legal agreement](https://steamcommunity.com/sharedfiles/workshoplegalagreement). The installer will remind you after uploading if you haven't accepted it.
+
+You can find more workshop options by clicking the *down arrow* next to the `Upload` button:
+
+- **Item Properties…**
+
+    Edit the item's title, description, preview image, visibility, tags and required items. You can choose to update the workshop straight away or wait until the next upload. The description can be linked to a text file in your addon so it can be kept with your project.
+
+- **Change Linked Item…**
+
+    Upload to a different workshop item, by picking one this addon was uploaded as or entering an item ID or link.
+
+- **Open Workshop Page**
+
+    Opens the linked item's workshop page in your browser.
+
+!!! note
+    Workshop properties for your addon are saved in `.alyxlib/workshop.json` in your addon's `content` folder.
+
+#### Uploading with the Half-Life Alyx tools
+
+If you'd rather upload with the Half-Life Alyx tools, click `Remove For Upload` first to temporarily remove AlyxLib files that can cause conflicts.
+
+After the installer has finished, upload your addon using the Half-Life Alyx tools.
 
 After uploading, click `Install` again to restore the AlyxLib files in your addon.
 
@@ -153,7 +190,7 @@ This will remove any AlyxLib related files that have not been modified in your a
 
 ### Using file removal on upload
 
-Use the removal list editor to control which files in your addon's `game` folder are affected when you click `Remove For Upload`.
+Use the removal list editor to control which files in your addon's `game` folder are affected when you click `Remove For Upload`. Files matching the list are also left out when you click `Upload`, whichever action their rule uses.
 
 Open the removal list editor from `Addon -> Manage Removal List`.
 
